@@ -1,8 +1,8 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-11T18:31:00-03:00  
-**Fase activa:** FASE 2 COMPLETADA (En espera de autorización para Fase 3)  
+**Última actualización:** 2026-10-11T18:52:00-03:00  
+**Fase activa:** FASE 3 COMPLETADA (En espera de autorización para Fase 4)  
 **Baseline de arquitectura:** Hermes Agent + Qwen Code CLI + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
 ---
@@ -14,7 +14,7 @@
 | **Fase 0** | Documentación base | **PASS** | 00-README.md a 07-ROADMAP.md y AGENTS.md aprobados y analizados. |
 | **Fase 1** | Inventario del entorno | **PASS** | Auditoría física y de software completa. Registrado en `docs/INVENTORY.md` y `logs/inventory-audit-20261011.log`. |
 | **Fase 2** | Backup y baseline | **PASS** | Creación de `backups/preinstall-*/`, verificación de hashes SHA-256, corrección de discrepancias documentales, creación de `MANIFEST.md`, `.gitignore` y primer commit baseline. |
-| **Fase 3** | Validación de llama.cpp + Qwen | **PENDING** | Validación funcional del binario existente a 64K context sin reiniciar innecesariamente. |
+| **Fase 3** | Validación de llama.cpp + Qwen | **PASS** | Validado inicio controlado a 64K (`n_ctx_slot = 65536`), `parallel = 1`, alias `qwen36`, inferencia exitosa (33.1 tok/s) y cleanup verificado. Evidencia en `evidence/installation/`. |
 | **Fase 4** | Configuración central | **PENDING** | Creación de `config/system.yaml`, `config/security.yaml` y `config/VERSIONS.lock`. |
 | **Fase 5** | Qwen Code CLI | **PENDING** | Instalación/configuración de `@qwen-code/qwen-code` y validación en sandbox headless. |
 | **Fase 6** | Hermes Agent | **PENDING** | Instalación/configuración de `NousResearch/hermes-agent` contra Qwen local. |
@@ -45,5 +45,5 @@
 
 ## Próximo Paso Recomendado
 
-- **Aprobación de la Fase 2:** El usuario revisará el informe de backup y baseline.
-- **Fase 3:** Validación funcional y de health endpoint de `llama-server.exe` junto al modelo Qwen3.6-35B-A3B a 64K context sin reiniciar el proceso si ya está disponible ni alterar configuraciones innecesariamente.
+- **Aprobación de la Fase 3:** El usuario revisará el informe de validación funcional y de evidencias de llama.cpp a 64K.
+- **Fase 4:** Creación de los archivos centrales de configuración (`config/system.yaml`, `config/security.yaml` y `config/VERSIONS.lock`) para desacoplar rutas y parámetros de los scripts individuales.
