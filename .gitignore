@@ -1,0 +1,63 @@
+# ==============================================================================
+# .gitignore — Desarrollador Autónomo
+# ==============================================================================
+
+# Backups locales (los backups se preservan en disco pero no se versionan en Git)
+backups/
+
+# Logs del sistema y de ejecución
+logs/
+*.log
+*.log.*
+
+# Archivos de entorno y posibles secretos
+.env
+.env.*
+*.secret
+*.key
+*.pem
+*.token
+
+# Python & entornos virtuales
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+dist/
+build/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Archivos de sistema operativo y editores
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Artefactos temporales de ejecución autónoma
+.autopilot/LOCK.json
+.autopilot/HEARTBEAT.json
+.autopilot/logs/
+.autopilot/checkpoints/
+
+# Política de Evidence:
+# Se versionan reportes, transcripciones y evidencias en formato texto (.md, .json, .txt).
+# Se excluyen volcados binarios pesados o volcados masivos de memoria/red.
+evidence/**/*.bin
+evidence/**/*.zip
+evidence/**/*.tar*
+evidence/**/*.dmp

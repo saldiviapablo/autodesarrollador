@@ -1,0 +1,649 @@
+# Desarrollador Autónomo
+
+**Versión de documentación:** 2.0  
+**Estado:** BASELINE PARA IMPLEMENTACIÓN  
+**Arquitectura principal:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
+
+---
+
+# 1. Qué es este proyecto
+
+**Desarrollador Autónomo** es una infraestructura local para convertir una PC Windows en un trabajador de programación capaz de recibir:
+
+- un proyecto existente;
+- un objetivo general;
+- criterios de aceptación;
+
+y trabajar durante horas de manera autónoma.
+
+El sistema debe poder:
+
+```text
+entender
+↓
+planificar
+↓
+investigar
+↓
+programar
+↓
+probar
+↓
+detectar errores
+↓
+corregirse
+↓
+recordar
+↓
+recuperarse
+↓
+validar
+↓
+reportar
+```
+
+sin depender de supervisión humana constante.
+
+---
+
+# 2. Arquitectura elegida
+
+```text
+                   USUARIO
+                      │
+                      ▼
+                HERMES AGENT
+          Supervisor / Orquestador
+                      │
+                      ▼
+                QWEN CODE CLI
+             Coding Worker principal
+                      │
+                      ▼
+                 LLAMA.CPP
+                      │
+                      ▼
+       Qwen3.6-35B-A3B Q4_K_M
+                    64K
+                      │
+                      ▼
+              PROYECTO + GIT
+```
+
+Alrededor de esta arquitectura existen componentes deterministas:
+
+```text
+Runner
+Watchdog
+Inference Lock
+STATE
+EVENTS
+Checkpoints
+Recovery Protocol
+Completion Gate
+Cleanup
+```
+
+---
+
+# 3. Roles principales
+
+## Hermes Agent
+
+Hermes es el cerebro supervisor.
+
+Debe:
+
+- recibir objetivos;
+- hacer preflight;
+- planificar;
+- investigar;
+- dividir trabajo;
+- supervisar;
+- delegar a Qwen Code;
+- detectar estancamiento;
+- consultar ChatGPT cuando sea útil;
+- validar evidencia;
+- decidir continuar, replantear o detener.
+
+---
+
+## Qwen Code CLI
+
+Qwen Code es el trabajador especializado en programación.
+
+Debe:
+
+- analizar repositorios;
+- modificar archivos;
+- ejecutar comandos;
+- correr tests;
+- correr builds;
+- usar Git local;
+- diagnosticar errores;
+- autocorregirse.
+
+---
+
+## Qwen local + llama.cpp
+
+Es el modelo local compartido.
+
+Configuración base validada:
+
+```text
+--ctx-size 65536
+--parallel 1
+--cpu-moe
+--n-gpu-layers 99
+--flash-attn on
+--cache-type-k q8_0
+--cache-type-v q8_0
+--jinja
+```
+
+---
+
+# 4. Regla clave de recursos
+
+El modelo local usa:
+
+```text
+--parallel 1
+```
+
+Por lo tanto:
+
+> **Sólo puede existir una inferencia Qwen activa a la vez.**
+
+Hermes y Qwen Code pueden realizar otras tareas en paralelo, como:
+
+- web;
+- tests;
+- builds;
+- filesystem;
+- Git;
+
+pero el acceso al modelo local debe estar serializado mediante un `Inference Lock` o mecanismo equivalente.
+
+---
+
+# 5. Qwen 64K ya fue validado
+
+Se realizó una prueba real progresiva hasta 60.000 tokens.
+
+Resultados:
+
+| Tokens reales | RAM máx. usada | RAM libre mín. | llama WS máx. | VRAM máx. |
+|---:|---:|---:|---:|---:|
+| 8K | 21.83 GB | 9.84 GB | 12.81 GB | 4186 MB |
+| 16K | 22.12 GB | 9.55 GB | 13.10 GB | 4198 MB |
+| 32K | 22.37 GB | 9.30 GB | 13.38 GB | 4198 MB |
+| 48K | 22.37 GB | 9.30 GB | 13.56 GB | 4198 MB |
+| 60K | 22.39 GB | 9.28 GB | 13.69 GB | 4198 MB |
+
+Conclusión inicial:
+
+```text
+64K es viable en el hardware probado.
+```
+
+También se validó que al cerrar `llama-server` se libera correctamente la memoria utilizada.
+
+---
+
+# 6. Filosofía del proyecto
+
+## 6.1 El chat no es memoria suficiente
+
+La conversación activa puede compactarse o reiniciarse.
+
+Por eso la continuidad depende de:
+
+```text
+filesystem
+Git
+tests/build
+STATE.json
+STATE.md
+EVENTS.jsonl
+QWEN.md
+checkpoints
+sesiones persistentes
+```
+
+---
+
+## 6.2 Un agente diciendo “terminé” no alcanza
+
+Debe existir evidencia.
+
+Ejemplos:
+
+```text
+test PASS
+build PASS
+artefacto existe
+endpoint responde
+Git diff correcto
+criterios cumplidos
+```
+
+---
+
+## 6.3 Autonomía no significa acceso ilimitado
+
+Dentro del workspace:
+
+```text
+alta autonomía
+```
+
+Fuera del workspace:
+
+```text
+mínimo privilegio
+```
+
+---
+
+## 6.4 Recuperarse es obligatorio
+
+Si falla:
+
+- Qwen Code;
+- Hermes;
+- llama.cpp;
+- una sesión;
+- Windows;
+
+el sistema debe poder reconstruir el estado.
+
+---
+
+# 7. Flujo de una ejecución
+
+```text
+Usuario selecciona proyecto
+        ↓
+Objetivo
+        ↓
+Hermes hace preflight
+        ↓
+RUN-CONTRACT
+        ↓
+Usuario aprueba una vez
+        ↓
+Runner inicia llama.cpp
+        ↓
+Hermes planifica
+        ↓
+Qwen Code implementa
+        ↓
+Tests / build
+        ↓
+¿falló?
+ ├─ sí → diagnosticar / corregir / investigar
+ └─ no
+        ↓
+Checkpoint
+        ↓
+Siguiente tarea
+        ↓
+Completion Gate
+        ↓
+Informe final
+        ↓
+Cleanup
+        ↓
+Cerrar llama.cpp
+```
+
+---
+
+# 8. ChatGPT dentro del sistema
+
+ChatGPT actúa únicamente como:
+
+```text
+CONSULTOR EXTERNO
+```
+
+Flujo:
+
+```text
+Hermes
+  ↓
+consultar_chatgpt
+  ↓
+Chrome dedicado
+  ↓
+chatgpt.com
+  ↓
+respuesta
+  ↓
+Hermes evalúa
+  ↓
+Qwen Code implementa
+```
+
+ChatGPT no debe modificar directamente el proyecto.
+
+---
+
+# 9. Documentos del proyecto
+
+## `00-README.md`
+
+Visión general y punto de entrada.
+
+---
+
+## `01-OBJETIVOS-Y-REQUISITOS.md`
+
+Especificación funcional.
+
+Define:
+
+- qué debe hacer;
+- requisitos;
+- prioridades;
+- criterios de aceptación;
+- definición de terminado.
+
+---
+
+## `02-ARQUITECTURA.md`
+
+Define:
+
+- componentes;
+- responsabilidades;
+- Runner;
+- Watchdog;
+- Inference Lock;
+- flujo;
+- ChatGPT;
+- locks;
+- recovery;
+- Completion Gate.
+
+---
+
+## `03-MEMORIA-Y-CONTINUIDAD.md`
+
+Define:
+
+- STATE;
+- EVENTS;
+- checkpoints;
+- sesiones;
+- recuperación;
+- compactación;
+- reconciliación;
+- integridad.
+
+---
+
+## `04-AUTONOMIA-Y-SEGURIDAD.md`
+
+Define:
+
+- autorización única;
+- acciones permitidas;
+- acciones prohibidas;
+- límites de workspace;
+- Git;
+- secretos;
+- navegador;
+- anti-loop;
+- bloqueo humano.
+
+---
+
+## `05-INSTALACION-Y-CONFIGURACION.md`
+
+Define:
+
+- entorno conocido;
+- llama.cpp;
+- modelo Qwen;
+- 64K;
+- componentes legacy;
+- inventario;
+- backups;
+- instalación;
+- configuración central;
+- rollback.
+
+---
+
+## `06-PRUEBAS-Y-CRITERIOS-DE-EXITO.md`
+
+Define cómo demostrar que cada componente funciona.
+
+Nada debe marcarse `PASS` sin evidencia.
+
+---
+
+## `07-ROADMAP.md`
+
+Define el orden de implementación por fases.
+
+---
+
+## `AGENTS.md`
+
+Reglas operativas obligatorias para Antigravity, Codex y otros agentes.
+
+Debe leerse antes de modificar el proyecto.
+
+---
+
+# 10. Carpeta esperada
+
+Estructura inicial:
+
+```text
+Desarrollador autonomo/
+│
+├── 00-README.md
+├── 01-OBJETIVOS-Y-REQUISITOS.md
+├── 02-ARQUITECTURA.md
+├── 03-MEMORIA-Y-CONTINUIDAD.md
+├── 04-AUTONOMIA-Y-SEGURIDAD.md
+├── 05-INSTALACION-Y-CONFIGURACION.md
+├── 06-PRUEBAS-Y-CRITERIOS-DE-EXITO.md
+├── 07-ROADMAP.md
+├── AGENTS.md
+│
+├── config/
+├── runner/
+├── scripts/
+├── tools/
+├── tests/
+├── sandbox/
+├── backups/
+├── docs/
+├── logs/
+└── evidence/
+```
+
+Las subcarpetas pueden ser creadas por Antigravity durante la implementación.
+
+---
+
+# 11. Estado actual
+
+Ya existe:
+
+```text
+Qwen local
+llama.cpp
+modelo GGUF
+prueba 64K
+documentación de arquitectura
+```
+
+Pendiente de implementación:
+
+```text
+Qwen Code CLI
+Hermes Agent
+integración
+Runner
+Watchdog
+Inference Lock
+memoria persistente
+web
+ChatGPT
+guardrails
+tests E2E
+Night Mode
+```
+
+La existencia real de Qwen Code y Hermes debe comprobarse mediante inventario antes de instalar nada.
+
+---
+
+# 12. Qué debe hacer Antigravity primero
+
+No instalar inmediatamente.
+
+Orden inicial:
+
+```text
+1. leer AGENTS.md
+2. leer toda la documentación
+3. inspeccionar el entorno
+4. generar INVENTORY
+5. comparar realidad con documentación
+6. hacer backups
+7. recién entonces comenzar implementación
+```
+
+---
+
+# 13. Qué NO debe hacer Antigravity
+
+No debe:
+
+- reinstalar todo;
+- descargar otro Qwen;
+- cambiar drivers;
+- alterar Windows innecesariamente;
+- reutilizar launchers legacy como sistema nuevo;
+- reducir 64K silenciosamente;
+- cambiar Hermes por otro supervisor;
+- cambiar Qwen Code por otro coding worker;
+- eliminar STATE/checkpoints;
+- desactivar seguridad para “hacerlo funcionar”;
+- marcar éxito sin pruebas.
+
+---
+
+# 14. Launchers legacy
+
+Existen configuraciones antiguas de Goose.
+
+Deben considerarse:
+
+```text
+LEGACY
+```
+
+No son la arquitectura actual.
+
+No deben borrarse hasta tener sistema nuevo validado.
+
+---
+
+# 15. Cómo se considera listo
+
+No alcanza con instalar programas.
+
+La versión 1.0 requiere demostrar:
+
+```text
+llama
+Qwen Code
+Hermes
+delegación
+Inference Lock
+STATE
+Recovery
+continuidad
+web
+ChatGPT
+seguridad
+anti-loop
+Runner
+Watchdog
+Completion Gate
+reporting
+cleanup
+E2E
+prueba prolongada
+```
+
+---
+
+# 16. Resultado esperado final
+
+La experiencia del usuario debe ser aproximadamente:
+
+```text
+abrir Desarrollador Autónomo
+        ↓
+seleccionar proyecto
+        ↓
+decir qué quiere lograr
+        ↓
+responder pocas preguntas iniciales
+        ↓
+INICIAR
+```
+
+Después:
+
+```text
+el usuario se va
+```
+
+y el sistema:
+
+```text
+investiga
+programa
+prueba
+corrige
+recuerda
+recupera
+continúa
+```
+
+hasta:
+
+```text
+COMPLETED
+```
+
+o:
+
+```text
+BLOCKED_REQUIRES_HUMAN
+STALLED
+FAILED
+```
+
+con un informe que explique exactamente qué ocurrió.
+
+---
+
+# 17. Regla final
+
+El objetivo no es crear un chatbot de programación.
+
+El objetivo es construir:
+
+> **un trabajador de programación autónomo, persistente, verificable y recuperable que pueda trabajar durante horas sobre proyectos reales con límites de seguridad claros.**
