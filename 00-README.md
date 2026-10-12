@@ -52,61 +52,93 @@ sin depender de supervisión humana constante.
                    USUARIO
                       │
                       ▼
-                HERMES AGENT
-          Supervisor / Orquestador
+            HERMES AGENT (Supervisor)
+                      │
+        ┌─────────────┴─────────────┐
+        ▼                           ▼
+  QWEN CODE CLI             HERMES REVIEWER
+ (Coding Worker)         (Auditor independiente)
+        │                           │
+        └─────────────┬─────────────┘
                       │
                       ▼
-                QWEN CODE CLI
-             Coding Worker principal
+                  LLAMA.CPP (127.0.0.1:8080)
                       │
                       ▼
-                 LLAMA.CPP
+        Qwen3.6-35B-A3B Q4_K_M (64K context)
                       │
                       ▼
-       Qwen3.6-35B-A3B Q4_K_M
-                    64K
-                      │
-                      ▼
-              PROYECTO + GIT
+               PROYECTO + GIT
 ```
 
-Alrededor de esta arquitectura existen componentes deterministas:
+La arquitectura se articula en dos capas bien diferenciadas:
 
-```text
-Runner
-Watchdog
-Inference Lock
-STATE
-EVENTS
-Checkpoints
-Recovery Protocol
-Completion Gate
-Cleanup
-```
+### HERMES CAPABILITY LAYER
+- Memoria Persistente (Nivel 2)
+- Skills (Memoria Procedimental)
+- Servidores MCP
+- Plugins / Herramientas Custom
+- Browser Automation Nativo
+- Bot Mode (Supervisor, Reviewer, Researcher)
+- Subagentes Jerárquicos
+- Git Worktrees Isolados
+- Cron y Jobs sin Agente
+- Extracción de Documentos
+- Gateway Multiplataforma
+- Web Dashboard
+- Auto-Update Controlado
+
+### DETERMINISTIC CONTROL LAYER (Autoritativa)
+- RUN-CONTRACT.yaml
+- STATE.json / EVENTS.jsonl
+- Checkpoints Inmutables
+- Security Guard (Path, Command, Secret)
+- Progress Guard (Anti-loop)
+- Inference Lock (.NET Mutex, parallel = 1)
+- Runner de Ciclo de Vida
+- Watchdog de Procesos
+- Cleanup Garantizado
+- Completion Gate
 
 ---
 
 # 3. Roles principales
 
-## Hermes Agent
-
-Hermes es el cerebro supervisor.
-
+## Hermes Supervisor
+Hermes es el cerebro supervisor y orquestador.
 Debe:
+- recibir objetivos y ejecutar preflight;
+- generar el `RUN-CONTRACT`;
+- planificar y dividir trabajo;
+- investigar web y consultar ChatGPT;
+- supervisar el progreso de los workers;
+- validar y emitir aceptación/rechazo (`DECISION: ACCEPTED/REJECTED`).
 
-- recibir objetivos;
-- hacer preflight;
-- planificar;
-- investigar;
-- dividir trabajo;
-- supervisar;
-- delegar a Qwen Code;
-- detectar estancamiento;
-- consultar ChatGPT cuando sea útil;
-- validar evidencia;
-- decidir continuar, replantear o detener.
+Hermes NO es el coding worker principal.
 
 ---
+
+## Qwen Code CLI (Coding Worker)
+Qwen Code es el especialista autónomo en programación.
+Debe:
+- analizar repositorios y código fuente;
+- modificar archivos y crear tests;
+- ejecutar comandos, linters y builds;
+- gestionar Git local;
+- diagnosticar fallos y autocorregirse.
+
+---
+
+## Hermes Reviewer (Auditor Independiente)
+Instancia de auditoría separada encargada de:
+- auditar diffs y cambios antes de la integración;
+- verificar objetivamente criterios de aceptación;
+- certificar la ausencia de regresiones.
+
+---
+
+## Runner y Watchdog
+Componentes deterministas fuera de los modelos LLM responsables del ciclo de vida, timeouts, health checks, serialización de inferencia y cleanup de procesos.
 
 ## Qwen Code CLI
 
@@ -428,7 +460,13 @@ Nada debe marcarse `PASS` sin evidencia.
 
 ## `07-ROADMAP.md`
 
-Define el orden de implementación por fases.
+Define el orden de implementación por macrofases (Macrofases 1 a 6 aprobadas, Macrofases 7A, 7B y 8 pendientes).
+
+---
+
+## `08-CAPACIDADES-NATIVAS-HERMES.md`
+
+Especificación canónica, matriz de preparación y gobernanza de las 14 capacidades nativas de Hermes Agent y del subsistema de idempotencia.
 
 ---
 
@@ -442,7 +480,7 @@ Debe leerse antes de modificar el proyecto.
 
 # 10. Carpeta esperada
 
-Estructura inicial:
+Estructura canónica:
 
 ```text
 Desarrollador autonomo/
@@ -455,7 +493,9 @@ Desarrollador autonomo/
 ├── 05-INSTALACION-Y-CONFIGURACION.md
 ├── 06-PRUEBAS-Y-CRITERIOS-DE-EXITO.md
 ├── 07-ROADMAP.md
+├── 08-CAPACIDADES-NATIVAS-HERMES.md
 ├── AGENTS.md
+├── MANIFEST.md
 │
 ├── config/
 ├── runner/
@@ -469,40 +509,30 @@ Desarrollador autonomo/
 └── evidence/
 ```
 
-Las subcarpetas pueden ser creadas por Antigravity durante la implementación.
+Las subcarpetas son gestionadas de forma controlada según el avance de cada fase.
 
 ---
 
 # 11. Estado actual
 
-Ya existe:
+Fases Aprobadas y Certificadas (PASS):
 
 ```text
-Qwen local
-llama.cpp
-modelo GGUF
-prueba 64K
-documentación de arquitectura
+Macrofase 1: Baseline e Inventario (Fases 0 a 4) — PASS
+Macrofase 2: Qwen Code CLI (Fase 5) — PASS
+Macrofase 3: Hermes Agent (Fase 6) — PASS
+Macrofase 4: Integración Hermes ↔ Qwen Code (Fases 7 a 9) — PASS
+Macrofase 5: Memoria y Continuidad (Fases 10 a 12) — PASS
+Macrofase 6: Web, ChatGPT, Seguridad y Anti-Loop (Fases 13 a 16) — PASS
 ```
 
-Pendiente de implementación:
+Pendiente de Implementación:
 
 ```text
-Qwen Code CLI
-Hermes Agent
-integración
-Runner
-Watchdog
-Inference Lock
-memoria persistente
-web
-ChatGPT
-guardrails
-tests E2E
-Night Mode
+Macrofase 7A: Hermes Native Capabilities (7A.1 a 7A.10) — PENDING
+Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — PENDING
+Macrofase 8:  Validación Final (Fases 23 a 28) — PENDING
 ```
-
-La existencia real de Qwen Code y Hermes debe comprobarse mediante inventario antes de instalar nada.
 
 ---
 

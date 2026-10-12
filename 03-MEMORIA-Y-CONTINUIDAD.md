@@ -29,69 +29,79 @@ La regla principal es:
 
 ---
 
-# 2. Principio de memoria por capas
+# 2. Principio de memoria: Modelo de 3 Niveles y Memoria Procedimental
 
-La memoria se organiza en capas.
+La memoria del sistema se organiza formalmente en tres niveles de persistencia operativa y una categoría procedimental:
 
 ```text
-CAPA 1 — REALIDAD
-Código / filesystem / Git / tests / build
+┌────────────────────────────────────────────────────────────────────────┐
+│             NIVEL 1 — MEMORIA OPERATIVA AUTORITATIVA                   │
+│  - Filesystem y código fuente real    - RUN-CONTRACT.yaml              │
+│  - Git (árbol de trabajo, commits)    - EVENTS.jsonl (append-only)     │
+│  - Tests y builds ejecutados en vivo  - Checkpoints inmutables         │
+│  - STATE.json (fuente de verdad canónica del estado de tareas)         │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Prevalece sobre cualquier nivel
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│             NIVEL 2 — MEMORIA PERSISTENTE HERMES                       │
+│  - Lecciones aprendidas y errores resueltos en ejecuciones previas     │
+│  - Preferencias técnicas y decisiones arquitectónicas estables         │
+│  - Contexto semántico acumulado del proyecto                           │
+│  - Patrones exitosos de implementación                                 │
+│  * RESTRICCIÓN: Jamás puede dar por hecho el éxito de un test, un      │
+│    build o el contenido de un archivo; eso se verifica siempre en N1.  │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│             NIVEL 3 — MEMORIA DE SESIÓN (AUXILIAR Y VOLÁTIL)           │
+│  - Conversación activa de Hermes y Qwen Code                          │
+│  - Razonamiento transitorio en ventana de contexto                     │
+│  * Puede compactarse, reiniciarse o descartarse por completo sin       │
+│    comprometer la continuidad ni el estado del proyecto.               │
+└────────────────────────────────────────────────────────────────────────┘
 
-CAPA 2 — ESTADO OPERATIVO
-STATE.json / STATE.md / RUN-CONTRACT.yaml
-
-CAPA 3 — HISTORIAL ESTRUCTURADO
-EVENTS.jsonl / logs / checkpoints / evidence
-
-CAPA 4 — MEMORIA DEL AGENTE
-QWEN.md / auto-memory / Hermes memory
-
-CAPA 5 — SESIONES
-Qwen Code sessions / Hermes sessions
-
-CAPA 6 — CONTEXTO ACTIVO
-Lo que el modelo ve en este momento
+┌────────────────────────────────────────────────────────────────────────┐
+│             MEMORIA PROCEDIMENTAL (SKILLS REUTILIZABLES)               │
+│  - Procedimientos operativos estandarizados (SOPs en Markdown)         │
+│  - Metodologías de diagnóstico, auditoría de migraciones SQL, etc.     │
+│  * Ciclo de promoción: Experiencia repetida → Procedimiento validado → │
+│    Auditoría humana / seguridad → Skill reusable (~/.hermes/skills/). │
+│  * RESTRICCIÓN: Un Skill no puede modificar políticas de seguridad.   │
+└────────────────────────────────────────────────────────────────────────┘
 ```
-
-La capa inferior debe ser más confiable que la superior.
-
-Nunca se debe confiar únicamente en la memoria activa del modelo.
 
 ---
 
 # 3. Jerarquía de verdad
 
-En caso de contradicción, prevalece este orden:
+En caso de discrepancia o contradicción entre componentes, prevalece este orden estricto:
 
-1. estado real del filesystem;
-2. Git;
-3. tests/builds ejecutados;
-4. artefactos verificables;
-5. `STATE.json`;
-6. `RUN-CONTRACT.yaml`;
-7. `STATE.md`;
-8. `EVENTS.jsonl`;
-9. logs;
-10. `QWEN.md`;
-11. sesión Qwen Code;
-12. sesión Hermes;
-13. memoria conversacional.
+1. Estado real del filesystem (archivos en disco);
+2. Repositorio Git local (`git status`, `git diff`, commits);
+3. Salida de tests y builds ejecutados objetivamente;
+4. Artefactos verificables generados;
+5. `.autopilot/STATE.json` (estado canónico estructurado);
+6. `.autopilot/RUN-CONTRACT.yaml` (contrato de ejecución);
+7. `.autopilot/STATE.md` (resumen visual para humanos);
+8. `.autopilot/EVENTS.jsonl` (registro cronológico monotónico);
+9. Logs de ejecución en `.autopilot/logs/`;
+10. `QWEN.md` y memoria de instrucciones del repositorio;
+11. Nivel 2: Memoria persistente nativa de Hermes;
+12. Nivel 3: Historial de sesiones de Hermes o Qwen Code;
+13. Memoria conversacional / razonamiento en contexto.
 
-Ejemplo:
-
-Si `STATE.md` dice:
-
+### Ejemplo canónico:
+Si la memoria persistente o `STATE.md` dice:
 ```text
 build: PASS
 ```
-
-pero `npm run build` falla:
-
+pero la ejecución real de `npm run build` falla en el filesystem:
 ```text
 REALIDAD = FAIL
 ```
-
-El sistema debe corregir el estado persistido.
+El sistema reconcilia de inmediato el estado, imponiendo la realidad física (Nivel 1) por encima de cualquier memoria previa.
 
 ---
 

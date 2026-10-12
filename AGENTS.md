@@ -28,80 +28,97 @@ Debe leerse antes de:
 La arquitectura base aprobada es:
 
 ```text
-Hermes Agent
+HERMES AGENT (Supervisor / Orquestador)
     ↓
-Supervisor / Orquestador
+QWEN CODE CLI (Coding Worker principal)
     ↓
-Qwen Code CLI
+llama.cpp (127.0.0.1:8080)
     ↓
-Coding Worker
-    ↓
-llama.cpp
-    ↓
-Qwen3.6-35B-A3B Q4_K_M
+Qwen3.6-35B-A3B Q4_K_M (64K context)
 ```
 
-Componentes adicionales obligatorios:
+Estructurada en dos capas complementarias:
 
-```text
-Runner
-Watchdog
-Inference Lock
-STATE
-EVENTS
-Checkpoints
-Completion Gate
-Cleanup
-```
+### HERMES CAPABILITY LAYER
+- Memoria Persistente (Nivel 2)
+- Skills (Memoria Procedimental)
+- Servidores MCP
+- Plugins y Custom Tools
+- Browser Automation Nativo
+- Bot Mode (Supervisor, Reviewer, Researcher)
+- Subagentes Jerárquicos
+- Git Worktrees Isolados
+- Cron y No-Agent Jobs
+- Extracción de Documentos
+- Gateway Multiplataforma
+- Web Dashboard
+- Auto-Update Controlado
 
-No sustituir silenciosamente ninguno de estos componentes.
+### DETERMINISTIC CONTROL LAYER (Autoritativa)
+- RUN-CONTRACT
+- STATE.json
+- EVENTS.jsonl
+- Checkpoints inmutables
+- Security Guard (Path, Command, Secret)
+- Progress Guard (Anti-loop)
+- Inference Lock (.NET Mutex cross-process)
+- Runner de ciclo de vida
+- Watchdog de procesos
+- Cleanup garantizado
+- Completion Gate
+
+No sustituir silenciosamente ninguno de estos componentes. Las capacidades de Hermes jamás sustituyen la verdad técnica determinista.
 
 ---
 
 # 3. Roles
 
-## Hermes
+## Hermes Supervisor
 
 Responsabilidad:
-
 - planificación;
 - investigación;
-- supervisión;
-- recuperación;
-- escalamiento;
-- validación;
+- supervisión y preflight;
+- gestión de RUN-CONTRACT;
+- recuperación y escalamiento;
 - consulta ChatGPT;
-- delegación.
+- delegación estructurada a workers;
+- validación final.
 
 Hermes NO es el coding worker principal.
 
 ---
 
-## Qwen Code CLI
+## Qwen Code CLI (Coding Worker)
 
 Responsabilidad:
-
-- analizar código;
+- analizar código y repositorios;
 - modificar archivos;
-- ejecutar comandos;
-- tests;
-- builds;
+- ejecutar comandos autorizados;
+- tests y builds;
 - Git local;
-- autocorrección.
+- diagnóstico y autocorrección.
+
+---
+
+## Hermes Reviewer (Auditor Independiente)
+
+Responsabilidad:
+- auditoría de diffs generados por el worker;
+- verificación de cumplimiento estricto de criterios de aceptación;
+- comprobación de ausencia de regresiones o archivos espurios.
 
 ---
 
 ## Runner
 
 Responsabilidad:
-
-- ciclo de vida;
-- procesos;
-- timeouts;
-- health;
-- watchdog;
-- locks;
-- cleanup.
+- ciclo de vida de procesos;
+- timeouts globales y por fase;
+- health check de endpoints;
+- watchdog y recuperación de procesos caídos;
+- serialización mediante Inference Lock;
+- cleanup garantizado.
 
 ---
 
@@ -143,6 +160,7 @@ Antes de empezar, leer:
 02-ARQUITECTURA.md
 03-MEMORIA-Y-CONTINUIDAD.md
 04-AUTONOMIA-Y-SEGURIDAD.md
+08-CAPACIDADES-NATIVAS-HERMES.md
 05-INSTALACION-Y-CONFIGURACION.md
 06-PRUEBAS-Y-CRITERIOS-DE-EXITO.md
 07-ROADMAP.md
@@ -161,10 +179,11 @@ Si existe contradicción:
 3. 01-OBJETIVOS-Y-REQUISITOS.md
 4. 02-ARQUITECTURA.md
 5. 03-MEMORIA-Y-CONTINUIDAD.md
-6. 05-INSTALACION-Y-CONFIGURACION.md
-7. 06-PRUEBAS-Y-CRITERIOS-DE-EXITO.md
-8. 07-ROADMAP.md
-9. instrucciones temporales de implementación
+6. 08-CAPACIDADES-NATIVAS-HERMES.md
+7. 05-INSTALACION-Y-CONFIGURACION.md
+8. 06-PRUEBAS-Y-CRITERIOS-DE-EXITO.md
+9. 07-ROADMAP.md
+10. instrucciones temporales de implementación
 ```
 
 No resolver contradicciones ocultándolas.
@@ -306,7 +325,7 @@ Existe evidencia de funcionamiento hasta 60K tokens reales con margen de RAM.
 
 ---
 
-# 12. `--parallel 1`
+# 12. `--parallel 1` y Serialización
 
 Regla crítica:
 
@@ -320,7 +339,16 @@ Debe existir:
 Inference Lock
 ```
 
-o mecanismo equivalente.
+o mecanismo equivalente cross-process.
+
+Esta restricción aplica estrictamente a:
+- Hermes Supervisor
+- Qwen Code Worker
+- Hermes Reviewer (Bot Mode)
+- Hermes Researcher
+- Cualquier subagente instanciado
+
+Bot Mode y delegación NO autorizan inferencia simultánea. Todas las llamadas a Qwen local (`qwen36`) deben ejecutarse serializadas.
 
 ---
 
@@ -1234,7 +1262,24 @@ No:
 
 ---
 
-# 72. Regla final
+---
+
+# 73. Prefer Native When Verified
+
+Preferir capacidades nativas Hermes sobre código propio cuando:
+
+- estén presentes en la versión congelada (v0.21.6);
+- hayan pasado security review;
+- hayan pasado tests deterministas;
+- no reduzcan garantías deterministas.
+
+NO reemplazar componentes existentes sólo por ser nativos.
+
+Evidence first.
+
+---
+
+# 74. Regla final
 
 El objetivo no es que Antigravity produzca muchos archivos.
 

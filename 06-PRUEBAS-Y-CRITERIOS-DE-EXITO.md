@@ -976,6 +976,18 @@ no superar límite.
 
 ---
 
+## T-CHATGPT-010 — Idempotencia y Deduplicación
+
+Enviar consulta al bridge con `consultation_id` asignado.
+Reintentar inmediatamente la llamada con idéntico `consultation_id`.
+
+Esperado:
+- El bridge detecta el identificador procesado y retorna `ALREADY_SENT` o el resultado anterior sin reenviar al composer.
+- Los turnos del usuario y del asistente en el chat se incrementan en exactamente +1.
+- No se producen ejecuciones duplicadas en la ventana de chat.
+
+---
+
 # 21. Pruebas de seguridad
 
 ## T-SEC-001 — Write outside workspace
@@ -1498,6 +1510,65 @@ Debe contener:
 24. report
 25. cleanup
 ```
+
+---
+
+# 35.B. Catálogo de Pruebas Futuras — Macrofase 7A (Hermes Native Capabilities)
+
+> [!IMPORTANT]
+> **ESTADO DE ESTAS PRUEBAS:** PENDING / NO EJECUTADAS.
+> Estas pruebas corresponden a la futura **Macrofase 7A**. **NO se ejecutan durante la presente revisión documental.**
+> Se definen formalmente en este documento para congelar los criterios objetivos de validación antes de comenzar la implementación.
+
+Cada subfase de la Macrofase 7A contará con su correspondiente batería de pruebas estructuradas:
+
+### 7A.1 Memoria Persistente y Skills
+- **T-7A-MEM-001 (Functional):** Hermes retiene una lección aprendida entre reinicios de sesión y la aplica en una decisión técnica subsiguiente.
+- **T-7A-MEM-002 (Security):** Sanitización activa: verificación de que credenciales o tokens en contexto sean convertidos a `[REDACTED]` antes de persistir en `MEMORY.md`.
+- **T-7A-SKILL-001 (Functional):** Hermes carga e interpreta un SOP estructurado desde `~/.hermes/skills/` (ej. diagnóstico de tests).
+- **T-7A-SKILL-002 (Security):** Intento de un Skill de ejecutar comandos fuera del allowlist o alterar `security.yaml` resulta estrictamente bloqueado.
+
+### 7A.2 Servidores MCP y Plugins
+- **T-7A-MCP-001 (Functional):** Conexión exitosa a un servidor MCP acotado e invocación de herramienta allowlisted.
+- **T-7A-MCP-002 (Security - Tool Filtering):** Intento de invocar una herramienta MCP no permitida en la allowlist es interceptado y denegado.
+- **T-7A-MCP-003 (Failure / Timeout):** Simulación de servidor MCP colgado; verificación de interrupción tras timeout (30s) sin bloquear el hilo de Hermes.
+- **T-7A-PLUGIN-001 (Integration):** Carga de plugin de herramienta custom verificada por hash SHA-256.
+
+### 7A.3 Extracción Estructurada de Documentos
+- **T-7A-DOC-001 (Functional):** Ingesta de especificación técnica en formato DOCX y extracción limpia a Markdown legible.
+- **T-7A-DOC-002 (Functional):** Ingesta de tabla de datos en XLSX y conversión a estructura JSON tabular.
+- **T-7A-DOC-003 (Security):** Ingesta de documento con macros o payload malicioso; el parser confinado rechaza la ejecución de scripts.
+
+### 7A.4 Browser Automation Nativo
+- **T-7A-BROWSER-001 (Functional):** Navegación headless a documentación estática y extracción estructurada de texto.
+- **T-7A-BROWSER-002 (Security - Domain Boundaries):** Intento de navegación hacia dominio fuera de la allowlist o intento de escape es abortado de inmediato.
+- **T-7A-BROWSER-003 (Cleanup):** Verificación de ausencia de procesos de renderizado web huérfanos tras completar la navegación.
+
+### 7A.5 Bot Mode y Subagentes Jerárquicos
+- **T-7A-BOT-001 (Functional):** Flujo de 3 roles: Hermes Supervisor emite contrato -> Qwen Code implementa -> Hermes Reviewer audita diff y valida criterios.
+- **T-7A-BOT-002 (Integration - Serialización Estricta):** Validación de que Supervisor, Worker y Reviewer respetan `--parallel 1` adquiriendo el `Inference Lock` con 0 ms de solapamiento.
+- **T-7A-SUBAGENT-001 (Security):** Subagente instanciado intenta ejecutar `git push` o cambiar configuración del sistema; la acción es bloqueada por herencia estricta de políticas.
+
+### 7A.6 Git Worktrees Isolados
+- **T-7A-WT-001 (Functional):** Creación de worktree desacoplado en `.autopilot-worktrees/task-001/` y verificación de compilación independiente.
+- **T-7A-WT-002 (Integration):** Integración controlada al árbol principal solo tras recibir `DECISION: ACCEPTED` del Reviewer y PASS en Completion Gate.
+- **T-7A-WT-003 (Cleanup):** Eliminación forzada y limpieza completa de directorios de worktrees post-ejecución.
+
+### 7A.7 Cron y Jobs sin Agente
+- **T-7A-NOAGENT-001 (Functional):** Ejecución de rutina de verificación de hashes y limpieza de logs; validación de **0 tokens consumidos y 0 inferencias LLM**.
+- **T-7A-CRON-001 (Integration):** Disparador programado por Cron activa una tarea en el Runner respetando el ciclo de vida y Watchdog.
+
+### 7A.8 Web Dashboard
+- **T-7A-DASH-001 (Functional):** Inicio de interfaz web local en `127.0.0.1:3000` y renderizado correcto del estado canónico desde `STATE.json`.
+- **T-7A-DASH-002 (Failure / Desacoplamiento):** Terminación forzada del proceso del Dashboard durante un run autónomo; verificación de que el Runner y los workers continúan sin perturbación.
+
+### 7A.9 Gateway Multiplataforma
+- **T-7A-GATEWAY-001 (Functional):** Emisión de alerta saliente unidireccional de `RUN COMPLETED` hacia webhook mock / sandbox.
+- **T-7A-GATEWAY-002 (Security):** Envío de payload no autorizado simulado como mensaje entrante; rechazo por falta de firma criptográfica y categorización como `UNTRUSTED`.
+
+### 7A.10 Actualización Automática Controlada
+- **T-7A-UPDATE-001 (Functional - Canary Sandbox):** Simulación de update candidate en `sandbox/canary-update/`; ejecución exitosa de smoke suite antes de promoción.
+- **T-7A-UPDATE-002 (Failure / Auto-Rollback):** Inyección de regresión simulada en el candidato; el pipeline detecta fallo en tests y ejecuta rollback automático restaurando la versión congelada intacta.
 
 ---
 

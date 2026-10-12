@@ -83,55 +83,53 @@ Toda operación destructiva, irreversible, de producción, de credenciales o fue
 
 ---
 
+## P-06 — Capacidades nativas subordinadas a la capa determinista
+
+Las capacidades nativas de Hermes (memoria Nivel 2, skills, MCP, browser, bots, cron, subagentes, gateway) amplían la funcionalidad pero no constituyen la fuente de verdad operativa.
+En caso de conflicto, la verdad técnica de la Deterministic Control Layer (Git, tests/builds, `STATE.json`, `RUN-CONTRACT.yaml`) prevalece de forma absoluta.
+
+---
+
+## P-07 — Prefer Native When Verified
+
+Se preferirán las capacidades nativas provistas por Hermes Agent frente a desarrollos custom únicamente cuando:
+- Estén presentes y comprobadas en la versión congelada instalada (v0.21.6);
+- Hayan superado una revisión de seguridad y encuadre de privilegios mínimos;
+- Hayan superado pruebas deterministas completas;
+- No reduzcan ni degraden las garantías de contención y reproducibilidad.
+
+---
+
 # 3. Componentes obligatorios
 
-## C-01 — Hermes Agent
-
-Rol: supervisor/orquestador.
-
+## C-01 — Hermes Supervisor
+Rol: supervisor / orquestador principal.
 Debe:
-
-- recibir el objetivo general;
-- ejecutar preflight;
-- planificar;
-- dividir tareas;
-- investigar;
-- controlar progreso;
-- decidir cuándo delegar;
-- detectar estancamiento;
-- consultar ChatGPT cuando corresponda;
-- validar resultados;
-- decidir continuar, replantear, completar o bloquear.
+- recibir el objetivo general y ejecutar preflight;
+- planificar y emitir contratos `DelegationRequest`;
+- dividir tareas e investigar (web y ChatGPT);
+- controlar el progreso y supervisar a los workers;
+- validar entregables y emitir aceptación/rechazo formal (`DECISION: ACCEPTED/REJECTED`).
 
 Hermes no debe competir con Qwen Code editando simultáneamente los mismos archivos.
 
 ---
 
 ## C-02 — Qwen Code CLI
-
-Rol: agente especializado de programación.
-
+Rol: especialista autónomo de programación (Coding Worker).
 Debe:
-
-- analizar repositorios;
-- leer archivos;
-- crear/modificar archivos;
-- ejecutar comandos;
-- ejecutar tests;
-- ejecutar builds;
+- analizar repositorios y arquitectura de código;
+- leer, crear y editar archivos;
+- ejecutar comandos, linters, tests y builds;
 - utilizar Git local;
-- diagnosticar errores;
-- autocorregirse;
-- devolver resultados estructurados y evidencia.
+- diagnosticar errores y autocorregirse;
+- devolver resultados estructurados `DelegationResult` con diffs y evidencia.
 
 ---
 
 ## C-03 — llama.cpp + Qwen local
-
-Modelo principal local.
-
+Modelo principal local compartido.
 Configuración base validada:
-
 ```text
 --ctx-size 65536
 --parallel 1
@@ -142,41 +140,66 @@ Configuración base validada:
 --cache-type-v q8_0
 --jinja
 ```
-
-Endpoint base previsto:
-
-```text
-http://127.0.0.1:8080
-```
-
-Alias previsto:
-
-```text
-qwen36
-```
+Endpoint base: `http://127.0.0.1:8080` | Alias: `qwen36`
 
 ---
 
 ## C-04 — Night Supervisor / Runner
-
-Debe existir una capa determinista externa a los LLM.
-
+Capa determinista externa a los LLM responsable del ciclo de vida de procesos.
 Responsabilidades:
+- iniciar llama.cpp y verificar health check;
+- orquestar la ejecución, gestionar timeouts y heartbeats;
+- detectar caídas de procesos y activar Watchdog;
+- coordinar checkpoints y recovery determinista;
+- ejecutar cleanup garantizado y emitir reportes finales.
 
-- iniciar llama.cpp;
-- esperar health check;
-- iniciar/orquestar ejecución;
-- manejar timeouts;
-- controlar ciclos;
-- verificar procesos;
-- detectar fallos;
-- reintentar cuando corresponda;
-- gestionar checkpoints;
-- ejecutar cleanup;
-- cerrar `llama-server`;
-- producir reporte final.
+---
 
-El runner no debe depender exclusivamente de las decisiones del modelo.
+## C-05 — Inference Lock
+Primitiva de exclusión mutua cross-process (.NET Mutex) que garantiza acceso serializado estricto al modelo local (`--parallel 1`).
+Impide terminantemente que dos agentes o subagentes ejecuten inferencias simultáneas.
+
+---
+
+## C-06 — Hermes Reviewer y Bot Mode
+Roles especializados de Hermes configurados para segregar funciones:
+- `HERMES REVIEWER`: auditor independiente que verifica diffs y criterios de aceptación sin sesgo del implementador;
+- `HERMES RESEARCHER`: asistente enfocado en documentación técnica.
+Todos los roles de Bot Mode operan bajo el mismo modelo local y bajo serialización estricta del `Inference Lock`.
+
+---
+
+## C-07 — Servidores MCP y Plugins
+Mecanismo de integración de herramientas externas bajo el principio de mínima superficie:
+- Allowlist explícito de herramientas activas;
+- Confinamiento de scope y timeouts deterministas;
+- No se admiten servidores MCP sobredimensionados sin justificación.
+
+---
+
+## C-08 — Git Worktrees Isolados
+Aislamiento físico en `.autopilot-worktrees/task-<ID>/` para ejecución segura de tareas de refactorización o workers paralelos, integrando cambios al árbol principal sólo tras el `Completion Gate`.
+
+---
+
+## C-09 — Cron y Jobs sin Agente
+- `Cron / Routines`: disparadores periódicos subordinados al Runner;
+- `Jobs sin Agente`: tareas deterministas de mantenimiento (limpieza de logs, hash checks, backups) con **cero inferencias LLM**.
+
+---
+
+## C-10 — Extracción Documental
+Capacidad de ingesta de especificaciones y documentación de proyecto en formatos DOCX, XLSX, PPTX, PDF, RTF y Markdown, distinguiendo dependencias nativas de opcionales.
+
+---
+
+## C-11 — Pipeline de Auto-Update Seguro
+Procedimiento de actualización de Hermes Agent estructurado en sandbox canary, verificación de hash/origen, suite de regresión y rollback automático en caso de anomalías.
+
+---
+
+## C-12 — Idempotencia del Bridge ChatGPT
+Mecanismo en el puente CDP a `chatgpt.com` que garantiza que cada consulta con identificador `consultation_id` sea transmitida a lo sumo una única vez, retornando `ALREADY_SENT` ante reintentos.
 
 ---
 
@@ -716,6 +739,49 @@ Debe aceptar diferentes proyectos mediante configuración.
 Debe existir un proyecto sandbox para validar cambios en la infraestructura antes de usar proyectos reales.
 
 **Prioridad:** CRÍTICA
+
+---
+
+## RF-031 — Idempotencia del Bridge ChatGPT
+
+Toda consulta hacia ChatGPT debe incluir un `consultation_id` único. El sistema debe garantizar que un identificador se transmita como máximo una única vez al compositor.
+Si se produce un reintento con el mismo identificador, el bridge debe retornar `ALREADY_SENT` sin pulsar "Send" nuevamente.
+El sistema debe verificar que los turnos del usuario y del asistente se incrementen en exactamente +1.
+
+**Prioridad:** ALTA
+
+---
+
+## RF-032 — Aislamiento mediante Git Worktrees
+
+Para tareas complejas o workers auxiliares, el sistema debe poder inicializar un árbol de trabajo desacoplado en `.autopilot-worktrees/task-<ID>/`.
+Las modificaciones se validan con tests y diffs en el worktree antes de su integración al branch principal mediante el Completion Gate.
+
+**Prioridad:** ALTA
+
+---
+
+## RF-033 — Tareas Deterministas sin Agente (No-Agent Jobs)
+
+El sistema debe permitir la ejecución programada o periódica de rutinas de mantenimiento (limpieza de temporales, backups de estado, verificación de hashes) utilizando scripts deterministas con **cero inferencias LLM**.
+
+**Prioridad:** MEDIA
+
+---
+
+## RF-034 — Extracción Estructurada de Documentos
+
+El sistema debe ser capaz de ingerir especificaciones en formatos no planos (DOCX, XLSX, PDF, RTF) convirtiéndolas a texto estructurado para el análisis por parte de Hermes Supervisor.
+
+**Prioridad:** MEDIA
+
+---
+
+## RF-035 — Pipeline de Auto-Update Seguro
+
+Cualquier actualización de Hermes Agent debe ejecutarse primero en un sandbox canary con verificación de origen, versión y hash, evaluando smoke tests y regresiones antes de su promoción a producción, con capacidad de rollback automático.
+
+**Prioridad:** ALTA
 
 ---
 

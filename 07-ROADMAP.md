@@ -7,13 +7,27 @@
 
 ---
 
-# 1. Objetivo
+# 1. Objetivo y Estructura de Macrofases
 
-Definir el orden obligatorio de implementación.
+Definir el orden obligatorio de implementación dividido en **8 macrofases visibles**.
 
 Principio:
 
 > **No avanzar a la siguiente fase si la anterior no fue verificada.**
+
+### Resumen de Macrofases del Proyecto
+
+| MACROFASE | DESCRIPCIÓN | FASES INTERNAS | ESTADO |
+|:---|:---|:---:|:---:|
+| **Macrofase 1** | Baseline e Inventario | Fases 0 a 4 | **PASS** |
+| **Macrofase 2** | Qwen Code CLI | Fase 5 | **PASS** |
+| **Macrofase 3** | Hermes Agent | Fase 6 | **PASS** |
+| **Macrofase 4** | Integración Hermes ↔ Qwen Code | Fases 7 a 9 | **PASS** |
+| **Macrofase 5** | Memoria y Continuidad | Fases 10 a 12 | **PASS** |
+| **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
+| **Macrofase 7A**| Hermes Native Capabilities | Subfases 7A.1 a 7A.10 | **PENDING** |
+| **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PENDING** |
+| **Macrofase 8** | Validación Final | Fases 23 a 28 | **PENDING** |
 
 Cada fase debe producir:
 
@@ -703,7 +717,100 @@ ANTI_LOOP PASS
 
 ---
 
-# 20. Fase 17 — Runner
+# 20. MACROFASE 7A — Capacidades Nativas de Hermes (Hermes Native Capabilities)
+
+**Estado:** PENDING (Congelada a nivel documental; pendiente de implementación)
+
+Esta macrofase incorpora formalmente las 14 capacidades nativas de Hermes Agent y el componente de hardening de ChatGPT, supeditadas al principio rector **"Prefer Native When Verified"** y a la **Deterministic Control Layer**.
+
+Cada subfase debe superar sus pruebas funcionales, de seguridad, fallo, cleanup e integración antes de considerarse completa.
+
+---
+
+### Subfase 7A.1 — Memoria Persistente y Skills Reutilizables
+- **Objetivo:** Habilitar la retención de lecciones aprendidas y decisiones de diseño en la memoria persistente de Hermes (Nivel 2) y cargar procedimientos operativos estandarizados (SOPs) desde `~/.hermes/skills/` como memoria procedimental.
+- **Entregables:** Configuración de memoria persistente en Hermes, catálogo inicial de skills (testing, auditoría, refactorización), sanitizador de secretos `[REDACTED]`.
+- **Condición de salida:** `7A.1 PASS` (Demostración de retención entre sesiones sin violar jerarquía de verdad).
+
+---
+
+### Subfase 7A.2 — Servidores MCP y Plugins
+- **Objetivo:** Conectar herramientas externas mediante el protocolo MCP y plugins custom bajo el principio de mínima superficie de herramientas.
+- **Entregables:** Configuración de clientes MCP en Hermes, allowlist estricta de tools, wrappers de timeout deterministas.
+- **Condición de salida:** `7A.2 PASS` (Invocación de herramientas allowlisted y rechazo de tools no autorizadas).
+
+---
+
+### Subfase 7A.3 — Extracción Estructurada de Documentos
+- **Objetivo:** Dotar a Hermes de la capacidad de ingerir especificaciones en formatos no planos (DOCX, XLSX, PDF, RTF) convirtiéndolas a Markdown legible.
+- **Entregables:** Módulo de extracción de documentos, evaluación y auditoría de dependencias opcionales de Python (`mammoth`, `openpyxl`, `pypdf`).
+- **Condición de salida:** `7A.3 PASS` (Extracción exitosa de especificaciones de proyecto en sandbox sin ejecución de macros maliciosas).
+
+---
+
+### Subfase 7A.4 — Browser Automation Nativo
+- **Objetivo:** Activar la capacidad de navegación headless de Hermes para búsqueda e inspección técnica profunda.
+- **Entregables:** Configuración del browser nativo, delimitación por domain allowlist, integración en la jerarquía (Nativo -> MCP -> Bridge ChatGPT).
+- **Condición de salida:** `7A.4 PASS` (Extracción estructurada de documentación oficial con terminación limpia de procesos).
+
+---
+
+### Subfase 7A.5 — Bot Mode y Subagentes Jerárquicos
+- **Objetivo:** Configurar la especialización de roles dentro de Hermes (Supervisor, Reviewer, Researcher) y delegación a subagentes acotados.
+- **Entregables:** Perfiles de bots dedicados en Hermes, flujo de revisión independiente Supervisor -> Worker -> Reviewer, integración con `Inference Lock`.
+- **Condición de salida:** `7A.5 PASS` (Flujo multi-rol completo con 100% de serialización bajo `--parallel 1`).
+
+---
+
+### Subfase 7A.6 — Git Worktrees Isolados
+- **Objetivo:** Proveer aislamiento físico en `.autopilot-worktrees/task-<ID>/` para ejecución segura de refactorizaciones o workers secundarios.
+- **Entregables:** Scripts de ciclo de vida de worktrees (create, isolate, diff review, clean), integración con Completion Gate.
+- **Condición de salida:** `7A.6 PASS` (Aislamiento verificado, merge controlado tras revisión y cleanup forzado sin directorios huérfanos).
+
+---
+
+### Subfase 7A.7 — Cron y Jobs sin Agente
+- **Objetivo:** Implementar disparadores periódicos subordinados al Runner y rutinas de mantenimiento deterministas (backups, hash checks) que consuman exactamente **0 inferencias LLM**.
+- **Entregables:** Rutinas de Cron registradas, catálogo de scripts deterministas de mantenimiento sin LLM.
+- **Condición de salida:** `7A.7 PASS` (Ejecución exitosa de tareas de mantenimiento con 0 tokens consumidos).
+
+---
+
+### Subfase 7A.8 — Web Dashboard de Observabilidad
+- **Objetivo:** Proporcionar una interfaz web local de monitorización y observabilidad desacoplada del ciclo de vida del Runner.
+- **Entregables:** Configuración del Web Dashboard en `127.0.0.1:3000`, lectura de estado canónico desde `STATE.json`.
+- **Condición de salida:** `7A.8 PASS` (Visualización correcta de métricas y demostración de que el Runner sigue activo si el Dashboard cae).
+
+---
+
+### Subfase 7A.9 — Gateway Multiplataforma
+- **Objetivo:** Habilitar la transmisión unidireccional de alertas críticas hacia canales de mensajería (Telegram/Discord/Slack).
+- **Entregables:** Adaptador de notificaciones salientes para eventos `COMPLETED`, `FAILED`, `BLOCKED`, `STALLED`.
+- **Condición de salida:** `7A.9 PASS` (Recepción exitosa de alertas salientes y bloqueo de comandos externos no autorizados).
+
+---
+
+### Subfase 7A.10 — Actualización Automática Controlada
+- **Objetivo:** Implementar el pipeline de actualización de Hermes Agent bajo entorno canary aislado con capacidad de rollback automático.
+- **Entregables:** Scripts de staging canary en `sandbox/canary-update/`, verificación de hash SHA-256, suite de regresión y rollback.
+- **Condición de salida:** `7A.10 PASS` (Validación de promoción exitosa y reversión inmediata ante inyección de fallo en canary).
+
+---
+
+### Hardening Adicional — Idempotencia del Bridge ChatGPT
+- **Objetivo:** Implementar deduplicación y tracking estricto de turnos en `tools/chatgpt-bridge.js`.
+- **Entregables:** Manejo de `consultation_id`, retorno determinista de `ALREADY_SENT`, auditoría de incremento de turnos (+1 user, +1 assistant).
+- **Condición de salida:** `CHATGPT_IDEMPOTENCY PASS` (Prueba de consulta duplicada rechaza segundo envío).
+
+---
+
+# 21. MACROFASE 7B — Runner Autónomo Nocturno
+
+Agrupa las fases de ciclo de vida determinista, supervisión y cierre seguro:
+
+---
+
+## Fase 17 — Runner
 
 ## Objetivo
 
@@ -907,7 +1014,13 @@ CLEANUP PASS
 
 ---
 
-# 26. Fase 23 — Sandbox integral
+# 22. MACROFASE 8 — Validación Final
+
+Agrupa las fases de prueba en sandbox integral, validaciones prolongadas autónomas y auditoría final:
+
+---
+
+## Fase 23 — Sandbox integral
 
 ## Objetivo
 

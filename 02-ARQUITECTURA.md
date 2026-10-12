@@ -38,59 +38,69 @@ La arquitectura debe priorizar:
 ```text
 ┌─────────────────────────────────────────────────────────────┐
 │                         USUARIO                             │
-│                                                             │
 │  Selecciona proyecto + objetivo + aprobación inicial       │
 └────────────────────────────┬────────────────────────────────┘
                              │
-                             v
+                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                     HERMES AGENT                            │
-│                  Supervisor / Orquestador                   │
-│                                                             │
-│  - preflight                                                │
-│  - planificación                                            │
-│  - investigación web                                       │
-│  - memoria/sesiones                                        │
-│  - control de progreso                                     │
-│  - consulta ChatGPT                                        │
-│  - delegación                                              │
-│  - validación                                              │
+│                   HERMES SUPERVISOR                         │
+│               Orquestación y Gobernanza                     │
+└──────────────┬───────────────────────────────┬──────────────┘
+               │                               │
+               ▼                               ▼
+┌─────────────────────────────┐ ┌─────────────────────────────┐
+│        QWEN CODE            │ │       HERMES REVIEWER       │
+│      Coding Worker          │ │    Auditor Independiente    │
+│  - edición / terminal       │ │  - verificación de diffs    │
+│  - tests / builds / git     │ │  - criterios de aceptación  │
+└──────────────┬──────────────┘ └──────────────┬──────────────┘
+               │                               │
+               │ [Serializado vía Inference Lock]
+               ▼                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                        LLAMA.CPP                            │
+│  Modelo único local: Qwen3.6-35B-A3B Q4_K_M (64K context)    │
+│  parallel = 1 | host: 127.0.0.1:8080 | alias: qwen36        │
 └────────────────────────────┬────────────────────────────────┘
                              │
-                             │ delega tareas de programación
-                             v
+                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    QWEN CODE CLI                            │
-│                    Coding Worker                            │
-│                                                             │
-│  - inspección de repo                                      │
-│  - edición de archivos                                     │
-│  - terminal                                                │
-│  - tests                                                   │
-│  - builds                                                  │
-│  - Git local                                               │
-│  - diagnóstico                                             │
-│  - autocorrección                                          │
-└────────────────────────────┬────────────────────────────────┘
-                             │
-                             │ inferencia
-                             v
-┌─────────────────────────────────────────────────────────────┐
-│                       LLAMA.CPP                             │
-│                                                             │
-│  Qwen3.6-35B-A3B Q4_K_M                                   │
-│  ctx 65536                                                 │
-│  parallel 1                                                │
-│  endpoint 127.0.0.1:8080                                  │
-└────────────────────────────┬────────────────────────────────┘
-                             │
-                             v
-┌─────────────────────────────────────────────────────────────┐
-│                    PROYECTO REAL                            │
-│                                                             │
-│  Código | Git | tests | build | artefactos | .autopilot/  │
+│                      PROYECTO REAL                          │
+│  Código | Git | tests | build | artefactos | .autopilot/    │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+El sistema opera mediante la interacción coordinada de dos capas arquitectónicas desacopladas:
+
+### 2.1 HERMES CAPABILITY LAYER
+Conjunto de capacidades nativas que potencian la cognición, investigación y extensibilidad de Hermes:
+- **Native Browser:** Navegación e inspección técnica web autónoma.
+- **Web Search:** Búsqueda técnica externa en fuentes allowlisted.
+- **ChatGPT Consultant:** Asesoría externa supervisada con domain-lock estricto.
+- **Skills Reutilizables:** Memoria procedimental (SOPs operativos estandarizados).
+- **Memoria Persistente (Nivel 2):** Retención semántica de contexto, preferencias y lecciones aprendidas.
+- **Servidores MCP:** Integración modular de herramientas bajo principio de mínima superficie.
+- **Plugins y Custom Tools:** Extensiones de herramientas en runtime.
+- **Cron y No-Agent Jobs:** Disparadores periódicos y rutinas de mantenimiento sin inferencias.
+- **Extracción Documental:** Ingesta estructurada de especificaciones (DOCX, XLSX, PDF, etc.).
+- **Gateway Multiplataforma:** Notificaciones seguras hacia mensajería externa.
+- **Web Dashboard:** Interfaz de observabilidad y estado de tareas (no crítica).
+- **Bot Mode y Subagentes:** Especialización de roles (Supervisor, Reviewer, Researcher) y descomposición jerárquica.
+- **Git Worktrees:** Espacios de trabajo físicos aislados para workers.
+- **Auto-Update Controlado:** Pipeline de actualización con canary y rollback.
+
+### 2.2 DETERMINISTIC CONTROL LAYER (Capa Autoritativa)
+Capa determinista de gobernanza, ciclo de vida, contención y persistencia objetiva:
+- **RUN-CONTRACT.yaml:** Contrato inmutable de alcance, políticas y límites de la ejecución.
+- **STATE.json y EVENTS.jsonl:** Estado operativo canónico y log monotónico auditable.
+- **Checkpoints Inmutables:** Snapshots reproducibles de estado, Git y artefactos.
+- **Security Guard:** Control perimetral de rutas (Path Guard), comandos (Command Guard) y secretos.
+- **Progress Guard:** Motor anti-loop, normalización de firmas de error y fingerprints de progreso.
+- **Inference Lock:** Primitiva de exclusión mutua cross-process que garantiza `--parallel 1`.
+- **Runner de Ciclo de Vida:** Control de procesos padre, timeouts y orquestación externa a los LLM.
+- **Watchdog de Procesos:** Monitor de heartbeat, fallos de servicio y recuperación limitada.
+- **Cleanup Garantizado:** Destructor tipo `finally` que garantiza ausencia de procesos o locks huérfanos.
+- **Completion Gate:** Barrera determinista de salida basada en tests, build, diffs y criterios reales.
 
 ---
 
@@ -565,95 +575,99 @@ STALLED
 
 ## 14.1 Rol
 
-Consultor externo.
-
-No es worker.
-
-No modifica archivos.
+Consultor externo asistido. No es worker de implementación ni modifica archivos directamente.
 
 ---
 
 ## 14.2 Chrome dedicado
 
-Debe existir un perfil separado de Chrome para automatización.
-
-Nombre provisional:
-
-```text
-HERMES-CHATGPT
-```
-
-### Reglas
-
-- una pestaña principal;
-- `chatgpt.com`;
-- sesión iniciada manualmente por el usuario;
-- no acceder a otras pestañas;
-- no navegar a otros dominios;
-- no pedir credenciales;
-- no almacenar contraseña.
+Perfil dedicado y persistente: `data/browser/HERMES-CHATGPT`.
+Reglas de confinamiento:
+- una sola pestaña controlada;
+- domain-lock estricto: `chatgpt.com`;
+- sesión iniciada manualmente por el usuario en preflight o paso inicial;
+- sin acceso a pestañas personales del usuario ni a otros dominios;
+- sin credenciales almacenadas en scripts.
 
 ---
 
 ## 14.3 Herramienta `consultar_chatgpt`
 
 Debe:
-
-1. validar que Chrome esté disponible;
-2. validar dominio;
-3. tomar contexto resumido;
-4. escribir prompt;
-5. esperar respuesta;
-6. recuperar respuesta;
-7. guardar evidencia;
-8. devolver texto a Hermes.
-
-### Protección
-
-Si el dominio cambia:
-
-```text
-ABORT
-```
+1. validar que Chrome CDP (puerto 9222) esté respondiendo;
+2. verificar que la pestaña pertenezca a `chatgpt.com`;
+3. sanear prompt de secretos y aplicar codificación UTF-8 pura (BOM check);
+4. enviar prompt y monitorear extracción de respuesta en streaming;
+5. guardar evidencia en `.autopilot/evidence/chatgpt/`;
+6. devolver la respuesta consultiva a Hermes para su evaluación.
 
 ---
 
-# 15. Web Research
+## 14.4 Idempotencia y Deduplicación del Bridge
 
-Hermes debe preferir:
-
-1. documentación oficial;
-2. repositorios oficiales;
-3. issues/releases;
-4. fuentes técnicas fiables.
-
-Cada investigación relevante debe poder quedar registrada en:
-
-```text
-.autopilot/evidence/web/
-```
+Toda consulta debe incluir un `consultation_id` único y determinista.
+- **Garantía:** Exactamente un (1) envío físico por `consultation_id`.
+- **Detección de Reintento:** Si se invoca el bridge con un identificador ya procesado o en curso, debe retornar inmediatamente `ALREADY_SENT` o entregar el resultado previo sin volver a pulsar "Send".
+- **Verificación de Turnos:** El bridge debe auditar que:
+  - `user_turns_after == user_turns_before + 1`
+  - `assistant_turns_after == assistant_turns_before + 1`
+  Garantizando que no hubo pérdida ni duplicación de contexto en el chat.
 
 ---
 
-# 16. Memoria y continuidad
+# 15. Web Research y Automatización de Navegación
 
-La arquitectura usa varias capas:
+Hermes prioriza fuentes técnicas oficiales estructuradas:
+1. Documentación oficial del framework / biblioteca.
+2. Repositorios oficiales y issues cerrados.
+3. Especificaciones y RFCs.
 
+### Jerarquía de Navegadores:
 ```text
-Nivel 1:
-contexto activo
-
-Nivel 2:
-sesiones Hermes/Qwen
-
-Nivel 3:
-STATE / QWEN.md / EVENTS
-
-Nivel 4:
-Git / tests / filesystem
+1. Browser Nativo de Hermes      → Para búsqueda técnica, scraping headless y documentación
+2. MCP Browser / Playwright      → Para pruebas dinámicas o interacción con UIs complejas
+3. Hardened ChatGPT Bridge (CDP) → Confinado estrictamente a chatgpt.com
 ```
 
-La capa superior puede fallar y el sistema debe reconstruirse desde las inferiores.
+Toda investigación relevante se persiste en `.autopilot/evidence/web/` con fuentes y hashes.
+
+---
+
+# 16. Memoria y continuidad (Modelo de 3 Niveles + Skills)
+
+La persistencia del sistema se organiza formalmente en tres niveles de memoria más memoria procedimental:
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│             NIVEL 1 — MEMORIA OPERATIVA AUTORITATIVA                   │
+│  - Filesystem y código real           - RUN-CONTRACT.yaml              │
+│  - Git (status, commits, diffs)       - EVENTS.jsonl (append-only)     │
+│  - Tests y builds ejecutados          - Checkpoints inmutables         │
+│  - STATE.json (fuente operativa canónica)                              │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Prevalece sobre niveles superiores
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│             NIVEL 2 — MEMORIA PERSISTENTE HERMES                       │
+│  - Preferencias arquitectónicas       - Decisiones reutilizables       │
+│  - Lecciones aprendidas               - Patrones exitosos comprobados  │
+│  * No puede declarar como verdad: estado de tests, build o archivos    │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│             NIVEL 3 — MEMORIA DE SESIÓN (AUXILIAR)                     │
+│  - Historial de chat                  - Razonamiento transitorio       │
+│  * Se puede perder, compactar o descartar sin afectar continuidad      │
+└────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────┐
+│             MEMORIA PROCEDIMENTAL (SKILLS REUTILIZABLES)               │
+│  - Procedimientos operativos estandarizados (SOPs en Markdown)         │
+│  - Diagnóstico de stacks, auditorías SQL, checklists de release        │
+│  * Solo lectura; no pueden alterar directivas de seguridad ni contrato │
+└────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -1176,106 +1190,181 @@ No debe contener lógica compleja.
 
 ---
 
-# 37. Interfaz futura
+# 37. Web Dashboard y Observabilidad
 
-Primera versión:
-
-- Hermes como interfaz principal;
-- runner en segundo plano;
-- logs/reportes como evidencia.
-
-Una GUI propia es opcional y queda fuera de alcance inicial.
+El Web Dashboard es una interfaz web ligera de monitorización local provista por Hermes.
+- **Propósito:** Visualizar sesiones, bots activos, cron jobs, logs en tiempo real y métricas de salud.
+- **Desacoplamiento Operacional:** El Runner y el sistema de ejecución autónoma nocturna son completamente independientes del Dashboard. El Dashboard es una herramienta de observabilidad humana; **si el dashboard se cierra, falla o no se inicia, el Runner continúa su ejecución sin interrupción.**
+- **Red:** Confinado estrictamente a `127.0.0.1` en puerto local no conflictivo.
 
 ---
 
-# 38. Secuencia de una noche típica
+# 38. Gateway Multiplataforma
+
+Capacidad de Hermes para integrarse con canales de mensajería externos (Telegram, Discord, Slack, etc.).
+- **Fase Inicial (Notificaciones):** Transmisión unidireccional y saliente de eventos críticos:
+  - `RUN COMPLETED` (con resumen y métricas)
+  - `RUN FAILED` (con causa raíz normalizada)
+  - `BLOCKED_REQUIRES_HUMAN` (solicitud de desbloqueo justificada)
+  - `STALLED` (detección de ausencia de progreso)
+- **Fase Avanzada (Comandos Remotos - Restringida):** Si se autoriza la recepción de órdenes, cualquier mensaje recibido desde el Gateway es tratado como **entrada no confiable (`UNTRUSTED`)**, debiendo validarse criptográficamente, pasar por el `Security Guard` y ajustarse estrictamente a las restricciones de `RUN-CONTRACT.yaml`. Quedan terminantemente prohibidas acciones destructivas remotas.
+
+---
+
+# 39. Bot Mode y Subagentes Jerárquicos
+
+Configuración multi-agente especializada para la segregación de funciones:
+- **Roles:**
+  - `HERMES SUPERVISOR`: Orquesta el ciclo global, evalúa contratos y aprueba o rechaza entregables.
+  - `QWEN CODE`: Coding Worker principal especializado en edición, testing y ejecución de comandos.
+  - `HERMES REVIEWER`: Auditor independiente que examina diffs de Git y verifica que los criterios de aceptación se cumplan objetivamente antes de la aprobación.
+  - `HERMES RESEARCHER`: Investigador auxiliar dedicado a la documentación técnica.
+- **Serialización Absoluta:** Todos los roles comparten la única instancia local `qwen36` (`--parallel 1`). **En ningún momento se ejecutan inferencias simultáneas.** El `Inference Lock` encola y serializa cada turno.
+- **Subagentes:** Hermes puede instanciar subagentes efímeros para tareas puntuales. Los subagentes heredan permisos restringidos y no pueden alterar contratos, políticas de seguridad ni realizar acciones fuera de scope.
+
+---
+
+# 40. Git Worktrees Isolados
+
+Para tareas complejas o workers paralelos que requieran aislamiento del espacio de trabajo principal:
+- **Ubicación:** `.autopilot-worktrees/task-<ID>/`
+- **Ciclo de Vida:**
+  ```text
+  1. git worktree add .autopilot-worktrees/task-001 -b agent/task-001
+  2. Worker opera, edita y corre tests en el worktree aislado
+  3. Reviewer examina el diff generado
+  4. Supervisor evalúa en Completion Gate
+  5. Merge o cherry-pick controlado hacia el árbol de trabajo principal
+  6. git worktree remove --force .autopilot-worktrees/task-001
+  ```
+- **Regla:** Ningún worktree se fusiona automáticamente al branch principal sin superar la suite de tests y el Completion Gate.
+
+---
+
+# 41. Servidores MCP y Plugins
+
+- **Mínima Superficie:** No se incorporan servidores MCP que expongan decenas de herramientas genéricas. Se exige un allowlist explícito por servidor.
+- **Gobernanza MCP:** Cada servidor MCP conectado cuenta con scope de filesystem delimitado, timeouts estrictos y health check periódico.
+- **Plugins Custom:** Se adoptan capacidades nativas de Hermes preferentemente ("Prefer Native When Verified"). Se recurre a plugins de herramientas custom únicamente cuando se requieran salvaguardas deterministas no provistas nativamente.
+
+---
+
+# 42. Cron y Tareas sin Agente (No-Agent Jobs)
+
+- **Cron / Routines:** Planificador temporal subordinado al Runner para activar rutinas periódicas de supervisión.
+- **Jobs sin Agente (Deterministic No-Agent Jobs):** Tareas automatizadas que no requieren razonamiento de lenguaje:
+  - Limpieza de temporales y logs antiguos;
+  - Auditoría de hashes SHA-256 e integridad de backups;
+  - Health checks de puertos y servicios;
+  - Backups de `STATE.json`.
+  - **Ventaja crítica:** **0 inferencias LLM**, 0 consumo de tokens y nulo bloqueo del Inference Lock.
+
+---
+
+# 43. Extracción Estructurada de Documentos
+
+Soporte estructurado para ingerir especificaciones en formatos no planos (DOCX, XLSX, PPTX, PDF, RTF, ODF, EPUB, legacy Office):
+- *Nativo:* Parsing de formatos soportados directamente por el sistema o convertidores a texto plano.
+- *Dependencias Opcionales:* Librerías Python (`openpyxl`, `mammoth`, `pypdf`). No se instalan ciegamente; su incorporación requiere auditoría previa en Macrofase 7A.
+
+---
+
+# 44. Pipeline de Auto-Update Seguro
+
+Proceso riguroso para actualizar Hermes Agent sin riesgo de romper el entorno productivo:
+```text
+UPDATE AVAILABLE
+      ↓
+Download en Sandbox / Directorio Canary
+      ↓
+Verificación de Hash SHA-256 y Origen
+      ↓
+Backup Completo del Entorno de Producción
+      ↓
+Smoke Tests y Regression Suite en Canary
+      ↓
+¿PASS? ── SÍ ──> Promover a Producción y actualizar VERSIONS.lock
+   │
+   └── NO ──> Rollback Inmediato y Registro de Incidencia
+```
+Se prohíbe terminantemente la ejecución desatendida de `hermes update` directamente sobre producción.
+
+---
+
+# 45. Secuencia de una noche típica
 
 ```text
 23:55 usuario abre sistema
-
-00:00 preflight
+00:00 preflight y contrato
 00:05 usuario aprueba
-
-00:06 llama inicia
-00:07 Hermes reconstruye estado
+00:06 llama-server inicia y health responde
+00:07 Hermes reconstruye estado desde .autopilot
 00:08 ciclo 1
-
-00:20 Qwen Code implementa
+00:20 Qwen Code implementa en worktree aislado
 00:35 tests fallan
 00:40 Qwen corrige
-
-01:10 checkpoint
-01:11 ciclo 2
-
-02:30 problema externo
+01:10 tests PASS, checkpoint
+01:11 Hermes Reviewer audita diff y aprueba
+01:12 merge a rama principal, ciclo 2
+02:30 problema externo (API / lib)
 02:35 Hermes investiga web
 02:50 nuevo intento
-
-03:20 sigue bloqueado
-03:25 Hermes consulta ChatGPT
-03:30 nueva estrategia
-
+03:20 bloqueo persistente
+03:25 Hermes consulta ChatGPT con consultation_id único
+03:30 asesoría recibida, nueva estrategia
 04:15 checkpoint
-04:16 nueva sesión Qwen
-
-06:30 Completion Gate
+04:16 nueva sesión limpia de Qwen
+06:30 Completion Gate verifica tests, build y criterios
 06:45 PASS
-
-06:50 informe final
-06:51 cleanup
-06:52 llama cerrado
+06:50 informe final generado
+06:51 cleanup de procesos, worktrees y locks
+06:52 llama-server cerrado
 ```
 
 ---
 
-# 39. Responsabilidades resumidas
+# 46. Responsabilidades resumidas
 
-| Componente | Responsabilidad principal |
-|---|---|
-| Usuario | objetivo + aprobación inicial |
-| Runner | ciclo de vida y seguridad operacional |
-| Hermes | estrategia y supervisión |
-| Qwen Code | programación |
-| Qwen local | razonamiento/inferencia |
-| Git | evidencia y recuperación |
-| STATE | continuidad operacional |
-| EVENTS | auditoría |
-| ChatGPT | consulta externa |
-| Watchdog | detección de fallos |
-| Completion Gate | validación final |
+| Componente | Capa | Responsabilidad principal |
+|---|---|---|
+| Usuario | Humana | Objetivo, preflight y aprobación inicial |
+| Runner | Determinista | Ciclo de vida de procesos, timeouts y orquestación |
+| Hermes Supervisor | Hermes Capability | Estrategia, contratos y supervisión |
+| Qwen Code | Worker | Implementación, refactorización y tests |
+| Hermes Reviewer | Hermes Capability | Auditoría independiente de diffs |
+| llama.cpp (qwen36) | Inferencia Local | Modelo compartido local serializado (`parallel = 1`) |
+| Inference Lock | Determinista | Exclusión mutua estricta de inferencia (.NET Mutex) |
+| Git & Worktrees | Determinista | Evidencia, control de versiones y aislamiento |
+| STATE & EVENTS | Determinista | Continuidad operacional y auditoría append-only |
+| Watchdog | Determinista | Monitor de fallos, heartbeat y recuperación de procesos |
+| Completion Gate | Determinista | Validación multi-criterio previa a COMPLETED |
+| Cleanup | Determinista | Terminación garantizada tipo `finally` sin huérfanos |
 
 ---
 
-# 40. Criterio de arquitectura correcta
+# 47. Criterio de arquitectura correcta
 
 La arquitectura se considera correctamente implementada si:
-
-- Hermes y Qwen Code pueden compartir el mismo Qwen a 64K;
-- nunca hay dos inferencias simultáneas;
-- una caída no obliga a recomenzar;
-- el proyecto puede recuperarse desde STATE + Git + tests;
-- ChatGPT puede consultarse de forma controlada;
-- una ejecución puede durar horas sin permisos repetidos;
-- existe anti-loop externo;
-- COMPLETED exige evidencia;
-- llama-server se cierra al finalizar.
+- Hermes y Qwen Code comparten el mismo Qwen local a 64K context;
+- Nunca ocurren dos inferencias simultáneas (Inference Lock serializa 100%);
+- Una caída de proceso no obliga a recomenzar (reconstrucción desde Git/STATE);
+- El sistema puede operar durante horas sin intervención tras aprobación inicial;
+- Las consultas a ChatGPT son idempotentes y deducadas;
+- Se previene el consumo infinito mediante motor anti-loop y guardrails deterministas;
+- La finalización (`COMPLETED`) exige verificación objetiva completa;
+- El cleanup libera todos los procesos y locks al terminar.
 
 ---
 
-# 41. Regla para Antigravity
+# 48. Regla para Antigravity
 
-Antigravity debe implementar esta arquitectura de forma incremental.
-
+Antigravity debe implementar esta arquitectura de forma incremental por fases.
 Puede proponer mejoras, pero:
+- no debe sustituir Hermes ni Qwen Code;
+- no debe cambiar el modelo local `qwen36`;
+- no debe reducir el contexto de 64K sin evidencia;
+- no debe eliminar las capas de estado ni la jerarquía de verdad;
+- no debe retirar el Runner ni el Watchdog deterministas;
+- no debe introducir inferencia concurrente bajo `parallel = 1`.
 
-- no debe sustituir Hermes;
-- no debe sustituir Qwen Code;
-- no debe cambiar el modelo principal;
-- no debe reducir el contexto;
-- no debe eliminar las capas de estado;
-- no debe quitar el Runner/Watchdog;
-- no debe introducir concurrencia de inferencia con `parallel 1`;
-
-sin aprobación explícita.
-
-Si una pieza no es viable, debe documentar evidencia antes de proponer alternativa.
+Cualquier cambio a la arquitectura base debe documentarse y someterse a aprobación previa.

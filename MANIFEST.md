@@ -16,14 +16,15 @@ El sistema se rige formalmente por la siguiente documentación técnica canónic
 3. **`01-OBJETIVOS-Y-REQUISITOS.md`**: Especificación funcional y criterios de aceptación globales.
 4. **`02-ARQUITECTURA.md`**: Arquitectura del sistema, supervisión, serialización y ciclo de vida.
 5. **`03-MEMORIA-Y-CONTINUIDAD.md`**: Jerarquía de verdad, persistencia de estado (.autopilot), sesiones y recuperación.
-6. **`05-INSTALACION-Y-CONFIGURACION.md`**: Requisitos de entorno, configuración central y directivas de despliegue.
-7. **`06-PRUEBAS-Y-CRITERIOS-DE-EXITO.md`**: Catálogo de pruebas, criterios de éxito y Completion Gate.
-8. **`07-ROADMAP.md`**: Orden cronológico obligatorio de implementación por fases (Fase 0 a Fase 28).
-9. **`00-README.md`**: Visión general del proyecto y filosofía de trabajo.
+6. **`08-CAPACIDADES-NATIVAS-HERMES.md`**: Catálogo canónico, gobernanza y matriz de capacidades nativas de Hermes.
+7. **`05-INSTALACION-Y-CONFIGURACION.md`**: Requisitos de entorno, configuración central y directivas de despliegue.
+8. **`06-PRUEBAS-Y-CRITERIOS-DE-EXITO.md`**: Catálogo de pruebas, criterios de éxito y Completion Gate.
+9. **`07-ROADMAP.md`**: Orden cronológico obligatorio de implementación por macrofases (1 a 8).
+10. **`00-README.md`**: Visión general del proyecto y filosofía de trabajo.
 
 ---
 
-# 2. Arquitectura Base
+# 2. Arquitectura Base y Separación de Capas
 
 La cadena de trabajo aprobada es:
 
@@ -31,12 +32,16 @@ La cadena de trabajo aprobada es:
 USUARIO (Aprobación única)
     │
     ▼
-HERMES AGENT (Supervisor / Orquestador)
+HERMES SUPERVISOR (Orquestador principal)
     │
-    ▼
-QWEN CODE CLI (Coding Worker principal)
-    │
-    ▼
+    ├──────────────────────────┐
+    ▼                          ▼
+QWEN CODE CLI           HERMES REVIEWER
+(Coding Worker)      (Auditor independiente)
+    │                          │
+    └──────────┬───────────────┘
+               │ [Serializado vía Inference Lock]
+               ▼
 LLAMA.CPP (127.0.0.1:8080)
     │
     ▼
@@ -46,12 +51,15 @@ Qwen3.6-35B-A3B Q4_K_M (64K context)
 PROYECTO + GIT LOCAL
 ```
 
-### Componentes Deterministas Auxiliares:
-- **Night Supervisor / Runner:** Control de ciclo de vida, timeouts, health y cleanup garantizado.
-- **Watchdog:** Detección de fallos de procesos, heartbeat y recuperación controlada.
-- **Inference Lock:** Serialización estricta de inferencia (`--parallel 1`) entre supervisor y worker.
-- **Sistema de Estado:** `.autopilot/` (`RUN-CONTRACT.yaml`, `STATE.json`, `STATE.md`, `EVENTS.jsonl`, checkpoints).
-- **Completion Gate:** Validación objetiva multi-criterio antes de permitir el estado `COMPLETED`.
+### Capas del Sistema:
+1. **HERMES CAPABILITY LAYER:** Memoria persistente (Nivel 2), Skills reutilizables (Memoria procedimental), servidores MCP, plugins de herramientas, Browser Automation nativo, Bot Mode (Supervisor, Reviewer, Researcher), subagentes jerárquicos, Git Worktrees, Cron y Jobs sin agente, extracción documental, Gateway y Web Dashboard.
+2. **DETERMINISTIC CONTROL LAYER (Autoritativa):** `RUN-CONTRACT.yaml`, `STATE.json`, `EVENTS.jsonl`, checkpoints inmutables, Security Guard, Progress Guard, Inference Lock (.NET Mutex cross-process, `parallel = 1`), Runner de ciclo de vida, Watchdog de procesos, Completion Gate y Cleanup garantizado.
+
+### Modelo de Memoria:
+- **Nivel 1 (Operativo Autoritativo):** Filesystem, Git, tests/builds, `STATE.json`, `RUN-CONTRACT.yaml`, `EVENTS.jsonl`. Prevalece sobre cualquier otro nivel.
+- **Nivel 2 (Memoria Persistente Hermes):** Lecciones aprendidas, preferencias técnicas y patrones estables. Consultiva; no puede declarar estado de tests o archivos.
+- **Nivel 3 (Memoria de Sesión):** Conversación activa y contexto transitorio. Auxiliar y volátil.
+- **Memoria Procedimental (Skills):** SOPs estandarizados en Markdown. No pueden alterar directivas de seguridad.
 
 ---
 
@@ -79,26 +87,17 @@ Parámetros validados:
 
 ---
 
-# 4. Estado Actual de Implementación
+# 4. Estado Actual de Implementación por Macrofases
 
-- **Fase 0 (Documentación base):** PASS
-- **Fase 1 (Inventario del entorno real):** PASS (Registrado en `docs/INVENTORY.md` y `logs/inventory-audit-20261011.log`)
-- **Fase 2 (Backup y Baseline):** PASS (Punto de restauración `backups/preinstall-*/`, `.gitignore`, baseline Git)
-- **Fase 3 (Validación llama.cpp + Qwen):** PASS (Validado 64K, parallel 1, qwen36, inferencia local y cleanup)
-- **Fase 4 (Configuración central):** PASS (Configuraciones YAML, VERSIONS.lock, suite determinista de 66 pruebas)
-- **Fase 5 (Qwen Code CLI):** PASS (Instalado @qwen-code/qwen-code@0.25.1, 7 capacidades validadas)
-- **Fase 6 (Hermes Agent):** PASS (Instalado hermes-agent v0.21.6, perfil aislado, 10 pruebas validadas)
-- **Fase 7 (Model Gateway / Inference Lock):** PASS (Primitiva System.Threading.Mutex + metadata en runtime/locks, crash recovery, timeout)
-- **Fase 8 (Worker Qwen Code / Handoff):** PASS (Contratos DelegationRequest/DelegationResult validados con JSON Schema, ejecución sandbox)
-- **Fase 9 (Delegación Hermes → Qwen Code):** PASS (Flujo 2 agentes, revisión/aceptación, rechazo ante falso éxito, serialización estricta 0 ms)
-- **Fase 10 (Estado Persistente .autopilot):** PASS (Esquemas validados, atomic write + previous backup, eventos append-only, sanitización, checkpoints)
-- **Fase 11 (Recovery y Reconciliación):** PASS (Protocolo de 15 pasos, Crash A/B/C/D resueltos, checkpoints, verificación de idempotencia)
-- **Fase 12 (Continuidad de Sesiones):** PASS (Principio CONVERSATION != SOURCE OF TRUTH certificado, recuperación de contexto sin historial, etapas multi-sesión)
-- **Fase 13 (Web Research):** PASS (Búsqueda gratuita DDG/Wiki/GitHub/PyPI, contenedor no confiable, defensa prompt injection con Hermes en vivo)
-- **Fase 14 (Chrome Dedicado + ChatGPT):** PASS (Perfil persistente en `data/browser/HERMES-CHATGPT`, CDP 9222, domain-lock, 1 pestaña, presupuesto global, consulta REAL sin mocks con extracción de tokens en vivo, evaluación supervisora Hermes DECISION: ACCEPT)
-- **Fase 15 (Guardrails de Seguridad):** PASS (Command Guard 11/11, Path Guard con canonical check, bloqueo de junctions, redacción de secretos, policy merge estricto)
-- **Fase 16 (Anti-Loop / Timeouts):** PASS (Firmas de error normalizadas, fingerprints de avance real, límites de repetición, escalera de escalamiento, kill de árbol de procesos)
-- **Fases 17 a 28:** PENDING
+- **Macrofase 1 (Baseline e Inventario - Fases 0 a 4):** **PASS**
+- **Macrofase 2 (Qwen Code CLI - Fase 5):** **PASS**
+- **Macrofase 3 (Hermes Agent - Fase 6):** **PASS**
+- **Macrofase 4 (Integración Hermes ↔ Qwen Code - Fases 7 a 9):** **PASS**
+- **Macrofase 5 (Memoria y Continuidad - Fases 10 a 12):** **PASS**
+- **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
+- **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **PENDING**
+- **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PENDING**
+- **Macrofase 8 (Validación Final - Fases 23 a 28):** **PENDING**
 
 ---
 

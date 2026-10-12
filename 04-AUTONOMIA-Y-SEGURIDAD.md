@@ -1180,7 +1180,126 @@ Un proyecto gestionado no debe poder alterar la infraestructura por accidente.
 
 ---
 
-# 60. Principio final
+# 61. Política de Seguridad para Servidores MCP (Tool Filtering)
+
+Cualquier servidor MCP conectado a Hermes debe someterse a:
+- **Filtrado estricto por allowlist:** Las herramientas no aprobadas quedan deshabilitadas a nivel de esquema.
+- **Principio de mínimos privilegios:** Por defecto, las herramientas MCP que acceden a filesystem o red operan en modo solo lectura o restringidas a subdirectorios explícitos.
+- **Validación de argumentos:** Los argumentos JSON de entrada se sanean contra inyecciones de comandos antes de su ejecución.
+- **Timeouts deterministas:** Si una llamada MCP no retorna en el tiempo asignado (ej. 30s), se aborta la invocación y se libera el hilo.
+
+---
+
+# 62. Permisos y Confinamiento de Bot Mode
+
+La especialización de identidades en Hermes (Supervisor, Reviewer, Researcher) está sujeta a límites de privilegios:
+- **Hermes Supervisor:** Posee permisos de orquestación, gestión de contratos y delegación; no puede editar archivos del proyecto directamente en paralelo con el worker.
+- **Qwen Code (Worker):** Confinado exclusivamente al workspace y repositorio asignado; no puede modificar la infraestructura del sistema.
+- **Hermes Reviewer:** Opera en modo **solo lectura** del repositorio y del diff; no tiene permisos para aplicar cambios en código ni alterar el contrato.
+- **Hermes Researcher:** Acceso restringido a documentación y scraping allowlisted; no tiene permisos de modificación de filesystem.
+- **Serialización Absoluta:** Ningún bot puede ejecutar inferencia sin adquirir el `Inference Lock`.
+
+---
+
+# 63. Límites y Permisos de Subagentes
+
+Cuando el Supervisor delega subtareas a instancias efímeras de subagentes:
+- Los subagentes heredan una política de permisos igual o más restrictiva que la del Supervisor.
+- Tienen terminantemente prohibido:
+  - Ejecutar `git push` o alterar la configuración de Git;
+  - Modificar las directivas de seguridad (`security.yaml` o `RUN-CONTRACT.yaml`);
+  - Modificar archivos fuera del alcance estricto de la subtarea delegada;
+  - Desplegar o comunicar hacia canales externos no autorizados.
+- La profundidad de recursión de subagentes está acotada (máximo 1 nivel de delegación).
+
+---
+
+# 64. Confinamiento de Git Worktrees
+
+Para aislar ramas de trabajo en `.autopilot-worktrees/task-<ID>/`:
+- El worker queda confinado a la raíz de su worktree específico; no puede navegar hacia `..` ni acceder a carpetas de otros worktrees.
+- Se prohíbe manipular hooks de Git (`.git/hooks/`) o alterar la configuración central de Git desde el worktree.
+- Antes de integrar cualquier worktree al árbol principal, el Reviewer y el Completion Gate deben validar el diff en su totalidad.
+- El Runner garantiza la eliminación forzada (`git worktree remove --force`) del worktree tras la finalización de la tarea.
+
+---
+
+# 65. Verificación y Confianza de Plugins
+
+Cualquier plugin o custom tool integrado en Hermes debe cumplir:
+- Origen auditado y firmado o verificado por hash SHA-256;
+- Prohibición de inclusión de binarios opacos no verificables;
+- No acceso a variables de entorno que contengan secretos sin pasar por el redactor de secretos;
+- Ejecución en espacio de nombres acotado.
+
+---
+
+# 66. Confinamiento y Confianza de Gateway (Entrada Untrusted)
+
+El subsistema de Gateway (Telegram/Discord/Slack) opera bajo régimen de canal externo no confiable:
+- **Modo Predeterminado:** Exclusivamente **notificaciones salientes** unidireccionales de eventos de ciclo de vida.
+- **Recepción de Mensajes:** Cualquier orden recibida remotamente se cataloga como `UNTRUSTED_EXTERNAL_INPUT`.
+- Se requiere autenticación criptográfica y token de un solo uso para autorizar intervenciones humanas remotas.
+- Toda acción remota debe ser evaluada por el `Security Guard` y ajustarse estrictamente a `RUN-CONTRACT.yaml`. Queda bloqueada cualquier instrucción de borrado, push remoto o modificación del sistema.
+
+---
+
+# 67. Permisos de Cron y Tareas Programadas
+
+- Cron opera subordinado al Runner determinista; no puede eludir el ciclo de vida de procesos ni el Watchdog.
+- Las rutinas disparadas por Cron solo pueden invocar tareas registradas en el catálogo oficial de tareas.
+- Cron no puede iniciar ejecuciones autónomas sin un `RUN-CONTRACT` válido y pre-aprobado.
+
+---
+
+# 68. Restricciones de Jobs sin Agente (No-Agent Jobs)
+
+Los jobs deterministas sin LLM (housekeeping, backups, checks de hashes):
+- No tienen acceso a red saliente salvo para health checks explícitamente autorizados en `127.0.0.1`.
+- No pueden realizar operaciones de borrado fuera de las carpetas de temporales designadas (`logs/`, `.autopilot-worktrees/`).
+- Tienen un consumo de inferencia de exactamente **0 tokens**, preservando el `Inference Lock`.
+
+---
+
+# 69. Seguridad y Rollback en Auto-Update
+
+Para evitar que una actualización de Hermes Agent degrade el sistema:
+- La versión de producción permanece congelada en `v0.21.6` mientras se prueba un candidato.
+- El candidato se descarga en un directorio sandbox/canary aislado.
+- Se verifica su hash y procedencia contra los registros de versiones seguras.
+- Se ejecutan suites de pruebas automáticas (smoke y regresión).
+- Ante cualquier fallo o anomalía, se aplica rollback inmediato restaurando la versión congelada desde el backup.
+
+---
+
+# 70. Delimitación de Proveedores de Navegación (Browser Boundaries)
+
+Se establecen fronteras estrictas entre los distintos mecanismos de navegación:
+- **Navegador Nativo de Hermes:** Confinado a dominios de documentación y repositorios allowlisted; sin acceso a cookies personales ni almacenamiento del navegador del usuario.
+- **ChatGPT Bridge:** Confinado mediante domain-lock a `chatgpt.com` exclusivamente; control de una única pestaña bajo perfil dedicado `HERMES-CHATGPT`.
+- Queda bloqueada cualquier redirección no autorizada o navegación fuera del scope establecido.
+
+---
+
+# 71. Sanitización de Memoria Persistente y Prevención de Inyecciones
+
+La memoria persistente de Hermes (Nivel 2) debe protegerse contra contaminación e inyección de contexto:
+- Todo texto almacenado en la memoria persistente pasa por el filtro de redacción de secretos (`[REDACTED]`).
+- Los datos provenientes de la web o de respuestas de herramientas se sanitizan para evitar inyecciones de prompts indirectas en la memoria persistente.
+- El contenido de la memoria es estrictamente consultivo y jamás sustituye los tests ni el código fuente.
+
+---
+
+# 72. Revisión de Seguridad de Skills Reutilizables
+
+Los Skills (Memoria Procedimental):
+- Deben ser archivos de texto plano o Markdown auditables por humanos en `~/.hermes/skills/`.
+- No pueden contener código ejecutable ofuscado ni invocaciones arbitrarias a shell scripts no autorizados.
+- **Inviolabilidad de Políticas:** Un Skill no tiene potestad para modificar, ampliar o relajar ninguna regla de `security.yaml` o del contrato de ejecución.
+
+---
+
+# 73. Principio final
 
 El sistema debe ser capaz de trabajar solo durante horas.
 
@@ -1196,7 +1315,7 @@ La autonomía se concede dentro de un contrato, un workspace y políticas verifi
 
 ---
 
-# 61. Criterio de éxito
+# 74. Criterio de éxito
 
 La seguridad/autonomía se considera implementada correctamente si:
 
@@ -1213,7 +1332,7 @@ La seguridad/autonomía se considera implementada correctamente si:
 
 ---
 
-# 62. Regla para Antigravity
+# 75. Regla para Antigravity
 
 Antigravity debe implementar seguridad como una capa técnica, no sólo como instrucciones textuales a los modelos.
 

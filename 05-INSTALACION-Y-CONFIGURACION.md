@@ -267,9 +267,7 @@ Crear:
 config\system.yaml
 ```
 
-Debe contener todas las rutas y parámetros principales.
-
-Ejemplo:
+Debe contener todas las rutas y parámetros principales, centralizando tanto la infraestructura base como las secciones para futuras capacidades de Hermes:
 
 ```yaml
 system:
@@ -301,6 +299,45 @@ security:
 chatgpt:
   enabled: true
   allowed_domain: "chatgpt.com"
+  chrome_profile_dir: "data\\browser\\HERMES-CHATGPT"
+  cdp_port: 9222
+  max_queries: 5
+
+# Estructuras de configuración para capacidades nativas de Hermes (Inactivas por defecto)
+mcp_servers:
+  enabled: false
+  servers: []
+
+skills:
+  enabled: false
+  directory: "~\\.hermes\\skills"
+
+cron:
+  enabled: false
+  routines: []
+
+gateway:
+  enabled: false
+  notifications_only: true
+  provider: ""
+
+dashboard:
+  enabled: false
+  host: "127.0.0.1"
+  port: 3000
+
+worktrees:
+  enabled: false
+  base_dir: ".autopilot-worktrees"
+
+document_extraction:
+  enabled: false
+  allow_optional_dependencies: false
+
+auto_update:
+  enabled: false
+  require_canary: true
+  auto_rollback: true
 ```
 
 ---
@@ -1304,13 +1341,33 @@ HERMES PASS
 DELEGATION PASS
 WEB PASS
 CHATGPT PASS
+SECURITY PASS
+ANTI_LOOP PASS
 RUNNER PASS
 SYSTEM PASS
 ```
 
 ---
 
-# 70. Regla para Antigravity
+# 70. Dependencias para Extracción Documental
+
+Para el procesamiento de especificaciones en formatos no planos:
+- **Formatos Nativos:** Texto plano, Markdown, JSON, YAML y formatos convertibles mediante utilidades estándar del sistema.
+- **Dependencias Opcionales:** Librerías especializadas de Python como `openpyxl` (XLSX), `mammoth` / `python-docx` (DOCX), `pypdf` / `pdfminer` (PDF).
+- **Directiva de Instalación:** **NO instalar dependencias opcionales en esta fase.** Su evaluación, auditoría de vulnerabilidades y necesidad operativa se evaluarán durante la Macrofase 7A (subfase 7A.3).
+
+---
+
+# 71. Directorio Canary y Staging para Auto-Update
+
+Cualquier prueba de actualización de Hermes Agent debe realizarse en un staging desacoplado:
+- Directorio de staging: `sandbox\canary-update\`
+- No se ejecutan comandos `hermes update` sobre el entorno productivo.
+- El procedimiento requiere snapshot previo de `~/.hermes/` y del virtualenv en `backups/updates/<timestamp>/`.
+
+---
+
+# 72. Regla para Antigravity
 
 Antigravity debe actuar primero como auditor del entorno y después como instalador.
 
