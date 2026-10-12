@@ -88,7 +88,10 @@ Parámetros validados:
 - **Fase 4 (Configuración central):** PASS (Configuraciones YAML, VERSIONS.lock, suite determinista de 66 pruebas)
 - **Fase 5 (Qwen Code CLI):** PASS (Instalado @qwen-code/qwen-code@0.25.1, 7 capacidades validadas)
 - **Fase 6 (Hermes Agent):** PASS (Instalado hermes-agent v0.21.6, perfil aislado, 10 pruebas validadas)
-- **Fases 7 a 28:** PENDING
+- **Fase 7 (Model Gateway / Inference Lock):** PASS (Primitiva System.Threading.Mutex + metadata en runtime/locks, crash recovery, timeout)
+- **Fase 8 (Worker Qwen Code / Handoff):** PASS (Contratos DelegationRequest/DelegationResult validados con JSON Schema, ejecución sandbox)
+- **Fase 9 (Delegación Hermes → Qwen Code):** PASS (Flujo 2 agentes, revisión/aceptación, rechazo ante falso éxito, serialización estricta 0 ms)
+- **Fases 10 a 28:** PENDING
 
 ---
 

@@ -1,0 +1,27 @@
+﻿{
+    "schema_version":  "1.0",
+    "delegation_id":  "del-hermes-flow-01",
+    "objective":  "Corregir calculator.py para que pase test_calculator.py",
+    "workspace":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\delegation-basic",
+    "task":  "Modificar calculator.py cambiando el operador de resta \u0027-\u0027 por el de suma \u0027+\u0027 en la funcion add",
+    "acceptance_criteria":  [
+                                "La funcion add retorna la suma de a y b",
+                                "test_calculator.py pasa con ExitCode 0"
+                            ],
+    "allowed_actions":  [
+                            "edit_file",
+                            "run_test"
+                        ],
+    "forbidden_actions":  [
+                              "git push",
+                              "borrado de archivos"
+                          ],
+    "tests":  [
+                  "python test_calculator.py"
+              ],
+    "context":  {
+                    "test_file":  "test_calculator.py",
+                    "failing_file":  "calculator.py"
+                },
+    "status":  "READY"
+}

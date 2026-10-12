@@ -41,6 +41,9 @@ param(
     [int]$TimeoutSeconds = 360,
 
     [Parameter(Mandatory = $false)]
+    [switch]$SkipLock,
+
+    [Parameter(Mandatory = $false)]
     [string[]]$ExtraArgs = @()
 )
 
@@ -169,6 +172,28 @@ $psi.EnvironmentVariables["OPENAI_API_KEY"] = "local-not-required"
 $psi.EnvironmentVariables["OPENAI_MODEL"] = $modelName
 $psi.EnvironmentVariables["QWEN_TELEMETRY"] = "false"
 
+$lockToken = $null
+if (-not $SkipLock) {
+    . (Join-Path $infraRoot "scripts\inference-lock.ps1")
+    $lockToken = Acquire-InferenceLock -Owner "qwen_code" -Purpose "coding-worker" -TimeoutSeconds $TimeoutSeconds -InfraPath $infraRoot
+    if (-not $lockToken.Acquired) {
+        return [PSCustomObject]@{
+            Success       = $false
+            ExitCode      = -2
+            TimedOut      = $false
+            LockStatus    = $lockToken.Status
+            Duration      = 0
+            Stdout        = ""
+            Stderr        = "Error de adquisicion de Inference Lock: $($lockToken.Error)"
+            Json          = $null
+            BaseUrl       = $baseUrl
+            Model         = $modelName
+            ApprovalMode  = $ApprovalMode
+            WorkingDir    = $targetWorkDir
+        }
+    }
+}
+
 $startTime = Get-Date
 $timedOut = $false
 $exitCode = -1
@@ -206,6 +231,9 @@ try {
     $err = $_.Exception.Message
 } finally {
     $duration = [Math]::Round(((Get-Date) - $startTime).TotalSeconds, 2)
+    if ($lockToken) {
+        $null = Release-InferenceLock -LockToken $lockToken
+    }
 }
 
 $parsedJson = $null

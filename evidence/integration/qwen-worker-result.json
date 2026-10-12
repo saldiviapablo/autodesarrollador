@@ -1,0 +1,24 @@
+﻿{
+    "schema_version":  "1.0",
+    "delegation_id":  "del-worker-test-01",
+    "status":  "SUCCESS",
+    "summary":  "EjecuciÃ³n completada por Qwen Code Worker.",
+    "files_changed":  [
+                          "__pycache__/calculator.cpython-314.pyc",
+                          "calculator.py"
+                      ],
+    "tests":  [
+                  {
+                      "command":  "python test_calculator.py",
+                      "status":  "PASS",
+                      "exit_code":  0,
+                      "output":  ""
+                  }
+              ],
+    "commands":  [
+                     "python test_calculator.py"
+                 ],
+    "errors":  "Warning: running headless with --yolo / approval-mode=yolo and no sandbox. All tool calls (shell, write, edit) auto-execute at this process\u0027s privilege level. Configure tools.executionSandbox on Linux or a supported legacy sandbox via --sandbox / QWEN_SANDBOX, or set QWEN_CODE_SUPPRESS_YOLO_WARNING=1 to silence this notice.",
+    "needs_review":  true,
+    "review_notes":  "Tarea procesada por Qwen Code Worker. Pruebas unitarias: PASS. Archivos modificados: 2."
+}

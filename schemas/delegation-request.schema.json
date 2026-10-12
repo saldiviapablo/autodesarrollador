@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DelegationRequest",
+  "description": "Contrato estructurado de delegación de Hermes Supervisor hacia Qwen Code Worker",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "delegation_id",
+    "objective",
+    "workspace",
+    "task",
+    "acceptance_criteria",
+    "allowed_actions",
+    "forbidden_actions",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"]
+    },
+    "delegation_id": {
+      "type": "string",
+      "pattern": "^del-[a-zA-Z0-9_-]+$"
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 5
+    },
+    "workspace": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task": {
+      "type": "string",
+      "minLength": 5
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "allowed_actions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "forbidden_actions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "tests": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "context": {
+      "type": "object"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["READY", "IN_PROGRESS", "COMPLETED", "REJECTED"]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DelegationResult",
+  "description": "Resultado estructurado devuelto por Qwen Code Worker hacia Hermes Supervisor",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "delegation_id",
+    "status",
+    "summary",
+    "files_changed",
+    "tests",
+    "commands",
+    "errors",
+    "needs_review"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"]
+    },
+    "delegation_id": {
+      "type": "string",
+      "pattern": "^del-[a-zA-Z0-9_-]+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["SUCCESS", "FAILED", "BLOCKED", "REJECTED", "TIMEOUT"]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 5
+    },
+    "files_changed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["command", "status", "exit_code"],
+        "properties": {
+          "command": { "type": "string" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL", "SKIPPED"] },
+          "exit_code": { "type": "integer" },
+          "output": { "type": "string" }
+        }
+      }
+    },
+    "commands": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "needs_review": {
+      "type": "boolean"
+    },
+    "review_notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

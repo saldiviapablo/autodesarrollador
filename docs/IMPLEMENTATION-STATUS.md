@@ -1,8 +1,8 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-12T00:43:00-03:00  
-**Fase activa:** FASE 6 COMPLETADA (En espera de autorización para Macrofase 4 / Fase 7)  
+**Última actualización:** 2026-10-12T01:30:00-03:00  
+**Fase activa:** MACROFASE 4 COMPLETADA (Fases 7, 8 y 9 — Integración Hermes ↔ Qwen Code)  
 **Baseline de arquitectura:** Hermes Agent + Qwen Code CLI + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
 ---
@@ -18,9 +18,9 @@
 | **Fase 4** | Configuración central | **PASS** | Creación de `config/system.yaml`, `config/security.yaml`, `config/VERSIONS.lock` y `config/README.md`. Verificación determinista (66/66 pruebas superadas) con `scripts/verify-config.ps1`. |
 | **Fase 5** | Qwen Code CLI | **PASS** | Instalación de `@qwen-code/qwen-code@0.25.1`, suite `verify-qwen-code.ps1` exitosa (7/7 capacidades validadas: inferencia local, headless, inspección en sandbox, autofix FAIL->FIX->PASS, JSON, timeout, resume). Evidencia en `evidence/installation/`. |
 | **Fase 6** | Hermes Agent | **PASS** | Instalación nativa de `NousResearch/hermes-agent` v0.21.6 (commit `818c13b`), perfil dedicado `desarrollador-autonomo`, endpoint local OpenAI-compatible 64K (`http://127.0.0.1:8080/v1`), suite `verify-hermes.ps1` exitosa (10/10 pruebas validadas: Llama readiness, modelo registrado, headless -z, contexto 64K, lectura en sandbox, terminal, razonamiento multi-paso, continuidad de sesión, timeout, recuperación). Evidencia en `evidence/installation/`. |
-| **Fase 7** | Model Gateway / Inference Lock | **PENDING** | Mecanismo determinista de exclusión mutua para serializar `--parallel 1`. |
-| **Fase 8** | Wrapper Qwen Code | **PENDING** | Interfaz estructurada (JSON in/out, timeouts) para ejecución autónoma. |
-| **Fase 9** | Delegación Hermes → Qwen Code | **PENDING** | Integración supervisor-worker en sandbox con validación de Git diff y tests. |
+| **Fase 7** | Model Gateway / Inference Lock | **PASS** | Primitiva de exclusión mutua cross-process con .NET Mutex + metadata observable. Validada concurrencia, crash recovery (sin archivos huérfanos), timeout controlado. Evidencia en `evidence/integration/inference-lock.md`. |
+| **Fase 8** | Worker Qwen Code / Handoff | **PASS** | Contratos estructurados tipados `DelegationRequest` y `DelegationResult` validados con JSON Schema. Ejecución headless autónoma, verificación determinista de tests y tracking de diffs Git. Evidencia en `evidence/integration/qwen-worker-result.json`. |
+| **Fase 9** | Delegación Hermes → Qwen Code | **PASS** | Flujo completo de 2 agentes: Hermes Supervisor planifica y emite contrato -> Qwen Code Worker repara código en sandbox y pasa tests -> Hermes Supervisor valida y emite DECISION: ACCEPTED. Validada detección de falso SUCCESS (DECISION: REJECTED), flujo de re-delegación multi-intento y serialización estricta (0 ms solapamiento). Evidencia en `evidence/integration/`. |
 | **Fase 10** | Estructura `.autopilot` | **PENDING** | Esquema `RUN-CONTRACT.yaml`, `STATE.json`, `EVENTS.jsonl`, escrituras atómicas. |
 | **Fase 11** | Recovery Protocol | **PENDING** | Reconciliación determinista ante caídas de procesos o reinicios. |
 | **Fase 12** | Sesiones y continuidad | **PENDING** | Gestión de `--continue`/`--resume` e historial sin pérdida de contexto. |
@@ -44,7 +44,7 @@
 ---
 
 ## Próximo Paso Recomendado
- 
-- **Aprobación de la Fase 6 / Macrofase 3:** El usuario revisará el informe de verificación de Hermes Agent Supervisor y el commit en la rama `phase/06-hermes-agent`.
-- **Fase 7 (Macrofase 4):** Implementación de Model Gateway / Inference Lock para garantizar la serialización de inferencias locales bajo la regla inviolable `--parallel 1`.
+
+- **Aprobación de Macrofase 4 (Fases 7, 8 y 9):** El usuario revisará el informe de verificación de la integración Hermes ↔ Qwen Code, serialización de inferencia y handoff estructurado.
+- **Macrofase 5 (Memoria, Continuidad y Resiliencia):** Proceder con Fase 10 (Estructura `.autopilot`, `STATE.json`, `EVENTS.jsonl`), Fase 11 (Protocolo de Recuperación) y Fase 12 (Persistencia de Sesiones).
 
