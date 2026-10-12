@@ -9,6 +9,9 @@ param(
     [string]$ProjectPath,
 
     [Parameter(Mandatory = $false)]
+    [string]$CheckpointId = "",
+
+    [Parameter(Mandatory = $false)]
     [switch]$StayInRecovering
 )
 
@@ -33,6 +36,17 @@ $reconcileReport = [System.Collections.Generic.List[string]]::new()
 $recoveredFromBackup = $false
 $stateFile = Join-Path $autopilotDir "STATE.json"
 $previousFile = Join-Path $autopilotDir "STATE.previous.json"
+$stateSchemaPath = Join-Path $infraRoot "schemas\autopilot-state.schema.json"
+
+# 1.1 Si se solicitó un CheckpointId específico, verificar su integridad criptográfica
+if (-not [string]::IsNullOrWhiteSpace($CheckpointId)) {
+    $specificChkDir = Join-Path $autopilotDir "checkpoints\$CheckpointId"
+    $specIntegrity = Test-CheckpointIntegrity -CheckpointDir $specificChkDir
+    if (-not $specIntegrity.Valid) {
+        throw "CHECKPOINT_INTEGRITY_FAILED: Checkpoint '$CheckpointId' no es válido ($($specIntegrity.Detail))."
+    }
+    $reconcileReport.Add("Checkpoint '$CheckpointId' verificado criptográficamente con éxito (CHECKPOINT_INTEGRITY_OK).")
+}
 
 # 2. Leer RUN-CONTRACT.yaml
 $contractPath = Join-Path $autopilotDir "RUN-CONTRACT.yaml"
@@ -91,6 +105,13 @@ if ($stateNeedsRegen) {
         if (Test-Path -LiteralPath $checkpointsDir) {
             $chkDirs = Get-ChildItem -Path $checkpointsDir -Directory | Sort-Object CreationTime -Descending
             foreach ($cd in $chkDirs) {
+                # Validar integridad criptográfica del checkpoint antes de confiar en él
+                $chkIntegrity = Test-CheckpointIntegrity -CheckpointDir $cd.FullName
+                if (-not $chkIntegrity.Valid) {
+                    $reconcileReport.Add("Checkpoint $($cd.Name) descartado: CHECKPOINT_INTEGRITY_FAILED ($($chkIntegrity.Detail)).")
+                    continue
+                }
+
                 $chkStatePath = Join-Path $cd.FullName "state.json"
                 if (Test-Path -LiteralPath $chkStatePath) {
                     try {
@@ -99,7 +120,7 @@ if ($stateNeedsRegen) {
                             $rawChkText = Get-Content -LiteralPath $chkStatePath -Raw -Encoding UTF8
                             $stateObj = $rawChkText | ConvertFrom-Json
                             $recoveredFromBackup = $true
-                            $reconcileReport.Add("Recuperado exitosamente desde checkpoint $($cd.Name).")
+                            $reconcileReport.Add("Recuperado exitosamente desde checkpoint $($cd.Name) íntegro.")
                             break
                         }
                     } catch { }

@@ -470,6 +470,12 @@ function Test-HeartbeatStale {
 
 # ------------------------------------------------------------------------------
 # 8. Metadatos de Bloqueo de Ejecución de Proyecto (LOCK.json)
+# NOTA ARQUITECTÓNICA (HARDENING PREVIO):
+# LOCK.json dentro de .autopilot es METADATA para observabilidad, detección de PID,
+# run_id y procesos abandonados (stale runs). NO constituye una primitiva atómica
+# de exclusión mutua de run (dos procesos concurrentes podrían competir antes de
+# escribirlo). La exclusión atómica de ejecución global se implementará en el
+# Runner de Macrofase 7 mediante una primitiva atómica de kernel.
 # ------------------------------------------------------------------------------
 function Write-RunLockMeta {
     param(
@@ -488,7 +494,7 @@ function Write-RunLockMeta {
 
     $lockPath = Join-Path $AutopilotDir "LOCK.json"
     $lockObj = [ordered]@{
-        note         = "METADATA de run autónomo. La exclusión mutua de inferencia reside en Named Mutex."
+        note         = "METADATA de observabilidad de run autónomo. NO es lock atómico de SO. La exclusión mutua atómica reside en el Runner."
         run_id       = $RunId
         owner_pid    = $OwnerPid
         started_at   = (Get-Date).ToString("o")
@@ -498,4 +504,83 @@ function Write-RunLockMeta {
     $lockJson = $lockObj | ConvertTo-Json -Depth 4
     [System.IO.File]::WriteAllText($lockPath, $lockJson, [System.Text.Encoding]::UTF8)
     return $lockObj
+}
+
+# ------------------------------------------------------------------------------
+# 9. Verificación Criptográfica de Integridad de Checkpoints
+# ------------------------------------------------------------------------------
+function Test-CheckpointIntegrity {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$CheckpointDir
+    )
+
+    if (-not (Test-Path -LiteralPath $CheckpointDir)) {
+        return [PSCustomObject]@{
+            Valid  = $false
+            Status = "CHECKPOINT_NOT_FOUND"
+            Detail = "El directorio del checkpoint no existe: $CheckpointDir"
+        }
+    }
+
+    $manifestPath = Join-Path $CheckpointDir "checkpoint-manifest.json"
+    if (-not (Test-Path -LiteralPath $manifestPath)) {
+        return [PSCustomObject]@{
+            Valid  = $false
+            Status = "CHECKPOINT_INTEGRITY_FAILED"
+            Detail = "Falta checkpoint-manifest.json en $CheckpointDir"
+        }
+    }
+
+    try {
+        $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if (-not $manifest.files -or $manifest.files.Count -eq 0) {
+            return [PSCustomObject]@{
+                Valid  = $false
+                Status = "CHECKPOINT_INTEGRITY_FAILED"
+                Detail = "checkpoint-manifest.json no contiene lista de archivos"
+            }
+        }
+
+        foreach ($entry in $manifest.files) {
+            $fPath = Join-Path $CheckpointDir $entry.filename
+            if (-not (Test-Path -LiteralPath $fPath)) {
+                return [PSCustomObject]@{
+                    Valid  = $false
+                    Status = "CHECKPOINT_INTEGRITY_FAILED"
+                    Detail = "Archivo registrado en manifiesto no existe: $($entry.filename)"
+                }
+            }
+
+            $item = Get-Item -LiteralPath $fPath
+            if ($item.Length -ne $entry.size_bytes) {
+                return [PSCustomObject]@{
+                    Valid  = $false
+                    Status = "CHECKPOINT_INTEGRITY_FAILED"
+                    Detail = "Discrepancia de tamaño en $($entry.filename): esperado $($entry.size_bytes), real $($item.Length)"
+                }
+            }
+
+            $hash = (Get-FileHash -LiteralPath $fPath -Algorithm SHA256).Hash
+            if ($hash -ne $entry.sha256) {
+                return [PSCustomObject]@{
+                    Valid  = $false
+                    Status = "CHECKPOINT_INTEGRITY_FAILED"
+                    Detail = "Discrepancia de SHA-256 en $($entry.filename): esperado $($entry.sha256), real $hash"
+                }
+            }
+        }
+
+        return [PSCustomObject]@{
+            Valid  = $true
+            Status = "CHECKPOINT_INTEGRITY_OK"
+            Detail = "Todos los artefactos verificados contra SHA-256 de checkpoint-manifest.json ($($manifest.files.Count) archivos)"
+        }
+    } catch {
+        return [PSCustomObject]@{
+            Valid  = $false
+            Status = "CHECKPOINT_INTEGRITY_FAILED"
+            Detail = "Error parseando o verificando checkpoint-manifest.json: $_"
+        }
+    }
 }

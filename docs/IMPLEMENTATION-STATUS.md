@@ -1,8 +1,8 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-12T02:15:00-03:00  
-**Fase activa:** MACROFASE 5 COMPLETADA (Fases 10, 11 y 12 — Memoria, Estado y Continuidad)  
+**Última actualización:** 2026-10-12T16:53:00-03:00  
+**Fase activa:** MACROFASE 6 COMPLETADA (Fases 13, 14, 15 y 16 — Web, ChatGPT, Seguridad y Anti-Loop)  
 **Baseline de arquitectura:** Hermes Agent + Qwen Code CLI + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
 ---
@@ -24,10 +24,10 @@
 | **Fase 10** | Estructura `.autopilot` | **PASS** | Esquemas `run-contract.schema.json` y `autopilot-state.schema.json`, `QWEN.md`, máquina de estados cerrada, escritura atómica con fallback `STATE.previous.json`, log append-only `EVENTS.jsonl` monotónico, sanitización `[REDACTED]` y checkpoints inmutables. Evidencia en `evidence/continuity/`. |
 | **Fase 11** | Recovery Protocol | **PASS** | Reconciliación determinista de 15 pasos. Verificados Crash A (Git > STATE), Crash B (test en curso -> UNKNOWN), Crash C (STATE corrupto -> fallback previous), Crash D (stale heartbeat -> RECOVERING), checkpoints y prueba de idempotencia estricta. Evidencia en `evidence/continuity/`. |
 | **Fase 12** | Sesiones y continuidad | **PASS** | Principio `CONVERSATION != SOURCE OF TRUTH` certificado: ejecución en 2 etapas (`add` + `multiply`), checkpoint intermedio, simulación de pérdida total de contexto, reconstrucción exacta (100%) por nueva sesión limpia de Hermes Supervisor sin historial de chat, resolución de etapa 2 por nueva sesión Qwen Code, revisión y aceptación final (`DECISION: ACCEPTED`). Evidencia en `evidence/continuity/`. |
-| **Fase 13** | Web Research | **PENDING** | Investigación documental y almacenamiento estructurado de evidencia web. |
-| **Fase 14** | Chrome dedicado + ChatGPT | **PENDING** | Perfil `HERMES-CHATGPT` con domain-lock estricto para consultas externas. |
-| **Fase 15** | Guardrails de seguridad | **PENDING** | Límites de workspace, comando bloqueados, canonical path checks. |
-| **Fase 16** | Anti-loop | **PENDING** | Detección de ciclos sin progreso, firmas de error repetidas y escalamiento. |
+| **Fase 13** | Web Research | **PASS** | Búsqueda técnica gratuita (DDG, Wikipedia, GitHub, PyPI), extracción HTML segura, contenedor `<UNTRUSTED_EXTERNAL_DATA>`, sanitización de secretos y defensa contra prompt injection validada con Hermes en vivo. Evidencias en `evidence/web/`. |
+| **Fase 14** | Chrome dedicado + ChatGPT | **PASS** | Perfil dedicado `runtime/chrome/HERMES-CHATGPT`, control CDP (puerto 9222), domain-lock estricto (`chatgpt.com`), garantía de 1 sola pestaña, presupuesto global `max_chatgpt_queries = 5`, soporte de login manual con `BLOCKED_REQUIRES_HUMAN_LOGIN`, rol consultivo supervisado por Hermes (`DECISION: ACCEPT/PARTIAL/REJECT`). Evidencias en `evidence/chatgpt/`. |
+| **Fase 15** | Guardrails de seguridad | **PASS** | Command guard determinista bloqueando 11/11 comandos destructivos (`git push`, `format`, `diskpart`, `rmdir /s /q .`), path guard con rutas canónicas y bloqueo de escapes (`..` y junctions), redacción activa de secretos y fusión de políticas por intersección estricta. Evidencias en `evidence/security/`. |
+| **Fase 16** | Anti-loop | **PASS** | Normalización de firmas de error ignorando ruido volátil (PIDs, timestamps, temp paths), huella de progreso determinista (Git + tests + diffs), detección de bucles (máx 3 fallos iguales / máx 3 ciclos sin avance), escalera de escalamiento determinista hasta `BLOCKED_REQUIRES_HUMAN` y timeout con terminación completa de árbol de procesos sin huérfanos. Evidencias en `evidence/anti-loop/`. |
 | **Fase 17** | Runner | **PENDING** | Orquestador determinista del ciclo de vida y gestión de procesos. |
 | **Fase 18** | Watchdog | **PENDING** | Monitor de heartbeat, detección de procesos caídos y recuperación limitada. |
 | **Fase 19** | Launcher único | **PENDING** | Scripts ejecutables limpios `INICIAR` y `DETENER`. |
@@ -45,6 +45,6 @@
 
 ## Próximo Paso Recomendado
 
-- **Aprobación de Macrofase 5 (Fases 10, 11 y 12):** El usuario revisará el informe de verificación de persistencia, recovery y continuidad.
-- **Macrofase 6 (Web y ChatGPT):** Proceder con Fase 13 (Web Research) y Fase 14 (Perfil dedicado Chrome + ChatGPT con domain-lock) únicamente tras aprobación formal.
+- **Aprobación de Macrofase 6 (Fases 13, 14, 15 y 16):** El usuario revisará el informe de verificación de Web Research, Chrome dedicado + ChatGPT consultivo, Guardrails deterministas y Motor Anti-loop.
+- **Macrofase 7 (Runner Autónomo Nocturno):** Proceder con Fase 17 (Runner), Fase 18 (Watchdog), Fase 19 (Launchers), Fase 20 (Completion Gate), Fase 21 (Reportes) y Fase 22 (Cleanup garantizado) únicamente tras aprobación formal.
 

@@ -94,7 +94,11 @@ Parámetros validados:
 - **Fase 10 (Estado Persistente .autopilot):** PASS (Esquemas validados, atomic write + previous backup, eventos append-only, sanitización, checkpoints)
 - **Fase 11 (Recovery y Reconciliación):** PASS (Protocolo de 15 pasos, Crash A/B/C/D resueltos, checkpoints, verificación de idempotencia)
 - **Fase 12 (Continuidad de Sesiones):** PASS (Principio CONVERSATION != SOURCE OF TRUTH certificado, recuperación de contexto sin historial, etapas multi-sesión)
-- **Fases 13 a 28:** PENDING
+- **Fase 13 (Web Research):** PASS (Búsqueda gratuita DDG/Wiki/GitHub/PyPI, contenedor no confiable, defensa prompt injection con Hermes en vivo)
+- **Fase 14 (Chrome Dedicado + ChatGPT):** PASS (Perfil HERMES-CHATGPT, CDP 9222, domain-lock, 1 pestaña, presupuesto global, login manual, rol consultivo)
+- **Fase 15 (Guardrails de Seguridad):** PASS (Command Guard 11/11, Path Guard con canonical check, bloqueo de junctions, redacción de secretos, policy merge estricto)
+- **Fase 16 (Anti-Loop / Timeouts):** PASS (Firmas de error normalizadas, fingerprints de avance real, límites de repetición, escalera de escalamiento, kill de árbol de procesos)
+- **Fases 17 a 28:** PENDING
 
 ---
 

@@ -110,7 +110,33 @@ $chkMasterObj = [ordered]@{
 $chkMasterJson = $chkMasterObj | ConvertTo-Json -Depth 5
 [System.IO.File]::WriteAllText((Join-Path $targetChkDir "checkpoint.json"), $chkMasterJson, [System.Text.Encoding]::UTF8)
 
-# 5. Registrar evento en EVENTS.jsonl
+# 5. Generar checkpoint-manifest.json con SHA-256 criptográfico de todos los artefactos
+$manifestFiles = [System.Collections.Generic.List[object]]::new()
+Get-ChildItem -LiteralPath $targetChkDir -File | Where-Object { $_.Name -ne "checkpoint-manifest.json" } | ForEach-Object {
+    $fHash = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash
+    $manifestFiles.Add([ordered]@{
+        filename   = $_.Name
+        size_bytes = $_.Length
+        sha256     = $fHash
+    })
+}
+
+$manifestObj = [ordered]@{
+    schema_version = "1.0"
+    checkpoint_id  = $CheckpointId
+    created_at     = (Get-Date).ToString("o")
+    files          = @($manifestFiles)
+}
+$manifestJson = $manifestObj | ConvertTo-Json -Depth 5
+$manifestPath = Join-Path $targetChkDir "checkpoint-manifest.json"
+[System.IO.File]::WriteAllText($manifestPath, $manifestJson, [System.Text.Encoding]::UTF8)
+
+# 6. Marcar todos los archivos como ReadOnly en Windows
+Get-ChildItem -LiteralPath $targetChkDir -File | ForEach-Object {
+    $_.IsReadOnly = $true
+}
+
+# 7. Registrar evento en EVENTS.jsonl
 $null = Add-AutopilotEvent `
     -AutopilotDir $autopilotDir `
     -RunId $stateObj.run_id `
@@ -121,9 +147,10 @@ $null = Add-AutopilotEvent `
         reason        = $Reason
         git_head      = $gitHead
         git_dirty     = $gitDirty
+        manifest_files= $manifestFiles.Count
     }
 
-# 6. Actualizar metadatos de checkpoint en STATE.json
+# 8. Actualizar metadatos de checkpoint en STATE.json
 $stateObj.checkpoint.last_id = $CheckpointId
 $stateObj.checkpoint.last_created_at = (Get-Date).ToString("o")
 $updatedState = Write-AtomicState -StateObj $stateObj -AutopilotDir $autopilotDir -ValidateTransition $false
@@ -132,5 +159,6 @@ return [PSCustomObject]@{
     CheckpointId  = $CheckpointId
     Directory     = $targetChkDir
     Master        = $chkMasterObj
+    Manifest      = $manifestObj
     UpdatedState  = $updatedState
 }
