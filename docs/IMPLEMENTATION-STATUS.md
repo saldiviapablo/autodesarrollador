@@ -1,8 +1,8 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-11T23:45:00-03:00  
-**Fase activa:** FASE 5 COMPLETADA (En espera de autorización para Fase 6)  
+**Última actualización:** 2026-10-12T00:43:00-03:00  
+**Fase activa:** FASE 6 COMPLETADA (En espera de autorización para Macrofase 4 / Fase 7)  
 **Baseline de arquitectura:** Hermes Agent + Qwen Code CLI + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
 ---
@@ -17,7 +17,7 @@
 | **Fase 3** | Validación de llama.cpp + Qwen | **PASS** | Validado inicio controlado a 64K (`n_ctx_slot = 65536`), `parallel = 1`, alias `qwen36`, inferencia exitosa (33.1 tok/s) y cleanup verificado. Evidencia en `evidence/installation/`. |
 | **Fase 4** | Configuración central | **PASS** | Creación de `config/system.yaml`, `config/security.yaml`, `config/VERSIONS.lock` y `config/README.md`. Verificación determinista (66/66 pruebas superadas) con `scripts/verify-config.ps1`. |
 | **Fase 5** | Qwen Code CLI | **PASS** | Instalación de `@qwen-code/qwen-code@0.25.1`, suite `verify-qwen-code.ps1` exitosa (7/7 capacidades validadas: inferencia local, headless, inspección en sandbox, autofix FAIL->FIX->PASS, JSON, timeout, resume). Evidencia en `evidence/installation/`. |
-| **Fase 6** | Hermes Agent | **PENDING** | Instalación/configuración de `NousResearch/hermes-agent` contra Qwen local. |
+| **Fase 6** | Hermes Agent | **PASS** | Instalación nativa de `NousResearch/hermes-agent` v0.21.6 (commit `818c13b`), perfil dedicado `desarrollador-autonomo`, endpoint local OpenAI-compatible 64K (`http://127.0.0.1:8080/v1`), suite `verify-hermes.ps1` exitosa (10/10 pruebas validadas: Llama readiness, modelo registrado, headless -z, contexto 64K, lectura en sandbox, terminal, razonamiento multi-paso, continuidad de sesión, timeout, recuperación). Evidencia en `evidence/installation/`. |
 | **Fase 7** | Model Gateway / Inference Lock | **PENDING** | Mecanismo determinista de exclusión mutua para serializar `--parallel 1`. |
 | **Fase 8** | Wrapper Qwen Code | **PENDING** | Interfaz estructurada (JSON in/out, timeouts) para ejecución autónoma. |
 | **Fase 9** | Delegación Hermes → Qwen Code | **PENDING** | Integración supervisor-worker en sandbox con validación de Git diff y tests. |
@@ -45,5 +45,6 @@
 
 ## Próximo Paso Recomendado
  
-- **Aprobación de la Fase 5:** El usuario revisará el informe de verificación de Qwen Code CLI y el commit en la rama `phase/05-qwen-code`.
-- **Fase 6:** Instalación y configuración de Hermes Agent (`NousResearch/hermes-agent`) como supervisor/orquestador apuntando al modelo local `qwen36` en `127.0.0.1:8080`.
+- **Aprobación de la Fase 6 / Macrofase 3:** El usuario revisará el informe de verificación de Hermes Agent Supervisor y el commit en la rama `phase/06-hermes-agent`.
+- **Fase 7 (Macrofase 4):** Implementación de Model Gateway / Inference Lock para garantizar la serialización de inferencias locales bajo la regla inviolable `--parallel 1`.
+

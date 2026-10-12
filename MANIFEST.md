@@ -83,8 +83,12 @@ Parámetros validados:
 
 - **Fase 0 (Documentación base):** PASS
 - **Fase 1 (Inventario del entorno real):** PASS (Registrado en `docs/INVENTORY.md` y `logs/inventory-audit-20261011.log`)
-- **Fase 2 (Backup y Baseline):** EN PROCESO / COMPLETADA (Punto de restauración `backups/preinstall-*/`, `.gitignore`, baseline Git)
-- **Fases 3 a 28:** PENDING
+- **Fase 2 (Backup y Baseline):** PASS (Punto de restauración `backups/preinstall-*/`, `.gitignore`, baseline Git)
+- **Fase 3 (Validación llama.cpp + Qwen):** PASS (Validado 64K, parallel 1, qwen36, inferencia local y cleanup)
+- **Fase 4 (Configuración central):** PASS (Configuraciones YAML, VERSIONS.lock, suite determinista de 66 pruebas)
+- **Fase 5 (Qwen Code CLI):** PASS (Instalado @qwen-code/qwen-code@0.25.1, 7 capacidades validadas)
+- **Fase 6 (Hermes Agent):** PASS (Instalado hermes-agent v0.21.6, perfil aislado, 10 pruebas validadas)
+- **Fases 7 a 28:** PENDING
 
 ---
 
