@@ -2,12 +2,12 @@
 // ==============================================================================
 // tools/chatgpt-bridge.js — Cliente CDP para Consulta a ChatGPT (Perfil Dedicado)
 // Proyecto: Desarrollador Autónomo
-// Versión: 2.0 (Macrofase 6 — Fase 14: Chrome Dedicado + ChatGPT)
+// Versión: 2.0 (Macrofase 6 — Fase 14: Chrome Dedicado + ChatGPT Real)
 // ==============================================================================
 
 const fs = require('fs');
 const path = require('path');
-const { spawn, execSync } = require('child_process');
+const { spawn } = require('child_process');
 
 const CHROME_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const CDP_PORT = 9222;
@@ -24,13 +24,24 @@ const hasFlag = (flag) => args.includes(flag);
 
 const action = getArg('--action', 'check-session');
 const targetUrl = getArg('--url', 'https://chatgpt.com');
-const profileDir = getArg('--profile-dir', path.resolve(__dirname, '..', 'runtime', 'chrome', 'HERMES-CHATGPT'));
-const question = getArg('--question', '');
-const context = getArg('--context', '');
+const profileDir = getArg('--profile-dir', path.resolve(__dirname, '..', 'data', 'browser', 'HERMES-CHATGPT'));
+let question = getArg('--question', '');
+const questionB64 = getArg('--question-b64', '');
+if (questionB64) {
+  try { question = Buffer.from(questionB64, 'base64').toString('utf8'); } catch {}
+}
+
+let context = getArg('--context', '');
+const contextB64 = getArg('--context-b64', '');
+if (contextB64) {
+  try { context = Buffer.from(contextB64, 'base64').toString('utf8'); } catch {}
+}
+
 const purpose = getArg('--purpose', 'Revisión técnica');
 const consultationId = getArg('--consultation-id', `consult-${Date.now()}`);
 const mockResponse = getArg('--mock-response', '');
-const timeoutSec = parseInt(getArg('--timeout', '40'), 10);
+const isRawPrompt = hasFlag('--raw-prompt');
+const timeoutSec = parseInt(getArg('--timeout', '60'), 10);
 
 // 1. Verificación Estricta de Domain Lock
 function validateDomain(urlStr) {
@@ -71,7 +82,7 @@ async function launchDedicatedChrome() {
     '--disable-sync',
     '--disable-extensions',
     '--disable-background-networking',
-    '--window-size=1200,900',
+    '--window-size=1280,960',
     targetUrl
   ];
 
@@ -83,7 +94,7 @@ async function launchDedicatedChrome() {
 
   // Esperar readiness de CDP
   const start = Date.now();
-  while (Date.now() - start < 10000) {
+  while (Date.now() - start < 15000) {
     if (await isChromeRunning()) return true;
     await new Promise(r => setTimeout(r, 400));
   }
@@ -105,7 +116,7 @@ function sendCdp(ws, method, params = {}) {
     const timeout = setTimeout(() => {
       ws.removeEventListener('message', handler);
       reject(new Error(`Timeout esperando respuesta CDP para ${method}`));
-    }, 15000);
+    }, 20000);
 
     const handler = (evt) => {
       try {
@@ -144,7 +155,6 @@ async function enforceSingleTabAndDomainLock() {
   const activeTab = pages[0];
   // Validar Domain Lock
   if (!validateDomain(activeTab.url)) {
-    // Cerrar pestaña si violó dominio
     try { await fetch(`${CDP_BASE}/json/close/${activeTab.id}`); } catch {}
     return {
       success: false,
@@ -172,7 +182,7 @@ async function main() {
     process.exit(2);
   }
 
-  // Manejo de Mock Response para tests deterministas y sin login
+  // Manejo de Mock Response si explícitamente se solicita
   if (mockResponse) {
     const out = {
       status: "SUCCESS",
@@ -214,16 +224,22 @@ async function main() {
 
   const activeTab = tabCheck.tab;
 
-  // Si la acción es solo cerrar el navegador
+  // Si la acción es solo cerrar el navegador de forma controlada vía CDP
   if (action === 'close-browser') {
     try {
-      execSync('taskkill /F /IM chrome.exe 2>nul');
+      const verRes = await fetch(`${CDP_BASE}/json/version`);
+      const verData = await verRes.json();
+      if (verData.webSocketDebuggerUrl) {
+        const browserWs = await connectCdp(verData.webSocketDebuggerUrl);
+        await sendCdp(browserWs, 'Browser.close');
+        browserWs.close();
+      }
     } catch {}
-    console.log(JSON.stringify({ status: "SUCCESS", message: "Navegador cerrado." }, null, 2));
+    console.log(JSON.stringify({ status: "SUCCESS", message: "Navegador cerrado limpiamente vía CDP Browser.close." }, null, 2));
     process.exit(0);
   }
 
-  // Conectar WebSocket
+  // Conectar WebSocket a la página activa
   let ws;
   try {
     ws = await connectCdp(activeTab.webSocketDebuggerUrl);
@@ -243,8 +259,12 @@ async function main() {
       expression: `(() => {
         const url = window.location.href;
         const bodyText = document.body ? document.body.innerText : '';
-        const hasPromptBox = !!document.querySelector('#prompt-textarea') || !!document.querySelector('div[contenteditable="true"]');
-        const hasLoginButton = !!document.querySelector('button[data-testid="login-button"]') || url.includes('/auth/login') || bodyText.includes('Log in');
+        const hasPromptBox = !!document.querySelector('.ProseMirror') ||
+                             !!document.querySelector('#prompt-textarea') ||
+                             !!document.querySelector('div[contenteditable="true"]');
+        const hasLoginButton = !!document.querySelector('button[data-testid="login-button"]') ||
+                               url.includes('/auth/login') ||
+                               (bodyText.includes('Log in') && !hasPromptBox);
         return { url, hasPromptBox, hasLoginButton, title: document.title };
       })()`,
       returnByValue: true
@@ -292,8 +312,10 @@ async function main() {
         process.exit(3);
       }
 
-      // Preparar consulta sanitizada
-      const fullPrompt = `CONSULTA TÉCNICA (ROL CONSULTOR ARQUITECTÓNICO):
+      // Preparar prompt final
+      let fullPrompt = question;
+      if (!isRawPrompt && (context || (purpose && purpose !== 'Revisión técnica' && purpose !== 'test'))) {
+        fullPrompt = `CONSULTA TÉCNICA (ROL CONSULTOR ARQUITECTÓNICO):
 Propósito: ${purpose || 'Revisión técnica'}
 Pregunta: ${question}
 Contexto:
@@ -303,50 +325,158 @@ Por favor proporciona:
 1. Causa probable
 2. Dos estrategias alternativas
 3. Riesgos técnicos asociados`;
+      }
 
-      // Inyectar en prompt-textarea
+      // 1. Contar turnos antes de enviar
+      const countResBefore = await sendCdp(ws, 'Runtime.evaluate', {
+        expression: `(() => {
+          const articles = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
+          const userTurns = document.querySelectorAll('[data-message-author-role="user"]');
+          return Math.max(articles.length, userTurns.length);
+        })()`,
+        returnByValue: true
+      });
+      const turnsBefore = countResBefore.result ? countResBefore.result.value : 0;
+
+      // 2. Inyectar texto en composer y hacer clic en enviar
       const injectRes = await sendCdp(ws, 'Runtime.evaluate', {
         expression: `(() => {
-          const textarea = document.querySelector('#prompt-textarea') || document.querySelector('div[contenteditable="true"]');
-          if (!textarea) return false;
-          if (textarea.tagName === 'TEXTAREA') {
-            textarea.value = ${JSON.stringify(fullPrompt)};
-            textarea.dispatchEvent(new Event('input', { bubbles: true }));
-          } else {
-            textarea.innerText = ${JSON.stringify(fullPrompt)};
-            textarea.dispatchEvent(new Event('input', { bubbles: true }));
-          }
-          const sendBtn = document.querySelector('button[data-testid="send-button"]') || document.querySelector('button[aria-label="Send prompt"]');
+          const prose = document.querySelector('.ProseMirror') ||
+                        document.querySelector('#prompt-textarea') ||
+                        document.querySelector('div[contenteditable="true"]');
+          if (!prose) return { success: false, reason: 'Composer not found' };
+
+          prose.focus();
+          document.execCommand('selectAll', false, null);
+          document.execCommand('insertText', false, ${JSON.stringify(fullPrompt)});
+          prose.dispatchEvent(new Event('input', { bubbles: true }));
+          prose.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'a' }));
+          prose.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: 'a' }));
+
+          const form = prose.closest('form');
+          const sendBtn = form ? (
+            form.querySelector('button[type="submit"]') ||
+            form.querySelector('button[aria-label="Enviar"]') ||
+            form.querySelector('button[data-testid="send-button"]') ||
+            form.querySelector('button[aria-label*="Send"]')
+          ) : (
+            document.querySelector('button[data-testid="send-button"]') ||
+            document.querySelector('button[aria-label="Enviar"]') ||
+            document.querySelector('button[aria-label*="Send"]')
+          );
+
           if (sendBtn && !sendBtn.disabled) {
             sendBtn.click();
-            return true;
+            return { success: true, method: 'button_click' };
+          } else if (form) {
+            form.requestSubmit();
+            return { success: true, method: 'form_submit' };
+          } else {
+            prose.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+            return { success: true, method: 'enter_key' };
           }
-          return false;
         })()`,
         returnByValue: true
       });
 
-      // Aguardar respuesta (extracción del último mensaje del asistente)
-      // Esperar hasta timeoutSec segundos a que deje de streamear
-      let finalResponse = "";
-      const startTime = Date.now();
-      while (Date.now() - startTime < timeoutSec * 1000) {
-        await new Promise(r => setTimeout(r, 2000));
-        const checkDone = await sendCdp(ws, 'Runtime.evaluate', {
+      const injectVal = injectRes.result ? injectRes.result.value : {};
+      if (!injectVal.success) {
+        console.log(JSON.stringify({
+          status: "ERROR",
+          error: `Fallo al inyectar o enviar mensaje: ${injectVal.reason || 'Desconocido'}`,
+          consultation_id: consultationId,
+          timestamp: new Date().toISOString()
+        }, null, 2));
+        ws.close();
+        process.exit(1);
+      }
+
+      // 3. Confirmar que el mensaje fue enviado (CHATGPT_MESSAGE_SENT = true)
+      let messageSent = false;
+      const sendStart = Date.now();
+      while (Date.now() - sendStart < 12000) {
+        await new Promise(r => setTimeout(r, 600));
+        const checkTurn = await sendCdp(ws, 'Runtime.evaluate', {
           expression: `(() => {
             const articles = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
-            if (articles.length === 0) return { done: false, text: '' };
-            const lastArticle = articles[articles.length - 1];
-            const isStreaming = !!document.querySelector('.result-streaming');
-            return { done: !isStreaming, text: lastArticle.innerText };
+            const userTurns = document.querySelectorAll('[data-message-author-role="user"]');
+            const main = document.querySelector('main');
+            const hasUserText = main ? (main.innerText.includes('Tú dijiste:') || main.innerText.includes('You said:')) : false;
+            const isStreaming = !!document.querySelector('button[data-testid*="stop"]') ||
+                                !!document.querySelector('button[aria-label*="Detener"]') ||
+                                !!document.querySelector('button[aria-label*="Stop"]') ||
+                                !!document.querySelector('.result-streaming');
+            return {
+              count: Math.max(articles.length, userTurns.length),
+              hasUserText,
+              isStreaming
+            };
           })()`,
           returnByValue: true
         });
 
-        const val = checkDone.result ? checkDone.result.value : null;
-        if (val && val.done && val.text) {
-          finalResponse = val.text;
+        const turnVal = checkTurn.result ? checkTurn.result.value : {};
+        if (turnVal.count > turnsBefore || turnVal.hasUserText || turnVal.isStreaming) {
+          messageSent = true;
           break;
+        }
+      }
+
+      // 4. Aguardar respuesta del asistente (CHATGPT_RESPONSE_RECEIVED = true)
+      let finalResponse = "";
+      let lastText = "";
+      let stableCount = 0;
+      const genStart = Date.now();
+
+      while (Date.now() - genStart < timeoutSec * 1000) {
+        await new Promise(r => setTimeout(r, 1200));
+
+        const checkRes = await sendCdp(ws, 'Runtime.evaluate', {
+          expression: `(() => {
+            const isStreaming = !!document.querySelector('button[data-testid*="stop"]') ||
+                                !!document.querySelector('button[aria-label*="Detener"]') ||
+                                !!document.querySelector('button[aria-label*="Stop"]') ||
+                                !!document.querySelector('.result-streaming');
+
+            // Estrategia 1: DilResponseRoot / PortalBoundary / agent-turn / markdown
+            const dilRoots = Array.from(document.querySelectorAll('[class*="DilResponseRoot"], [class*="PortalBoundary"], [class*="agent-turn"], [class*="markdown"]'))
+              .map(el => el.innerText.trim())
+              .filter(t => t.length > 0 && !t.includes('Tú dijiste:') && !t.includes('You said:'));
+            let text = dilRoots.length > 0 ? dilRoots[dilRoots.length - 1] : '';
+
+            // Estrategia 2: split por 'ChatGPT dijo:' o 'ChatGPT said:'
+            if (!text) {
+              const main = document.querySelector('main');
+              if (main) {
+                const parts = main.innerText.split(/ChatGPT dijo:|ChatGPT said:/i);
+                if (parts.length > 1) {
+                  text = parts[parts.length - 1].split(/ChatGPT puede cometer|Última respuesta/i)[0].trim();
+                }
+              }
+            }
+
+            return { isStreaming, text: (text || '').trim() };
+          })()`,
+          returnByValue: true
+        });
+
+        const resVal = checkRes.result ? checkRes.result.value : null;
+        if (resVal && resVal.text) {
+          if (!resVal.isStreaming) {
+            if (resVal.text === lastText) {
+              stableCount++;
+              if (stableCount >= 2) { // Estable por ~2.4s y sin indicador de streaming
+                finalResponse = resVal.text;
+                break;
+              }
+            } else {
+              lastText = resVal.text;
+              stableCount = 1;
+            }
+          } else {
+            lastText = resVal.text;
+            stableCount = 0;
+          }
         }
       }
 
@@ -355,23 +485,32 @@ Por favor proporciona:
       if (!finalResponse) {
         console.log(JSON.stringify({
           status: "TIMEOUT",
-          error: "Timeout esperando respuesta completa de ChatGPT.",
+          error: `Timeout esperando respuesta completa tras ${timeoutSec}s`,
+          message_sent: messageSent,
           consultation_id: consultationId,
           timestamp: new Date().toISOString()
         }, null, 2));
         process.exit(1);
       }
 
-      console.log(JSON.stringify({
+      const out = {
         status: "SUCCESS",
         response: finalResponse,
         consultation_id: consultationId,
+        source: "chatgpt_web_real",
+        message_sent: messageSent,
+        response_received: true,
+        url: pageState.url,
         timestamp: new Date().toISOString()
-      }, null, 2));
+      };
+
+      console.log(JSON.stringify(out, null, 2));
       process.exit(0);
     }
   } catch (err) {
-    if (ws) ws.close();
+    if (ws) {
+      try { ws.close(); } catch {}
+    }
     console.log(JSON.stringify({
       status: "ERROR",
       error: `Fallo durante interacción CDP: ${err.message}`,

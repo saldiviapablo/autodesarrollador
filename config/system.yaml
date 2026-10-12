@@ -75,8 +75,15 @@ recovery:
 
 chatgpt:
   profile_name: "HERMES-CHATGPT"
+  profile_dir: "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\data\\browser\\HERMES-CHATGPT"
   target_url: "https://chatgpt.com"
   max_tabs: 1
+  cdp_host: "127.0.0.1"
+  cdp_port: 9222
+  allowed_domains:
+    - "chatgpt.com"
+    - "openai.com"
+  chrome_executable: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 
 qwen_code:
   package: "@qwen-code/qwen-code"

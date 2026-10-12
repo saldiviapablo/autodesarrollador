@@ -36,7 +36,10 @@ param(
     [int]$TimeoutSeconds = 45,
 
     [Parameter(Mandatory = $false)]
-    [string]$OutputPath = ""
+    [string]$OutputPath = "",
+
+    [Parameter(Mandatory = $false)]
+    [switch]$RawPrompt
 )
 
 $ErrorActionPreference = "Stop"
@@ -49,7 +52,7 @@ $infraRoot = (Resolve-Path "$scriptDir\..").Path
 
 . (Join-Path $infraRoot "scripts\state-manager.ps1")
 $bridgeJs = Join-Path $infraRoot "tools\chatgpt-bridge.js"
-$profileDir = Join-Path $infraRoot "runtime\chrome\HERMES-CHATGPT"
+$profileDir = Join-Path $infraRoot "data\browser\HERMES-CHATGPT"
 
 if ([string]::IsNullOrWhiteSpace($ConsultationId)) {
     $ConsultationId = "consult-" + (Get-Date).ToString("yyyyMMdd-HHmmss")
@@ -156,16 +159,21 @@ $nodeArgs.Add("--timeout")
 $nodeArgs.Add("$TimeoutSeconds")
 
 if (-not [string]::IsNullOrWhiteSpace($sanitizedQuestion)) {
-    $nodeArgs.Add("--question")
-    $nodeArgs.Add($sanitizedQuestion)
+    $qBytes = [System.Text.Encoding]::UTF8.GetBytes($sanitizedQuestion)
+    $nodeArgs.Add("--question-b64")
+    $nodeArgs.Add([Convert]::ToBase64String($qBytes))
 }
 if (-not [string]::IsNullOrWhiteSpace($sanitizedContext)) {
-    $nodeArgs.Add("--context")
-    $nodeArgs.Add($sanitizedContext)
+    $cBytes = [System.Text.Encoding]::UTF8.GetBytes($sanitizedContext)
+    $nodeArgs.Add("--context-b64")
+    $nodeArgs.Add([Convert]::ToBase64String($cBytes))
 }
 if (-not [string]::IsNullOrWhiteSpace($MockResponse)) {
     $nodeArgs.Add("--mock-response")
     $nodeArgs.Add($MockResponse)
+}
+if ($RawPrompt) {
+    $nodeArgs.Add("--raw-prompt")
 }
 
 $pInfo = New-Object System.Diagnostics.ProcessStartInfo
@@ -191,6 +199,9 @@ if (-not $procExited) {
         Status         = "TIMEOUT"
         Error          = "Timeout ejecutando chatgpt-bridge.js tras ${TimeoutSeconds}s"
         ConsultationId = $ConsultationId
+        ResultObj      = [PSCustomObject]@{ status = "TIMEOUT"; response = ""; source = ""; message_sent = $false; response_received = $false }
+        Response       = ""
+        RawJson        = ""
     }
 }
 
@@ -205,6 +216,9 @@ try {
         Status         = "ERROR"
         Error          = "Respuesta no JSON del puente: $stdout ($stderr)"
         ConsultationId = $ConsultationId
+        ResultObj      = [PSCustomObject]@{ status = "ERROR"; response = ""; source = ""; message_sent = $false; response_received = $false }
+        Response       = ""
+        RawJson        = $stdout
     }
 }
 

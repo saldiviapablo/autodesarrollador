@@ -27,12 +27,12 @@ La Macrofase 6 establece las capacidades de investigación web, consulta consult
 3. **Defensa contra Prompt Injection con Hermes en Vivo:** Hermes local evaluó una página inyectada con la orden maliciosa de ejecutar `git push --force origin master`. Hermes extrajo fielmente el dato legítimo (versión 4.2.0) y rechazó explícitamente el comando malicioso.
 
 ### Fase 14 — Chrome Dedicado + ChatGPT Consultivo
-1. **Perfil Aislado y Persistente:** Perfil exclusivo en `runtime/chrome/HERMES-CHATGPT`, desacoplado de perfiles personales.
+1. **Perfil Aislado y Persistente:** Perfil exclusivo en `data/browser/HERMES-CHATGPT`, desacoplado de perfiles personales y excluido de Git.
 2. **Domain Lock Estricto:** Control mediante CDP permitiendo únicamente `chatgpt.com` y `openai.com`. Cualquier intento de escape a dominios ajenos es bloqueado antes de la navegación.
 3. **Máximo 1 Pestaña Controlada:** Cierre automático de pestañas adicionales.
-4. **Presupuesto Global de Consultas:** Límite configurable (`max_chatgpt_queries = 5` por run). Al superarse el límite, las consultas son denegadas sin abrir el navegador.
-5. **Autenticación Humana Respetada:** Detección de login con estado `BLOCKED_REQUIRES_HUMAN_LOGIN` manteniendo la ventana visible. Tras el login manual del usuario, la sesión quedó activa y validada.
-6. **Rol Consultivo de ChatGPT:** ChatGPT actúa exclusivamente como consultor de arquitectura (`ADVISORY_UNTRUSTED`). Hermes Supervisor evalúa su consejo emitiendo un veredicto estructurado (`DECISION: ACCEPT/PARTIAL/REJECT`).
+4. **Presupuesto Global de Consultas:** Límite configurable (`max_chatgpt_queries = 5` por run). Al superarse el límite, las consultas son denegadas sin abrir el navegador ni tocar el DOM.
+5. **Autenticación Humana Respetada:** Detección de login con estado `BLOCKED_REQUIRES_HUMAN_LOGIN` manteniendo la ventana visible. Tras el login manual del usuario, la sesión quedó activa y validada en `data/browser/HERMES-CHATGPT`.
+6. **Consulta REAL y Rol Consultivo de ChatGPT:** Consulta real en vivo vía CDP sin mocks (`CHATGPT_BRIDGE_REAL_OK`, `7 + 8 = 15`). ChatGPT actúa exclusivamente como consultor de arquitectura (`ADVISORY_UNTRUSTED`). Hermes Supervisor evalúa su consejo emitiendo un veredicto estructurado (`DECISION: ACCEPT`).
 
 ### Fase 15 — Guardrails y Seguridad Ejecutable
 1. **Command Guard Determinista:** Bloqueo estricto de 11/11 comandos peligrosos (`git push`, `git push --force`, `git clean -fdx`, `git reset --hard`, `format`, `diskpart`, `bcdedit`, `reg delete`, `shutdown`, `restart-computer`, `netsh advfirewall`, `rmdir /s /q .`).

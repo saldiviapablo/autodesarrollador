@@ -1,8 +1,8 @@
 ﻿# Evidencia: Perfil Chrome Dedicado HERMES-CHATGPT
 
 - **Ubicacion:** 
-`C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\runtime\chrome\HERMES-CHATGPT`
+`C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\data\browser\HERMES-CHATGPT`
 - **Aislamiento:** Completamente desacoplado del perfil personal del usuario de Windows.
-- **Persistencia:** Almacena cookies de sesion y estado de navegacion de forma local entre ejecuciones.
+- **Persistencia:** Almacena cookies de sesion y estado de navegacion de forma local en data/browser.
 - **Seguridad:** Enlazado exclusivamente a `127.0.0.1` en puerto CDP 9222.
 - **Estado:** PASS
