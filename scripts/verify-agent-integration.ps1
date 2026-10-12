@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/verify-agent-integration.ps1 — Suite de Verificación de Macrofase 4
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fases 7, 8 y 9 — Integración Hermes ↔ Qwen Code)

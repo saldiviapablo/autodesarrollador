@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/web-research.ps1 — Wrapper de Investigación Web y Extracción
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 6 — Fase 13: Web Research)

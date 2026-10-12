@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/verify-config.ps1 — Verificación Determinista de Configuración Central
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fase 4 — Configuración Central)

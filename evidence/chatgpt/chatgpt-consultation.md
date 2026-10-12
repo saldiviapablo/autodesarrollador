@@ -1,7 +1,7 @@
-﻿# Evidencia: Consulta REAL a ChatGPT y EvaluaciÃ³n por Hermes Supervisor
+﻿# Evidencia: Consulta REAL a ChatGPT y Evaluación por Hermes Supervisor
 
 - **Rol de ChatGPT:** CONSULTOR EXTERNO DE ALTO NIVEL (ADVISORY_UNTRUSTED)
-- **Modalidad:** Consulta REAL en navegador Google Chrome autenticado vÃ­a CDP (SIN MOCK)
+- **Modalidad:** Consulta REAL en navegador Google Chrome autenticado vía CDP (SIN MOCK)
 - **Origen Reportado:** 
 `chatgpt_web_real`
 - **Turnos de Usuario Incrementados:** 
@@ -12,10 +12,10 @@ True
 
 ## Respuesta REAL Obtenida de ChatGPT:
 > 
-CHATGPT_BRIDGE_REAL_OK
-> 7 + 8 = 15
+CHATGPT_BRIDGE_UTF8_OK
+> áéíóú ñ ¿sí?
 
-## EvaluaciÃ³n y Veredicto de Hermes Supervisor:
+## Evaluación y Veredicto de Hermes Supervisor:
 > 
 DECISION: ACCEPT
-> JUSTIFICACIÓN: La respuesta coincide exactamente con los tokens de validación requeridos sin código no autorizado ni acciones peligrosas.
+> JUSTIFICACION: Evaluacion omitida por switch SkipLlama.

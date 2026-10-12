@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/recover-autopilot.ps1 — Protocolo Determinista de Recuperación y Reconciliación
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 5 — Fase 11: Recovery y Reconciliación)

@@ -2,7 +2,7 @@
 // ==============================================================================
 // tools/chatgpt-bridge.js — Cliente CDP para Consulta a ChatGPT (Perfil Dedicado)
 // Proyecto: Desarrollador Autónomo
-// Versión: 2.0 (Macrofase 6 — Fase 14: Chrome Dedicado + ChatGPT Real)
+// Versión: 2.0 (Macrofase 6 — Fase 14: Hardening de Unicode / UTF-8)
 // ==============================================================================
 
 const fs = require('fs');
@@ -13,6 +13,13 @@ const CHROME_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 const CDP_PORT = 9222;
 const CDP_BASE = `http://127.0.0.1:${CDP_PORT}`;
 const ALLOWED_DOMAINS = ['chatgpt.com', 'openai.com'];
+
+const CANONICAL_UNICODE_STRING = `Prueba UTF-8:
+áéíóú ÁÉÍÓÚ
+ñ Ñ
+¿Dónde está?
+¡Funciona!
+— € °`;
 
 // Parse arguments
 const args = process.argv.slice(2);
@@ -25,6 +32,7 @@ const hasFlag = (flag) => args.includes(flag);
 const action = getArg('--action', 'check-session');
 const targetUrl = getArg('--url', 'https://chatgpt.com');
 const profileDir = getArg('--profile-dir', path.resolve(__dirname, '..', 'data', 'browser', 'HERMES-CHATGPT'));
+
 let question = getArg('--question', '');
 const questionB64 = getArg('--question-b64', '');
 if (questionB64) {
@@ -299,6 +307,73 @@ async function main() {
       }
     }
 
+    // Acción unicode-roundtrip (Verificación determinista del DOM sin enviar prompt)
+    if (action === 'unicode-roundtrip') {
+      const testText = question || CANONICAL_UNICODE_STRING;
+
+      const roundtripRes = await sendCdp(ws, 'Runtime.evaluate', {
+        expression: `(() => {
+          const prose = document.querySelector('.ProseMirror') ||
+                        document.querySelector('#prompt-textarea') ||
+                        document.querySelector('div[contenteditable="true"]');
+          if (!prose) return { success: false, reason: 'Composer not found' };
+
+          prose.focus();
+          document.execCommand('selectAll', false, null);
+          document.execCommand('insertText', false, ${JSON.stringify(testText)});
+          prose.dispatchEvent(new Event('input', { bubbles: true }));
+
+          const rawInnerText = (prose.innerText || '').trim();
+          const pElements = Array.from(prose.querySelectorAll('p'));
+          const domText = pElements.length > 0
+            ? pElements.map(p => p.innerText).join('\\n').trim()
+            : rawInnerText.replace(/\\r\\n/g, '\\n').replace(/\\n\\n+/g, '\\n').trim();
+
+          // Limpiar composer inmediatamente
+          document.execCommand('selectAll', false, null);
+          document.execCommand('delete', false, null);
+          prose.dispatchEvent(new Event('input', { bubbles: true }));
+
+          return { success: true, domText, rawInnerText };
+        })()`,
+        returnByValue: true
+      });
+
+      const rtVal = roundtripRes.result ? roundtripRes.result.value : {};
+      if (!rtVal.success) {
+        console.log(JSON.stringify({
+          status: "ERROR",
+          error: `Fallo durante roundtrip en composer: ${rtVal.reason || 'Desconocido'}`,
+          timestamp: new Date().toISOString()
+        }, null, 2));
+        ws.close();
+        process.exit(1);
+      }
+
+      const normSource = testText.trim().replace(/\r\n/g, '\n').replace(/\n\n+/g, '\n');
+      const normDom = (rtVal.domText || '').trim().replace(/\r\n/g, '\n').replace(/\n\n+/g, '\n');
+      const match = (normSource === normDom);
+
+      const out = {
+        status: match ? "SUCCESS" : "CHATGPT_ENCODING_MISMATCH",
+        unicode_roundtrip: match ? "PASS" : "FAIL",
+        source_text: normSource,
+        dom_text: normDom,
+        source_text_equals_dom_text: match,
+        checkpoints: {
+          source_text: normSource,
+          node_decoded_string: testText,
+          cdp_input_string: testText,
+          dom_composer_text: normDom
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      console.log(JSON.stringify(out, null, 2));
+      try { ws.close(); } catch {}
+      process.exit(match ? 0 : 1);
+    }
+
     // Acción consult
     if (action === 'consult') {
       if (pageState.hasLoginButton && !pageState.hasPromptBox) {
@@ -338,7 +413,7 @@ Por favor proporciona:
       });
       const turnsBefore = countResBefore.result ? countResBefore.result.value : 0;
 
-      // 2. Inyectar texto en composer y hacer clic en enviar
+      // 2. Inyectar texto en composer
       const injectRes = await sendCdp(ws, 'Runtime.evaluate', {
         expression: `(() => {
           const prose = document.querySelector('.ProseMirror') ||
@@ -350,10 +425,67 @@ Por favor proporciona:
           document.execCommand('selectAll', false, null);
           document.execCommand('insertText', false, ${JSON.stringify(fullPrompt)});
           prose.dispatchEvent(new Event('input', { bubbles: true }));
-          prose.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'a' }));
-          prose.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: 'a' }));
 
-          const form = prose.closest('form');
+          const rawInnerText = (prose.innerText || '').trim();
+          const pElements = Array.from(prose.querySelectorAll('p'));
+          const domText = pElements.length > 0
+            ? pElements.map(p => p.innerText).join('\\n').trim()
+            : rawInnerText.replace(/\\r\\n/g, '\\n').replace(/\\n\\n+/g, '\\n').trim();
+
+          return { success: true, domText, rawInnerText };
+        })()`,
+        returnByValue: true
+      });
+
+      const injectVal = injectRes.result ? injectRes.result.value : {};
+      if (!injectVal.success) {
+        console.log(JSON.stringify({
+          status: "ERROR",
+          error: `Fallo al inyectar mensaje: ${injectVal.reason || 'Desconocido'}`,
+          consultation_id: consultationId,
+          timestamp: new Date().toISOString()
+        }, null, 2));
+        ws.close();
+        process.exit(1);
+      }
+
+      // 3. Verificación Pre-Send Obligatoria: SOURCE_TEXT === DOM_TEXT
+      const normSource = fullPrompt.trim().replace(/\r\n/g, '\n').replace(/\n\n+/g, '\n');
+      const normDom = (injectVal.domText || '').trim().replace(/\r\n/g, '\n').replace(/\n\n+/g, '\n');
+      const textMatches = (normSource === normDom);
+
+      if (!textMatches) {
+        // Limpiar composer y abortar envío
+        await sendCdp(ws, 'Runtime.evaluate', {
+          expression: `(() => {
+            const prose = document.querySelector('.ProseMirror') || document.querySelector('#prompt-textarea') || document.querySelector('div[contenteditable="true"]');
+            if (prose) {
+              prose.focus();
+              document.execCommand('selectAll', false, null);
+              document.execCommand('delete', false, null);
+              prose.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+          })()`
+        });
+
+        console.log(JSON.stringify({
+          status: "CHATGPT_ENCODING_MISMATCH",
+          error: "El texto inyectado en el DOM no coincide carácter por carácter con el texto origen.",
+          source_text: normSource,
+          dom_text: normDom,
+          source_text_equals_dom_text: false,
+          consultation_id: consultationId,
+          timestamp: new Date().toISOString()
+        }, null, 2));
+        ws.close();
+        process.exit(1);
+      }
+
+      // 4. Si el texto coincide exactamente: Pulsar Enviar
+      const sendClickRes = await sendCdp(ws, 'Runtime.evaluate', {
+        expression: `(() => {
+          const prose = document.querySelector('.ProseMirror') || document.querySelector('#prompt-textarea') || document.querySelector('div[contenteditable="true"]');
+          const form = prose ? prose.closest('form') : null;
           const sendBtn = form ? (
             form.querySelector('button[type="submit"]') ||
             form.querySelector('button[aria-label="Enviar"]') ||
@@ -371,27 +503,16 @@ Por favor proporciona:
           } else if (form) {
             form.requestSubmit();
             return { success: true, method: 'form_submit' };
-          } else {
+          } else if (prose) {
             prose.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
             return { success: true, method: 'enter_key' };
           }
+          return { success: false, reason: 'Send trigger failed' };
         })()`,
         returnByValue: true
       });
 
-      const injectVal = injectRes.result ? injectRes.result.value : {};
-      if (!injectVal.success) {
-        console.log(JSON.stringify({
-          status: "ERROR",
-          error: `Fallo al inyectar o enviar mensaje: ${injectVal.reason || 'Desconocido'}`,
-          consultation_id: consultationId,
-          timestamp: new Date().toISOString()
-        }, null, 2));
-        ws.close();
-        process.exit(1);
-      }
-
-      // 3. Confirmar que el mensaje fue enviado (CHATGPT_MESSAGE_SENT = true)
+      // 5. Confirmar que el mensaje fue enviado (CHATGPT_MESSAGE_SENT = true)
       let messageSent = false;
       const sendStart = Date.now();
       while (Date.now() - sendStart < 12000) {
@@ -422,7 +543,7 @@ Por favor proporciona:
         }
       }
 
-      // 4. Aguardar respuesta del asistente (CHATGPT_RESPONSE_RECEIVED = true)
+      // 6. Aguardar respuesta del asistente (CHATGPT_RESPONSE_RECEIVED = true)
       let finalResponse = "";
       let lastText = "";
       let stableCount = 0;
@@ -500,6 +621,9 @@ Por favor proporciona:
         source: "chatgpt_web_real",
         message_sent: messageSent,
         response_received: true,
+        source_text: normSource,
+        dom_text: normDom,
+        source_text_equals_dom_text: textMatches,
         url: pageState.url,
         timestamp: new Date().toISOString()
       };

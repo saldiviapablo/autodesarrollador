@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/consultar-chatgpt.ps1 — Herramienta Reusable de Consulta a ChatGPT
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 6 — Fase 14: Chrome Dedicado + ChatGPT)
@@ -250,10 +250,13 @@ if (-not [string]::IsNullOrWhiteSpace($OutputPath)) {
 }
 
 return [PSCustomObject]@{
-    Status         = $resultObj.status
-    Response       = $resultObj.response
-    ConsultationId = $ConsultationId
-    Error          = $resultObj.error
-    ResultObj      = $resultObj
-    RawJson        = $stdout
+    Status                  = $resultObj.status
+    Response                = $resultObj.response
+    ConsultationId          = $ConsultationId
+    Error                   = $resultObj.error
+    ResultObj               = $resultObj
+    RawJson                 = $stdout
+    SourceTextEqualsDomText = $resultObj.source_text_equals_dom_text
+    DomText                 = $resultObj.dom_text
+    SourceText              = $resultObj.source_text
 }

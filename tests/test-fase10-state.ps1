@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # tests/test-fase10-state.ps1 — Suite de Verificación de Fase 10 (Estado Persistente)
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 5 — Fase 10: Estado Persistente .autopilot)

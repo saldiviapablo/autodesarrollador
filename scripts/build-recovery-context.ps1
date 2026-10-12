@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/build-recovery-context.ps1 — Generador de Contexto Compacto de Recuperación
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 5 — Fase 12: Continuidad entre Sesiones)

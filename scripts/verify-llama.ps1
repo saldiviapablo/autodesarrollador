@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Script de verificación reproducible de llama-server y Qwen3.6-35B-A3B a 64K contexto.
 .DESCRIPTION

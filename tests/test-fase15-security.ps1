@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # tests/test-fase15-security.ps1 — Suite de Verificación de Guardrails (Fase 15)
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 6 — Fase 15: Guardrails / Seguridad Ejecutable)

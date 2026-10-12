@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/progress-guard.ps1 — Motor Anti-Loop, Timeouts y Control de Progreso
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 6 — Fase 16: Anti-Loop / Timeouts / Control de Progreso)

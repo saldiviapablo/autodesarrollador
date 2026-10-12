@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/verify-web-security.ps1 — Suite Maestra de Verificación de Macrofase 6
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fases 13, 14, 15 y 16: Web, ChatGPT, Seguridad y Anti-Loop)

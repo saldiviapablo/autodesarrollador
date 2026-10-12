@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # tests/test-inference-lock.ps1 — Suite de Verificación de Inference Lock (Fase 7)
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fase 7 — Inference Lock / Serialización)

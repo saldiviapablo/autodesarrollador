@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/invoke-delegation.ps1 — Mediador de Delegación Estructurada
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fase 8 — Worker Qwen Code / Handoff)

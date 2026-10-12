@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # tests/test-checkpoint-integrity.ps1 — Prueba de Regresión de Integridad Criptográfica
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Hardening Previo Macrofase 6: Checkpoint-Manifest y SHA-256)

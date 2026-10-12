@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/inference-lock.ps1 — Mecanismo de Exclusión Mutua de Inferencia
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fase 7 — Inference Lock / Serialización)

@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/start-hermes-chatgpt.ps1 — Iniciador de Chrome Dedicado HERMES-CHATGPT
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 6 — Fase 14: Chrome Dedicado + ChatGPT)

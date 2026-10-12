@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/create-autopilot-checkpoint.ps1 — Creador Inmutable de Checkpoints
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 5 — Fase 10: Estado Persistente .autopilot)

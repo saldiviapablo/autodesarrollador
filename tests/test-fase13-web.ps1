@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # tests/test-fase13-web.ps1 — Suite de Verificación de Web Research (Fase 13)
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 6 — Fase 13: Web Research)

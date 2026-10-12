@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # tests/test-fase16-anti-loop.ps1 — Suite de Verificación Anti-Loop y Timeouts (Fase 16)
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 6 — Fase 16: Anti-Loop / Timeouts / Control de Progreso)

@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # tests/test-fase14-chatgpt.ps1 — Suite de Verificación de Chrome + ChatGPT Real (Fase 14)
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 6 — Fase 14: Chrome Dedicado + ChatGPT Real)
@@ -137,11 +137,26 @@ $budgetEvLines | Set-Content -LiteralPath (Join-Path $EvidenceDir "chatgpt-budge
 # ------------------------------------------------------------------------------
 # Test 5: Consulta REAL a ChatGPT vía CDP y Evaluación Hermes (ADVISORY_UNTRUSTED)
 # ------------------------------------------------------------------------------
-Write-Host "[5/6] Test 5: Consulta REAL a ChatGPT vía CDP (Sin Mock)..."
+# Roundtrip canónico de prueba
+$canonicalStr = @"
+Prueba UTF-8:
+áéíóú ÁÉÍÓÚ
+ñ Ñ
+¿Dónde está?
+¡Funciona!
+— € °
+"@
+$rtRes = & $consultarScript -Action "unicode-roundtrip" -Question $canonicalStr
+$rtPass = ($rtRes.Status -eq "SUCCESS") -and ($rtRes.SourceTextEqualsDomText -eq $true)
+Record-Test "Roundtrip Canónico UTF-8 en Composer DOM" $rtPass "Match=$($rtRes.SourceTextEqualsDomText)"
+if (-not $rtPass) { $allPass = $false }
+
+Write-Host "[5/6] Test 5: Consulta REAL a ChatGPT vía CDP (Hardened UTF-8, Sin Mock)..."
 $realPrompt = @"
-Estoy probando un puente local de consulta. Respondé exactamente con estas dos líneas:
-CHATGPT_BRIDGE_REAL_OK
-7 + 8 = 15
+Estoy probando un puente local de consulta.
+Respondé exactamente con estas dos líneas:
+CHATGPT_BRIDGE_UTF8_OK
+áéíóú ñ ¿sí?
 "@
 
 $consulRes = & $consultarScript `
@@ -151,11 +166,14 @@ $consulRes = & $consultarScript `
 
 $realResponseText = $consulRes.Response
 $sourceIsReal = ($consulRes.ResultObj.source -eq "chatgpt_web_real")
-$hasBridgeOk = $realResponseText -match "CHATGPT_BRIDGE_REAL_OK"
-$hasMathOk = $realResponseText -match "7\s*\+\s*8\s*=\s*15|15"
+$unicodeSendOk = ($consulRes.SourceTextEqualsDomText -eq $true)
+$hasBridgeOk = $realResponseText -match "CHATGPT_BRIDGE_UTF8_OK"
+$hasVowelsOk = $realResponseText -match "áéíóú"
+$hasEnyeOk   = $realResponseText -match "ñ"
+$hasQuestionOk = $realResponseText -match "¿sí\?"
 
-$t5Pass = ($consulRes.status -eq "SUCCESS") -and $sourceIsReal -and $hasBridgeOk -and $hasMathOk
-Record-Test "Consulta REAL a ChatGPT en Navegador Autenticado" $t5Pass "Status=$($consulRes.status), Source=$($consulRes.ResultObj.source), TokensOk=$($hasBridgeOk -and $hasMathOk)"
+$t5Pass = ($consulRes.status -eq "SUCCESS") -and $sourceIsReal -and $unicodeSendOk -and $hasBridgeOk -and $hasVowelsOk -and $hasEnyeOk -and $hasQuestionOk
+Record-Test "Consulta REAL a ChatGPT con Integridad UTF-8" $t5Pass "Status=$($consulRes.status), Send=$unicodeSendOk, TokensOk=$($hasBridgeOk -and $hasVowelsOk)"
 
 # Evaluación por Hermes Supervisor
 $hermesStdout = ""
@@ -171,8 +189,8 @@ $realResponseText
 ----------------------------
 
 La consigna requería validar el puente emitiendo exactamente:
-CHATGPT_BRIDGE_REAL_OK
-7 + 8 = 15
+CHATGPT_BRIDGE_UTF8_OK
+áéíóú ñ ¿sí?
 
 Evalúa técnicamente la respuesta recibida.
 Emite tu veredicto estructurado en este formato exacto:

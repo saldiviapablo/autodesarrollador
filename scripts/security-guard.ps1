@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/security-guard.ps1 — Motor Determinista de Guardrails y Seguridad
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 6 — Fase 15: Guardrails / Seguridad Ejecutable)

@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/verify-qwen-code.ps1 — Verificación Integral de Qwen Code CLI (Fase 5)
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fase 5 — Qwen Code CLI)

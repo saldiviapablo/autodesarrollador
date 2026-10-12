@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # tests/test-fase11-recovery.ps1 — Suite de Verificación de Fase 11 (Recovery y Reconciliación)
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 5 — Fase 11: Recovery y Reconciliación)

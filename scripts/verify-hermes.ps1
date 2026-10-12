@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/verify-hermes.ps1 — Verificación Integral de Hermes Agent (Fase 6)
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fase 6 — Hermes Agent Supervisor)

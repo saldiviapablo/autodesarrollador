@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/test-chrome-smoke.ps1 — Prueba Aislada de Arranque (Chrome Smoke Test)
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 6 — Fase 14: Chrome Dedicado + ChatGPT)

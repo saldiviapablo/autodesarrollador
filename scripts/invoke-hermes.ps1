@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/invoke-hermes.ps1 — Wrapper de Invocación para Hermes Agent CLI
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fase 6 — Hermes Agent)

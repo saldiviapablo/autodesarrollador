@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/invoke-qwen-code.ps1 — Wrapper de Invocación para Qwen Code CLI
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fase 5 — Qwen Code CLI)

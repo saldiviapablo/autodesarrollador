@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/state-manager.ps1 — Administrador Canónico de Estado y Memoria
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Macrofase 5 — Fase 10: Estado Persistente .autopilot)

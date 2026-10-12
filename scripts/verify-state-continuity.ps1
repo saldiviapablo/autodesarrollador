@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/verify-state-continuity.ps1 — Suite Integral de Macrofase 5
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fases 10, 11 y 12: Memoria, Estado y Continuidad)
