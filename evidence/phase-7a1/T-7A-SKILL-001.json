@@ -1,0 +1,16 @@
+{
+    "test_id":  "T-7A-SKILL-001",
+    "name":  "Descubrimiento y Uso Real de Skill Reutilizable (SOP)",
+    "status":  "PASS",
+    "timestamp":  "2026-10-12T20:12:29.2495307-03:00",
+    "discovered_all_sops":  true,
+    "installed_sops_verified":  [
+                                    "test-failure-diagnosis",
+                                    "technical-audit-review",
+                                    "safe-refactoring"
+                                ],
+    "hermes_exit_code":  0,
+    "hermes_duration_s":  82.35,
+    "sop_contract_applied":  true,
+    "hermes_output":  "DIAGNOSIS_SKILL_APPLIED: test-failure-diagnosis\r\nFAILED_TEST: tests/test_health_endpoint.ps1 (línea 42, exit_code=1)\r\nFAILURE_CATEGORY: ENVIRONMENT_FAILURE\r\nROOT_CAUSE: El servidor `llama-server.exe` (127.0.0.1:8080) no está ejecutándose o no se ha iniciado antes de correr el test. El error `ConnectionRefusedError (WinError 10061)` indica que no hay ningún proceso escuchando en ese puerto — el endpoint `/health` no puede responder porque el servidor de inferencia local está caído o no se lanzó. No es un defecto de código ni del test; es un requisito de entorno no cumplido.\r\nMINIMAL_FIX: Iniciar `llama-server.exe` con los parámetros validados del proyecto (modelo Qwen3.6-35B-A3B, `--ctx-size 65536 --parallel 1 --cpu-moe --n-gpu-layers 99 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --jinja`) Y validar su health endpoint antes de ejecutar el test de integridad del sistema. Si se usa el runner, asegurarse de que la fase `INFRA_PREFLIGHT` (health check de llama-server) pase antes de correr tests.\r\nDETERMINISTIC_RETEST: `tests/test_health_endpoint.ps1` — debe pasar con `exit_code == 0` y `HTTP 200 OK` desde `http://127.0.0.1:8080/health` solo después de confirmar que `llama-server.exe` está corriendo y el health endpoint responde."
+}

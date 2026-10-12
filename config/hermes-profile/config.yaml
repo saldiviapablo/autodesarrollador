@@ -1,0 +1,29 @@
+model:
+  default: qwen36
+  provider: custom
+  base_url: http://127.0.0.1:8080/v1
+  context_length: 65536
+custom_providers:
+  - name: local-qwen
+    base_url: http://127.0.0.1:8080/v1
+    api_key: local-not-required
+    api_mode: chat_completions
+    context_length: 65536
+    models:
+      qwen36:
+        context_length: 65536
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  memory_char_limit: 2200
+  user_char_limit: 1375
+  nudge_interval: 10
+skills:
+  creation_nudge_interval: 10
+hooks_auto_accept: true
+hooks:
+  pre_tool_call:
+    - command: '"C:/Python314/python.exe" "C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/scripts/hermes-pre-tool-hook.py"'
+      timeout: 30
+      fail_closed: true
+_config_version: 50

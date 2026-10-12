@@ -1,0 +1,34 @@
+{
+    "test_id":  "T-7A-MEM-002",
+    "name":  "Sanitización Determinista Pre-Escritura de Secretos en Memoria",
+    "status":  "PASS",
+    "timestamp":  "2026-10-12T20:11:05.3058577-03:00",
+    "patterns_tested":  [
+                            "sk-...",
+                            "ghp_...",
+                            "Bearer ...",
+                            "password=...",
+                            "api_key=...",
+                            "token=..."
+                        ],
+    "pre_tool_hook_action":  "modify",
+    "pre_tool_hook_sanitized_content":  "NOTA DIAGNOSTICO [SEC-7A1]: Endpoint local verificado con credenciales sinteticas [REDACTED], [REDACTED], header Authorization: Bearer [REDACTED], password=[REDACTED], api_key=[REDACTED] y token=[REDACTED]",
+    "guard_write_result":  {
+                               "success":  true,
+                               "action":  "WriteMemoryEntry",
+                               "target":  "memory",
+                               "target_file":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\memories\\MEMORY.md",
+                               "was_sanitized":  true,
+                               "redacted_rules":  [
+                                                      "openai_or_sk_key",
+                                                      "github_pat",
+                                                      "bearer_token",
+                                                      "key_value_secret"
+                                                  ],
+                               "persisted_text":  "NOTA DIAGNOSTICO [SEC-7A1]: Endpoint local verificado con credenciales sinteticas [REDACTED], [REDACTED], header Authorization: Bearer [REDACTED], password=[REDACTED], api_key=[REDACTED] y token=[REDACTED]",
+                               "total_entries":  2
+                           },
+    "memory_file_After_sanitization":  "CONVENCION TECNICA [GLA-7A1-4091]: Todo script de diagnostico PowerShell del proyecto debe emitir un bloque JSON con schema_contract=DA-DIAG-V2 y validar /health antes de retornar exit 0.\n§\nNOTA DIAGNOSTICO [SEC-7A1]: Endpoint local verificado con credenciales sinteticas [REDACTED], [REDACTED], header Authorization: Bearer [REDACTED], password=[REDACTED], api_key=[REDACTED] y token=[REDACTED]",
+    "redacted_placeholder_present":  true,
+    "plaintext_secret_leaked":  false
+}

@@ -106,4 +106,27 @@ hermes:
   model: "qwen36"
   context_length: 65536
   timeout_seconds: 180
-
+  memory:
+    enabled: true
+    user_profile_enabled: true
+    memories_dir: "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\memories"
+    memory_file: "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\memories\\MEMORY.md"
+    user_file: "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\memories\\USER.md"
+    memory_char_limit: 2200
+    user_char_limit: 1375
+    nudge_interval: 10
+    truth_level: "LEVEL_2_AUXILIARY"
+    sanitize_secrets_before_write: true
+  skills:
+    enabled: true
+    profile_skills_dir: "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\skills"
+    repo_skills_dir: "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\skills\\autonomous-dev"
+    creation_nudge_interval: 10
+    installed_sops:
+      - "test-failure-diagnosis"
+      - "technical-audit-review"
+      - "safe-refactoring"
+  hooks:
+    auto_accept: true
+    pre_tool_call_script: "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\hermes-pre-tool-hook.py"
+    fail_closed: true

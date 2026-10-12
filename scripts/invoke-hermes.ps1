@@ -43,6 +43,9 @@ param(
     [switch]$SkipLock,
 
     [Parameter(Mandatory = $false)]
+    [string[]]$Skills = @(),
+
+    [Parameter(Mandatory = $false)]
     [string[]]$ExtraArgs = @()
 )
 
@@ -126,6 +129,14 @@ if ($Mode -eq "oneshot") {
         $argList.Add("stream-json")
     }
     $argList.Add("--yolo")
+    if ($Skills -and $Skills.Count -gt 0) {
+        foreach ($sk in $Skills) {
+            if (-not [string]::IsNullOrWhiteSpace($sk)) {
+                $argList.Add("-s")
+                $argList.Add($sk.Trim())
+            }
+        }
+    }
     if ($MaxTurns -gt 0) {
         $argList.Add("--max-turns")
         $argList.Add($MaxTurns.ToString())
@@ -172,6 +183,8 @@ $psi.WorkingDirectory = $targetWorkDir
 $psi.RedirectStandardOutput = $true
 $psi.RedirectStandardError = $true
 $psi.RedirectStandardInput = $true
+$psi.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+$psi.StandardErrorEncoding = [System.Text.Encoding]::UTF8
 $psi.UseShellExecute = $false
 $psi.CreateNoWindow = $true
 
@@ -179,6 +192,9 @@ $psi.CreateNoWindow = $true
 $psi.EnvironmentVariables["OPENAI_BASE_URL"] = $baseUrl
 $psi.EnvironmentVariables["OPENAI_API_KEY"] = "local-not-required"
 $psi.EnvironmentVariables["OPENAI_MODEL"] = $modelName
+$psi.EnvironmentVariables["HERMES_ACCEPT_HOOKS"] = "1"
+$psi.EnvironmentVariables["PYTHONUTF8"] = "1"
+$psi.EnvironmentVariables["PYTHONIOENCODING"] = "utf-8"
 
 $lockToken = $null
 if (-not $SkipLock) {

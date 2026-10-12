@@ -1,0 +1,109 @@
+{
+  "phase": "7A.1",
+  "title": "Inventario Real de Hermes v0.21.6 — Memoria Persistente y Skills Reutilizables",
+  "inspected_at": "2026-10-12T19:38:30-03:00",
+  "hermes_installation": {
+    "version": "0.21.6",
+    "release_date": "2026.4.14",
+    "git_commit": "4d97dc792",
+    "binary_path": "C:\\Users\\Pc\\AppData\\Local\\hermes\\bin\\hermes.exe",
+    "source_dir": "C:\\Users\\Pc\\AppData\\Local\\hermes\\hermes-agent",
+    "python_exe": "C:\\Users\\Pc\\AppData\\Local\\hermes\\hermes-agent\\venv\\Scripts\\python.exe",
+    "root_hermes_dir": "C:\\Users\\Pc\\AppData\\Local\\hermes",
+    "active_profile": "desarrollador-autonomo",
+    "profile_hermes_home": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo",
+    "legacy_dot_hermes_exists": false
+  },
+  "persistent_memory": {
+    "native_implementation": "Curated file-backed MemoryStore (tools/memory_tool.py + tools/memory_tool_store.py)",
+    "storage_dir": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\memories",
+    "files": {
+      "memory": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\memories\\MEMORY.md",
+      "user": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\memories\\USER.md"
+    },
+    "entry_delimiter": "\\n§\\n",
+    "locking_mechanism": "Cross-process file lock (.lock sibling file via msvcrt.locking on Windows) + atomic temp-file rename",
+    "default_limits": {
+      "memory_char_limit": 2200,
+      "user_char_limit": 1375,
+      "nudge_interval": 10
+    },
+    "config_keys_in_config_yaml": {
+      "section": "memory",
+      "memory_enabled": true,
+      "user_profile_enabled": true,
+      "memory_char_limit": 2200,
+      "user_char_limit": 1375,
+      "nudge_interval": 10,
+      "provider": ""
+    },
+    "tool_interface": {
+      "tool_name": "memory",
+      "toolset": "memory",
+      "actions": ["add", "replace", "remove"],
+      "supports_batch_operations": true,
+      "targets": ["memory", "user"]
+    },
+    "cross_session_lifecycle": {
+      "session_start": "AIAgent._init_memory() instantiates MemoryStore and calls load_from_disk(), capturing a frozen _system_prompt_snapshot injected into the volatile tier of the system prompt.",
+      "mid_session_writes": "Calls to the memory tool immediately update self.memory_entries / self.user_entries, acquire the file lock, and atomically write MEMORY.md / USER.md to disk.",
+      "next_session_recall": "Any new session (new session_id) running under -p desarrollador-autonomo loads MEMORY.md from disk at startup and injects it into the system prompt under 'MEMORY (your personal notes)'."
+    },
+    "cli_commands": [
+      "hermes -p desarrollador-autonomo memory status",
+      "hermes -p desarrollador-autonomo memory setup",
+      "hermes -p desarrollador-autonomo memory off",
+      "hermes -p desarrollador-autonomo memory reset"
+    ],
+    "builtin_scan_vs_required_sanitization": {
+      "builtin_scan": "tools/memory_tool_store.py::_scan_memory_content checks prompt injection patterns and blocks only quoted 20+ char api_key/token/secret via hardcoded_secret threat pattern without redacting to [REDACTED].",
+      "required_sanitization_gap": "Unquoted password=..., token=..., Bearer ..., sk-..., ghp_... would either pass through unredacted or fail without redacting to [REDACTED].",
+      "solution": "Configure native Hermes pre_tool_call shell hook (agent/shell_hooks.py) with hooks_auto_accept: true and fail_closed: true pointing to scripts/hermes-pre-tool-hook.py, which intercepts memory tool calls before MemoryStore.add/replace runs and rewrites sensitive patterns to [REDACTED] via {'action': 'modify', 'args': ...}, plus PowerShell helper scripts/hermes-memory-guard.ps1 for deterministic CLI/file sanitization."
+    }
+  },
+  "reusable_skills": {
+    "native_implementation": "Progressive disclosure SKILL.md system (tools/skills_tool.py + tools/skill_manager_tool.py + agent/prompt_builder.py)",
+    "storage_dir": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\skills",
+    "canonical_repo_mirror": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\skills\\autonomous-dev",
+    "format": {
+      "entry_file": "SKILL.md",
+      "frontmatter": "YAML frontmatter delimited by --- requiring 'name' (^[a-z0-9][a-z0-9._-]*$, max 64 chars) and 'description' (concise 1-sentence description <= 150 chars)",
+      "supporting_dirs": ["references/", "templates/", "scripts/", "assets/"]
+    },
+    "discovery_and_loading": {
+      "tier_1_index": "build_skills_system_prompt() scans ~/.hermes/skills/ and injects a compact category/name/description index into the volatile tier of the system prompt.",
+      "tier_2_on_demand": "The agent calls skills_list() or skill_view(name, file_path) to load full Markdown instructions on demand.",
+      "preload_options": "CLI flag -s / --skills <name> or config.yaml skills.auto_load list preloads full SKILL.md content into the system prompt at session start.",
+      "oneshot_q_behavior": "In -q (oneshot) mode, agent/oneshot_footprint.py hides skill_manage (authoring) but keeps skills_list and skill_view enabled. ONESHOT_SKILLS_LOAD_GUIDANCE instructs loading skills that carry project-specific conventions/contracts, and -s <skill> or skills.auto_load preloads them deterministically."
+    },
+    "cli_commands": [
+      "hermes -p desarrollador-autonomo skills list",
+      "hermes -p desarrollador-autonomo skills inspect <name>",
+      "hermes -p desarrollador-autonomo skills audit [name]",
+      "hermes -p desarrollador-autonomo skills config",
+      "hermes -p desarrollador-autonomo skills snapshot"
+    ]
+  },
+  "system_prompt_precedence_and_hooks": {
+    "prompt_assembly_file": "C:\\Users\\Pc\\AppData\\Local\\hermes\\hermes-agent\\agent\\system_prompt.py",
+    "tiers_order": [
+      "1. stable tier: SOUL.md identity -> tool & execution guidance -> skills.auto_load -> coding prefix",
+      "2. context tier: caller system_message -> project context files (AGENTS.md) -> workspace snapshot",
+      "3. volatile tier: skills index (_skills_prompt) -> MEMORY.md & USER.md snapshot -> plugin sections -> active profile -> timestamp"
+    ],
+    "truth_hierarchy_enforcement": {
+      "level_1_authoritative": "Filesystem, Git status/diff, real test/build execution, .autopilot/RUN-CONTRACT.yaml, .autopilot/STATE.json, .autopilot/EVENTS.jsonl",
+      "level_2_auxiliary": "Hermes MEMORY.md, USER.md, session history, reusable skills",
+      "enforcement_mechanism": "Reinforced in profile SOUL.md, AGENTS.md context injection, skill contracts, and pre_tool_call hook validation."
+    },
+    "pre_tool_call_hook_architecture": {
+      "source_file": "C:\\Users\\Pc\\AppData\\Local\\hermes\\hermes-agent\\agent\\shell_hooks.py",
+      "dispatch_file": "C:\\Users\\Pc\\AppData\\Local\\hermes\\hermes-agent\\agent\\tool_executor.py (_dispatch_authorized_once -> _pre_tool_block)",
+      "capabilities": [
+        "Modify tool arguments before execution via stdout JSON {'action': 'modify', 'args': {...}}",
+        "Block unauthorized tool calls before execution via stdout JSON {'action': 'block', 'message': '...'} or exit code 2",
+        "Fail closed (fail_closed: true) if the hook script errors or times out"
+      ]
+    }
+  }
+}

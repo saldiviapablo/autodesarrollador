@@ -54,6 +54,14 @@ secret_policy:
   allow_secrets_in_git: false
   allow_secrets_in_chatgpt: false
   allow_secrets_in_state: false
+  allow_secrets_in_memory: false
+  sanitize_before_memory_write: true
+  redaction_placeholder: "[REDACTED]"
+
+hermes_capabilities:
+  memory_truth_level: "LEVEL_2_AUXILIARY"
+  skills_can_bypass_guardrails: false
+  enforce_pre_tool_hook: true
 
 protected_paths:
   - "C:\\AI\\llama.cpp"

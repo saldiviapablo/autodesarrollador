@@ -1,7 +1,7 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-12T19:22:00-03:00  
+**Última actualización:** 2026-10-12T20:16:30-03:00  
 **Estado documental:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Baseline de arquitectura:** Hermes Agent (v0.21.6) + Qwen Code CLI (@qwen-code/qwen-code@0.25.1) + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
@@ -17,7 +17,7 @@
 | **Macrofase 4** | **Integración Hermes ↔ Qwen Code** (Fases 7 a 9) | **PASS** | Inference Lock cross-process (.NET Mutex), contratos JSON Schema `DelegationRequest`/`DelegationResult`, delegación supervisada completa de 2 agentes con serialización estricta (0 ms solapamiento). Evidencia en `evidence/integration/`. |
 | **Macrofase 5** | **Memoria y Continuidad** (Fases 10 a 12) | **PASS** | Estructura `.autopilot/` (`STATE.json`, `RUN-CONTRACT.yaml`, `EVENTS.jsonl`), Protocolo de Recuperación de 15 pasos y continuidad multi-sesión validada con pérdida total de contexto en chat. Evidencia en `evidence/continuity/`. |
 | **Macrofase 6** | **Web, ChatGPT, Seguridad y Anti-Loop** (Fases 13 a 16) | **PASS** | Web Research seguro (Fase 13), Chrome dedicado CDP con consulta real a ChatGPT y validación UTF-8/BOM (Fase 14), Guardrails deterministas de rutas, comandos y secretos (Fase 15) y Motor Anti-loop con escalera de escalamiento (Fase 16). Evidencias en `evidence/web/`, `evidence/chatgpt/`, `evidence/security/` y `evidence/anti-loop/`. |
-| **Macrofase 7A** | **Capacidades Nativas de Hermes** (Subfases 7A.1 a 7A.10) | **PENDING** | Congelada documentalmente en `08-CAPACIDADES-NATIVAS-HERMES.md`. Incorpora Memoria N2, Skills, MCP, Extracción documental (`Prefer Native When Verified`), Browser nativo, Bot Mode, Worktrees, Cron/No-agent jobs (validación autónoma en `7A.7`), Web Dashboard (superficie administrativa `127.0.0.1:9119` configurable), Gateway, Auto-update e Idempotencia de ChatGPT (`T-CHATGPT-010`, pendiente de implementar y probar). Ninguna capacidad activa aún. |
+| **Macrofase 7A** | **Capacidades Nativas de Hermes** (Subfases 7A.1 a 7A.10) | **IN_PROGRESS** | **Subfase 7A.1 = PASS** (Memoria Persistente Nivel 2 + 3 Skills SOP + Hook determinista `pre_tool_call`; 5/5 pruebas en `evidence/phase-7a1/`). Subfases 7A.2 a 7A.10 en estado **PENDING**. |
 | **Macrofase 7B** | **Runner Autónomo Nocturno** (Fases 17 a 22) | **PENDING** | Orquestador determinista de procesos, integración obligatoria `Cron → Runner → Watchdog → RUN-CONTRACT` (`T-RUN-009`), Watchdog de fallos, Launchers limpios `INICIAR`/`DETENER`, Completion Gate objetivo, reportes estandarizados y Cleanup garantizado. |
 | **Macrofase 8** | **Validación Final** (Fases 23 a 28) | **PENDING** | Suite integral en sandbox, pruebas autónomas prolongadas (E2E corto, 2 horas y nocturna de 6-8 horas), auditoría integral y piloto en proyecto real no crítico. |
 
@@ -44,7 +44,8 @@
 | **Fase 14** | Chrome dedicado + ChatGPT | **PASS** | Perfil dedicado CDP, domain-lock `chatgpt.com`, consulta real sin mock y transporte UTF-8 certificado. |
 | **Fase 15** | Guardrails de seguridad | **PASS** | Command Guard 11/11, Path Guard canónico, bloqueo de junctions y redacción de secretos. |
 | **Fase 16** | Anti-loop | **PASS** | Normalización de errores, huella de progreso, escalera de escalamiento determinista. |
-| **Fase 7A.1-10**| Hermes Native Capabilities | **PENDING** | 10 subfases canónicas definidas formalmente en `08-CAPACIDADES-NATIVAS-HERMES.md`. |
+| **Subfase 7A.1**| Memoria Persistente + Skills | **PASS** | Memoria Nivel 2 (`MEMORY.md`), 3 Skills SOP (`test-failure-diagnosis`, `technical-audit-review`, `safe-refactoring`), hook `pre_tool_call` de sanitización y bloqueo adversarial (`T-7A-MEM-001/002`, `T-7A-SKILL-001/002`, `T-7A-HIERARCHY-001` PASS). |
+| **Subfases 7A.2-10**| Resto Capacidades Nativas Hermes| **PENDING** | MCP, Plugins, Extracción Documental, Browser Nativo, Bots/Subagentes/Worktrees, Cron/No-Agent Jobs, Dashboard, Gateway, Auto-Update e Idempotencia ChatGPT. |
 | **Fase 17** | Runner | **PENDING** | Orquestador determinista del ciclo de vida y gestión de procesos. |
 | **Fase 18** | Watchdog | **PENDING** | Monitor de heartbeat, detección de procesos caídos y recuperación limitada. |
 | **Fase 19** | Launcher único | **PENDING** | Scripts ejecutables limpios `INICIAR` y `DETENER`. |
@@ -62,5 +63,4 @@
 
 ## Próximo Paso Recomendado
 
-- **Aprobación de la Revisión Documental de Arquitectura:** El usuario revisará el catálogo congelado de capacidades nativas (`08-CAPACIDADES-NATIVAS-HERMES.md`), la incorporación de las capas `HERMES CAPABILITY LAYER` y `DETERMINISTIC CONTROL LAYER`, el nuevo modelo de memoria de 3 niveles + Skills, y la reestructuración del Roadmap en Macrofases 7A, 7B y 8.
-- **Inicio de Macrofase 7A (Hermes Native Capabilities):** Proceder con la implementación secuencial (7A.1 → 7A.2 → ...) únicamente tras la aprobación formal de esta revisión documental.
+- **Subfase 7A.2 (Servidores MCP + Plugins / Custom Tools + Extracción Documental):** Proceder únicamente tras la revisión y aprobación de la Subfase 7A.1.
