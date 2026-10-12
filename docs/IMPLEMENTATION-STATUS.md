@@ -1,8 +1,8 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-11T22:33:00-03:00  
-**Fase activa:** FASE 4 COMPLETADA (En espera de autorización para Fase 5)  
+**Última actualización:** 2026-10-11T23:45:00-03:00  
+**Fase activa:** FASE 5 COMPLETADA (En espera de autorización para Fase 6)  
 **Baseline de arquitectura:** Hermes Agent + Qwen Code CLI + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
 ---
@@ -16,7 +16,7 @@
 | **Fase 2** | Backup y baseline | **PASS** | Creación de `backups/preinstall-*/`, verificación de hashes SHA-256, corrección de discrepancias documentales, creación de `MANIFEST.md`, `.gitignore` y primer commit baseline. |
 | **Fase 3** | Validación de llama.cpp + Qwen | **PASS** | Validado inicio controlado a 64K (`n_ctx_slot = 65536`), `parallel = 1`, alias `qwen36`, inferencia exitosa (33.1 tok/s) y cleanup verificado. Evidencia en `evidence/installation/`. |
 | **Fase 4** | Configuración central | **PASS** | Creación de `config/system.yaml`, `config/security.yaml`, `config/VERSIONS.lock` y `config/README.md`. Verificación determinista (66/66 pruebas superadas) con `scripts/verify-config.ps1`. |
-| **Fase 5** | Qwen Code CLI | **PENDING** | Instalación/configuración de `@qwen-code/qwen-code` y validación en sandbox headless. |
+| **Fase 5** | Qwen Code CLI | **PASS** | Instalación de `@qwen-code/qwen-code@0.25.1`, suite `verify-qwen-code.ps1` exitosa (7/7 capacidades validadas: inferencia local, headless, inspección en sandbox, autofix FAIL->FIX->PASS, JSON, timeout, resume). Evidencia en `evidence/installation/`. |
 | **Fase 6** | Hermes Agent | **PENDING** | Instalación/configuración de `NousResearch/hermes-agent` contra Qwen local. |
 | **Fase 7** | Model Gateway / Inference Lock | **PENDING** | Mecanismo determinista de exclusión mutua para serializar `--parallel 1`. |
 | **Fase 8** | Wrapper Qwen Code | **PENDING** | Interfaz estructurada (JSON in/out, timeouts) para ejecución autónoma. |
@@ -44,6 +44,6 @@
 ---
 
 ## Próximo Paso Recomendado
-
-- **Aprobación de la Fase 4:** El usuario revisará el informe de verificación determinista de la configuración central y el commit en la rama `phase/04-central-config`.
-- **Fase 5:** Instalación y configuración controlada de Qwen Code CLI (`@qwen-code/qwen-code`) en modo headless apuntando al modelo local `qwen36` en `127.0.0.1:8080`.
+ 
+- **Aprobación de la Fase 5:** El usuario revisará el informe de verificación de Qwen Code CLI y el commit en la rama `phase/05-qwen-code`.
+- **Fase 6:** Instalación y configuración de Hermes Agent (`NousResearch/hermes-agent`) como supervisor/orquestador apuntando al modelo local `qwen36` en `127.0.0.1:8080`.
