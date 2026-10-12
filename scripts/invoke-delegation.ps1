@@ -45,18 +45,18 @@ if (-not [string]::IsNullOrEmpty($RequestFile) -and (Test-Path -LiteralPath $Req
 
 # 2. Validar schema de DelegationRequest usando Python + jsonschema
 function Test-JsonAgainstSchema([string]$jsonContent, [string]$schemaPath) {
-    $validatePy = @'
-import sys, json, jsonschema
-try:
-    data = json.loads(sys.argv[1])
-    schema = json.load(open(sys.argv[2], encoding='utf-8'))
-    jsonschema.validate(instance=data, schema=schema)
-    print("VALID")
-except Exception as e:
-    print(f"INVALID: {e}")
-'@
-    $res = & $pythonExe -c $validatePy $jsonContent $schemaPath
-    return $res
+    $tempFile = [System.IO.Path]::GetTempFileName()
+    try {
+        [System.IO.File]::WriteAllText($tempFile, $jsonContent, [System.Text.Encoding]::UTF8)
+        $validatePy = "import sys, json, jsonschema; d = json.load(open(sys.argv[1], encoding='utf-8-sig')); s = json.load(open(sys.argv[2], encoding='utf-8-sig')); jsonschema.validate(instance=d, schema=s); print('VALID')"
+        $res = & $pythonExe -c $validatePy $tempFile $schemaPath 2>&1
+        $resStr = ($res | Out-String).Trim()
+        return $resStr
+    } catch {
+        return "INVALID: $($_.Exception.Message)"
+    } finally {
+        if (Test-Path -LiteralPath $tempFile) { Remove-Item -LiteralPath $tempFile -Force -ErrorAction SilentlyContinue }
+    }
 }
 
 $reqValidation = Test-JsonAgainstSchema $rawRequestText $reqSchemaPath
@@ -178,20 +178,38 @@ if ($requestObj.tests -and $requestObj.tests.Count -gt 0) {
     }
 }
 
-# 8. Identificar archivos modificados en Git dentro del workspace
+# 8. Identificar archivos modificados en Git dentro del workspace (filtrando artefactos temporales/runtime)
+function Test-IsSignificantChange([string]$filePath) {
+    if ([string]::IsNullOrWhiteSpace($filePath)) { return $false }
+    $norm = $filePath -replace '\\', '/'
+    if ($norm -match '(^|/)__pycache__(/|$)' -or
+        $norm -match '\.(pyc|pyo|pyd|log|tmp|swp)$' -or
+        $norm -match '(^|/)\.pytest_cache(/|$)' -or
+        $norm -match '(^|/)\.coverage($|/)') {
+        return $false
+    }
+    return $true
+}
+
 $changedFiles = [System.Collections.Generic.List[string]]::new()
 try {
     $gitStatusOut = & git -C "$canonicalWorkspace" status --porcelain 2>&1
     foreach ($line in ($gitStatusOut -split "`r?`n")) {
         if ($line -match '^\s*[MADRCU?]+\s+(.+)$') {
-            $changedFiles.Add($matches[1].Trim())
+            $f = $matches[1].Trim()
+            if (Test-IsSignificantChange $f) {
+                $changedFiles.Add($f)
+            }
         }
     }
     if ($changedFiles.Count -eq 0) {
         $recentFiles = & git -C "$canonicalWorkspace" log -1 --name-only --pretty="" 2>&1
         foreach ($line in ($recentFiles -split "`r?`n")) {
             if (-not [string]::IsNullOrWhiteSpace($line)) {
-                $changedFiles.Add($line.Trim())
+                $f = $line.Trim()
+                if (Test-IsSignificantChange $f) {
+                    $changedFiles.Add($f)
+                }
             }
         }
     }

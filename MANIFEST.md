@@ -91,7 +91,10 @@ Parámetros validados:
 - **Fase 7 (Model Gateway / Inference Lock):** PASS (Primitiva System.Threading.Mutex + metadata en runtime/locks, crash recovery, timeout)
 - **Fase 8 (Worker Qwen Code / Handoff):** PASS (Contratos DelegationRequest/DelegationResult validados con JSON Schema, ejecución sandbox)
 - **Fase 9 (Delegación Hermes → Qwen Code):** PASS (Flujo 2 agentes, revisión/aceptación, rechazo ante falso éxito, serialización estricta 0 ms)
-- **Fases 10 a 28:** PENDING
+- **Fase 10 (Estado Persistente .autopilot):** PASS (Esquemas validados, atomic write + previous backup, eventos append-only, sanitización, checkpoints)
+- **Fase 11 (Recovery y Reconciliación):** PASS (Protocolo de 15 pasos, Crash A/B/C/D resueltos, checkpoints, verificación de idempotencia)
+- **Fase 12 (Continuidad de Sesiones):** PASS (Principio CONVERSATION != SOURCE OF TRUTH certificado, recuperación de contexto sin historial, etapas multi-sesión)
+- **Fases 13 a 28:** PENDING
 
 ---
 

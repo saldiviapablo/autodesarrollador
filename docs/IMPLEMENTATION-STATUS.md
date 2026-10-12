@@ -1,8 +1,8 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-12T01:30:00-03:00  
-**Fase activa:** MACROFASE 4 COMPLETADA (Fases 7, 8 y 9 — Integración Hermes ↔ Qwen Code)  
+**Última actualización:** 2026-10-12T02:15:00-03:00  
+**Fase activa:** MACROFASE 5 COMPLETADA (Fases 10, 11 y 12 — Memoria, Estado y Continuidad)  
 **Baseline de arquitectura:** Hermes Agent + Qwen Code CLI + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
 ---
@@ -21,9 +21,9 @@
 | **Fase 7** | Model Gateway / Inference Lock | **PASS** | Primitiva de exclusión mutua cross-process con .NET Mutex + metadata observable. Validada concurrencia, crash recovery (sin archivos huérfanos), timeout controlado. Evidencia en `evidence/integration/inference-lock.md`. |
 | **Fase 8** | Worker Qwen Code / Handoff | **PASS** | Contratos estructurados tipados `DelegationRequest` y `DelegationResult` validados con JSON Schema. Ejecución headless autónoma, verificación determinista de tests y tracking de diffs Git. Evidencia en `evidence/integration/qwen-worker-result.json`. |
 | **Fase 9** | Delegación Hermes → Qwen Code | **PASS** | Flujo completo de 2 agentes: Hermes Supervisor planifica y emite contrato -> Qwen Code Worker repara código en sandbox y pasa tests -> Hermes Supervisor valida y emite DECISION: ACCEPTED. Validada detección de falso SUCCESS (DECISION: REJECTED), flujo de re-delegación multi-intento y serialización estricta (0 ms solapamiento). Evidencia en `evidence/integration/`. |
-| **Fase 10** | Estructura `.autopilot` | **PENDING** | Esquema `RUN-CONTRACT.yaml`, `STATE.json`, `EVENTS.jsonl`, escrituras atómicas. |
-| **Fase 11** | Recovery Protocol | **PENDING** | Reconciliación determinista ante caídas de procesos o reinicios. |
-| **Fase 12** | Sesiones y continuidad | **PENDING** | Gestión de `--continue`/`--resume` e historial sin pérdida de contexto. |
+| **Fase 10** | Estructura `.autopilot` | **PASS** | Esquemas `run-contract.schema.json` y `autopilot-state.schema.json`, `QWEN.md`, máquina de estados cerrada, escritura atómica con fallback `STATE.previous.json`, log append-only `EVENTS.jsonl` monotónico, sanitización `[REDACTED]` y checkpoints inmutables. Evidencia en `evidence/continuity/`. |
+| **Fase 11** | Recovery Protocol | **PASS** | Reconciliación determinista de 15 pasos. Verificados Crash A (Git > STATE), Crash B (test en curso -> UNKNOWN), Crash C (STATE corrupto -> fallback previous), Crash D (stale heartbeat -> RECOVERING), checkpoints y prueba de idempotencia estricta. Evidencia en `evidence/continuity/`. |
+| **Fase 12** | Sesiones y continuidad | **PASS** | Principio `CONVERSATION != SOURCE OF TRUTH` certificado: ejecución en 2 etapas (`add` + `multiply`), checkpoint intermedio, simulación de pérdida total de contexto, reconstrucción exacta (100%) por nueva sesión limpia de Hermes Supervisor sin historial de chat, resolución de etapa 2 por nueva sesión Qwen Code, revisión y aceptación final (`DECISION: ACCEPTED`). Evidencia en `evidence/continuity/`. |
 | **Fase 13** | Web Research | **PENDING** | Investigación documental y almacenamiento estructurado de evidencia web. |
 | **Fase 14** | Chrome dedicado + ChatGPT | **PENDING** | Perfil `HERMES-CHATGPT` con domain-lock estricto para consultas externas. |
 | **Fase 15** | Guardrails de seguridad | **PENDING** | Límites de workspace, comando bloqueados, canonical path checks. |
@@ -45,6 +45,6 @@
 
 ## Próximo Paso Recomendado
 
-- **Aprobación de Macrofase 4 (Fases 7, 8 y 9):** El usuario revisará el informe de verificación de la integración Hermes ↔ Qwen Code, serialización de inferencia y handoff estructurado.
-- **Macrofase 5 (Memoria, Continuidad y Resiliencia):** Proceder con Fase 10 (Estructura `.autopilot`, `STATE.json`, `EVENTS.jsonl`), Fase 11 (Protocolo de Recuperación) y Fase 12 (Persistencia de Sesiones).
+- **Aprobación de Macrofase 5 (Fases 10, 11 y 12):** El usuario revisará el informe de verificación de persistencia, recovery y continuidad.
+- **Macrofase 6 (Web y ChatGPT):** Proceder con Fase 13 (Web Research) y Fase 14 (Perfil dedicado Chrome + ChatGPT con domain-lock) únicamente tras aprobación formal.
 

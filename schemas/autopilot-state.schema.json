@@ -1,0 +1,177 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AutopilotState",
+  "description": "Estado canónico persistente para el Desarrollador Autónomo en .autopilot/STATE.json",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "project_id",
+    "objective",
+    "status",
+    "created_at",
+    "updated_at",
+    "cycle",
+    "max_cycles",
+    "current_phase",
+    "current_task",
+    "completed_tasks",
+    "pending_tasks",
+    "acceptance_criteria",
+    "git",
+    "tests",
+    "build",
+    "progress",
+    "failure",
+    "checkpoint",
+    "next_action"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"]
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^run-[a-zA-Z0-9_-]+$"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 5
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "INITIALIZED",
+        "PREFLIGHT",
+        "AUTHORIZED",
+        "RUNNING",
+        "CHECKPOINTING",
+        "RECOVERING",
+        "BLOCKED_REQUIRES_HUMAN",
+        "STALLED",
+        "FAILED",
+        "COMPLETED",
+        "ABORTED"
+      ]
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "cycle": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_cycles": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "current_phase": {
+      "type": "string"
+    },
+    "current_task": {
+      "type": "string"
+    },
+    "completed_tasks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "pending_tasks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "current_delegation_id": {
+      "type": ["string", "null"]
+    },
+    "hermes_session_id": {
+      "type": ["string", "null"]
+    },
+    "qwen_session_id": {
+      "type": ["string", "null"]
+    },
+    "git": {
+      "type": "object",
+      "required": ["branch", "head", "dirty", "changed_files"],
+      "properties": {
+        "branch": { "type": "string" },
+        "head": { "type": "string" },
+        "dirty": { "type": "boolean" },
+        "changed_files": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "tests": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["NONE", "RUNNING", "PASS", "FAIL", "UNKNOWN"]
+        },
+        "last_command": { "type": ["string", "null"] },
+        "last_exit_code": { "type": ["integer", "null"] },
+        "last_run_at": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "build": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["NONE", "RUNNING", "PASS", "FAIL", "UNKNOWN"]
+        },
+        "last_command": { "type": ["string", "null"] },
+        "last_exit_code": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "progress": {
+      "type": "object",
+      "required": ["score", "no_progress_cycles"],
+      "properties": {
+        "score": { "type": "number", "minimum": 0 },
+        "last_progress_at": { "type": ["string", "null"] },
+        "no_progress_cycles": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "failure": {
+      "type": "object",
+      "required": ["repeated_count"],
+      "properties": {
+        "last_signature": { "type": ["string", "null"] },
+        "repeated_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "checkpoint": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "last_id": { "type": ["string", "null"] },
+        "last_created_at": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "next_action": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
