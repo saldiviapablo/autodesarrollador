@@ -1,7 +1,7 @@
 # Desarrollador Autónomo
 
 **Versión de documentación:** 2.0  
-**Estado:** BASELINE PARA IMPLEMENTACIÓN  
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Arquitectura principal:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
 
 ---
@@ -85,7 +85,7 @@ La arquitectura se articula en dos capas bien diferenciadas:
 - Cron y Jobs sin Agente
 - Extracción de Documentos
 - Gateway Multiplataforma
-- Web Dashboard
+- Web Dashboard (Superficie administrativa y observabilidad local)
 - Auto-Update Controlado
 
 ### DETERMINISTIC CONTROL LAYER (Autoritativa)
@@ -139,21 +139,6 @@ Instancia de auditoría separada encargada de:
 
 ## Runner y Watchdog
 Componentes deterministas fuera de los modelos LLM responsables del ciclo de vida, timeouts, health checks, serialización de inferencia y cleanup de procesos.
-
-## Qwen Code CLI
-
-Qwen Code es el trabajador especializado en programación.
-
-Debe:
-
-- analizar repositorios;
-- modificar archivos;
-- ejecutar comandos;
-- correr tests;
-- correr builds;
-- usar Git local;
-- diagnosticar errores;
-- autocorregirse.
 
 ---
 

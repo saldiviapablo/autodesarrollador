@@ -2,7 +2,7 @@
 ## Proyecto: Desarrollador Autónomo
 
 **Versión:** 2.0  
-**Estado:** BORRADOR PARA APROBACIÓN  
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Arquitectura base:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
 
 ---
@@ -84,7 +84,7 @@ Conjunto de capacidades nativas que potencian la cognición, investigación y ex
 - **Cron y No-Agent Jobs:** Disparadores periódicos y rutinas de mantenimiento sin inferencias.
 - **Extracción Documental:** Ingesta estructurada de especificaciones (DOCX, XLSX, PDF, etc.).
 - **Gateway Multiplataforma:** Notificaciones seguras hacia mensajería externa.
-- **Web Dashboard:** Interfaz de observabilidad y estado de tareas (no crítica).
+- **Web Dashboard:** Superficie administrativa y de observabilidad local (`127.0.0.1:9119` por defecto, puerto configurable), desacoplada del Runner.
 - **Bot Mode y Subagentes:** Especialización de roles (Supervisor, Reviewer, Researcher) y descomposición jerárquica.
 - **Git Worktrees:** Espacios de trabajo físicos aislados para workers.
 - **Auto-Update Controlado:** Pipeline de actualización con canary y rollback.
@@ -603,15 +603,17 @@ Debe:
 
 ---
 
-## 14.4 Idempotencia y Deduplicación del Bridge
+## 14.4 Idempotencia y Deduplicación del Bridge (Requisito Pendiente — Macrofase 7A)
 
-Toda consulta debe incluir un `consultation_id` único y determinista.
+> **Estado actual:** No implementado ni probado todavía (`ENABLED: NO`, `CONFIGURED: NO`, `TESTED: NO`). Su implementación y certificación mediante `T-CHATGPT-010` es un requisito obligatorio de la Macrofase 7A.
+
+Una vez implementado en Macrofase 7A, toda consulta deberá incluir un `consultation_id` único y determinista:
 - **Garantía:** Exactamente un (1) envío físico por `consultation_id`.
-- **Detección de Reintento:** Si se invoca el bridge con un identificador ya procesado o en curso, debe retornar inmediatamente `ALREADY_SENT` o entregar el resultado previo sin volver a pulsar "Send".
-- **Verificación de Turnos:** El bridge debe auditar que:
+- **Detección de Reintento:** Si se invoca el bridge con un identificador ya procesado o en curso, deberá retornar inmediatamente `ALREADY_SENT` o entregar el resultado previo sin volver a pulsar "Send".
+- **Verificación de Turnos:** El bridge deberá auditar que:
   - `user_turns_after == user_turns_before + 1`
   - `assistant_turns_after == assistant_turns_before + 1`
-  Garantizando que no hubo pérdida ni duplicación de contexto en el chat.
+  Garantizando que no haya pérdida ni duplicación de contexto en el chat.
 
 ---
 
@@ -1190,12 +1192,13 @@ No debe contener lógica compleja.
 
 ---
 
-# 37. Web Dashboard y Observabilidad
+# 37. Web Dashboard (Observabilidad y Superficie Administrativa)
 
-El Web Dashboard es una interfaz web ligera de monitorización local provista por Hermes.
-- **Propósito:** Visualizar sesiones, bots activos, cron jobs, logs en tiempo real y métricas de salud.
-- **Desacoplamiento Operacional:** El Runner y el sistema de ejecución autónoma nocturna son completamente independientes del Dashboard. El Dashboard es una herramienta de observabilidad humana; **si el dashboard se cierra, falla o no se inicia, el Runner continúa su ejecución sin interrupción.**
-- **Red:** Confinado estrictamente a `127.0.0.1` en puerto local no conflictivo.
+El Web Dashboard de Hermes NO es solamente un visor pasivo: es tanto un panel de observabilidad como una **superficie administrativa** capaz de gestionar configuración, servidores MCP, memoria, cron, skills y otras opciones del agente.
+- **Propósito:** Visualizar sesiones, bots activos, cron jobs, logs en tiempo real y métricas de salud, además de ofrecer capacidades de gestión administrativa local.
+- **Red y Configuración por Defecto:** Utiliza como default nativo de Hermes `host: 127.0.0.1` y `port: 9119` (el puerto debe seguir siendo configurable en `config/system.yaml`).
+- **Clasificación de Seguridad:** Al tratarse de una superficie administrativa con capacidad de modificar configuración, MCP, memoria, cron y skills, se clasifica con impacto alto sobre configuración/filesystem. Por ello, debe hacer **bind exclusivamente en loopback (`127.0.0.1`) por defecto** y nunca exponerse en `0.0.0.0` ni en interfaces de red externas sin túnel autenticado. Ninguna acción desde el Dashboard puede relajar las políticas autoritativas de `config/security.yaml` ni el `RUN-CONTRACT.yaml`.
+- **Desacoplamiento Operacional:** El Runner no depende de él; el sistema de ejecución autónoma nocturna es completamente independiente del Dashboard. **Si el Dashboard se cierra, falla o está deshabilitado (`enabled: false`), el Runner continúa su ejecución sin interrupción.**
 
 ---
 
@@ -1251,7 +1254,9 @@ Para tareas complejas o workers paralelos que requieran aislamiento del espacio 
 
 # 42. Cron y Tareas sin Agente (No-Agent Jobs)
 
-- **Cron / Routines:** Planificador temporal subordinado al Runner para activar rutinas periódicas de supervisión.
+- **Cron / Routines:** Planificador temporal nativo de Hermes para rutinas periódicas.
+  - **Validación en Subfase 7A.7:** Se valida de forma autónoma el subsistema Hermes Cron/Routines (creación, listado, pausa, reanudación), la ejecución de `no-agent jobs`, la garantía de **0 inferencias LLM** en tareas sin agente, seguridad y cleanup, sin requerir el Runner de la Macrofase 7B.
+  - **Integración en Macrofase 7B:** La integración completa `Cron → Runner → Watchdog → RUN-CONTRACT` se implementa y valida como criterio obligatorio de la Macrofase 7B una vez construido el Runner.
 - **Jobs sin Agente (Deterministic No-Agent Jobs):** Tareas automatizadas que no requieren razonamiento de lenguaje:
   - Limpieza de temporales y logs antiguos;
   - Auditoría de hashes SHA-256 e integridad de backups;
@@ -1263,9 +1268,11 @@ Para tareas complejas o workers paralelos que requieran aislamiento del espacio 
 
 # 43. Extracción Estructurada de Documentos
 
-Soporte estructurado para ingerir especificaciones en formatos no planos (DOCX, XLSX, PPTX, PDF, RTF, ODF, EPUB, legacy Office):
-- *Nativo:* Parsing de formatos soportados directamente por el sistema o convertidores a texto plano.
-- *Dependencias Opcionales:* Librerías Python (`openpyxl`, `mammoth`, `pypdf`). No se instalan ciegamente; su incorporación requiere auditoría previa en Macrofase 7A.
+Soporte estructurado para ingerir especificaciones en formatos planos y no planos (Markdown, JSON, YAML, DOCX, XLSX, PPTX, PDF, RTF, ODF, EPUB) aplicando estrictamente el principio **`Prefer Native When Verified`**:
+1. **Inventario y Prueba Nativa Primero:** En la subfase `7A.3`, primero se inventarían y prueban las capacidades reales de `read_file` / extract de Hermes v0.21.6 instalado.
+2. **Adopción Nativa:** Se utiliza la capacidad nativa siempre que soporte adecuadamente el formato requerido.
+3. **Dependencias Opcionales Sólo por Excepción Demostrada:** No se preseleccionan librerías externas como arquitectura de lectura. Únicamente se instala una dependencia opcional para aquellos formatos o casos específicos que la implementación nativa no resuelva (quedando librerías externas como `openpyxl`, `mammoth` o `pypdf` sólo como candidatas sujetas a necesidad real demostrada y auditoría).
+4. **Registro Oficial:** Se documenta y registra en `config/VERSIONS.lock` cualquier dependencia finalmente elegida durante `7A.3`.
 
 ---
 
@@ -1291,7 +1298,7 @@ Se prohíbe terminantemente la ejecución desatendida de `hermes update` directa
 
 ---
 
-# 45. Secuencia de una noche típica
+# 45. Secuencia de una noche típica (Arquitectura Objetivo Completa)
 
 ```text
 23:55 usuario abre sistema
@@ -1310,7 +1317,7 @@ Se prohíbe terminantemente la ejecución desatendida de `hermes update` directa
 02:35 Hermes investiga web
 02:50 nuevo intento
 03:20 bloqueo persistente
-03:25 Hermes consulta ChatGPT con consultation_id único
+03:25 Hermes consulta ChatGPT (con idempotencia consultation_id tras Macrofase 7A)
 03:30 asesoría recibida, nueva estrategia
 04:15 checkpoint
 04:16 nueva sesión limpia de Qwen
@@ -1344,12 +1351,12 @@ Se prohíbe terminantemente la ejecución desatendida de `hermes update` directa
 
 # 47. Criterio de arquitectura correcta
 
-La arquitectura se considera correctamente implementada si:
+La arquitectura objetivo se considera completamente implementada al cierre del roadmap si:
 - Hermes y Qwen Code comparten el mismo Qwen local a 64K context;
 - Nunca ocurren dos inferencias simultáneas (Inference Lock serializa 100%);
 - Una caída de proceso no obliga a recomenzar (reconstrucción desde Git/STATE);
 - El sistema puede operar durante horas sin intervención tras aprobación inicial;
-- Las consultas a ChatGPT son idempotentes y deducadas;
+- Las consultas a ChatGPT incorporan idempotencia y deduplicación verificada (`T-CHATGPT-010`, pendiente para Macrofase 7A);
 - Se previene el consumo infinito mediante motor anti-loop y guardrails deterministas;
 - La finalización (`COMPLETED`) exige verificación objetiva completa;
 - El cleanup libera todos los procesos y locks al terminar.

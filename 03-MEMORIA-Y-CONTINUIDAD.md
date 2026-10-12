@@ -2,7 +2,7 @@
 ## Proyecto: Desarrollador Autónomo
 
 **Versión:** 2.0  
-**Estado:** BORRADOR PARA APROBACIÓN  
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Arquitectura base:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
 
 ---

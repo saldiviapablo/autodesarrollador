@@ -2,7 +2,8 @@
 ## Proyecto: Desarrollador Autónomo
 
 **Versión de especificación:** 2.0  
-**Baseline:** Establecido en Fase 2 (Backup y Baseline)  
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
+**Baseline:** Establecido en Fase 2 (Backup y Baseline) y congelado para Macrofase 7A  
 **Host de ejecución:** Windows 11 Pro (Build 26200, 64 bits)
 
 ---
@@ -52,7 +53,7 @@ PROYECTO + GIT LOCAL
 ```
 
 ### Capas del Sistema:
-1. **HERMES CAPABILITY LAYER:** Memoria persistente (Nivel 2), Skills reutilizables (Memoria procedimental), servidores MCP, plugins de herramientas, Browser Automation nativo, Bot Mode (Supervisor, Reviewer, Researcher), subagentes jerárquicos, Git Worktrees, Cron y Jobs sin agente, extracción documental, Gateway y Web Dashboard.
+1. **HERMES CAPABILITY LAYER:** Memoria persistente (Nivel 2), Skills reutilizables (Memoria procedimental), servidores MCP, plugins de herramientas, Browser Automation nativo, Bot Mode (Supervisor, Reviewer, Researcher), subagentes jerárquicos, Git Worktrees, Cron y Jobs sin agente, extracción documental (`Prefer Native When Verified`), Gateway y Web Dashboard (superficie administrativa y observabilidad en `127.0.0.1:9119` por defecto, configurable).
 2. **DETERMINISTIC CONTROL LAYER (Autoritativa):** `RUN-CONTRACT.yaml`, `STATE.json`, `EVENTS.jsonl`, checkpoints inmutables, Security Guard, Progress Guard, Inference Lock (.NET Mutex cross-process, `parallel = 1`), Runner de ciclo de vida, Watchdog de procesos, Completion Gate y Cleanup garantizado.
 
 ### Modelo de Memoria:

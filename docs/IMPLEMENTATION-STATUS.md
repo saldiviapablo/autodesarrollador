@@ -1,8 +1,8 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-12T18:15:00-03:00  
-**Fase activa:** REVISIÓN DOCUMENTAL DE ARQUITECTURA COMPLETADA  
+**Última actualización:** 2026-10-12T19:22:00-03:00  
+**Estado documental:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Baseline de arquitectura:** Hermes Agent (v0.21.6) + Qwen Code CLI (@qwen-code/qwen-code@0.25.1) + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
 ---
@@ -17,8 +17,8 @@
 | **Macrofase 4** | **Integración Hermes ↔ Qwen Code** (Fases 7 a 9) | **PASS** | Inference Lock cross-process (.NET Mutex), contratos JSON Schema `DelegationRequest`/`DelegationResult`, delegación supervisada completa de 2 agentes con serialización estricta (0 ms solapamiento). Evidencia en `evidence/integration/`. |
 | **Macrofase 5** | **Memoria y Continuidad** (Fases 10 a 12) | **PASS** | Estructura `.autopilot/` (`STATE.json`, `RUN-CONTRACT.yaml`, `EVENTS.jsonl`), Protocolo de Recuperación de 15 pasos y continuidad multi-sesión validada con pérdida total de contexto en chat. Evidencia en `evidence/continuity/`. |
 | **Macrofase 6** | **Web, ChatGPT, Seguridad y Anti-Loop** (Fases 13 a 16) | **PASS** | Web Research seguro (Fase 13), Chrome dedicado CDP con consulta real a ChatGPT y validación UTF-8/BOM (Fase 14), Guardrails deterministas de rutas, comandos y secretos (Fase 15) y Motor Anti-loop con escalera de escalamiento (Fase 16). Evidencias en `evidence/web/`, `evidence/chatgpt/`, `evidence/security/` y `evidence/anti-loop/`. |
-| **Macrofase 7A** | **Capacidades Nativas de Hermes** (Subfases 7A.1 a 7A.10) | **PENDING** | Congelada documentalmente en `08-CAPACIDADES-NATIVAS-HERMES.md`. Incorpora Memoria N2, Skills, MCP, Browser nativo, Bot Mode, Worktrees, Cron/No-agent jobs, Dashboard, Gateway, Auto-update e Idempotencia de ChatGPT. Ninguna capacidad activa aún. |
-| **Macrofase 7B** | **Runner Autónomo Nocturno** (Fases 17 a 22) | **PENDING** | Orquestador determinista de procesos, Watchdog de fallos, Launchers limpios `INICIAR`/`DETENER`, Completion Gate objetivo, reportes estandarizados y Cleanup garantizado. |
+| **Macrofase 7A** | **Capacidades Nativas de Hermes** (Subfases 7A.1 a 7A.10) | **PENDING** | Congelada documentalmente en `08-CAPACIDADES-NATIVAS-HERMES.md`. Incorpora Memoria N2, Skills, MCP, Extracción documental (`Prefer Native When Verified`), Browser nativo, Bot Mode, Worktrees, Cron/No-agent jobs (validación autónoma en `7A.7`), Web Dashboard (superficie administrativa `127.0.0.1:9119` configurable), Gateway, Auto-update e Idempotencia de ChatGPT (`T-CHATGPT-010`, pendiente de implementar y probar). Ninguna capacidad activa aún. |
+| **Macrofase 7B** | **Runner Autónomo Nocturno** (Fases 17 a 22) | **PENDING** | Orquestador determinista de procesos, integración obligatoria `Cron → Runner → Watchdog → RUN-CONTRACT` (`T-RUN-009`), Watchdog de fallos, Launchers limpios `INICIAR`/`DETENER`, Completion Gate objetivo, reportes estandarizados y Cleanup garantizado. |
 | **Macrofase 8** | **Validación Final** (Fases 23 a 28) | **PENDING** | Suite integral en sandbox, pruebas autónomas prolongadas (E2E corto, 2 horas y nocturna de 6-8 horas), auditoría integral y piloto en proyecto real no crítico. |
 
 ---

@@ -2,7 +2,7 @@
 ## Proyecto: Desarrollador Autónomo
 
 **Versión:** 2.0  
-**Estado:** BORRADOR PARA APROBACIÓN  
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Arquitectura base:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
 
 ---
@@ -1246,9 +1246,9 @@ El subsistema de Gateway (Telegram/Discord/Slack) opera bajo régimen de canal e
 
 # 67. Permisos de Cron y Tareas Programadas
 
-- Cron opera subordinado al Runner determinista; no puede eludir el ciclo de vida de procesos ni el Watchdog.
 - Las rutinas disparadas por Cron solo pueden invocar tareas registradas en el catálogo oficial de tareas.
-- Cron no puede iniciar ejecuciones autónomas sin un `RUN-CONTRACT` válido y pre-aprobado.
+- En la subfase `7A.7`, Cron/Routines se valida de forma aislada verificando creación, listado, pausa, reanudación, ejecución de `no-agent jobs` (0 inferencias LLM), seguridad de permisos y cleanup.
+- En la **Macrofase 7B**, Cron se integra de extremo a extremo con la capa determinista (`Cron → Runner → Watchdog → RUN-CONTRACT`), quedando subordinado al Runner sin poder eludir el ciclo de vida de procesos, el Watchdog ni iniciar ejecuciones autónomas sin un `RUN-CONTRACT` válido y pre-aprobado.
 
 ---
 
@@ -1299,7 +1299,16 @@ Los Skills (Memoria Procedimental):
 
 ---
 
-# 73. Principio final
+# 73. Seguridad de Web Dashboard (Superficie Administrativa)
+
+El Hermes Web Dashboard NO es únicamente un visor pasivo de estado; constituye una **superficie administrativa** capaz de gestionar configuración, servidores MCP, memoria, cron, skills y otras opciones operativas de Hermes. Por consiguiente, su clasificación de seguridad es de **impacto alto sobre configuración y filesystem**, rigiéndose por las siguientes reglas obligatorias:
+- **Bind Exclusivo en Loopback:** Debe escuchar exclusivamente en `host: 127.0.0.1` y `port: 9119` por defecto (puerto configurable en `config/system.yaml`). Queda terminantemente prohibido exponerlo en `0.0.0.0` o en interfaces de red externas sin un túnel autenticado.
+- **Subordinación a Políticas Deterministas:** Ninguna modificación realizada desde la interfaz del Dashboard puede desactivar, eludir ni relajar las políticas de `config/security.yaml`, el `Inference Lock` ni los límites del `RUN-CONTRACT.yaml`.
+- **Independencia del Runner:** El Runner no depende del Dashboard para iniciar, supervisar, recuperar ni cerrar un run autónomo.
+
+---
+
+# 74. Principio final
 
 El sistema debe ser capaz de trabajar solo durante horas.
 
@@ -1315,7 +1324,7 @@ La autonomía se concede dentro de un contrato, un workspace y políticas verifi
 
 ---
 
-# 74. Criterio de éxito
+# 75. Criterio de éxito
 
 La seguridad/autonomía se considera implementada correctamente si:
 
@@ -1332,7 +1341,7 @@ La seguridad/autonomía se considera implementada correctamente si:
 
 ---
 
-# 75. Regla para Antigravity
+# 76. Regla para Antigravity
 
 Antigravity debe implementar seguridad como una capa técnica, no sólo como instrucciones textuales a los modelos.
 

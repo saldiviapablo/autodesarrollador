@@ -2,7 +2,7 @@
 ## Proyecto: Desarrollador Autónomo
 
 **Versión:** 2.0  
-**Estado:** BORRADOR PARA APROBACIÓN  
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Arquitectura base:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
 
 ---
@@ -323,8 +323,8 @@ gateway:
 
 dashboard:
   enabled: false
-  host: "127.0.0.1"
-  port: 3000
+  host: "127.0.0.1" # bind exclusivamente loopback por defecto (superficie administrativa)
+  port: 9119        # default nativo de Hermes (configurable)
 
 worktrees:
   enabled: false
@@ -1349,12 +1349,13 @@ SYSTEM PASS
 
 ---
 
-# 70. Dependencias para Extracción Documental
+# 70. Evaluación de Extracción Documental (Prefer Native When Verified)
 
-Para el procesamiento de especificaciones en formatos no planos:
-- **Formatos Nativos:** Texto plano, Markdown, JSON, YAML y formatos convertibles mediante utilidades estándar del sistema.
-- **Dependencias Opcionales:** Librerías especializadas de Python como `openpyxl` (XLSX), `mammoth` / `python-docx` (DOCX), `pypdf` / `pdfminer` (PDF).
-- **Directiva de Instalación:** **NO instalar dependencias opcionales en esta fase.** Su evaluación, auditoría de vulnerabilidades y necesidad operativa se evaluarán durante la Macrofase 7A (subfase 7A.3).
+Para el procesamiento de especificaciones en formatos planos y no planos (Markdown, JSON, YAML, DOCX, XLSX, PPTX, PDF, RTF) se aplica estrictamente el principio `Prefer Native When Verified`:
+1. **Inventario y Prueba Nativa Primero:** Durante la subfase `7A.3`, primero se inventarían y prueban las capacidades reales de `read_file` / extract de la versión instalada de Hermes (`v0.21.6`).
+2. **Uso Nativo Preferente:** Se utiliza la implementación nativa siempre que soporte adecuadamente el formato.
+3. **Dependencia Opcional Sólo si es Necesaria:** No se preseleccionan librerías externas como arquitectura de lectura. Sólo se instalará una dependencia opcional para aquellos formatos o casos que la implementación nativa no resuelva (quedando librerías externas como `openpyxl`, `mammoth` o `pypdf` únicamente como candidatas, no como requisito previo).
+4. **Registro en `7A.3`:** Cualquier dependencia opcional finalmente elegida e instalada tras auditoría en `7A.3` deberá quedar registrada en `config/VERSIONS.lock` y `config/INSTALLATION-STATE.json`. **NO instalar ninguna dependencia opcional antes de `7A.3`.**
 
 ---
 

@@ -2,7 +2,7 @@
 ## Proyecto: Desarrollador Autónomo
 
 **Versión:** 2.0  
-**Estado:** BORRADOR PARA APROBACIÓN  
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Arquitectura base:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
 
 ---
@@ -742,9 +742,9 @@ Cada subfase debe superar sus pruebas funcionales, de seguridad, fallo, cleanup 
 ---
 
 ### Subfase 7A.3 — Extracción Estructurada de Documentos
-- **Objetivo:** Dotar a Hermes de la capacidad de ingerir especificaciones en formatos no planos (DOCX, XLSX, PDF, RTF) convirtiéndolas a Markdown legible.
-- **Entregables:** Módulo de extracción de documentos, evaluación y auditoría de dependencias opcionales de Python (`mammoth`, `openpyxl`, `pypdf`).
-- **Condición de salida:** `7A.3 PASS` (Extracción exitosa de especificaciones de proyecto en sandbox sin ejecución de macros maliciosas).
+- **Objetivo:** Dotar a Hermes de la capacidad de ingerir especificaciones en formatos planos y no planos (Markdown, JSON, YAML, DOCX, XLSX, PDF, RTF) aplicando estrictamente `Prefer Native When Verified`: primero inventariar y probar las capacidades reales de `read_file` / extract de Hermes `v0.21.6` instalado; usar la capacidad nativa cuando soporte el formato; instalar una dependencia opcional únicamente para formatos/casos que la implementación nativa no resuelva (quedando librerías externas sólo como candidatas, no como requisito previo).
+- **Entregables:** Inventario y validación del extractor nativo de Hermes `v0.21.6`, módulo de ingesta estructurada, y registro oficial en `config/VERSIONS.lock` de cualquier dependencia finalmente elegida durante `7A.3`.
+- **Condición de salida:** `7A.3 PASS` (Extracción exitosa de especificaciones de proyecto en sandbox usando capacidad nativa verificada y fallback selectivo documentado, sin ejecución de macros maliciosas).
 
 ---
 
@@ -770,16 +770,16 @@ Cada subfase debe superar sus pruebas funcionales, de seguridad, fallo, cleanup 
 ---
 
 ### Subfase 7A.7 — Cron y Jobs sin Agente
-- **Objetivo:** Implementar disparadores periódicos subordinados al Runner y rutinas de mantenimiento deterministas (backups, hash checks) que consuman exactamente **0 inferencias LLM**.
-- **Entregables:** Rutinas de Cron registradas, catálogo de scripts deterministas de mantenimiento sin LLM.
-- **Condición de salida:** `7A.7 PASS` (Ejecución exitosa de tareas de mantenimiento con 0 tokens consumidos).
+- **Objetivo:** Validar de forma autónoma Hermes Cron/Routines (creación, listado, pausa, reanudación), `no-agent jobs`, garantía de **0 inferencias LLM** en tareas sin agente, seguridad y cleanup, sin depender todavía del Runner de la Macrofase 7B.
+- **Entregables:** Rutinas de Cron validadas (create/list/pause/resume/cleanup) y catálogo de scripts deterministas de mantenimiento (`no-agent jobs`) con 0 inferencias LLM.
+- **Condición de salida:** `7A.7 PASS` (Validación de ciclo de vida de Cron/Routines, ejecución de `no-agent job` con 0 inferencias LLM, seguridad y cleanup; la integración completa `Cron → Runner → Watchdog → RUN-CONTRACT` se valida obligatoriamente en Macrofase 7B).
 
 ---
 
-### Subfase 7A.8 — Web Dashboard de Observabilidad
-- **Objetivo:** Proporcionar una interfaz web local de monitorización y observabilidad desacoplada del ciclo de vida del Runner.
-- **Entregables:** Configuración del Web Dashboard en `127.0.0.1:3000`, lectura de estado canónico desde `STATE.json`.
-- **Condición de salida:** `7A.8 PASS` (Visualización correcta de métricas y demostración de que el Runner sigue activo si el Dashboard cae).
+### Subfase 7A.8 — Web Dashboard (Superficie Administrativa y Observabilidad)
+- **Objetivo:** Configurar y asegurar el Hermes Web Dashboard como panel de observabilidad y **superficie administrativa** local (capaz de gestionar configuración, MCP, memoria, cron, skills y otras opciones), completamente desacoplado del ciclo de vida del Runner.
+- **Entregables:** Configuración del Web Dashboard en su default nativo `host: 127.0.0.1` y `port: 9119` (puerto configurable), bind exclusivo en loopback y controles de seguridad para que no pueda relajar `config/security.yaml` ni `RUN-CONTRACT.yaml`.
+- **Condición de salida:** `7A.8 PASS` (Verificación en `127.0.0.1:9119` configurable, bind loopback estricto, revisión de seguridad como superficie administrativa e independencia total respecto al Runner).
 
 ---
 
@@ -797,16 +797,17 @@ Cada subfase debe superar sus pruebas funcionales, de seguridad, fallo, cleanup 
 
 ---
 
-### Hardening Adicional — Idempotencia del Bridge ChatGPT
-- **Objetivo:** Implementar deduplicación y tracking estricto de turnos en `tools/chatgpt-bridge.js`.
-- **Entregables:** Manejo de `consultation_id`, retorno determinista de `ALREADY_SENT`, auditoría de incremento de turnos (+1 user, +1 assistant).
-- **Condición de salida:** `CHATGPT_IDEMPOTENCY PASS` (Prueba de consulta duplicada rechaza segundo envío).
+### Hardening Adicional — Idempotencia del Bridge ChatGPT (Pendiente para Macrofase 7A)
+- **Estado previo a 7A:** No implementado ni probado todavía (`ENABLED: NO`, `CONFIGURED: NO`, `TESTED: NO`, `PRODUCTION_READY: NO`).
+- **Objetivo:** Implementar deduplicación por `consultation_id` y tracking estricto de turnos en `tools/chatgpt-bridge.js`.
+- **Entregables:** Manejo de `consultation_id`, retorno determinista de `ALREADY_SENT` ante reintentos y auditoría de incremento de turnos (`+1` user, `+1` assistant).
+- **Condición de salida:** `CHATGPT_IDEMPOTENCY PASS` (Superación de la prueba futura obligatoria `T-CHATGPT-010`).
 
 ---
 
 # 21. MACROFASE 7B — Runner Autónomo Nocturno
 
-Agrupa las fases de ciclo de vida determinista, supervisión y cierre seguro:
+Agrupa las fases de ciclo de vida determinista, supervisión y cierre seguro, incluyendo como criterio obligatorio la integración completa `Cron → Runner → Watchdog → RUN-CONTRACT`:
 
 ---
 
@@ -819,11 +820,12 @@ Crear supervisor determinista del ciclo de vida.
 ## Responsabilidades
 
 - leer config;
-- validar proyecto;
+- validar proyecto y exigir `RUN-CONTRACT.yaml` válido;
 - run_id;
 - iniciar llama;
 - health;
 - iniciar Hermes;
+- integración completa `Cron → Runner → Watchdog → RUN-CONTRACT` (`T-RUN-009`);
 - heartbeat;
 - timeout;
 - watchdog;
@@ -833,7 +835,7 @@ Crear supervisor determinista del ciclo de vida.
 ## Condición de salida
 
 ```text
-RUNNER PASS
+RUNNER PASS (incluyendo integración obligatoria Cron → Runner → Watchdog → RUN-CONTRACT)
 ```
 
 ---

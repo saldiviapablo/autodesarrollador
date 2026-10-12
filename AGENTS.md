@@ -2,7 +2,7 @@
 ## Proyecto: Desarrollador Autónomo
 
 **Versión:** 2.0  
-**Estado:** BORRADOR PARA APROBACIÓN  
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Aplicación:** Antigravity, Codex y cualquier agente que trabaje sobre esta infraestructura.
 
 ---
@@ -51,7 +51,7 @@ Estructurada en dos capas complementarias:
 - Cron y No-Agent Jobs
 - Extracción de Documentos
 - Gateway Multiplataforma
-- Web Dashboard
+- Web Dashboard (Superficie Administrativa y Observabilidad en `127.0.0.1:9119` por defecto, configurable)
 - Auto-Update Controlado
 
 ### DETERMINISTIC CONTROL LAYER (Autoritativa)

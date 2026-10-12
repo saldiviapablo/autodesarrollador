@@ -2,7 +2,7 @@
 ## Proyecto: Desarrollador Autónomo
 
 **Versión:** 2.0  
-**Estado:** BORRADOR PARA APROBACIÓN  
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Arquitectura base:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
 
 ---
@@ -183,13 +183,13 @@ Aislamiento físico en `.autopilot-worktrees/task-<ID>/` para ejecución segura 
 ---
 
 ## C-09 — Cron y Jobs sin Agente
-- `Cron / Routines`: disparadores periódicos subordinados al Runner;
+- `Cron / Routines`: disparadores periódicos nativos de Hermes validados en `7A.7` (creación, listado, pausa, reanudación, seguridad y cleanup), cuya integración completa `Cron → Runner → Watchdog → RUN-CONTRACT` se certifica en Macrofase 7B;
 - `Jobs sin Agente`: tareas deterministas de mantenimiento (limpieza de logs, hash checks, backups) con **cero inferencias LLM**.
 
 ---
 
 ## C-10 — Extracción Documental
-Capacidad de ingesta de especificaciones y documentación de proyecto en formatos DOCX, XLSX, PPTX, PDF, RTF y Markdown, distinguiendo dependencias nativas de opcionales.
+Capacidad de ingesta de especificaciones y documentación de proyecto (Markdown, JSON, YAML, DOCX, XLSX, PPTX, PDF, RTF) bajo el principio `Prefer Native When Verified`: primero se inventarían y prueban las capacidades reales de `read_file` / extract de Hermes v0.21.6 instalado; se usa la capacidad nativa cuando cubra el formato y sólo se instala una dependencia opcional para formatos/casos que la implementación nativa no resuelva, registrando la dependencia finalmente elegida durante `7A.3`.
 
 ---
 
@@ -198,8 +198,8 @@ Procedimiento de actualización de Hermes Agent estructurado en sandbox canary, 
 
 ---
 
-## C-12 — Idempotencia del Bridge ChatGPT
-Mecanismo en el puente CDP a `chatgpt.com` que garantiza que cada consulta con identificador `consultation_id` sea transmitida a lo sumo una única vez, retornando `ALREADY_SENT` ante reintentos.
+## C-12 — Idempotencia del Bridge ChatGPT (Requisito Pendiente para Macrofase 7A)
+Mecanismo a implementar y validar en Macrofase 7A (`T-CHATGPT-010`) sobre el puente CDP a `chatgpt.com` (actualmente no implementado ni probado) que garantizará que cada consulta con identificador `consultation_id` sea transmitida a lo sumo una única vez, retornando `ALREADY_SENT` ante reintentos.
 
 ---
 
@@ -742,11 +742,12 @@ Debe existir un proyecto sandbox para validar cambios en la infraestructura ante
 
 ---
 
-## RF-031 — Idempotencia del Bridge ChatGPT
+## RF-031 — Idempotencia del Bridge ChatGPT (Pendiente para Macrofase 7A)
 
-Toda consulta hacia ChatGPT debe incluir un `consultation_id` único. El sistema debe garantizar que un identificador se transmita como máximo una única vez al compositor.
-Si se produce un reintento con el mismo identificador, el bridge debe retornar `ALREADY_SENT` sin pulsar "Send" nuevamente.
-El sistema debe verificar que los turnos del usuario y del asistente se incrementen en exactamente +1.
+> **Estado actual:** Pendiente de implementación y prueba en Macrofase 7A (`T-CHATGPT-010`).
+
+Toda consulta hacia ChatGPT deberá incluir un `consultation_id` único. Al implementarse en Macrofase 7A, el sistema garantizará que un identificador se transmita como máximo una única vez al compositor.
+Si se produce un reintento con el mismo identificador, el bridge deberá retornar `ALREADY_SENT` sin pulsar "Send" nuevamente, verificando que los turnos del usuario y del asistente se incrementen en exactamente +1.
 
 **Prioridad:** ALTA
 
@@ -771,7 +772,7 @@ El sistema debe permitir la ejecución programada o periódica de rutinas de man
 
 ## RF-034 — Extracción Estructurada de Documentos
 
-El sistema debe ser capaz de ingerir especificaciones en formatos no planos (DOCX, XLSX, PDF, RTF) convirtiéndolas a texto estructurado para el análisis por parte de Hermes Supervisor.
+El sistema debe ser capaz de ingerir especificaciones en formatos estructurados y no planos (Markdown, JSON, YAML, DOCX, XLSX, PDF, RTF) convirtiéndolas a texto estructurado para el análisis por parte de Hermes Supervisor. Siguiendo `Prefer Native When Verified`, primero se inventarían y prueban las capacidades reales de `read_file` / extract de Hermes v0.21.6 instalado; se utiliza la extracción nativa cuando soporte adecuadamente el formato, instalando una dependencia opcional únicamente para los formatos o casos que la implementación nativa no resuelva y registrando la dependencia finalmente elegida durante `7A.3`.
 
 **Prioridad:** MEDIA
 

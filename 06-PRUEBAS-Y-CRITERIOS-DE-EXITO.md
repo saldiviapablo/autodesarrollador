@@ -2,7 +2,7 @@
 ## Proyecto: Desarrollador Autónomo
 
 **Versión:** 2.0  
-**Estado:** BORRADOR PARA APROBACIÓN  
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Arquitectura base:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
 
 ---
@@ -976,12 +976,14 @@ no superar límite.
 
 ---
 
-## T-CHATGPT-010 — Idempotencia y Deduplicación
+## T-CHATGPT-010 — Idempotencia y Deduplicación [PRUEBA FUTURA OBLIGATORIA — MACROFASE 7A]
+
+> **Nota de estado:** La deduplicación por `consultation_id` **NO está implementada ni probada todavía** (`ENABLED: NO`, `CONFIGURED: NO`, `TESTED: NO`, `PRODUCTION_READY: NO`). Esta prueba es obligatoria durante la implementación de la Macrofase 7A.
 
 Enviar consulta al bridge con `consultation_id` asignado.
 Reintentar inmediatamente la llamada con idéntico `consultation_id`.
 
-Esperado:
+Esperado (en Macrofase 7A):
 - El bridge detecta el identificador procesado y retorna `ALREADY_SENT` o el resultado anterior sin reenviar al composer.
 - Los turnos del usuario y del asistente en el chat se incrementan en exactamente +1.
 - No se producen ejecuciones duplicadas en la ventana de chat.
@@ -1243,6 +1245,17 @@ cleanup.
 Esperado:
 
 cleanup.
+
+---
+
+## T-RUN-009 — Integración Cron → Runner → Watchdog → RUN-CONTRACT (Obligatorio en Macrofase 7B)
+
+Disparar una rutina programada desde Hermes Cron que invoque al Runner autónomo.
+
+Esperado:
+- El Runner exige y valida un `RUN-CONTRACT.yaml` pre-aprobado antes de admitir la ejecución disparada por Cron (rechazando ejecuciones sin contrato válido).
+- La ejecución queda subordinada al ciclo de vida del Runner y monitoreada por el Watchdog de procesos.
+- Al finalizar o abortar, se ejecuta el Cleanup garantizado sin procesos ni locks huérfanos.
 
 ---
 
@@ -1535,9 +1548,9 @@ Cada subfase de la Macrofase 7A contará con su correspondiente batería de prue
 - **T-7A-PLUGIN-001 (Integration):** Carga de plugin de herramienta custom verificada por hash SHA-256.
 
 ### 7A.3 Extracción Estructurada de Documentos
-- **T-7A-DOC-001 (Functional):** Ingesta de especificación técnica en formato DOCX y extracción limpia a Markdown legible.
-- **T-7A-DOC-002 (Functional):** Ingesta de tabla de datos en XLSX y conversión a estructura JSON tabular.
-- **T-7A-DOC-003 (Security):** Ingesta de documento con macros o payload malicioso; el parser confinado rechaza la ejecución de scripts.
+- **T-7A-DOC-001 (Inventory & Native Verification):** Inventario y prueba real de las capacidades nativas de `read_file` / extract en el Hermes `v0.21.6` instalado frente a formatos estructurados y de especificación (Markdown, JSON, YAML, DOCX, XLSX, PDF, RTF), verificando qué formatos resuelve nativamente.
+- **T-7A-DOC-002 (Functional & Fallback Selectivo):** Extracción limpia a texto/Markdown estructurado usando la capacidad nativa cuando soporte el formato, instalando una dependencia opcional candidata únicamente para formatos/casos no resueltos nativamente y registrando la dependencia finalmente elegida en `config/VERSIONS.lock`.
+- **T-7A-DOC-003 (Security):** Ingesta de documento con macros o payload malicioso; el extractor confinado rechaza la ejecución de scripts y respeta Path Guard y Secret Redaction.
 
 ### 7A.4 Browser Automation Nativo
 - **T-7A-BROWSER-001 (Functional):** Navegación headless a documentación estática y extracción estructurada de texto.
@@ -1555,12 +1568,14 @@ Cada subfase de la Macrofase 7A contará con su correspondiente batería de prue
 - **T-7A-WT-003 (Cleanup):** Eliminación forzada y limpieza completa de directorios de worktrees post-ejecución.
 
 ### 7A.7 Cron y Jobs sin Agente
-- **T-7A-NOAGENT-001 (Functional):** Ejecución de rutina de verificación de hashes y limpieza de logs; validación de **0 tokens consumidos y 0 inferencias LLM**.
-- **T-7A-CRON-001 (Integration):** Disparador programado por Cron activa una tarea en el Runner respetando el ciclo de vida y Watchdog.
+- **T-7A-CRON-001 (Functional & Lifecycle):** Validación autónoma de Hermes Cron/Routines: creación, listado, pausa, reanudación y eliminación (cleanup) de rutinas programadas sin depender del Runner de Macrofase 7B.
+- **T-7A-NOAGENT-001 (Functional - Zero Inference):** Ejecución de `no-agent job` determinista (verificación de hashes y limpieza de logs); validación estricta de **0 inferencias LLM** y 0 tokens consumidos.
+- **T-7A-CRON-002 (Security & Cleanup):** Intento de registrar un job fuera del catálogo o con comandos bloqueados es denegado; verificación de cleanup completo de timers/jobs de prueba al finalizar. *(Nota: La integración completa `Cron → Runner → Watchdog → RUN-CONTRACT` se valida obligatoriamente en Macrofase 7B mediante `T-RUN-009`).*
 
-### 7A.8 Web Dashboard
-- **T-7A-DASH-001 (Functional):** Inicio de interfaz web local en `127.0.0.1:3000` y renderizado correcto del estado canónico desde `STATE.json`.
-- **T-7A-DASH-002 (Failure / Desacoplamiento):** Terminación forzada del proceso del Dashboard durante un run autónomo; verificación de que el Runner y los workers continúan sin perturbación.
+### 7A.8 Web Dashboard (Superficie Administrativa y Observabilidad)
+- **T-7A-DASH-001 (Functional & Loopback Default):** Inicio de interfaz web local en `127.0.0.1:9119` (default nativo de Hermes, con puerto configurable) y renderizado de estado y paneles administrativos.
+- **T-7A-DASH-002 (Security - Superficie Administrativa):** Verificación de bind exclusivo en loopback (`127.0.0.1`), rechazo de exposición en `0.0.0.0` y comprobación de que la gestión administrativa (configuración, MCP, memoria, cron, skills) no puede eludir `config/security.yaml` ni `RUN-CONTRACT.yaml`.
+- **T-7A-DASH-003 (Failure / Independencia del Runner):** Terminación forzada o deshabilitación del Dashboard; verificación de que la operación autónoma y el futuro Runner no dependen de él.
 
 ### 7A.9 Gateway Multiplataforma
 - **T-7A-GATEWAY-001 (Functional):** Emisión de alerta saliente unidireccional de `RUN COMPLETED` hacia webhook mock / sandbox.
