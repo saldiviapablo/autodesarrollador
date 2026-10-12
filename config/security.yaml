@@ -1,0 +1,79 @@
+# ==============================================================================
+# config/security.yaml — Políticas Globales de Seguridad y Guardrails
+# Proyecto: Desarrollador Autónomo
+# Versión: 2.0 (Fase 4 — Configuración Central)
+# ==============================================================================
+# Define las políticas obligatorias de seguridad para ejecuciones autónomas.
+# Precedencia: Las políticas de este archivo prevalecen sobre el RUN-CONTRACT,
+# las reglas de proyecto y cualquier instrucción o prompt del agente.
+# Una capa inferior NUNCA puede hacer más permisiva una regla de este archivo.
+# ==============================================================================
+
+workspace:
+  allow_write_outside: false
+  canonical_path_enforcement: true
+
+git:
+  allow_push: false
+  allow_force_push: false
+  allow_destructive_reset: false
+  allow_clean_fdx: false
+
+system:
+  allow_admin_runtime: false
+  allow_shutdown: false
+  allow_restart: false
+  allow_registry_changes: false
+  allow_firewall_changes: false
+  allow_global_execution_policy_changes: false
+
+network:
+  llama_public: false
+  llama_host: "127.0.0.1"
+  allow_port_forwarding: false
+  allow_public_tunnels: false
+
+browser:
+  dedicated_profile_required: true
+  dedicated_profile_name: "HERMES-CHATGPT"
+  allow_arbitrary_domains: false
+
+chatgpt:
+  enabled: true
+  allowed_domain: "chatgpt.com"
+  max_queries: 5
+  require_domain_lock: true
+
+autonomy:
+  max_cycles: 20
+  max_same_failure: 3
+  max_no_progress_cycles: 3
+
+secret_policy:
+  redact_logs: true
+  allow_secrets_in_git: false
+  allow_secrets_in_chatgpt: false
+  allow_secrets_in_state: false
+
+protected_paths:
+  - "C:\\AI\\llama.cpp"
+  - "C:\\Users\\Pc\\.cache\\huggingface\\hub\\models--ggml-org--Qwen3.6-35B-A3B-GGUF"
+  - "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\backups"
+  - "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config"
+  - "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\runner"
+
+blocked_commands:
+  patterns:
+    - "git push --force"
+    - "git push"
+    - "git clean -fdx"
+    - "git reset --hard"
+    - "format"
+    - "diskpart"
+    - "bcdedit"
+    - "reg delete"
+    - "shutdown"
+    - "Restart-Computer"
+    - "Remove-Item C:\\ -Recurse"
+    - "del /s /q C:\\"
+    - "rd /s /q C:\\"

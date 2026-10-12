@@ -1,0 +1,102 @@
+# ==============================================================================
+# config/VERSIONS.lock — Bloqueo de Versiones del Entorno Real
+# Proyecto: Desarrollador Autónomo
+# Versión: 2.0 (Fase 4 — Configuración Central)
+# ==============================================================================
+# Registra exclusivamente las versiones comprobadas empíricamente durante las
+# Fases 1, 2 y 3. No modificar valores sin una auditoría técnica documentada.
+# Formato: YAML determinista estructurado.
+# ==============================================================================
+
+lock_version: "1.0"
+updated_at: "2026-10-11T22:28:00-03:00"
+
+environment:
+  operating_system:
+    product: "Windows 11 Pro"
+    version: "10.0.26200"
+    build: "26200"
+    architecture: "64-bit"
+  hardware:
+    cpu: "AMD Ryzen 5 8400F 6-Core Processor (12 Threads)"
+    ram_gb: 31.67
+    gpu: "NVIDIA GeForce RTX 4060 Ti"
+    vram_mib: 8188
+    nvidia_driver: "591.86"
+    cuda_driver_version: "13.1"
+
+inference:
+  llama_cpp:
+    status: "VALIDATED"
+    executable: "C:\\AI\\llama.cpp\\llama-server.exe"
+    version: "0.5.0-dev"
+    build: 11368
+    commit: "1fb7ef3e3"
+    compiler: "Clang 20.1.8 for Windows x86_64"
+    cuda_runtime_target: "12.4"
+  qwen_model:
+    status: "VALIDATED"
+    name: "Qwen3.6-35B-A3B"
+    quantization: "Q4_K_M"
+    format: "GGUF"
+    context_validated: 65536
+    parallel_validated: 1
+    blob_sha256: "671e47e0ec53c665d048b98c3ecbfd5236b5ca9c3e02ed19fc8f81f7b85140c7"
+    size_bytes: 20419565568
+
+runtimes:
+  python_main:
+    version: "3.14.4"
+    executable: "C:\\Python314\\python.exe"
+    pyyaml_version: "6.0.3"
+  python_secondary:
+    version: "3.12.12"
+    executable: "C:\\Users\\Pc\\.local\\bin\\python3.12.exe"
+  uv:
+    version: "0.12.0"
+    executable: "C:\\Users\\Pc\\.local\\bin\\uv.exe"
+  node:
+    version: "24.14.1"
+    executable: "C:\\Program Files\\nodejs\\node.exe"
+  npm:
+    version: "11.11.0"
+    executable: "C:\\Program Files\\nodejs\\npm.ps1"
+  powershell:
+    edition: "Desktop"
+    version: "5.1.26100.9444"
+    executable: "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    execution_policy: "RemoteSigned"
+  powershell_core:
+    status: "NOT_INSTALLED"
+
+tools:
+  git:
+    version: "2.53.0.windows.3"
+    executable: "C:\\Program Files\\Git\\cmd\\git.exe"
+  github_cli:
+    version: "2.96.0"
+    executable: "C:\\Program Files\\GitHub CLI\\gh.exe"
+  chrome:
+    version: "154.0.8037.99"
+    executable: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+
+autonomous_agents:
+  qwen_code:
+    status: "NOT_INSTALLED"
+    target_package: "@qwen-code/qwen-code"
+    available_registry_version: "0.25.1"
+  hermes:
+    status: "NOT_INSTALLED"
+    target_repo: "NousResearch/hermes-agent"
+
+legacy:
+  goose:
+    status: "PRESERVED"
+    classification: "LEGACY"
+    version: "1.53.0"
+    executable: "C:\\Users\\Pc\\.local\\bin\\goose.exe"
+  opencode:
+    status: "PRESERVED"
+    classification: "LEGACY"
+    version: "1.18.34"
+    executable: "C:\\Users\\Pc\\AppData\\Roaming\\npm\\opencode.ps1"

@@ -1,8 +1,8 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-11T18:52:00-03:00  
-**Fase activa:** FASE 3 COMPLETADA (En espera de autorización para Fase 4)  
+**Última actualización:** 2026-10-11T22:33:00-03:00  
+**Fase activa:** FASE 4 COMPLETADA (En espera de autorización para Fase 5)  
 **Baseline de arquitectura:** Hermes Agent + Qwen Code CLI + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
 ---
@@ -15,7 +15,7 @@
 | **Fase 1** | Inventario del entorno | **PASS** | Auditoría física y de software completa. Registrado en `docs/INVENTORY.md` y `logs/inventory-audit-20261011.log`. |
 | **Fase 2** | Backup y baseline | **PASS** | Creación de `backups/preinstall-*/`, verificación de hashes SHA-256, corrección de discrepancias documentales, creación de `MANIFEST.md`, `.gitignore` y primer commit baseline. |
 | **Fase 3** | Validación de llama.cpp + Qwen | **PASS** | Validado inicio controlado a 64K (`n_ctx_slot = 65536`), `parallel = 1`, alias `qwen36`, inferencia exitosa (33.1 tok/s) y cleanup verificado. Evidencia en `evidence/installation/`. |
-| **Fase 4** | Configuración central | **PENDING** | Creación de `config/system.yaml`, `config/security.yaml` y `config/VERSIONS.lock`. |
+| **Fase 4** | Configuración central | **PASS** | Creación de `config/system.yaml`, `config/security.yaml`, `config/VERSIONS.lock` y `config/README.md`. Verificación determinista (66/66 pruebas superadas) con `scripts/verify-config.ps1`. |
 | **Fase 5** | Qwen Code CLI | **PENDING** | Instalación/configuración de `@qwen-code/qwen-code` y validación en sandbox headless. |
 | **Fase 6** | Hermes Agent | **PENDING** | Instalación/configuración de `NousResearch/hermes-agent` contra Qwen local. |
 | **Fase 7** | Model Gateway / Inference Lock | **PENDING** | Mecanismo determinista de exclusión mutua para serializar `--parallel 1`. |
@@ -45,5 +45,5 @@
 
 ## Próximo Paso Recomendado
 
-- **Aprobación de la Fase 3:** El usuario revisará el informe de validación funcional y de evidencias de llama.cpp a 64K.
-- **Fase 4:** Creación de los archivos centrales de configuración (`config/system.yaml`, `config/security.yaml` y `config/VERSIONS.lock`) para desacoplar rutas y parámetros de los scripts individuales.
+- **Aprobación de la Fase 4:** El usuario revisará el informe de verificación determinista de la configuración central y el commit en la rama `phase/04-central-config`.
+- **Fase 5:** Instalación y configuración controlada de Qwen Code CLI (`@qwen-code/qwen-code`) en modo headless apuntando al modelo local `qwen36` en `127.0.0.1:8080`.

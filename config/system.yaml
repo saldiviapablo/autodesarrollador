@@ -1,0 +1,72 @@
+# ==============================================================================
+# config/system.yaml — Configuración Central del Sistema
+# Proyecto: Desarrollador Autónomo
+# Versión: 2.0 (Fase 4 — Configuración Central)
+# ==============================================================================
+# Fuente central de configuración técnica. Los scripts y herramientas de la
+# infraestructura deben consumir estos parámetros en lugar de hardcodear valores.
+# No almacenar aquí datos volátiles de runtime (PIDs, tokens, timestamps de runs).
+# ==============================================================================
+
+system:
+  name: "Desarrollador Autónomo"
+  environment: "local"
+
+paths:
+  infrastructure_root: "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo"
+  ai_base_dir: "C:\\AI"
+
+llama:
+  executable: "C:\\AI\\llama.cpp\\llama-server.exe"
+  model: "C:\\Users\\Pc\\.cache\\huggingface\\hub\\models--ggml-org--Qwen3.6-35B-A3B-GGUF\\snapshots\\baec3ebee244827cda0f4557eafa8b28f7545fa6\\Qwen3.6-35B-A3B-Q4_K_M.gguf"
+  alias: "qwen36"
+  host: "127.0.0.1"
+  port: 8080
+  ctx_size: 65536
+  parallel: 1
+  cpu_moe: true
+  n_gpu_layers: 99
+  flash_attention: true
+  cache_type_k: "q8_0"
+  cache_type_v: "q8_0"
+  jinja: true
+  health_endpoint: "http://127.0.0.1:8080/health"
+  models_endpoint: "http://127.0.0.1:8080/v1/models"
+  chat_completions_endpoint: "http://127.0.0.1:8080/v1/chat/completions"
+  known_warnings:
+    - id: "MMAP_CPU_MOE_TENSOR_OVERRIDE"
+      message: "tensor overrides to CPU are used with mmap enabled - consider using --load-mode none for better performance"
+      status: "KNOWN_WARNING"
+      action: "RETAIN_VALIDATED_DEFAULTS"
+
+runner:
+  llama_start_timeout_seconds: 180
+  request_timeout_seconds: 60
+  global_timeout_minutes: 480
+  heartbeat_seconds: 15
+
+inference_lock:
+  timeout_seconds: 120
+  stale_threshold_seconds: 300
+
+limits:
+  max_cycles: 20
+  max_same_failure: 3
+  max_no_progress_cycles: 3
+  max_chatgpt_queries: 5
+  max_llama_restarts: 3
+  max_qwen_code_restarts: 3
+  max_hermes_restarts: 3
+
+logging:
+  level: "INFO"
+  retention_days: 14
+
+recovery:
+  auto_reconcile: true
+  checkpoint_interval_minutes: 30
+
+chatgpt:
+  profile_name: "HERMES-CHATGPT"
+  target_url: "https://chatgpt.com"
+  max_tabs: 1
