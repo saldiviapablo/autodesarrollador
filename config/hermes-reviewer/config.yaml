@@ -1,0 +1,85 @@
+model:
+  default: qwen36
+  provider: custom
+  base_url: http://127.0.0.1:8080/v1
+  context_length: 65536
+custom_providers:
+- name: local-qwen
+  base_url: http://127.0.0.1:8080/v1
+  api_key: local-not-required
+  api_mode: chat_completions
+  context_length: 65536
+  models:
+    qwen36:
+      context_length: 65536
+memory:
+  memory_enabled: false
+  user_profile_enabled: false
+  memory_char_limit: 2200
+  user_char_limit: 1375
+  nudge_interval: 10
+skills:
+  creation_nudge_interval: 10
+hooks_auto_accept: false
+browser:
+  backend: 'off'
+  cloud_provider: local
+  engine: chrome
+  headed: false
+  use_real_profile: false
+  allow_private_urls: false
+delegation:
+  max_concurrent_children: 1
+  max_spawn_depth: 1
+  max_iterations: 5
+  child_timeout_seconds: 120
+  oneshot_max_children: 1
+  subagent_auto_approve: false
+  inherit_mcp_toolsets: false
+hooks:
+  pre_tool_call:
+  - command: '"C:/Python314/python.exe" "C:/Users/Pc/Documents/Proyectos Tech/Desarrollador
+      autonomo/scripts/hermes-pre-tool-hook.py"'
+    timeout: 30
+    fail_closed: true
+mcp_single_query_discovery_timeout: 15.0
+mcp_servers: {}
+plugins:
+  enabled: []
+  load_timeout_seconds: 10
+  hook_callback_timeout: 30
+_config_version: 50
+platform_toolsets:
+  cli: []
+agent:
+  disabled_toolsets:
+  - terminal
+  - file
+  - web
+  - search
+  - vision
+  - image_gen
+  - video
+  - video_gen
+  - computer_use
+  - skills
+  - browser
+  - text_to_speech
+  - todo
+  - memory
+  - session_search
+  - clarify
+  - code_execution
+  - delegation
+  - kanban
+  - cronjob
+  - cron
+  - discord
+  - discord_admin
+  - yuanbao
+  - feishu_doc
+  - feishu_drive
+  - spotify
+  - catalog
+  - start_chat
+  - connections

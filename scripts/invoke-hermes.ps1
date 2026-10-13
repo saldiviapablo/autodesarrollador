@@ -225,6 +225,8 @@ $psi.EnvironmentVariables["OPENAI_API_KEY"] = "local-not-required"
 $psi.EnvironmentVariables["OPENAI_MODEL"] = $modelName
 $psi.EnvironmentVariables["PYTHONUTF8"] = "1"
 $psi.EnvironmentVariables["PYTHONIOENCODING"] = "utf-8"
+$psi.EnvironmentVariables['HERMES_SINGLE_QUERY_SESSION']='1'
+$psi.EnvironmentVariables['DELEGATION_MAX_CONCURRENT_CHILDREN']='1'
 if ($psi.EnvironmentVariables.ContainsKey("HERMES_ACCEPT_HOOKS")) {
     $psi.EnvironmentVariables.Remove("HERMES_ACCEPT_HOOKS")
 }

@@ -25,7 +25,7 @@ Principio:
 | **Macrofase 4** | Integración Hermes ↔ Qwen Code | Fases 7 a 9 | **PASS** |
 | **Macrofase 5** | Memoria y Continuidad | Fases 10 a 12 | **PASS** |
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
-| **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.4 PASS; 7A.5–7A.10 PENDING | **IN_PROGRESS** |
+| **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.5 PASS; 7A.6–7A.10 PENDING | **IN_PROGRESS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PENDING** |
 | **Macrofase 8** | Validación Final | Fases 23 a 28 | **PENDING** |
 
@@ -719,7 +719,7 @@ ANTI_LOOP PASS
 
 # 20. MACROFASE 7A — Capacidades Nativas de Hermes (Hermes Native Capabilities)
 
-**Estado:** IN_PROGRESS (arquitectura congelada; 7A.1–7A.4 PASS; 7A.5–7A.10 PENDING)
+**Estado:** IN_PROGRESS (arquitectura congelada; 7A.1–7A.5 PASS; 7A.6–7A.10 PENDING)
 
 Esta macrofase incorpora formalmente las 14 capacidades nativas de Hermes Agent y el componente de hardening de ChatGPT, supeditadas al principio rector **"Prefer Native When Verified"** y a la **Deterministic Control Layer**.
 

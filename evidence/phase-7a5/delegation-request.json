@@ -1,0 +1,22 @@
+﻿{
+    "schema_version":  "1.0",
+    "delegation_id":  "del-7a5-worker",
+    "objective":  "fix calculator add",
+    "workspace":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a5-roles",
+    "task":  "change add to return a+b",
+    "acceptance_criteria":  [
+                                "add(2,3)==5 and tests pass"
+                            ],
+    "allowed_actions":  [
+                            "edit_file",
+                            "run_test"
+                        ],
+    "forbidden_actions":  [
+                              "git push",
+                              "system changes"
+                          ],
+    "tests":  [
+                  "python test_calculator.py"
+              ],
+    "status":  "READY"
+}

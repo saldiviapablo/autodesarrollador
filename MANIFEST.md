@@ -96,7 +96,7 @@ Parámetros validados:
 - **Macrofase 4 (Integración Hermes ↔ Qwen Code - Fases 7 a 9):** **PASS**
 - **Macrofase 5 (Memoria y Continuidad - Fases 10 a 12):** **PASS**
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
-- **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **IN_PROGRESS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5–7A.10`: **PENDING**). Preflight correctivo aprobado en commit `f133bab`.
+- **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **IN_PROGRESS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5 — Bot Mode + Subagentes`: **PASS**; `7A.6–7A.10`: **PENDING**). Preflight correctivo aprobado en commit `f133bab`.
 - **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PENDING**
 - **Macrofase 8 (Validación Final - Fases 23 a 28):** **PENDING**
 

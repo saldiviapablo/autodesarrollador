@@ -28,6 +28,14 @@ browser:
   headed: false
   use_real_profile: false
   allow_private_urls: false
+delegation:
+  max_concurrent_children: 1
+  max_spawn_depth: 1
+  max_iterations: 5
+  child_timeout_seconds: 120
+  oneshot_max_children: 1
+  subagent_auto_approve: false
+  inherit_mcp_toolsets: false
 hooks:
   pre_tool_call:
     - command: '"C:/Python314/python.exe" "C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/scripts/hermes-pre-tool-hook.py"'
