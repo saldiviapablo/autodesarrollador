@@ -14,7 +14,14 @@ function Write-RunnerPrestartBlock($Info,[string]$Reason){
         $null=Write-AtomicState -StateObj $state -AutopilotDir $auto -ValidateTransition $false
         $null=Update-AutopilotHeartbeat -AutopilotDir $auto -RunId $state.run_id -ProcessId $PID -Status 'BLOCKED_REQUIRES_HUMAN' -CurrentTask $Reason
         $null=& (Join-Path $script:RunnerInfra 'scripts/create-autopilot-checkpoint.ps1') -ProjectPath $Info.project -CheckpointId ('chk-blocked-'+[datetime]::Now.ToString('yyyyMMddHHmmssfff')) -Reason $Reason
-        $null=Write-RunnerReport -Project $Info.project -RunId $state.run_id -State $state -Status 'BLOCKED_REQUIRES_HUMAN' -Technical 'NOT_STARTED' -Reason $Reason -Duration 0 -Cleanup @{started=$false;owned_processes=0;job_closed=$true}
+        $lockPath=Join-Path $auto 'LOCK.json'
+        if(Test-Path -LiteralPath $lockPath){
+            $old=Get-Content -LiteralPath $lockPath -Raw -Encoding UTF8|ConvertFrom-Json
+            # The physical run mutex is held; retire only this contract's initializer metadata.
+            if($old.run_id -ne $state.run_id){throw 'FOREIGN_LOCK_PRESERVED'}
+            Remove-Item -LiteralPath $lockPath
+        }
+        $null=Write-RunnerReport -Project $Info.project -RunId $state.run_id -State $state -Status 'BLOCKED_REQUIRES_HUMAN' -Technical 'NOT_STARTED' -Reason $Reason -Duration 0 -Cleanup @{started=$false;owned_processes=0;job_closed=$true;run_lock_removed=$true}
     }finally{if($acquired){$mutex.ReleaseMutex()};$mutex.Dispose()}
 }
 function Write-RunnerReport([string]$Project,[string]$RunId,$State,[string]$Status,[string]$Technical,[string]$Reason,[double]$Duration,$Cleanup,[string]$ReportRoot=''){
