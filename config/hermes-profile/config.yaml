@@ -21,6 +21,13 @@ memory:
 skills:
   creation_nudge_interval: 10
 hooks_auto_accept: false
+browser:
+  backend: "off"
+  cloud_provider: local
+  engine: chrome
+  headed: false
+  use_real_profile: false
+  allow_private_urls: false
 hooks:
   pre_tool_call:
     - command: '"C:/Python314/python.exe" "C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/scripts/hermes-pre-tool-hook.py"'

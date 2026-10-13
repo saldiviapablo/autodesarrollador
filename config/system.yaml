@@ -162,8 +162,8 @@ hermes:
 
 document_extraction:
   enabled: true
-  native_source_dir: "C:\\Users\\Pc\\AppData\\Local\\hermes\\hermes-agent"
-  native_python: "C:\\Users\\Pc\\AppData\\Local\\hermes\\installs\\f0a881ae792bab01\\environments\\d6bb9776990441fa960204f0f2b056ed\\venv\\Scripts\\python.exe"
+  native_source_dir: &hermes_native_source "C:\\Users\\Pc\\AppData\\Local\\hermes\\hermes-agent"
+  native_python: &hermes_native_python "C:\\Users\\Pc\\AppData\\Local\\hermes\\installs\\f0a881ae792bab01\\environments\\d6bb9776990441fa960204f0f2b056ed\\venv\\Scripts\\python.exe"
   native_read_extract_sha256: "d4e117e4e93b55a3d50a5b65ee9dd138790cc0e5797fc52ea159dab523ee5b73"
   native_file_tools_sha256: "98fd25b1eec21bf9646397bd2733b38670224e3e66862d7d0f9e434368fc1f80"
   allowed_formats: [".md", ".json", ".yaml", ".yml", ".docx", ".xlsx", ".pdf", ".rtf"]
@@ -175,4 +175,19 @@ document_extraction:
   allow_network: false
   allow_subprocess_from_parser: false
   reject_macros: true
+
+native_browser:
+  enabled: true
+  native_source_dir: *hermes_native_source
+  native_python: "C:\\Users\\Pc\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe"
+  native_site_packages: "C:\\Users\\Pc\\AppData\\Local\\hermes\\installs\\f0a881ae792bab01\\environments\\d6bb9776990441fa960204f0f2b056ed\\venv\\Lib\\site-packages"
+  native_module_sha256: "dc89c75b2a692b8b904a503bfecc6104fccd2501f50513ddf10dc9c53e3bee3f"
+  chromium_executable: "C:\\Users\\Pc\\AppData\\Local\\hermes\\tools\\chromium-1208\\chrome-win64\\chrome.exe"
+  action_policy_path: "config/native-browser-policy.json"
+  allowed_domains: ["docs.python.org", "nodejs.org", "learn.microsoft.com", "github.com", "pypi.org", "agent-browser.dev"]
+  timeout_seconds: 60
+  max_output_chars: 50000
+  cloud_provider: "local"
+  headed: false
+  use_real_profile: false
 

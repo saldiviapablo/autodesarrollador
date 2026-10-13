@@ -1,0 +1,59 @@
+﻿{
+    "test_id":  "T-7A-BROWSER-002",
+    "status":  "PASS",
+    "timestamp":  "2026-10-13T03:02:07.9049582-03:00",
+    "data":  {
+                 "wrapper_denials":  [
+                                         {
+                                             "url":  "https://example.com/",
+                                             "status":  "DENY",
+                                             "reason":  "DOMAIN_BLOCKED",
+                                             "cleanup_ok":  true
+                                         },
+                                         {
+                                             "url":  "https://foo.docs.python.org/",
+                                             "status":  "DENY",
+                                             "reason":  "DOMAIN_BLOCKED",
+                                             "cleanup_ok":  true
+                                         },
+                                         {
+                                             "url":  "https://docs.python.org.evil.test/",
+                                             "status":  "DENY",
+                                             "reason":  "DOMAIN_BLOCKED",
+                                             "cleanup_ok":  true
+                                         },
+                                         {
+                                             "url":  "https://docs.python.org@evil.test/",
+                                             "status":  "DENY",
+                                             "reason":  "DOMAIN_BLOCKED",
+                                             "cleanup_ok":  true
+                                         },
+                                         {
+                                             "url":  "http://docs.python.org/",
+                                             "status":  "DENY",
+                                             "reason":  "DOMAIN_BLOCKED",
+                                             "cleanup_ok":  true
+                                         },
+                                         {
+                                             "url":  "https://chatgpt.com/",
+                                             "status":  "DENY",
+                                             "reason":  "DOMAIN_BLOCKED",
+                                             "cleanup_ok":  true
+                                         },
+                                         {
+                                             "url":  "invalid URL",
+                                             "status":  "DENY",
+                                             "reason":  "DOMAIN_BLOCKED",
+                                             "cleanup_ok":  true
+                                         }
+                                     ],
+                 "native_engine_nonallowlisted":  {
+                                                      "success":  false,
+                                                      "error":  "Domain \u0027example.com\u0027 is not in the allowed domains list"
+                                                  },
+                 "native_evaluation_denied":  {
+                                                  "success":  false,
+                                                  "error":  "Action \u0027evaluate\u0027 denied by policy: Action \u0027evaluate\u0027 is not in the allow list"
+                                              }
+             }
+}

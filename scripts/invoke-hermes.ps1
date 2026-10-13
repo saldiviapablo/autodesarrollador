@@ -197,6 +197,25 @@ $psi.RedirectStandardError = $true
 $psi.RedirectStandardInput = $true
 $psi.StandardOutputEncoding = [System.Text.Encoding]::UTF8
 $psi.StandardErrorEncoding = [System.Text.Encoding]::UTF8
+
+# Govern built-in native browsing separately from the ChatGPT CDP bridge.
+if ($sysConfig.native_browser -and $sysConfig.native_browser.enabled) {
+    $browserPolicyPath=Join-Path $infraRoot $sysConfig.native_browser.action_policy_path
+    $browserPolicy=Get-Content -LiteralPath $browserPolicyPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    $expectedBrowserActions=@('launch','navigate','snapshot','get','close')
+    if ($browserPolicy.default -ne 'deny' -or (@($browserPolicy.allow) -join ',') -ne ($expectedBrowserActions -join ',')) {
+        throw 'DENY [NATIVE_BROWSER_ACTION_POLICY_MISMATCH]'
+    }
+    foreach($key in @($psi.EnvironmentVariables.Keys)) {
+        if ($key.StartsWith('AGENT_BROWSER_') -or $key.StartsWith('BU_CDP_')) { $psi.EnvironmentVariables.Remove($key) }
+    }
+    $psi.EnvironmentVariables['AGENT_BROWSER_ALLOWED_DOMAINS']=(@($sysConfig.native_browser.allowed_domains) -join ',')
+    $psi.EnvironmentVariables['AGENT_BROWSER_ACTION_POLICY']=$browserPolicyPath
+    $psi.EnvironmentVariables['AGENT_BROWSER_EXECUTABLE_PATH']=$sysConfig.native_browser.chromium_executable
+    $psi.EnvironmentVariables['AGENT_BROWSER_CONTENT_BOUNDARIES']='1'
+    $psi.EnvironmentVariables['AGENT_BROWSER_HEADED']='false'
+    $psi.EnvironmentVariables['AGENT_BROWSER_MAX_OUTPUT']=[string]$sysConfig.native_browser.max_output_chars
+}
 $psi.UseShellExecute = $false
 $psi.CreateNoWindow = $true
 
@@ -321,9 +340,36 @@ $exitCode = -1
 
 $rawOut = ""
 $rawErr = ""
+$hermesJob=$null
+$hermesReadyFile=$null
 
 try {
+    # Use the official installation-bound command, avoiding the Windows venv
+    # redirector. A start gate prevents any child tool from spawning before
+    # the worker has joined its owned kernel job.
+    . (Join-Path $infraRoot 'scripts/windows-process-job.ps1')
+    $runtimeRaw=& $hermesExe --print-runtime-command -- @argList
+    $runtimeCommand=($runtimeRaw -join "`n") | ConvertFrom-Json
+    $jobDir=Join-Path $infraRoot 'runtime/hermes-jobs'
+    New-Item -ItemType Directory -Path $jobDir -Force|Out-Null
+    $hermesReadyFile=Join-Path $jobDir ([guid]::NewGuid().ToString('N')+'.ready')
+    $hermesPrelude=@'
+import os, time, pathlib
+_job_ready = pathlib.Path(os.environ['DA_HERMES_JOB_READY_FILE'])
+_job_deadline = time.monotonic() + 5
+while not _job_ready.exists() and time.monotonic() < _job_deadline:
+    time.sleep(0.01)
+if not _job_ready.exists() or _job_ready.read_text().strip() != str(os.getpid()):
+    raise RuntimeError('HERMES_JOB_NOT_ASSIGNED')
+'@
+    $runtimeCommand[3]=$hermesPrelude+"`n"+$runtimeCommand[3]
+    $psi.FileName=$runtimeCommand[0]
+    $psi.Arguments=(@($runtimeCommand | Select-Object -Skip 1) | ForEach-Object { Format-CliArg $_ }) -join ' '
+    $psi.EnvironmentVariables['DA_HERMES_JOB_READY_FILE']=$hermesReadyFile
+    $hermesJob=New-Object DaOwnedProcessJob
     $proc = [System.Diagnostics.Process]::Start($psi)
+    $hermesJob.Assign($proc.Handle)
+    [IO.File]::WriteAllText($hermesReadyFile,$proc.Id.ToString())
     $proc.StandardInput.Close()
 
     $stdoutTask = $proc.StandardOutput.ReadToEndAsync()
@@ -351,6 +397,8 @@ try {
 } catch {
     $rawErr = $_.Exception.Message
 } finally {
+    if($hermesJob){$hermesJob.Dispose()}
+    if($hermesReadyFile -and (Test-Path -LiteralPath $hermesReadyFile)){Remove-Item -LiteralPath $hermesReadyFile}
     $duration = [Math]::Round(((Get-Date) - $startTime).TotalSeconds, 2)
     if ($lockToken) {
         $null = Release-InferenceLock -LockToken $lockToken
