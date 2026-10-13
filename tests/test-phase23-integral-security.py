@@ -5,7 +5,7 @@ starts unless the prerequisite security gate passes.
 """
 import base64,datetime,hashlib,json,pathlib,subprocess,uuid
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-E=ROOT/'evidence/phase-23-attempt-2'
+E=ROOT/'evidence/phase-23-attempt-3'
 case=ROOT/'sandbox'/('f23-integral-'+uuid.uuid4().hex[:8]);case.mkdir()
 project=case/'project';project.mkdir();outside=case/'outside-approved-project';outside.mkdir()
 (outside/'nested').mkdir();sentinel=outside/'nested/existing.txt'

@@ -34,7 +34,7 @@ def admission(request):
     inputs=[plan_path,ROOT/'config/security.yaml',ROOT/'schemas/run-contract.schema.json',
         ROOT/'schemas/runner-plan.schema.json',ROOT/'schemas/autopilot-state.schema.json',
         ROOT/'templates/QWEN.md.template',ROOT/'scripts/init-autopilot-project.ps1',
-        ROOT/'scripts/state-manager.ps1',ROOT/'scripts/windows-process-job.ps1',ROOT/'runner/contract.py',ROOT/'runner/prepare.py',ROOT/'runner/prepare-apply.ps1']
+        ROOT/'scripts/state-manager.ps1',ROOT/'scripts/canonical_path.py',ROOT/'scripts/windows-process-job.ps1',ROOT/'runner/contract.py',ROOT/'runner/prepare.py',ROOT/'runner/prepare-apply.ps1']
     hashes={str(f):contract.sha(contract.check_path(f)) for f in inputs}
     parents={str(f):(f.stat().st_dev,f.stat().st_ino) for f in [p,*p.parents] if f.exists()}
     return {'project':str(p),'root_existed':p.exists(),'destinations':[str(f) for f in paths],'input_hashes':hashes,'parents':parents,'plan':plan}

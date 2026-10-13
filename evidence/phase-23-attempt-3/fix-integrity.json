@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "command_secret_policy_bodies_unchanged": true,
+  "protected_sources_unchanged": {
+    "config/security.yaml": true,
+    "scripts/inference-lock.ps1": true,
+    "scripts/hermes-pre-tool-hook.py": true,
+    "scripts/mcp-sandbox-server.py": true,
+    "config/plugins/desarrollador-autonomo-health/__init__.py": true,
+    "config/plugins/desarrollador-autonomo-health/plugin.yaml": true,
+    "config/system.yaml": true,
+    "config/VERSIONS.lock": true
+  },
+  "source_sha256": {
+    "scripts/canonical_path.py": "1999ececa75fac713656584fa1802c10ea34fcbc26611626b8da48968362c686",
+    "scripts/security-guard.ps1": "df18149ae6dee48ad09f9851ca0ce4e3d6f64c068946c94ca137e98f18f6f0e2",
+    "scripts/hermes-mcp-plugin-guard.ps1": "40e9ffb3865e3ede42f959f951a0c2042538392fee73f380b7855731ccb6becf",
+    "runner/contract.py": "0ee2bf31773859612c1c9070c597fed97b113af170b9d5420510cea50e6bec14",
+    "runner/prepare.py": "f08433d27192358027c2ef24686cb35f5ecd9c3037ed843e7ffbdfb83fe7ae45",
+    "config/security.yaml": "68e0941a63ec53c67429a296d7db4722a29267a8aee5432086e4639ac8f0ec7f",
+    "scripts/inference-lock.ps1": "3990343f762a26c6e7ed090e64b3c3b0c2b719cd4e611f0c490cebc633928717",
+    "scripts/hermes-pre-tool-hook.py": "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+    "scripts/mcp-sandbox-server.py": "ab4c23e4c68dde352c63fbac9bef53dbdb747a411d52fb949d996413b20807c3",
+    "config/plugins/desarrollador-autonomo-health/__init__.py": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+    "config/plugins/desarrollador-autonomo-health/plugin.yaml": "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+    "config/system.yaml": "9434854d904f51ff9aeb786b0c73d276c54c5d511fbba373e67ab9858a8bca78",
+    "config/VERSIONS.lock": "81ca3683e16cc09625ea0000a46fee8d0a2caffdf5b33019a208dfed73b4dab4"
+  },
+  "historical_bindings_match": true,
+  "new_dependencies": [],
+  "mandatory_fix_gates": [
+    "A-J READ/WRITE PASS",
+    "Prepare PASS",
+    "MCP/plugin/Runner confinement PASS",
+    "historical Path/Command/Secret Guard PASS"
+  ]
+}

@@ -3,7 +3,7 @@ import base64,hashlib,json,os,pathlib,subprocess,sys,uuid
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'runner'))
 import prepare,contract
-E=ROOT/'evidence/phase-23-attempt-2';E.mkdir(exist_ok=True)
+E=ROOT/'evidence/phase-23-attempt-3';E.mkdir(exist_ok=True)
 case=ROOT/'sandbox'/('prepare-admission-'+uuid.uuid4().hex[:8]);case.mkdir()
 plan=case/'plan.json'
 plan.write_text(json.dumps({'schema_version':'1.0','task':'Verify the harmless fixture','backend':'probe',

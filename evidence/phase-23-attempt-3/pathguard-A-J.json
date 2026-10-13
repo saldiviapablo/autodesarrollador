@@ -1,0 +1,604 @@
+{
+  "status": "PASS",
+  "checks": {
+    "A_READ": true,
+    "A_WRITE": true,
+    "B_READ": true,
+    "B_WRITE": true,
+    "C_READ": true,
+    "C_WRITE": true,
+    "D_READ": true,
+    "D_WRITE": true,
+    "E_READ": true,
+    "E_WRITE": true,
+    "F_READ": true,
+    "F_WRITE": true,
+    "G_READ": true,
+    "G_WRITE": true,
+    "H_READ": true,
+    "H_WRITE": true,
+    "I_READ": true,
+    "I_WRITE": true,
+    "J_READ": true,
+    "J_WRITE": true,
+    "PREFIX_LOOKALIKE_READ": true,
+    "PREFIX_LOOKALIKE_WRITE": true,
+    "MISSING_NORMAL_READ": true,
+    "MISSING_NORMAL_WRITE": true,
+    "CYCLE_READ": true,
+    "CYCLE_WRITE": true,
+    "DANGLING_READ": true,
+    "DANGLING_WRITE": true,
+    "LINK_LIMIT_READ": true,
+    "LINK_LIMIT_WRITE": true,
+    "ROOT_DESTROY": true,
+    "ZERO_SIDE_EFFECTS": true,
+    "EXACT_ORIGINAL_REASON": true,
+    "RUNNER_external": true,
+    "RUNNER_internal": true,
+    "RUNNER_first": true,
+    "RUNNER_SCOPE": true,
+    "UNREADABLE_REPARSE_FAIL_CLOSED": true,
+    "MCP_EXTERNAL_DENY": true,
+    "MCP_NORMAL_ALLOW": true,
+    "PLUGIN_EXTERNAL_DENY": true,
+    "PLUGIN_NORMAL_ALLOW": true,
+    "PLUGIN_SHA256": true
+  },
+  "cases": [
+    {
+      "expected": true,
+      "id": "A_READ",
+      "decision": {
+        "Allowed": true,
+        "Decision": "ALLOW",
+        "Reason": "ALLOWED_WORKSPACE_PATH",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\inside\\normal.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\inside\\normal.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": true,
+      "id": "A_WRITE",
+      "decision": {
+        "Allowed": true,
+        "Decision": "ALLOW",
+        "Reason": "ALLOWED_WORKSPACE_PATH",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\inside\\normal.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\inside\\normal.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "B_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external\\existing.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "B_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external\\existing.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "C_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\new.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external\\new.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "C_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\new.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external\\new.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "D_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\nested",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external\\nested",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "D_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\nested",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external\\nested",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\external",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": true,
+      "id": "E_READ",
+      "decision": {
+        "Allowed": true,
+        "Decision": "ALLOW",
+        "Reason": "ALLOWED_WORKSPACE_PATH",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\inside\\normal.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\internal\\normal.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\internal",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\inside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": true,
+      "id": "E_WRITE",
+      "decision": {
+        "Allowed": true,
+        "Decision": "ALLOW",
+        "Reason": "ALLOWED_WORKSPACE_PATH",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\inside\\normal.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\internal\\normal.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\internal",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\inside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "F_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\first\\existing.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\first",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\second"
+          },
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\second",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "F_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\first\\existing.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\first",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\second"
+          },
+          {
+            "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\second",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "G_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "G_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "H_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "H_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": true,
+      "id": "I_READ",
+      "decision": {
+        "Allowed": true,
+        "Decision": "ALLOW",
+        "Reason": "ALLOWED_WORKSPACE_PATH",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\válido ñ 漢字\\archivo con espacios.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\válido ñ 漢字\\archivo con espacios.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": true,
+      "id": "I_WRITE",
+      "decision": {
+        "Allowed": true,
+        "Decision": "ALLOW",
+        "Reason": "ALLOWED_WORKSPACE_PATH",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\válido ñ 漢字\\archivo con espacios.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\válido ñ 漢字\\archivo con espacios.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "J_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Requested": "C:\\USERS\\PC\\DOCUMENTS\\PROYECTOS TECH\\DESARROLLADOR AUTONOMO\\SANDBOX\\PATHGUARD-329ED1D7\\PROJECT\\EXTERNAL\\EXISTING.TXT",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\USERS\\PC\\DOCUMENTS\\PROYECTOS TECH\\DESARROLLADOR AUTONOMO\\SANDBOX\\PATHGUARD-329ED1D7\\PROJECT\\EXTERNAL",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "J_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside\\existing.txt",
+        "Requested": "C:\\USERS\\PC\\DOCUMENTS\\PROYECTOS TECH\\DESARROLLADOR AUTONOMO\\SANDBOX\\PATHGUARD-329ED1D7\\PROJECT\\EXTERNAL\\EXISTING.TXT",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [
+          {
+            "entry": "C:\\USERS\\PC\\DOCUMENTS\\PROYECTOS TECH\\DESARROLLADOR AUTONOMO\\SANDBOX\\PATHGUARD-329ED1D7\\PROJECT\\EXTERNAL",
+            "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\outside"
+          }
+        ],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "PREFIX_LOOKALIKE_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project-evil\\existing.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project-evil\\existing.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "PREFIX_LOOKALIKE_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "PATH_BOUNDARY_VIOLATION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project-evil\\existing.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project-evil\\existing.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": true,
+      "id": "MISSING_NORMAL_READ",
+      "decision": {
+        "Allowed": true,
+        "Decision": "ALLOW",
+        "Reason": "ALLOWED_WORKSPACE_PATH",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\new-directory\\new.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\new-directory\\new.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": true,
+      "id": "MISSING_NORMAL_WRITE",
+      "decision": {
+        "Allowed": true,
+        "Decision": "ALLOW",
+        "Reason": "ALLOWED_WORKSPACE_PATH",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\new-directory\\new.txt",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project\\new-directory\\new.txt",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "CYCLE_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "REPARSE_CYCLE_DENIED",
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "CYCLE_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "REPARSE_CYCLE_DENIED",
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "DANGLING_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "REPARSE_TARGET_MISSING",
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "DANGLING_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "REPARSE_TARGET_MISSING",
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "LINK_LIMIT_READ",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "REPARSE_LIMIT_DENIED",
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "LINK_LIMIT_WRITE",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "REPARSE_LIMIT_DENIED",
+        "writes_performed": 0
+      }
+    },
+    {
+      "expected": false,
+      "id": "ROOT_DESTROY",
+      "decision": {
+        "Allowed": false,
+        "Decision": "DENY",
+        "Reason": "BLOCKED_ROOT_DESTRUCTION",
+        "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7\\project",
+        "ReparsePoints": [],
+        "writes_performed": 0
+      }
+    }
+  ],
+  "adapters": {
+    "mcp_external": {
+      "allowed": false,
+      "status": "PATH_CONFINEMENT_VIOLATION",
+      "decision": "DENY",
+      "reason": "PATH_BOUNDARY_VIOLATION"
+    },
+    "mcp_normal": {
+      "status": "OK",
+      "decision": "ALLOW",
+      "is_error": false,
+      "server": "da_local_sandbox",
+      "tool": "da_read_sandbox",
+      "child_pid": 13772,
+      "duration_seconds": 0.1,
+      "result": {
+        "status": "OK",
+        "decision": "ALLOW",
+        "server": "da_local_sandbox",
+        "tool": "da_read_sandbox",
+        "requested_path": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp\\pathguard-73691749\\normal.txt",
+        "canonical_path": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp\\pathguard-73691749\\normal.txt",
+        "content": "governed read sentinel",
+        "bytes": 22,
+        "timestamp": "2026-10-13T23:17:15.394478Z"
+      }
+    },
+    "plugin_external": {
+      "allowed": false,
+      "status": "PLUGIN_SECURITY_GUARD",
+      "decision": "DENY",
+      "reason": "PATH_BOUNDARY_VIOLATION"
+    },
+    "plugin_normal": {
+      "status": "HEALTHY",
+      "decision": "ALLOW",
+      "plugin": "desarrollador-autonomo-health",
+      "version": "1.0.0",
+      "tool": "da_project_health",
+      "requested_action": "read_health",
+      "workspace_root": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo",
+      "checks": {
+        "system_yaml_present": true,
+        "security_yaml_present": true,
+        "versions_lock_present": true,
+        "pre_tool_hook_present": true,
+        "mcp_sandbox_server_present": true,
+        "mcp_sandbox_dir_present": true
+      },
+      "timestamp": "2026-10-13T23:17:17.069257Z",
+      "allowed": true
+    },
+    "plugin_integrity": {
+      "allowed": true,
+      "status": "PASS",
+      "decision": "ALLOW",
+      "plugin_name": "desarrollador-autonomo-health",
+      "entrypoint_path": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py",
+      "manifest_path": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\plugin.yaml",
+      "approved_sha256": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+      "runtime_sha256": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+      "approved_manifest_sha256": "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+      "runtime_manifest_sha256": "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+      "reason": "Plugin SHA-256 cryptographic integrity verified."
+    }
+  },
+  "policy_E": "Existing 04 policy permits physical target inside workspace; Runner/Prepare/MCP retain stricter all-reparse DENY",
+  "before": {
+    "Allowed": true,
+    "Reason": "ALLOWED_WORKSPACE_PATH",
+    "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5e261a99\\project\\escape-junction\\nested\\existing.txt",
+    "Detail": "Ruta validada dentro del workspace canónico."
+  },
+  "case_root": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\pathguard-329ed1d7",
+  "cleanup": "Owned links removed nonrecursively; inert fixtures retained",
+  "local_inferences": 0
+}

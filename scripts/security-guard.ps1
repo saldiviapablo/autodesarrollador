@@ -32,104 +32,32 @@ function Test-WorkspacePathGuard {
         [string[]]$AllowedInfrastructurePaths = @()
     )
 
+    $proc=$null
     try {
         if ([string]::IsNullOrWhiteSpace($TargetFilePath)) {
-            return [PSCustomObject]@{ Allowed = $false; Reason = "BLOCKED_EMPTY_PATH"; Detail = "Ruta objetivo vacía." }
+            return [PSCustomObject]@{ Allowed=$false;Decision='DENY';Reason='BLOCKED_EMPTY_PATH';writes_performed=0 }
         }
-
-        # Resolver workspace canónico
-        $canonWorkspace = (Resolve-Path -LiteralPath $WorkspacePath -ErrorAction Stop).Path.TrimEnd('\')
-
-        # Resolver ruta objetivo absoluta
-        $combinedTarget = if ([System.IO.Path]::IsPathRooted($TargetFilePath)) {
-            $TargetFilePath
-        } else {
-            Join-Path $canonWorkspace $TargetFilePath
-        }
-
-        # Normalizar sin .. ni .
-        $fullTarget = [System.IO.Path]::GetFullPath($combinedTarget).TrimEnd('\')
-
-        # Comprobar si apunta o desciende por Junction / Symlink
-        $checkParent = $fullTarget
-        while (-not [string]::IsNullOrWhiteSpace($checkParent) -and -not (Test-Path -LiteralPath $checkParent)) {
-            $checkParent = Split-Path -Parent $checkParent
-        }
-
-        if (Test-Path -LiteralPath $checkParent) {
-            $item = Get-Item -LiteralPath $checkParent -Force -ErrorAction SilentlyContinue
-            if ($item -and $item.Attributes.HasFlag([System.IO.FileAttributes]::ReparsePoint)) {
-                # Resolver destino real del symlink o junction
-                $linkTarget = $item.Target
-                if ($linkTarget) {
-                    $linkResolved = [System.IO.Path]::GetFullPath($linkTarget).TrimEnd('\')
-                    if (-not $linkResolved.StartsWith($canonWorkspace, [System.StringComparison]::OrdinalIgnoreCase)) {
-                        return [PSCustomObject]@{
-                            Allowed   = $false
-                            Reason    = "BLOCKED_PATH_ESCAPE"
-                            Target    = $fullTarget
-                            Detail    = "ReparsePoint/Junction '$checkParent' escapa a destino fuera del workspace: '$linkResolved'"
-                        }
-                    }
-                }
-            }
-        }
-
-        # Comprobar si el path destino intenta destruir la raíz misma del proyecto
-        if ($fullTarget.Equals($canonWorkspace, [System.StringComparison]::OrdinalIgnoreCase) -and ($Operation -eq "DELETE" -or $Operation -eq "DESTROY")) {
-            return [PSCustomObject]@{
-                Allowed   = $false
-                Reason    = "BLOCKED_ROOT_DESTRUCTION"
-                Target    = $fullTarget
-                Detail    = "Intento de eliminación o sobreescritura destructiva de la raíz del proyecto."
-            }
-        }
-
-        # Comprobar si la ruta objetivo está dentro del workspace
-        $isInside = $fullTarget.StartsWith($canonWorkspace, [System.StringComparison]::OrdinalIgnoreCase)
-        if (-not $isInside) {
-            # Verificar si coincide con alguna excepción de infraestructura explícita
-            $isInfraAllowed = $false
-            foreach ($aPath in $AllowedInfrastructurePaths) {
-                if (-not [string]::IsNullOrWhiteSpace($aPath)) {
-                    $fullAllowed = [System.IO.Path]::GetFullPath($aPath).TrimEnd('\')
-                    if ($fullTarget.StartsWith($fullAllowed, [System.StringComparison]::OrdinalIgnoreCase)) {
-                        $isInfraAllowed = $true
-                        break
-                    }
-                }
-            }
-
-            if ($isInfraAllowed) {
-                return [PSCustomObject]@{
-                    Allowed   = $true
-                    Reason    = "ALLOWED_INFRASTRUCTURE_PATH"
-                    Target    = $fullTarget
-                    Detail    = "Ruta perteneciente a infraestructura permitida gestionada."
-                }
-            }
-
-            return [PSCustomObject]@{
-                Allowed   = $false
-                Reason    = "BLOCKED_PATH_ESCAPE"
-                Target    = $fullTarget
-                Detail    = "Ruta fuera del workspace canónico: '$fullTarget' no pertenece a '$canonWorkspace'"
-            }
-        }
-
-        return [PSCustomObject]@{
-            Allowed   = $true
-            Reason    = "ALLOWED_WORKSPACE_PATH"
-            Target    = $fullTarget
-            Detail    = "Ruta validada dentro del workspace canónico."
-        }
+        $request=@{target=$TargetFilePath;workspace=$WorkspacePath;operation=$Operation;infrastructure=@($AllowedInfrastructurePaths)}|ConvertTo-Json -Depth 5 -Compress
+        $encoded=[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($request))
+        $helper=Join-Path $PSScriptRoot 'canonical_path.py'
+        $psi=New-Object Diagnostics.ProcessStartInfo
+        $psi.FileName='C:/Python314/python.exe'
+        $psi.Arguments='"'+$helper+'" --request '+$encoded
+        $psi.UseShellExecute=$false;$psi.CreateNoWindow=$true
+        $psi.RedirectStandardOutput=$true;$psi.RedirectStandardError=$true
+        $psi.StandardOutputEncoding=[Text.Encoding]::UTF8;$psi.StandardErrorEncoding=[Text.Encoding]::UTF8
+        $psi.EnvironmentVariables['PYTHONDONTWRITEBYTECODE']='1';$psi.EnvironmentVariables['PYTHONUTF8']='1'
+        $proc=[Diagnostics.Process]::Start($psi)
+        $stdout=$proc.StandardOutput.ReadToEndAsync();$stderr=$proc.StandardError.ReadToEndAsync()
+        if(-not $proc.WaitForExit(20000)){$proc.Kill();$null=$proc.WaitForExit(5000);throw 'PATH_GUARD_TIMEOUT'}
+        if($proc.ExitCode -ne 0){throw 'PATH_GUARD_RESOLVER_FAILED'}
+        $decision=$stdout.Result|ConvertFrom-Json
+        if($null -eq $decision.Allowed -or $decision.Decision -notin @('ALLOW','DENY')){throw 'INVALID_PATH_GUARD_RESULT'}
+        return $decision
     } catch {
-        return [PSCustomObject]@{
-            Allowed = $false
-            Reason  = "BLOCKED_PATH_ERROR"
-            Detail  = "Error resolviendo ruta canónica: $_"
-        }
-    }
+        return [PSCustomObject]@{Allowed=$false;Decision='DENY';Reason='BLOCKED_PATH_ERROR';Detail='Canonical path resolver failed closed';writes_performed=0}
+    } finally {if($proc){$proc.Dispose()}}
+
 }
 
 # ------------------------------------------------------------------------------

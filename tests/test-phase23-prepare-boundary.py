@@ -1,7 +1,7 @@
 """Adversarial Prepare test; harmless targets confined to infrastructure sandbox."""
 import datetime,hashlib,json,pathlib,subprocess,uuid
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-E=ROOT/'evidence/phase-23-attempt-2';E.mkdir(exist_ok=True)
+E=ROOT/'evidence/phase-23-attempt-3';E.mkdir(exist_ok=True)
 case=ROOT/'sandbox'/('phase23-boundary-'+uuid.uuid4().hex[:8]);case.mkdir()
 outside=case/'outside-approved-project';outside.mkdir();sentinel=outside/'sentinel.txt';sentinel.write_text('owned harmless boundary sentinel\n',encoding='utf-8')
 project=case/'declared-project';plan=case/'plan.json'

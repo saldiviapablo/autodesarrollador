@@ -1,15 +1,11 @@
 """Strict runner admission and one approval binding contract, plan and frozen policy."""
-import argparse,hashlib,json,pathlib,sys,datetime,stat,yaml,jsonschema
+import argparse,hashlib,json,pathlib,sys,datetime,yaml,jsonschema
 ROOT=pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT/'scripts'))
+from canonical_path import resolve_path
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def check_path(p):
-    if '..' in pathlib.Path(p).parts:raise ValueError('PATH_TRAVERSAL_DENIED')
-    p=pathlib.Path(p).absolute()
-    for part in [p,*p.parents]:
-        try:attributes=part.lstat()
-        except FileNotFoundError:continue
-        if stat.S_ISLNK(attributes.st_mode) or getattr(attributes,'st_file_attributes',0)&stat.FILE_ATTRIBUTE_REPARSE_POINT:raise ValueError('REPARSE_POINT_DENIED')
-    return p.resolve()
+    return pathlib.Path(resolve_path(p,reject_reparse=True,reject_traversal=True)['physical'])
 
 def project_path(project, *, allow_missing=False, workspace=None):
     if not pathlib.Path(project).is_absolute():raise ValueError('ABSOLUTE_PROJECT_ROOT_REQUIRED')
@@ -39,10 +35,11 @@ def inspect(project):
     auto=check_path(p/'.autopilot');contract_path=check_path(auto/'RUN-CONTRACT.yaml');plan_path=check_path(auto/'RUN-PLAN.json')
     contract=yaml.safe_load(contract_path.read_text(encoding='utf-8-sig'))
     jsonschema.validate(contract,json.loads((ROOT/'schemas/run-contract.schema.json').read_text(encoding='utf-8-sig')))
-    if pathlib.Path(contract['project_root']).resolve()!=p:raise ValueError('CONTRACT_PROJECT_MISMATCH')
+    if check_path(contract['project_root'])!=p:raise ValueError('CONTRACT_PROJECT_MISMATCH')
     plan=json.loads(plan_path.read_text(encoding='utf-8-sig'))
     validate_plan(p,plan,contract['acceptance_criteria'])
     frozen=[ROOT/'config/system.yaml',ROOT/'config/security.yaml',ROOT/'config/VERSIONS.lock',ROOT/'scripts/inference-lock.ps1',ROOT/'scripts/hermes-pre-tool-hook.py',ROOT/'schemas/runner-plan.schema.json']
+    frozen+=[ROOT/'scripts/canonical_path.py',ROOT/'scripts/security-guard.ps1',ROOT/'scripts/hermes-mcp-plugin-guard.ps1']
     frozen+=sorted(f for f in (ROOT/'runner').iterdir() if f.suffix in ('.ps1','.py'))
     hashes={str(contract_path):sha(contract_path),str(plan_path):sha(plan_path),**{str(f):sha(f) for f in frozen}}
     digest=hashlib.sha256(json.dumps(hashes,sort_keys=True).encode()).hexdigest()

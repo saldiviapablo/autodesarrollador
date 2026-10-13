@@ -101,11 +101,11 @@ $t2a = ($pValInside.Allowed -eq $true -and $pValInside.Reason -eq "ALLOWED_WORKS
 
 # B) Escape relativo con ..
 $pValEscapeRel = Test-WorkspacePathGuard -TargetFilePath "..\..\Windows\System32" -WorkspacePath $SandboxDir
-$t2b = ($pValEscapeRel.Allowed -eq $false -and $pValEscapeRel.Reason -eq "BLOCKED_PATH_ESCAPE")
+$t2b = ($pValEscapeRel.Allowed -eq $false -and $pValEscapeRel.Reason -in @("BLOCKED_PATH_ESCAPE","PATH_BOUNDARY_VIOLATION"))
 
 # C) Escape absoluto fuera de workspace
 $pValEscapeAbs = Test-WorkspacePathGuard -TargetFilePath "C:\Windows\temp\leak.txt" -WorkspacePath $SandboxDir
-$t2c = ($pValEscapeAbs.Allowed -eq $false -and $pValEscapeAbs.Reason -eq "BLOCKED_PATH_ESCAPE")
+$t2c = ($pValEscapeAbs.Allowed -eq $false -and $pValEscapeAbs.Reason -in @("BLOCKED_PATH_ESCAPE","PATH_BOUNDARY_VIOLATION"))
 
 # D) Intento de destrucción de la raíz del proyecto
 $pValRootDestroy = Test-WorkspacePathGuard -TargetFilePath "." -WorkspacePath $SandboxDir -Operation "DESTROY"
@@ -154,7 +154,7 @@ $t3Pass = $false
 if ($junctionCreated) {
     $escapeJunctionPath = Join-Path $junctionDir "escape_file.txt"
     $jCheck = Test-WorkspacePathGuard -TargetFilePath $escapeJunctionPath -WorkspacePath $SandboxDir
-    $t3Pass = ($jCheck.Allowed -eq $false -and $jCheck.Reason -eq "BLOCKED_PATH_ESCAPE")
+    $t3Pass = ($jCheck.Allowed -eq $false -and $jCheck.Reason -in @("BLOCKED_PATH_ESCAPE","PATH_BOUNDARY_VIOLATION"))
     # Limpiar junction
     & cmd.exe /c "rmdir `"$junctionDir`"" 2>&1 | Out-Null
 } else {

@@ -50,6 +50,7 @@ if (-not $scriptDir) { $scriptDir = $PSScriptRoot }
 $infraRoot = (Resolve-Path "$scriptDir\..").Path
 $pythonExe = "C:\Python314\python.exe"
 $helperPy = Join-Path $infraRoot "scripts\mcp-sandbox-server.py"
+. (Join-Path $scriptDir 'security-guard.ps1')
 
 $secYaml = if (-not [string]::IsNullOrWhiteSpace($SecurityYamlPath)) {
     $SecurityYamlPath
@@ -356,6 +357,9 @@ function Get-CheckMcpToolCallResult {
     }
 
     if ($normalizedTool -eq "da_read_sandbox") {
+        $pathArgs=$ArgumentsJson|ConvertFrom-Json
+        $canonical=Test-WorkspacePathGuard -TargetFilePath ([string]$pathArgs.relative_path) -WorkspacePath $srvCfg.sandbox_root -Operation READ
+        if(-not $canonical.Allowed){return [ordered]@{allowed=$false;status='PATH_CONFINEMENT_VIOLATION';decision='DENY';reason=$canonical.Reason}}
         $checkRaw = & $pythonExe "$helperPy" --validate-path-b64 --args-b64 "$argsB64"
         $checkObj = ($checkRaw -join "`n") | ConvertFrom-Json
         if (-not $checkObj.allowed) {
@@ -420,6 +424,11 @@ if ($Action -eq "InvokeMcpTool") {
 }
 
 if ($Action -eq "InvokePluginTool") {
+    $pathArgs=$ArgumentsJson|ConvertFrom-Json
+    if($pathArgs.target_path){
+        $canonical=Test-WorkspacePathGuard -TargetFilePath ([string]$pathArgs.target_path) -WorkspacePath $infraRoot -Operation READ
+        if(-not $canonical.Allowed){[ordered]@{allowed=$false;status='PLUGIN_SECURITY_GUARD';decision='DENY';reason=$canonical.Reason}|ConvertTo-Json -Compress;exit 0}
+    }
     $integrity = Get-VerifyPluginIntegrityResult
     if (-not $integrity.allowed -or $integrity.status -ne "PASS") {
         Write-Output ($integrity | ConvertTo-Json -Depth 6 -Compress)
@@ -427,6 +436,10 @@ if ($Action -eq "InvokePluginTool") {
     }
 
     $entrypointFile = $integrity.entrypoint_path
+    if($pathArgs.target_path){
+        $canonical=Test-WorkspacePathGuard -TargetFilePath ([string]$pathArgs.target_path) -WorkspacePath $infraRoot -Operation READ
+        if(-not $canonical.Allowed){[ordered]@{allowed=$false;status='PLUGIN_SECURITY_GUARD';decision='DENY';reason=$canonical.Reason}|ConvertTo-Json -Compress;exit 0}
+    }
     $pluginOutRaw = & $pythonExe "$helperPy" --invoke-plugin "$entrypointFile" --args-b64 "$argsB64"
     Write-Output ($pluginOutRaw -join "`n")
     exit 0

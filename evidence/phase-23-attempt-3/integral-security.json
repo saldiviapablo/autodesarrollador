@@ -1,0 +1,47 @@
+{
+  "test_id": "T-F23-PATHGUARD-EXISTING-TARGET-JUNCTION",
+  "status": "PASS",
+  "classification": null,
+  "expected": "DENY: real target outside canonical workspace",
+  "actual": {
+    "Allowed": false,
+    "Decision": "DENY",
+    "Reason": "PATH_BOUNDARY_VIOLATION",
+    "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5a014b76\\outside-approved-project\\nested\\existing.txt",
+    "Requested": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5a014b76\\project\\escape-junction\\nested\\existing.txt",
+    "Workspace": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5a014b76\\project",
+    "ReparsePoints": [
+      {
+        "entry": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5a014b76\\project\\escape-junction",
+        "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5a014b76\\outside-approved-project"
+      }
+    ],
+    "writes_performed": 0
+  },
+  "canonical_project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5a014b76\\project",
+  "canonical_target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5a014b76\\outside-approved-project\\nested\\existing.txt",
+  "target_outside_workspace": true,
+  "sentinel_preserved": true,
+  "attempted_write": false,
+  "production_touched": false,
+  "local_inferences": 0,
+  "case_root": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5a014b76",
+  "baseline_test_exit": 1,
+  "baseline_build_exit": 0,
+  "fixture_requirements": [
+    "bug",
+    "feature",
+    "initially failing test",
+    "build",
+    "incomplete documentation",
+    "web research",
+    "real ChatGPT",
+    "prohibited operation",
+    "controlled recovery"
+  ],
+  "later_gates": "PENDING",
+  "guard_sha256": "df18149ae6dee48ad09f9851ca0ce4e3d6f64c068946c94ca137e98f18f6f0e2",
+  "fix_commit": "f279e3c94dfef4c452a4893c4a9e3266a2ae4bf2",
+  "timestamp": "2026-10-13T20:14:57.988973-03:00",
+  "junction_cleanup": "PASS"
+}
