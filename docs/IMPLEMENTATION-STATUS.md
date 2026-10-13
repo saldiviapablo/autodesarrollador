@@ -58,7 +58,7 @@
 | **Gate final 7A** | Regression global | **PASS** | 11 gates ejecutables, auditoría de 38 tests obligatorios, 67 checks de integridad, recovery/delegation real y cleanup/hash PASS; `evidence/regression-7a-final/`. |
 | **Fase 17** | Runner | **PASS** | evidence/phase-17/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 18** | Watchdog | **PASS** | evidence/phase-18/; pruebas, seguridad, timeout/cleanup y commit local. |
-| **Fase 19** | Launcher único | **PENDING** | Scripts ejecutables limpios `INICIAR` y `DETENER`. |
+| **Fase 19** | Launcher | **PASS** | evidence/phase-19/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 20** | Completion Gate | **PENDING** | Validación objetiva multi-criterio antes de permitir estado COMPLETED. |
 | **Fase 21** | Reportes | **PENDING** | Generación estandarizada de `FINAL.md`, `BLOCKED.md`, `FAILURE.md`, `STALLED.md`. |
 | **Fase 22** | Cleanup garantizado | **PENDING** | Rutina destructora segura (tipo `finally`) para evitar procesos huérfanos. |
@@ -80,3 +80,5 @@
 F17 = PASS. Próximo gate de 7B tras commit local: F18. No iniciar Macrofase8.
 
 F18 = PASS. Próximo gate de 7B tras commit local: F19. No iniciar Macrofase8.
+
+F19 = PASS. Próximo gate de 7B tras commit local: F20. No iniciar Macrofase8.
