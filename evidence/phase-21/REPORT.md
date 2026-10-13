@@ -1,0 +1,1 @@
+F21 PASS. JSON and human reports include all required fields and use the frozen secret sanitizer. Five terminal report formats tested; actual timeout, stalled, gate rejection and unattended blocked/checkpoint paths PASS. Prior capability regression smoke PASS. No new dependencies. Next F22 after local commit.

@@ -60,7 +60,7 @@
 | **Fase 18** | Watchdog | **PASS** | evidence/phase-18/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 19** | Launcher | **PASS** | evidence/phase-19/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 20** | Completion Gate | **PASS** | evidence/phase-20/; pruebas, seguridad, timeout/cleanup y commit local. |
-| **Fase 21** | Reportes | **PENDING** | Generación estandarizada de `FINAL.md`, `BLOCKED.md`, `FAILURE.md`, `STALLED.md`. |
+| **Fase 21** | Reportes | **PASS** | evidence/phase-21/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 22** | Cleanup garantizado | **PENDING** | Rutina destructora segura (tipo `finally`) para evitar procesos huérfanos. |
 | **Fase 23** | Sandbox integral | **PENDING** | Suite completa de pruebas destructivas y recuperación en entorno controlado. |
 | **Fase 24** | End-to-End corto | **PENDING** | Ciclo completo de 15 a 45 minutos sin intervención humana. |
@@ -84,3 +84,5 @@ F18 = PASS. Próximo gate de 7B tras commit local: F19. No iniciar Macrofase8.
 F19 = PASS. Próximo gate de 7B tras commit local: F20. No iniciar Macrofase8.
 
 F20 = PASS. Próximo gate de 7B tras commit local: F21. No iniciar Macrofase8.
+
+F21 = PASS. Próximo gate de 7B tras commit local: F22. No iniciar Macrofase8.

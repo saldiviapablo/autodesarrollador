@@ -4,6 +4,7 @@ $ErrorActionPreference='Stop'
 # Cron/Python callers may inherit PowerShell 7's module path. Pin only this PS5 process.
 if($PSVersionTable.PSVersion.Major -le 5){$env:PSModulePath=(Join-Path $PSHOME 'Modules')}
 . (Join-Path $PSScriptRoot 'core.ps1')
+. (Join-Path $PSScriptRoot 'report.ps1')
 if($Action -eq 'Prepare'){
     if(-not $Objective -or -not $AcceptanceCriteria -or -not(Test-Path -LiteralPath $PlanPath)){throw 'PREPARE_REQUIRES_OBJECTIVE_CRITERIA_AND_PLAN'}
     if(Test-Path -LiteralPath (Join-Path $ProjectRoot '.autopilot')){throw 'EXISTING_AUTOPILOT_PRESERVED_USE_PREFLIGHT_OR_RECOVERY'}
@@ -56,7 +57,7 @@ try{
     Save-RunnerState 'RUNNING' 'preflight passed'
     Write-RunnerJson (Join-Path $script:Auto 'RESTARTS.json') $script:Restarts
     $null=Write-RunLockMeta -AutopilotDir $script:Auto -RunId $script:RunId -OwnerPid $PID -ProjectRoot $script:Admission.project
-    Runner-Event 'RUN_STARTED' @{approval_digest=$script:Admission.digest;backend=$script:Admission.plan.backend}
+    Runner-Event 'RUN_STARTED' @{approval_digest=$script:Admission.digest;backend=$script:Admission.plan.backend;git_head=(& git -C $script:Admission.project rev-parse HEAD).Trim()}
     $stale=120;if($script:Admission.plan.heartbeat_stale_seconds){$stale=[Math]::Min($stale,$script:Admission.plan.heartbeat_stale_seconds)}
     $watch=Start-RunnerProcess 'watchdog' 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'watchdog-monitor.ps1'),'-ProjectRoot',$script:Admission.project,'-ParentId',$PID,'-ParentStartTicks',(Get-Process -Id $PID).StartTime.ToUniversalTime().Ticks,'-StaleSeconds',$stale) $script:Admission.project
     if($script:Admission.plan.backend -ne 'probe'){Start-RunnerModel}
@@ -95,6 +96,7 @@ try{
     $gatePath=Join-Path $PSScriptRoot 'completion-gate.ps1'
     if(Test-Path -LiteralPath $gatePath){$gate=& $gatePath -ProjectRoot $script:Admission.project;$terminal=$gate.status}else{$terminal='STALLED';$failure='COMPLETION_GATE_NOT_INSTALLED'}
     Runner-Event 'COMPLETION_ASSESSED' @{status=$terminal;gate=$gate}
+    if($terminal -eq 'COMPLETED'){$failure=''}elseif($gate){$failure='COMPLETION_REJECTED: '+($gate.failed -join ',')}
     if($terminal -eq 'COMPLETED' -or $terminal -eq 'BLOCKED_REQUIRES_HUMAN' -or $script:Admission.plan.backend -eq 'probe'){break}
     $feedback=(@{gate=$gate;tests=$tests;builds=$builds;linters=$linters}|ConvertTo-Json -Depth 12)
     $signature=Get-NormalizedErrorSignature -ErrorText (($gate.failed|Sort-Object) -join ',')
@@ -119,7 +121,7 @@ try{
             Save-RunnerState $terminal ('terminal: '+$failure)
             Runner-Event 'RUN_FINISHED' @{status=$terminal;technical=$technical;reason=$failure}
             $null=& (Join-Path $script:RunnerInfra 'scripts/create-autopilot-checkpoint.ps1') -ProjectPath $script:Admission.project -CheckpointId ('chk-runner-'+[datetime]::Now.ToString('yyyyMMddHHmmssfff')) -Reason ('Runner terminal '+$terminal)
-            Write-RunnerJson (Join-Path $script:Auto 'reports/runner-result.json') @{run_id=$script:RunId;status=$terminal;technical_status=$technical;reason=$failure;duration_seconds=([datetimeoffset]::Now-$script:Started).TotalSeconds;cleanup=@{job_closed=$true;external_model_preserved=($null -ne $script:ExternalModel)};processes=@($script:Owned.Values|ForEach-Object{$_.record})}
+            $null=Write-RunnerReport -Project $script:Admission.project -RunId $script:RunId -State $script:RunState -Status $terminal -Technical $technical -Reason $failure -Duration ([datetimeoffset]::Now-$script:Started).TotalSeconds -Cleanup @{job_closed=$true;external_model_preserved=($null -ne $script:ExternalModel)}
             if(Test-Path -LiteralPath (Join-Path $script:Auto 'LOCK.json')){Remove-Item -LiteralPath (Join-Path $script:Auto 'LOCK.json')}
         }
         $runMutex.ReleaseMutex()
