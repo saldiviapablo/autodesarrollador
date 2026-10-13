@@ -976,7 +976,7 @@ no superar límite.
 
 ---
 
-## T-CHATGPT-010 — Idempotencia y Deduplicación [PRUEBA FUTURA OBLIGATORIA — MACROFASE 7A]
+## T-CHATGPT-010 — Idempotencia y Deduplicación [OBLIGATORIA — PASS EN MACROFASE 7A]
 
 > **Nota de estado:** T-CHATGPT-010 = PASS (2026-10-13). Evidencia real: `evidence/chatgpt-idempotency/`. Incluye UNKNOWN_DELIVERY, reconciliación sin reenvío, UTF-8 y dominio exacto. Los criterios siguientes siguen siendo obligatorios.
 

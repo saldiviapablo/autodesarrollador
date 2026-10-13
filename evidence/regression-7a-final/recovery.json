@@ -1,0 +1,82 @@
+﻿{
+    "status":  "PASS",
+    "data":  {
+                 "Status":  "RECOVERED",
+                 "RecoveredFromBackup":  true,
+                 "DivergenceDetected":  false,
+                 "Report":  [
+                                "Checkpoint \u0027chk-regression-baseline\u0027 verificado criptográficamente con éxito (CHECKPOINT_INTEGRITY_OK).",
+                                "STATE.json corrupto o inválido contra schema (INVALID: Expecting value: line 2 column 1 (char 12)).",
+                                "Recuperado exitosamente desde STATE.previous.json.",
+                                "Tests figuraban en estado RUNNING pero el proceso terminó abruptamente. Reconciliado a UNKNOWN."
+                            ],
+                 "State":  {
+                               "schema_version":  "1.0",
+                               "run_id":  "run-20261013-095633",
+                               "project_id":  "macro7a-regression",
+                               "objective":  "Final 7A regression gate, recovery and delegation smoke",
+                               "status":  "RUNNING",
+                               "created_at":  "2026-10-13T09:56:33.3718138-03:00",
+                               "updated_at":  "2026-10-13T09:56:35.0667926-03:00",
+                               "cycle":  0,
+                               "max_cycles":  20,
+                               "current_phase":  "ACTIVE_EXECUTION",
+                               "current_task":  "Final 7A regression gate, recovery and delegation smoke",
+                               "completed_tasks":  [
+
+                                                   ],
+                               "pending_tasks":  [
+                                                     "Final 7A regression gate, recovery and delegation smoke"
+                                                 ],
+                               "acceptance_criteria":  [
+                                                           "Mandatory 7A evidence verified",
+                                                           "Security and lock regression PASS",
+                                                           "Recovery and delegation smoke PASS",
+                                                           "Protected hashes and cleanup PASS"
+                                                       ],
+                               "current_delegation_id":  null,
+                               "hermes_session_id":  null,
+                               "qwen_session_id":  null,
+                               "git":  {
+                                           "branch":  "master",
+                                           "head":  "dfaecde",
+                                           "dirty":  false,
+                                           "changed_files":  [
+
+                                                             ]
+                                       },
+                               "tests":  {
+                                             "status":  "UNKNOWN",
+                                             "last_command":  null,
+                                             "last_exit_code":  null,
+                                             "last_run_at":  null
+                                         },
+                               "build":  {
+                                             "status":  "NONE",
+                                             "last_command":  null,
+                                             "last_exit_code":  null
+                                         },
+                               "progress":  {
+                                                "score":  0,
+                                                "last_progress_at":  null,
+                                                "no_progress_cycles":  0
+                                            },
+                               "failure":  {
+                                               "last_signature":  null,
+                                               "repeated_count":  0
+                                           },
+                               "checkpoint":  {
+                                                  "last_id":  null,
+                                                  "last_created_at":  null
+                                              },
+                               "next_action":  "Re-ejecutar pruebas unitarias para certificar estado técnico tras cambios"
+                           }
+             },
+    "context":  {
+                    "FilePath":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\macro7a-regression\\.autopilot\\reports\\recovery-context.md",
+                    "CharCount":  1466,
+                    "ApproxTokens":  366,
+                    "Content":  "# CONTEXTO DE RECUPERACION COMPACTO (DERIVADO)\n\u003e **Principio de Memoria:** CONVERSATION != SOURCE OF TRUTH. Este resumen refleja el estado real verificado en filesystem/Git/tests.\n\n## 1. Identificacion y Objetivo\n- **Run ID:** `run-20261013-095633`\n- **Proyecto:** `macro7a-regression`\n- **Objetivo General:** Final 7A regression gate, recovery and delegation smoke\n- **Estado Operativo:** **RUNNING**\n- **Fase:** `ACTIVE_EXECUTION`\n- **Tarea Activa:** Final 7A regression gate, recovery and delegation smoke\n- **Ciclo Actual:** 0 / 20\n\n## 2. Criterios de Aceptacion\n- Mandatory 7A evidence verified\n- Security and lock regression PASS\n- Recovery and delegation smoke PASS\n- Protected hashes and cleanup PASS\n\n## 3. Estado de Tareas\n### Completadas\n- *(ninguna)*\n### Pendientes\n- [ ] Final 7A regression gate, recovery and delegation smoke\n\n## 4. Evidencia Tecnica Real (Git \u0026 Tests)\n- **Branch:** `master` | **HEAD:** `dfaecde` | **Dirty:** False\n- **Archivos modificados:** *(ninguno)*\n- **Ultimo Test:** `` -\u003e **UNKNOWN** (ExitCode: )\n- **Ultimo Checkpoint:** Ninguno\n\n## 5. Proxima Accion Inmediata\n**Re-ejecutar pruebas unitarias para certificar estado técnico tras cambios**\n\n## 6. Historial Reciente de Eventos\n- [seq=1] 2026-10-13T09:56:33.6114090-03:00 | RUN_INITIALIZED (init-script)\n- [seq=2] 2026-10-13T09:56:34.2196162-03:00 | CHECKPOINT_CREATED (checkpoint-manager)\n- [seq=3] 2026-10-13T09:56:35.0577931-03:00 | RECOVERY_RECONCILED (recovery-protocol)\n"
+                },
+    "checkpoint_integrity":  true
+}

@@ -230,7 +230,7 @@ A continuación se detalla el estado oficial de preparación y gobernanza de las
   ```
 - Se prohíbe terminantemente la ejecución desatendida de `hermes update` directamente sobre el entorno en producción.
 
-## 3.15 Idempotencia y Deduplicación del Bridge ChatGPT (Requisito Pendiente)
+## 3.15 Idempotencia y Deduplicación del Bridge ChatGPT (Implementado y verificado)
 - **Estado Actual: PASS.** Reserva persistente por ID, ALREADY_SENT, UNKNOWN_DELIVERY y reconcile sin Send; T-CHATGPT-010 real PASS. Detalle en docs/CHATGPT-IDEMPOTENCY.md.
 - **Requisitos de diseño implementados y verificados:**
   - Cada solicitud deberá contar con un identificador único `consultation_id`.
@@ -272,3 +272,10 @@ Para que cualquier capacidad de este catálogo pase del estado actual (`ENABLED:
 3. **FAILURE TEST:** Verificación del comportamiento ante fallos, timeouts o indisponibilidad del servicio subyacente.
 4. **CLEANUP TEST:** Comprobación de que tras finalizar la tarea no quedan procesos huérfanos, locks tomados ni archivos temporales basura.
 5. **INTEGRATION TEST:** Demostración de interoperabilidad armoniosa con el Supervisor, el Inference Lock y el sistema `.autopilot/` (y con el Runner en Macrofase 7B cuando corresponda).
+
+## Cierre de implementación 7A — 2026-10-13
+
+MACROFASE 7A = PASS. T-CHATGPT-010 y regression gate global PASS; evidencia en
+`evidence/regression-7a-final/`. Modelo qwen36/127.0.0.1:8080/65536/parallel1
+y hashes aprobados preservados. Hermes productivo v0.21.6 intacto. READY FOR 7B YES;
+7B permanece PENDING y no se inició. Límites certificados según cada capacidad.

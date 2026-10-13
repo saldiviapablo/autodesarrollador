@@ -1,0 +1,71 @@
+﻿{
+  "test_id": "PREFLIGHT-DOMAIN-NODE",
+  "status": "PASS",
+  "cases": [
+    {
+      "url": "https://chatgpt.com/",
+      "expected": "ALLOW",
+      "status": "PASS"
+    },
+    {
+      "url": "https://chatgpt.com/c/preflight?x=1#part",
+      "expected": "ALLOW",
+      "status": "PASS"
+    },
+    {
+      "url": "https://openai.com/",
+      "expected": "DENY",
+      "status": "PASS"
+    },
+    {
+      "url": "https://www.openai.com/",
+      "expected": "DENY",
+      "status": "PASS"
+    },
+    {
+      "url": "https://foo.chatgpt.com/",
+      "expected": "DENY",
+      "status": "PASS"
+    },
+    {
+      "url": "https://chatgpt.com.evil.test/",
+      "expected": "DENY",
+      "status": "PASS"
+    },
+    {
+      "url": "https://chatgpt.com@evil.test/",
+      "expected": "DENY",
+      "status": "PASS"
+    },
+    {
+      "url": "http://chatgpt.com/",
+      "expected": "DENY",
+      "status": "PASS"
+    },
+    {
+      "url": "URL invalida",
+      "expected": "DENY",
+      "status": "PASS"
+    },
+    {
+      "url": "about:blank",
+      "expected": "DENY",
+      "status": "PASS"
+    },
+    {
+      "url": "",
+      "expected": "DENY",
+      "status": "PASS"
+    },
+    {
+      "url": "https://chatgpt.com./",
+      "expected": "DENY",
+      "status": "PASS"
+    },
+    {
+      "url": "https://user:password@chatgpt.com/",
+      "expected": "DENY",
+      "status": "PASS"
+    }
+  ]
+}
