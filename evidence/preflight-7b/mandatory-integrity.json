@@ -1,0 +1,180 @@
+{
+  "status": "PASS",
+  "checks": {
+    "7A.1_mandatory_evidence": true,
+    "7A.2_mandatory_evidence": true,
+    "7A.3_mandatory_evidence": true,
+    "7A.4_mandatory_evidence": true,
+    "7A.5_mandatory_evidence": true,
+    "7A.6_mandatory_evidence": true,
+    "7A.7_mandatory_evidence": true,
+    "7A.8_mandatory_evidence": true,
+    "7A.9_mandatory_evidence": true,
+    "7A.10_mandatory_evidence": true,
+    "7A.1_all_required_test_ids": true,
+    "7A.2_all_required_test_ids": true,
+    "7A.3_all_required_test_ids": true,
+    "7A.4_all_required_test_ids": true,
+    "7A.5_all_required_test_ids": true,
+    "7A.6_all_required_test_ids": true,
+    "7A.7_all_required_test_ids": true,
+    "7A.8_all_required_test_ids": true,
+    "7A.9_all_required_test_ids": true,
+    "7A.10_all_required_test_ids": true,
+    "7A.3_prior_smoke": true,
+    "7A.4_prior_smoke": true,
+    "7A.5_prior_smoke": true,
+    "7A.6_prior_smoke": true,
+    "7A.7_prior_smoke": true,
+    "7A.8_prior_smoke": true,
+    "7A.9_prior_smoke": true,
+    "7A.10_prior_smoke": true,
+    "idempotency_real-tests": true,
+    "idempotency_deterministic": true,
+    "idempotency_budget": true,
+    "idempotency_budget-race": true,
+    "idempotency_state-schema": true,
+    "idempotency_regression-smoke": true,
+    "current_real_smoke_binding_tools/chatgpt-bridge.js": true,
+    "current_real_smoke_binding_scripts/chatgpt-domain-policy.ps1": true,
+    "current_real_smoke_binding_tools/chatgpt-ledger.js": true,
+    "current_real_smoke_binding_scripts/consultar-chatgpt.ps1": true,
+    "current_real_smoke_binding_scripts/start-hermes-chatgpt.ps1": true,
+    "wrapper-final-utf8": true,
+    "wrapper-final-cleanup": true,
+    "frozen_config/security.yaml": true,
+    "frozen_scripts/inference-lock.ps1": true,
+    "frozen_scripts/hermes-pre-tool-hook.py": true,
+    "frozen_scripts/security-guard.ps1": true,
+    "frozen_scripts/hermes-memory-guard.ps1": true,
+    "frozen_scripts/hermes-mcp-plugin-guard.ps1": true,
+    "frozen_scripts/progress-guard.ps1": true,
+    "frozen_schemas/run-contract.schema.json": true,
+    "approved_hook_sha256": true,
+    "approved_mcp_sha256": true,
+    "plugin_entry_C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\plugins\\desarrollador-autonomo-health": true,
+    "plugin_manifest_C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\plugins\\desarrollador-autonomo-health": true,
+    "plugin_entry_C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health": true,
+    "plugin_manifest_C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health": true,
+    "native_read_extract_hash": true,
+    "native_file_tools_hash": true,
+    "native_browser_hash": true,
+    "hermes_frozen_head": true,
+    "hermes_checkout_clean": true,
+    "hermes_productive_version": true,
+    "llama_alias_host_context_parallel": true,
+    "frozen_versions_lock_since_canary": true,
+    "installation_subphases_all_pass": true,
+    "macros_1_6_still_pass": true,
+    "7b_8_not_started": true,
+    "no_native_update_executed": true
+  },
+  "subphases": {
+    "7A.1": {
+      "status": "PASS",
+      "evidence": "evidence/phase-7a1/phase-7a1-summary.json",
+      "tests": {
+        "T-7A-MEM-001": "PASS",
+        "T-7A-MEM-002": "PASS",
+        "T-7A-SKILL-001": "PASS",
+        "T-7A-SKILL-002": "PASS",
+        "T-7A-HIERARCHY-001": "PASS",
+        "T-7A-HOOK-001": "PASS"
+      }
+    },
+    "7A.2": {
+      "status": "PASS",
+      "evidence": "evidence/phase-7a2/phase-7a2-summary.json",
+      "tests": {
+        "T-7A-MCP-001": "PASS",
+        "T-7A-MCP-002": "PASS",
+        "T-7A-MCP-003": "PASS",
+        "T-7A-MCP-004": "PASS",
+        "T-7A-MCP-005": "PASS",
+        "T-7A-PLUGIN-001": "PASS",
+        "T-7A-PLUGIN-002": "PASS"
+      }
+    },
+    "7A.3": {
+      "status": "PASS",
+      "evidence": "evidence/phase-7a3/phase-7a3-summary.json",
+      "tests": {
+        "T-7A-DOC-001": "PASS",
+        "T-7A-DOC-002": "PASS",
+        "T-7A-DOC-003": "PASS",
+        "T-7A-DOC-004": "PASS",
+        "T-7A-DOC-005": "PASS"
+      }
+    },
+    "7A.4": {
+      "status": "PASS",
+      "evidence": "evidence/phase-7a4/phase-7a4-summary.json",
+      "tests": {
+        "T-7A-BROWSER-001": "PASS",
+        "T-7A-BROWSER-002": "PASS",
+        "T-7A-BROWSER-004": "PASS",
+        "T-7A-BROWSER-003": "PASS",
+        "T-7A-BROWSER-005": "PASS"
+      }
+    },
+    "7A.5": {
+      "status": "PASS",
+      "evidence": "evidence/phase-7a5/SUMMARY.json",
+      "tests": {
+        "T-7A-BOT-001": "PASS",
+        "T-7A-BOT-002": "PASS",
+        "T-7A-BOT-003": "PASS",
+        "T-7A-SUBAGENT-001": "PASS",
+        "deterministic-gate": "PASS",
+        "regression-smoke": "PASS",
+        "prior-capabilities-smoke": "PASS"
+      }
+    },
+    "7A.6": {
+      "status": "PASS",
+      "evidence": "evidence/phase-7a6/tests.json",
+      "tests": {
+        "T-7A-WT-001": "PASS",
+        "T-7A-WT-002": "PASS",
+        "T-7A-WT-003": "PASS"
+      }
+    },
+    "7A.7": {
+      "status": "PASS",
+      "evidence": "evidence/phase-7a7/tests.json",
+      "tests": {
+        "T-7A-CRON-001": "PASS",
+        "T-7A-CRON-002": "PASS",
+        "T-7A-CRON-003_TIMEOUT": "PASS"
+      }
+    },
+    "7A.8": {
+      "status": "PASS",
+      "evidence": "evidence/phase-7a8/tests.json",
+      "tests": {
+        "T-7A-DASH-001": "PASS",
+        "T-7A-DASH-002": "PASS",
+        "T-7A-DASH-003": "PASS"
+      }
+    },
+    "7A.9": {
+      "status": "PASS",
+      "evidence": "evidence/phase-7a9/tests.json",
+      "tests": {
+        "T-7A-GATEWAY-001": "PASS",
+        "T-7A-GATEWAY-002": "PASS",
+        "TIMEOUT_CLEANUP": "PASS"
+      }
+    },
+    "7A.10": {
+      "status": "PASS",
+      "evidence": "evidence/phase-7a10/tests.json",
+      "tests": {
+        "T-7A-UPDATE-001": "PASS",
+        "T-7A-UPDATE-002": "PASS"
+      }
+    }
+  },
+  "mandatory_test_count": 38,
+  "approved_subphase_suites_repeated": false
+}
