@@ -97,7 +97,7 @@ Parámetros validados:
 - **Macrofase 5 (Memoria y Continuidad - Fases 10 a 12):** **PASS**
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
 - **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **PASS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5 — Bot Mode + Subagentes`: **PASS**; `7A.6 — Git Worktrees`: **PASS**; `7A.7 — Cron + No-Agent Jobs`: **PASS**; `7A.8 — Native Dashboard`: **PASS**; `7A.9 — Gateway`: **PASS**; `7A.10 — Controlled Auto-update`: **PASS**; `ChatGPT Idempotency`: **PASS**; `regression gate`: **PASS**). Preflight correctivo aprobado en commit `f133bab`.
-- **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PENDING**
+- **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **IN_PROGRESS**
 - **Macrofase 8 (Validación Final - Fases 23 a 28):** **PENDING**
 
 ---
@@ -105,3 +105,5 @@ Parámetros validados:
 # 5. Regla Fundamental de Verificación
 
 > **Las capacidades, flags y versiones específicas deben verificarse siempre contra el software y las herramientas realmente instaladas en el host, y nunca asumirse ciegamente por documentación teórica.**
+
+Actualización operativa 2026-10-13T16:00:00.067794-03:00: Macrofase7B IN_PROGRESS; F17 (Runner) PASS; evidence/phase-17/. 7A permanece PASS.

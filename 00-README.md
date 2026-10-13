@@ -527,7 +527,7 @@ Macrofase 7A: Hermes Native Capabilities (7A.1 a 7A.10) — PASS
   7A.10 — PASS
   ChatGPT Idempotency — PASS
   Regression gate — PASS
-Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — PENDING
+Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — IN_PROGRESS
 Macrofase 8:  Validación Final (Fases 23 a 28) — PENDING
 ```
 
@@ -674,3 +674,5 @@ El objetivo no es crear un chatbot de programación.
 El objetivo es construir:
 
 > **un trabajador de programación autónomo, persistente, verificable y recuperable que pueda trabajar durante horas sobre proyectos reales con límites de seguridad claros.**
+
+Actualización operativa 2026-10-13T16:00:00.067794-03:00: Macrofase7B IN_PROGRESS; F17 (Runner) PASS; evidence/phase-17/. 7A permanece PASS.

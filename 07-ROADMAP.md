@@ -26,7 +26,7 @@ Principio:
 | **Macrofase 5** | Memoria y Continuidad | Fases 10 a 12 | **PASS** |
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
-| **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PENDING** |
+| **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **IN_PROGRESS** |
 | **Macrofase 8** | Validación Final | Fases 23 a 28 | **PENDING** |
 
 Cada fase debe producir:
@@ -1352,3 +1352,5 @@ No debe:
 El objetivo no es instalar rápido.
 
 El objetivo es terminar con un sistema que pueda trabajar solo durante horas y que pueda recuperarse cuando algo falla.
+
+Actualización operativa 2026-10-13T16:00:00.067794-03:00: Macrofase7B IN_PROGRESS; F17 (Runner) PASS; evidence/phase-17/. 7A permanece PASS.
