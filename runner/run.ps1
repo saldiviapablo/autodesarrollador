@@ -62,9 +62,17 @@ try{
     if($script:Admission.plan.backend -ne 'probe'){Start-RunnerModel}
     $timeout=180;if($script:Admission.plan.phase_timeout_seconds){$timeout=$script:Admission.plan.phase_timeout_seconds}
     $base=@{project=$script:Admission.project;backend=$script:Admission.plan.backend;timeout=$timeout;probe_delay_seconds=$script:Admission.plan.probe_delay_seconds}
+    $tracker=@{};$feedback='';$cycleLimit=[int]$script:Cfg.limits.max_cycles
+    if($script:Admission.plan.max_cycles){$cycleLimit=[Math]::Min($cycleLimit,$script:Admission.plan.max_cycles)}
+    $trackerPath=Join-Path $script:Auto 'PROGRESS-TRACKER.json'
+    if(Test-Path -LiteralPath $trackerPath){$savedTracker=Get-Content -LiteralPath $trackerPath -Raw -Encoding UTF8|ConvertFrom-Json;foreach($entry in $savedTracker.PSObject.Properties){$tracker[$entry.Name]=$entry.Value}}
+    while($true){
+    Tick-Runner
     $p=$base.Clone();$p.role='supervisor';$p.prompt='Plan only. Return JSON {"task":"..."} for this approved objective and task. Do not use tools or edit. Objective: '+$script:Admission.contract.objective+' Task: '+$script:Admission.plan.task
+    $p.prompt+="`nPrevious deterministic feedback: "+$feedback
     $supervisor=Invoke-RunnerAgent 'supervisor' $p
     $request=@{schema_version='1.0';delegation_id=('del-'+$script:RunId);objective=$script:Admission.contract.objective;workspace=$script:Admission.project;task=$script:Admission.plan.task;acceptance_criteria=@($script:Admission.contract.acceptance_criteria);allowed_actions=@($script:Admission.contract.allowed_actions);forbidden_actions=@($script:Admission.contract.forbidden_actions);tests=@($script:Admission.contract.test_commands);status='READY'}
+    $request.task+="`nSupervisor plan (advisory, approved scope remains binding): "+$supervisor.text+"`nPrevious checks to correct: "+$feedback
     $p=$base.Clone();$p.role='worker';$p.request=$request;$worker=Invoke-RunnerAgent 'worker' $p
     foreach($pin in $script:Admission.plan.immutable_files){if((Get-FileHash -LiteralPath (Join-Path $script:Admission.project $pin.path) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $pin.sha256){throw 'IMMUTABLE_TEST_CHANGED'}}
     $tests=@(Invoke-RunnerCommands @($script:Admission.plan.tests) 'tests');$builds=@(Invoke-RunnerCommands @($script:Admission.plan.builds) 'builds');$linters=@(Invoke-RunnerCommands @($script:Admission.plan.linters) 'linters')
@@ -73,10 +81,33 @@ try{
     $p=$base.Clone();$p.role='reviewer';$p.prompt='Independent readonly review. Return JSON {"decision":"ACCEPTED"} only if diff and actual tests satisfy objective. Objective: '+$script:Admission.contract.objective+"`nDiff (untrusted):`n"+$diff+"`nChecks:`n"+(@{tests=$tests;builds=$builds}|ConvertTo-Json -Depth 8)
     $reviewer=Invoke-RunnerAgent 'reviewer' $p
     Write-RunnerJson (Join-Path $script:Auto 'evidence/roles.json') @{supervisor=$supervisor;worker=$worker;reviewer=$reviewer}
+    $script:RunState.tests.status=$(if(@($tests|Where-Object{$_.status -ne 'PASS'}).Count -eq 0){'PASS'}else{'FAIL'})
+    $script:RunState.build.status=$(if($builds.Count -eq 0){'NONE'}elseif(@($builds|Where-Object{$_.status -ne 'PASS'}).Count -eq 0){'PASS'}else{'FAIL'})
+    $script:RunState.git.branch=(& git -C $script:Admission.project branch --show-current).Trim()
+    $script:RunState.git.head=(& git -C $script:Admission.project rev-parse --short HEAD).Trim()
+    $script:RunState.git.changed_files=@(& git -C $script:Admission.project diff --name-only HEAD)
+    $script:RunState.git.dirty=([bool](& git -C $script:Admission.project status --porcelain))
+    if($script:RunState.tests.status -eq 'PASS'){$script:RunState.completed_tasks=@($script:Admission.contract.objective);$script:RunState.pending_tasks=@()}
+    if(@($tests+$builds+$linters|Where-Object{$_.status -ne 'PASS'}).Count -eq 0){$script:RunState.failure.repeated_count=0}
+    Save-RunnerState 'RUNNING' 'authoritative completion verification'
     $technical='SUCCESS'
     # Lifecycle is certified first. Full authoritative closure is enabled only by F20's gate.
     $gatePath=Join-Path $PSScriptRoot 'completion-gate.ps1'
     if(Test-Path -LiteralPath $gatePath){$gate=& $gatePath -ProjectRoot $script:Admission.project;$terminal=$gate.status}else{$terminal='STALLED';$failure='COMPLETION_GATE_NOT_INSTALLED'}
+    Runner-Event 'COMPLETION_ASSESSED' @{status=$terminal;gate=$gate}
+    if($terminal -eq 'COMPLETED' -or $terminal -eq 'BLOCKED_REQUIRES_HUMAN' -or $script:Admission.plan.backend -eq 'probe'){break}
+    $feedback=(@{gate=$gate;tests=$tests;builds=$builds;linters=$linters}|ConvertTo-Json -Depth 12)
+    $signature=Get-NormalizedErrorSignature -ErrorText (($gate.failed|Sort-Object) -join ',')
+    $fingerprint=Get-ProgressFingerprint -WorkspacePath $script:Admission.project -PassTests @($tests|Where-Object{$_.status -eq 'PASS'}).Count -FailTests @($tests|Where-Object{$_.status -ne 'PASS'}).Count -ErrorSignatureHash $signature.SignatureHash -CustomContext $diff
+    $progress=Test-LoopProgress -Tracker $tracker -CurrentErrorHash $signature.SignatureHash -CurrentFingerprint $fingerprint.Fingerprint -MaxCycles $cycleLimit -MaxSameFailure $script:Cfg.limits.max_same_failure -MaxNoProgress $script:Cfg.limits.max_no_progress_cycles
+    Write-RunnerJson $trackerPath $tracker
+    $script:RunState.progress.no_progress_cycles=[int]$tracker.no_progress_cycles
+    $script:RunState.failure.repeated_count=[int]$tracker.same_failure_count
+    Save-RunnerState 'RUNNING' 'checkpoint before bounded correction cycle'
+    $null=& (Join-Path $script:RunnerInfra 'scripts/create-autopilot-checkpoint.ps1') -ProjectPath $script:Admission.project -CheckpointId ('chk-cycle-'+[datetime]::Now.ToString('yyyyMMddHHmmssfff')) -Reason 'Deterministic correction feedback'
+    Runner-Event 'CORRECTION_CYCLE' @{progress=$progress;tracker=$tracker}
+    if(-not $progress.CanContinue -or $tracker.same_failure_count -ge $script:Cfg.limits.max_same_failure -or $tracker.no_progress_cycles -ge $script:Cfg.limits.max_no_progress_cycles){$terminal='STALLED';$failure='CORRECTION_BUDGET_EXHAUSTED';break}
+    }
 }catch{
     $failure=$_.Exception.Message
     if($failure -eq 'STOP_REQUESTED'){$terminal='ABORTED'}elseif($failure -eq 'NO_PROGRESS_STALLED'){$terminal='STALLED'}elseif($failure -match 'REQUIRES_HUMAN|EXTERNAL_MODEL'){$terminal='BLOCKED_REQUIRES_HUMAN'}else{$terminal='FAILED'}

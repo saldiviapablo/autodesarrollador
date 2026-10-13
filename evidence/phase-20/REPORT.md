@@ -1,0 +1,1 @@
+F20 PASS. Twelve false positives denied; nine mandatory criteria PASS. Real serialized native chain completed in 224 seconds; all 19 gate checks PASS. Limits persist across recovery; strict failure cap remains three. Cleanup and prior capability smoke PASS. Test harness NameError corrected. No protected policy changes or new dependencies. Next F21 after local commit.
