@@ -1,7 +1,7 @@
 """Adversarial Prepare test; harmless targets confined to infrastructure sandbox."""
 import datetime,hashlib,json,pathlib,subprocess,uuid
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-E=ROOT/'evidence/phase-23';E.mkdir(exist_ok=True)
+E=ROOT/'evidence/phase-23-attempt-2';E.mkdir(exist_ok=True)
 case=ROOT/'sandbox'/('phase23-boundary-'+uuid.uuid4().hex[:8]);case.mkdir()
 outside=case/'outside-approved-project';outside.mkdir();sentinel=outside/'sentinel.txt';sentinel.write_text('owned harmless boundary sentinel\n',encoding='utf-8')
 project=case/'declared-project';plan=case/'plan.json'
@@ -16,8 +16,10 @@ try:
     after={str(p.relative_to(outside)):hashlib.sha256(p.read_bytes()).hexdigest() for p in outside.rglob('*') if p.is_file()}
     changes=sorted(n for n in set(before)|set(after) if before.get(n)!=after.get(n))
     rejected=result.returncode!=0 and 'REPARSE_POINT_DENIED' in result.stdout+result.stderr
-    passed=rejected and not changes
-    proof={'test_id':'T-F23-PREPARE-BOUNDARY','status':'PASS' if passed else 'FAIL','classification':None if passed else 'SECURITY_REGRESSION','expected':'DENY before any write through a rejected project junction','actual_admission_denied':rejected,'exit_code':result.returncode,'outside_approved_project_changed_files':changes,'sentinel_preserved':before['sentinel.txt']==after.get('sentinel.txt'),'case_root':str(case),'junction':str(project),'target':str(outside),'target_is_owned_sandbox':True,'production_touched':False,'local_inferences':0,'runner_source_sha256':hashlib.sha256((ROOT/'runner/run.ps1').read_bytes()).hexdigest(),'baseline_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'timestamp':datetime.datetime.now().astimezone().isoformat()}
+    response=json.loads(result.stdout)
+    zero=rejected and not changes and response.get('prepare_write_count')==0 and not(outside/'QWEN.md').exists() and not(outside/'.autopilot').exists()
+    passed=zero
+    proof={'test_id':'T-F23-PREPARE-BOUNDARY','status':'PASS' if passed else 'FAIL','classification':None if passed else 'SECURITY_REGRESSION','expected':'DENY before any write through a rejected project junction','actual_admission_denied':rejected,'PREPARE_ZERO_WRITE_ON_DENY':'PASS' if zero else 'FAIL','prepare_write_count':response.get('prepare_write_count'),'qwen_md_exists':(outside/'QWEN.md').exists(),'autopilot_exists':(outside/'.autopilot').exists(),'exit_code':result.returncode,'outside_approved_project_changed_files':changes,'sentinel_preserved':before['sentinel.txt']==after.get('sentinel.txt'),'case_root':str(case),'junction':str(project),'target':str(outside),'target_is_owned_sandbox':True,'production_touched':False,'local_inferences':0,'runner_source_sha256':hashlib.sha256((ROOT/'runner/run.ps1').read_bytes()).hexdigest(),'baseline_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'timestamp':datetime.datetime.now().astimezone().isoformat()}
     (E/'prepare-boundary.json').write_text(json.dumps(proof,indent=2)+'\n',encoding='utf-8');(E/'prepare-boundary.stdout.txt').write_text(result.stdout,encoding='utf-8');(E/'prepare-boundary.stderr.txt').write_text(result.stderr,encoding='utf-8')
     print(json.dumps(proof));raise SystemExit(0 if passed else 1)
 finally:

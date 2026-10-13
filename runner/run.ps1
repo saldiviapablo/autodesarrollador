@@ -1,27 +1,26 @@
-[CmdletBinding()]
-param([Parameter(Mandatory=$true)][string]$ProjectRoot,[ValidateSet('Prepare','Preflight','Approve','Start')][string]$Action='Preflight',[string]$ApprovalDigest='', [switch]$Recover,[string]$Objective,[string[]]$AcceptanceCriteria,[string]$PlanPath)
+﻿[CmdletBinding()]
+param([Parameter(Mandatory=$true)][string]$ProjectRoot,[ValidateSet('Prepare','Preflight','Approve','Start')][string]$Action='Preflight',[string]$ApprovalDigest='', [switch]$Recover,[string]$Objective,[string[]]$AcceptanceCriteria,[string]$PlanPath,[string]$WorkspaceRoot)
 $ErrorActionPreference='Stop'
 # Cron/Python callers may inherit PowerShell 7's module path. Pin only this PS5 process.
 if($PSVersionTable.PSVersion.Major -le 5){$env:PSModulePath=(Join-Path $PSHOME 'Modules')}
+if($Action -eq 'Prepare'){
+    [Console]::OutputEncoding=[Text.Encoding]::UTF8
+    $env:PYTHONUTF8='1';$env:PYTHONDONTWRITEBYTECODE='1'
+    $prepareMutex=New-Object Threading.Mutex($false,'Local\DesarrolladorAutonomo_RunMutex');$prepareHeld=$false
+    try {
+        try{$prepareHeld=$prepareMutex.WaitOne(0)}catch [Threading.AbandonedMutexException]{$prepareHeld=$true}
+        if(-not $prepareHeld){@{status='DENY';phase='PREPARE_PRE_ADMISSION';reason='RUN_ALREADY_ACTIVE';prepare_write_count=0}|ConvertTo-Json;exit 2}
+        $request=@{project=$ProjectRoot;objective=$Objective;criteria=@($AcceptanceCriteria);plan=$PlanPath;workspace=$WorkspaceRoot}|ConvertTo-Json -Depth 8 -Compress
+        $encoded=[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($request))
+        & C:/Python314/python.exe (Join-Path $PSScriptRoot 'prepare.py') --request $encoded
+        exit $LASTEXITCODE
+    } finally {
+        if($prepareHeld){$prepareMutex.ReleaseMutex()};$prepareMutex.Dispose()
+    }
+}
 . (Join-Path $PSScriptRoot 'core.ps1')
 . (Join-Path $PSScriptRoot 'report.ps1')
 . (Join-Path $PSScriptRoot 'cleanup.ps1')
-if($Action -eq 'Prepare'){
-    if(-not $Objective -or -not $AcceptanceCriteria -or -not(Test-Path -LiteralPath $PlanPath)){throw 'PREPARE_REQUIRES_OBJECTIVE_CRITERIA_AND_PLAN'}
-    if(Test-Path -LiteralPath (Join-Path $ProjectRoot '.autopilot')){throw 'EXISTING_AUTOPILOT_PRESERVED_USE_PREFLIGHT_OR_RECOVERY'}
-    $projectFull=[IO.Path]::GetFullPath($ProjectRoot)
-    if($projectFull -eq $script:RunnerInfra -or $projectFull -eq [IO.Path]::GetPathRoot($projectFull)){throw 'PROJECT_ROOT_DENIED'}
-    if(Test-Path -LiteralPath (Join-Path $ProjectRoot 'QWEN.md')){throw 'EXISTING_QWEN_CONTEXT_REQUIRES_BACKUP_BEFORE_INITIALIZATION'}
-    $null=& (Join-Path $script:RunnerInfra 'scripts/init-autopilot-project.ps1') -ProjectPath $ProjectRoot -Objective $Objective -AcceptanceCriteria $AcceptanceCriteria
-    Copy-Item -LiteralPath $PlanPath -Destination (Join-Path $ProjectRoot '.autopilot/RUN-PLAN.json')
-    $contractPath=Join-Path $ProjectRoot '.autopilot/RUN-CONTRACT.yaml'
-    $code='import sys,yaml,pathlib;p=pathlib.Path(sys.argv[1]);d=yaml.safe_load(p.read_text(encoding="utf-8-sig"));d["authorized"]=False;d["authorized_at"]=None;p.write_text(yaml.safe_dump(d,sort_keys=False,allow_unicode=True),encoding="utf-8")'
-    # Use file rather than inline -c quoting across Windows PowerShell.
-    $helper=Join-Path $ProjectRoot '.autopilot/draft-contract.py';[IO.File]::WriteAllText($helper,$code.Replace('sys.argv[1]','sys.argv[1]'))
-    & C:/Python314/python.exe $helper $contractPath
-    Remove-Item -LiteralPath $helper
-    $Action='Preflight'
-}
 $admissionAction='inspect';if($Action -eq 'Approve'){$admissionAction='approve'}elseif($Action -eq 'Start'){$admissionAction='validate'}
 try{$script:Admission=Get-RunnerAdmission $admissionAction $ProjectRoot $ApprovalDigest}catch{@{status='BLOCKED_REQUIRES_HUMAN';reason=$_.Exception.Message;started=$false}|ConvertTo-Json;exit 2}
 if($Action -ne 'Start'){@{status='PASS';action=$Action;project=$script:Admission.project;run_id=$script:Admission.contract.run_id;approval_digest=$script:Admission.digest}|ConvertTo-Json;exit 0}

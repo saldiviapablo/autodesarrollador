@@ -445,7 +445,7 @@ Nada debe marcarse `PASS` sin evidencia.
 
 ## `07-ROADMAP.md`
 
-Define el orden de implementación por macrofases (Macrofases 1–6, 7A y 7B certificadas históricamente; validación de Macrofase 8 detenida por F23 FAIL / SECURITY_REGRESSION).
+Define el orden de implementación por macrofases (Macrofases 1–6, 7A y 7B certificadas históricamente; validación de Macrofase 8 IN_PROGRESS tras la corrección de Prepare; F23 integral pendiente de nuevo intento).
 
 ---
 
@@ -528,7 +528,7 @@ Macrofase 7A: Hermes Native Capabilities (7A.1 a 7A.10) — PASS
   ChatGPT Idempotency — PASS
   Regression gate — PASS
 Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — PASS
-Macrofase 8:  Validación Final (Fases 23 a 28) — FAIL / STOPPED_SECURITY_REGRESSION (F23)
+Macrofase 8:  Validación Final (Fases 23 a 28) — IN_PROGRESS (Prepare fix PASS; F23 integral en nuevo intento)
 ```
 
 ---
@@ -689,6 +689,10 @@ Actualización operativa 2026-10-13T16:58:45.255234-03:00: Macrofase7B IN_PROGRE
 
 Cierre 7B: F17–F22, E2E real con fallo controlado y regression smoke PASS. READY FOR MACROFASE 8 YES; no se inició. Informe: docs/MACROPHASE-7B-FINAL-REPORT.md.
 
-## Validación actual Macrofase 8
+## Validación histórica Macrofase 8 — intento 1
 
 Preflight PASS. F23 FAIL: SECURITY_REGRESSION en Prepare; rechazo de junction posterior a escrituras fuera del proyecto declarado. F24–F26 y 2h/4h NOT_RUN por gate anterior FAIL. Cleanup PASS, inferencias locales 0. Certificaciones anteriores preservadas como historial, no como prueba de este caso nuevo. READY FOR REAL PILOT NO. Informe: docs/MACROPHASE-8-STOP-REPORT.md.
+
+## Validación actual Macrofase 8 — intento 2
+
+Prepare fix PASS. PREPARE_ZERO_WRITE_ON_DENY y casos A–H PASS. Smokes acotados PASS; sin inferencia local. F23 integral IN_PROGRESS; F24–F26, 2h/4h y regression final NOT_RUN. READY FOR REAL PILOT NO. Informe: docs/PREPARE-BOUNDARY-FIX.md. Evidencia histórica FAIL del intento 1 preservada.

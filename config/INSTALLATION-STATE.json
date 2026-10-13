@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-13T18:54:41.560782-03:00",
+  "updated_at": "2026-10-13T19:47:21.031432-03:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -32,7 +32,7 @@
     "6": "PASS",
     "7A": "PASS",
     "7B": "PASS",
-    "8": "FAIL"
+    "8": "IN_PROGRESS"
   },
   "subphases_7a": {
     "7A.1": "PASS",
@@ -72,7 +72,7 @@
   "ready_for_8": false,
   "e2e_scope": "PENDING refers to F24/F25 final validation; e2e_7b is the approved short 7B integration",
   "phases_8": {
-    "23": "FAIL",
+    "23": "IN_PROGRESS",
     "24": "NOT_RUN",
     "25": "NOT_RUN",
     "26": "NOT_RUN",
@@ -80,14 +80,17 @@
     "28": "PENDING"
   },
   "validation_8": {
-    "status": "STOPPED_SECURITY_REGRESSION",
+    "status": "PREPARE_FIX_PASS_F23_RETEST_PENDING",
     "test": "T-F23-PREPARE-BOUNDARY",
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
-    "current_security_revalidation": "FAIL",
+    "current_security_revalidation": "PREPARE_FIX_SMOKE_PASS",
     "checkpoint_4h": "NOT_RUN / PREVIOUS_GATE_FAILED",
     "regression_gate_final": "NOT_RUN / PREVIOUS_GATE_FAILED",
-    "ready_for_real_pilot": false
+    "ready_for_real_pilot": false,
+    "prepare_zero_write_on_deny": "PASS",
+    "historical_attempt_1": "FAIL / SECURITY_REGRESSION; unchanged evidence/phase-23/",
+    "attempt_2_evidence": "evidence/phase-23-attempt-2/"
   },
   "ready_for_real_pilot": false
 }
