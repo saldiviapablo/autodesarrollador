@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "tests": {
+    "T-7A-CRON-001": "PASS",
+    "T-7A-CRON-002": "PASS",
+    "T-7A-CRON-003_TIMEOUT": "PASS"
+  },
+  "native_create_list_pause_resume_remove": true,
+  "native_no_agent_run": {
+    "success": true,
+    "output": "{\"event\": \"HEALTH_SNAPSHOT\", \"run_id\": \"run-20261013-053215\", \"status\": \"INITIALIZED\", \"local_inferences\": 0}",
+    "error": null,
+    "local_inferences": 0
+  },
+  "denied": {
+    "unknown_job": "CATALOG_DENIED",
+    "git push --force": "CATALOG_DENIED",
+    "../evil.py": "CATALOG_DENIED",
+    "tampered_script": "SCRIPT_HASH_DENIED"
+  },
+  "timeout": "Script timed out after 1s: C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a7-cron\\.autopilot\\hermes-cron\\scripts\\timeout-fixture.py",
+  "timeout_pid_stopped": true,
+  "remaining_jobs": 0,
+  "timers_started": 0,
+  "llm_constructor_tripwire": true,
+  "network_tripwire": true,
+  "inference_lock_unchanged": true,
+  "local_inferences": 0
+}
