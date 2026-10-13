@@ -1,0 +1,471 @@
+{
+  "status": "PASS",
+  "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-final7b-e2e-38b76049",
+  "stage": "final",
+  "native_roles_observed": [
+    "llama",
+    "reviewer",
+    "supervisor",
+    "watchdog",
+    "worker"
+  ],
+  "native_chain": "Supervisor -> Qwen Code -> actual tests -> independent Reviewer -> Completion Gate -> reports -> cleanup",
+  "gate": {
+    "status": "COMPLETED",
+    "checks": {
+      "state_schema_valid": true,
+      "native_live_backend": true,
+      "roles_success": true,
+      "independent_reviewer_accepted": true,
+      "run_id_consistent": true,
+      "tests_all_required": true,
+      "builds_all_required": true,
+      "linters_all_required": true,
+      "tests_exist": true,
+      "no_build_approved_or_passed": true,
+      "criteria_all_mapped_and_passed": true,
+      "pending_empty": true,
+      "failures_not_pending": true,
+      "state_tests_pass": true,
+      "immutable_test_calculator.py": true,
+      "artifact_calculator.py": true,
+      "diff_only_approved_files": true,
+      "relevant_diff_exists": true,
+      "state_git_head_consistent": true
+    },
+    "failed": [],
+    "changed_files": [
+      "calculator.py"
+    ],
+    "run_id": "run-20261013-170634",
+    "source": "DETERMINISTIC_COMPLETION_GATE"
+  },
+  "report": {
+    "schema_version": "1.0",
+    "run_id": "run-20261013-170634",
+    "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-final7b-e2e-38b76049",
+    "objective": "Implement correct addition with verified tests",
+    "duration_seconds": 207.92049179999998,
+    "status": "COMPLETED",
+    "technical_status": "SUCCESS",
+    "reason": "",
+    "tasks_completed": [
+      "Implement correct addition with verified tests"
+    ],
+    "pending_tasks": [],
+    "changed_files": [
+      "calculator.py"
+    ],
+    "commits": [],
+    "tests": [
+      {
+        "output": "RUNNER_TEST_PASS\r\n",
+        "status": "PASS",
+        "marker_present": true,
+        "id": "unit",
+        "exit_code": 0
+      }
+    ],
+    "builds": [],
+    "linters": [],
+    "errors": [
+      {
+        "reason": "AGENT_FAILED:supervisor",
+        "count": 1,
+        "role": "supervisor"
+      }
+    ],
+    "retries": {
+      "llama": 0,
+      "supervisor": 1,
+      "reviewer": 0,
+      "worker": 0
+    },
+    "recoveries": [
+      {
+        "schema_version": "1.0",
+        "seq": 9,
+        "event_id": "evt-1afe44a11d21",
+        "timestamp": "2026-10-13T17:06:43.1188120-03:00",
+        "run_id": "run-20261013-170634",
+        "actor": "runner",
+        "type": "WATCHDOG_AGENT_RESTART",
+        "payload": {
+          "reason": "AGENT_FAILED:supervisor",
+          "count": 1,
+          "role": "supervisor"
+        }
+      }
+    ],
+    "web_queries": [],
+    "chatgpt_queries_used": null,
+    "blocks": [],
+    "completion_gate": {
+      "status": "COMPLETED",
+      "checks": {
+        "state_schema_valid": true,
+        "native_live_backend": true,
+        "roles_success": true,
+        "independent_reviewer_accepted": true,
+        "run_id_consistent": true,
+        "tests_all_required": true,
+        "builds_all_required": true,
+        "linters_all_required": true,
+        "tests_exist": true,
+        "no_build_approved_or_passed": true,
+        "criteria_all_mapped_and_passed": true,
+        "pending_empty": true,
+        "failures_not_pending": true,
+        "state_tests_pass": true,
+        "immutable_test_calculator.py": true,
+        "artifact_calculator.py": true,
+        "diff_only_approved_files": true,
+        "relevant_diff_exists": true,
+        "state_git_head_consistent": true
+      },
+      "failed": [],
+      "changed_files": [
+        "calculator.py"
+      ],
+      "run_id": "run-20261013-170634",
+      "source": "DETERMINISTIC_COMPLETION_GATE"
+    },
+    "cleanup": {
+      "job_closed": true,
+      "owned_survivors": [],
+      "run_mutex_released": true,
+      "run_lock_removed": true,
+      "inference_mutex": "FREE",
+      "external_model_preserved": false,
+      "errors": []
+    },
+    "processes": [
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 22272,
+        "name": "watchdog",
+        "executable": "powershell.exe",
+        "start_ticks": 639275187968298848
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 13872,
+        "name": "llama",
+        "executable": "C:\\AI\\llama.cpp\\llama-server.exe",
+        "start_ticks": 639275187973202874
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 26796,
+        "name": "supervisor",
+        "executable": "powershell.exe",
+        "start_ticks": 639275188009689872
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 14636,
+        "name": "supervisor",
+        "executable": "powershell.exe",
+        "start_ticks": 639275188039784602
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 23944,
+        "name": "worker",
+        "executable": "powershell.exe",
+        "start_ticks": 639275188552935159
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 32776,
+        "name": "check-unit",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639275189712909239
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 28216,
+        "name": "reviewer",
+        "executable": "powershell.exe",
+        "start_ticks": 639275189713725708
+      }
+    ],
+    "generated_at": "2026-10-13T17:10:04.3241291-03:00"
+  },
+  "resources": [
+    {
+      "elapsed_seconds": 4.0000013541430235e-06,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 22503677952,
+      "llama_working_set_bytes": 0
+    },
+    {
+      "elapsed_seconds": 5.103842999989865,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 17751642112,
+      "llama_working_set_bytes": 4527329280
+    },
+    {
+      "elapsed_seconds": 10.222440899990033,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 17663619072,
+      "llama_working_set_bytes": 4527546368
+    },
+    {
+      "elapsed_seconds": 15.419762099991203,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 17474732032,
+      "llama_working_set_bytes": 4527710208
+    },
+    {
+      "elapsed_seconds": 20.60529459999816,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 4969148416,
+      "llama_working_set_bytes": 17061249024
+    },
+    {
+      "elapsed_seconds": 25.651958899994497,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 3738886144,
+      "llama_working_set_bytes": 18695036928
+    },
+    {
+      "elapsed_seconds": 30.683442099994863,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 3470667776,
+      "llama_working_set_bytes": 18947035136
+    },
+    {
+      "elapsed_seconds": 35.72862090000126,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 3373342720,
+      "llama_working_set_bytes": 19081191424
+    },
+    {
+      "elapsed_seconds": 40.798404699991806,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 3116273664,
+      "llama_working_set_bytes": 19178131456
+    },
+    {
+      "elapsed_seconds": 45.91273279998859,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 3025158144,
+      "llama_working_set_bytes": 19264405504
+    },
+    {
+      "elapsed_seconds": 50.999535599999945,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 2772144128,
+      "llama_working_set_bytes": 19445010432
+    },
+    {
+      "elapsed_seconds": 56.06439769999997,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 2678050816,
+      "llama_working_set_bytes": 19557797888
+    },
+    {
+      "elapsed_seconds": 61.19401849999849,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 2353242112,
+      "llama_working_set_bytes": 19886637056
+    },
+    {
+      "elapsed_seconds": 66.22202359999937,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 1300787200,
+      "llama_working_set_bytes": 20746051584
+    },
+    {
+      "elapsed_seconds": 71.40043529999093,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 788316160,
+      "llama_working_set_bytes": 21227864064
+    },
+    {
+      "elapsed_seconds": 76.4971019999939,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 684126208,
+      "llama_working_set_bytes": 21248536576
+    },
+    {
+      "elapsed_seconds": 81.58226450000075,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 639811584,
+      "llama_working_set_bytes": 21156028416
+    },
+    {
+      "elapsed_seconds": 86.71594899999036,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 665600000,
+      "llama_working_set_bytes": 20993089536
+    },
+    {
+      "elapsed_seconds": 91.85281149999355,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 584732672,
+      "llama_working_set_bytes": 20995874816
+    },
+    {
+      "elapsed_seconds": 97.02271219999238,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 661430272,
+      "llama_working_set_bytes": 20889911296
+    },
+    {
+      "elapsed_seconds": 102.15395009999338,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 681967616,
+      "llama_working_set_bytes": 20891144192
+    },
+    {
+      "elapsed_seconds": 107.2664866999985,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 640299008,
+      "llama_working_set_bytes": 20858105856
+    },
+    {
+      "elapsed_seconds": 112.44539110000187,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 590938112,
+      "llama_working_set_bytes": 20298973184
+    },
+    {
+      "elapsed_seconds": 117.62439549999544,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 566292480,
+      "llama_working_set_bytes": 20223963136
+    },
+    {
+      "elapsed_seconds": 122.62993879998976,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 594669568,
+      "llama_working_set_bytes": 20198694912
+    },
+    {
+      "elapsed_seconds": 127.76850619999459,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 418279424,
+      "llama_working_set_bytes": 20385845248
+    },
+    {
+      "elapsed_seconds": 132.96221399999922,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 403935232,
+      "llama_working_set_bytes": 20383846400
+    },
+    {
+      "elapsed_seconds": 138.16250259999651,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 1996541952,
+      "llama_working_set_bytes": 20020187136
+    },
+    {
+      "elapsed_seconds": 143.28221469999698,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 1909452800,
+      "llama_working_set_bytes": 20868513792
+    },
+    {
+      "elapsed_seconds": 148.39687729999423,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 2285428736,
+      "llama_working_set_bytes": 20405207040
+    },
+    {
+      "elapsed_seconds": 153.54123999999138,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 2241290240,
+      "llama_working_set_bytes": 20407156736
+    },
+    {
+      "elapsed_seconds": 158.69739289999416,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 2217287680,
+      "llama_working_set_bytes": 20407197696
+    },
+    {
+      "elapsed_seconds": 163.79990709999402,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 2158419968,
+      "llama_working_set_bytes": 20473073664
+    },
+    {
+      "elapsed_seconds": 168.92356339999242,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 1935433728,
+      "llama_working_set_bytes": 20674281472
+    },
+    {
+      "elapsed_seconds": 174.02814179999405,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 1918332928,
+      "llama_working_set_bytes": 20674306048
+    },
+    {
+      "elapsed_seconds": 179.25461859999632,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 2158333952,
+      "llama_working_set_bytes": 20674351104
+    },
+    {
+      "elapsed_seconds": 184.34795939999458,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 1710784512,
+      "llama_working_set_bytes": 20674498560
+    },
+    {
+      "elapsed_seconds": 189.46810790000018,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 1702715392,
+      "llama_working_set_bytes": 20822708224
+    },
+    {
+      "elapsed_seconds": 194.60912769999413,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 1306718208,
+      "llama_working_set_bytes": 20890886144
+    },
+    {
+      "elapsed_seconds": 199.73166039999342,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 1255727104,
+      "llama_working_set_bytes": 20890972160
+    },
+    {
+      "elapsed_seconds": 204.86007099998824,
+      "ram_total_bytes": 34001903616,
+      "ram_available_bytes": 1326518272,
+      "llama_working_set_bytes": 21005864960
+    }
+  ],
+  "vram_mib_used_total": [
+    "1298, 8188",
+    "4502, 8188",
+    "4467, 8188",
+    "4476, 8188"
+  ],
+  "controlled_fault": {
+    "pid": 29740,
+    "start_time": 1791922002.733502,
+    "executable": "C:\\Users\\Pc\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+    "parent_role": "supervisor"
+  },
+  "owned_descendants_survived": 0,
+  "compatible_external_model_preserved": false,
+  "source_hashes": {
+    "runner\\agent-step.ps1": "0a19b9227bd534a6eb77e9a40faaf18a5b1a80f42082962dfe217218437e18fb",
+    "runner\\cleanup.ps1": "85cedfbbc7b1d56ea09b278a1e6d31aafe26aff7dbfdc3075eb8d459f7bfac7d",
+    "runner\\completion-gate.ps1": "b93cb42184b62d1d767b9410d37fcff2740b50f46312f85736bc1cb60af69d95",
+    "runner\\completion.py": "4d78268bc6aff1e7684b9fe580ff7ddb9bc95c2386507b0c67e591a522375e66",
+    "runner\\contract.py": "190899765d09bcac94e61ce5fecbb44af54354a7719a823d62ade615809b0064",
+    "runner\\core.ps1": "ac616b779b5159289f9109134b54e7f1b20cb250caf58dd7ff9e8611713ec355",
+    "runner\\launch.ps1": "2401c33036bc93412d344e630296672eb098d3b8ba82555d9c5b074d60d0d291",
+    "runner\\report.ps1": "5613bce99642891988b6a5f23b034a9e1ec9a3b7aeb9c9b23a4869685ab249b7",
+    "runner\\run.ps1": "ed7148882467697be392a9bdf59e4fffd3c66f356ead8830ff69cb4a5567a9ea",
+    "runner\\stop.ps1": "c7407bb00d88d5ebb63822bd215542e0cd2df2a653705a042c154f2b3fbdee6d",
+    "runner\\watchdog-monitor.ps1": "b45ccb3151e7caa021f6dbcb0f4a95e37411e56ea4ab3ddd8f701c85d4bcf0f1"
+  },
+  "dependencies_added": []
+}

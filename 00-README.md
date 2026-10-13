@@ -1,7 +1,7 @@
 # Desarrollador Autónomo
 
-**Versión de documentación:** 2.0  
-**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
+**Versión de documentación:** 2.0
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A
 **Arquitectura principal:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
 
 ---
@@ -445,7 +445,7 @@ Nada debe marcarse `PASS` sin evidencia.
 
 ## `07-ROADMAP.md`
 
-Define el orden de implementación por macrofases (Macrofases 1 a 6 aprobadas, Macrofases 7A, 7B y 8 pendientes).
+Define el orden de implementación por macrofases (Macrofases 1–6, 7A y 7B PASS; Macrofase 8 PENDING).
 
 ---
 
@@ -527,7 +527,7 @@ Macrofase 7A: Hermes Native Capabilities (7A.1 a 7A.10) — PASS
   7A.10 — PASS
   ChatGPT Idempotency — PASS
   Regression gate — PASS
-Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — IN_PROGRESS
+Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — PASS
 Macrofase 8:  Validación Final (Fases 23 a 28) — PENDING
 ```
 
@@ -686,3 +686,5 @@ Actualización operativa 2026-10-13T16:37:16.325404-03:00: Macrofase7B IN_PROGRE
 Actualización operativa 2026-10-13T16:40:23.240900-03:00: Macrofase7B IN_PROGRESS; F21 (Reportes) PASS; evidence/phase-21/. 7A permanece PASS.
 
 Actualización operativa 2026-10-13T16:58:45.255234-03:00: Macrofase7B IN_PROGRESS; F22 (Cleanup garantizado) PASS; evidence/phase-22/. 7A permanece PASS.
+
+Cierre 7B: F17–F22, E2E real con fallo controlado y regression smoke PASS. READY FOR MACROFASE 8 YES; no se inició. Informe: docs/MACROPHASE-7B-FINAL-REPORT.md.

@@ -1,8 +1,8 @@
 # 08 — Capacidades Nativas de Hermes
 ## Proyecto: Desarrollador Autónomo
 
-**Versión:** 2.0  
-**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
+**Versión:** 2.0
+**Estado:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A
 **Arquitectura base:** Hermes Agent + Qwen Code CLI + Qwen local mediante llama.cpp
 
 ---
@@ -57,7 +57,7 @@ A continuación se detalla el estado oficial de preparación y gobernanza de las
 
 | CAPACIDAD | PROPÓSITO | SUPPORTED_BY_INSTALLED_VERSION | ENABLED | CONFIGURED | SECURITY_REVIEWED | TESTED | PRODUCTION_READY | DEPENDENCIES | FALLBACK | NOTAS |
 |:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---|:---|:---|
-| **1. Cron / Routines** | Planificación temporal y ciclo de vida | SÍ (CLI/API `hermes cron`) | **SÍ** | SÍ | SÍ | SÍ | **SÍ** | Subsistema cron Hermes; Runner en 7B | Tareas periódicas disparadas por Runner | 7A.7 PASS; perfil aislado, catálogo fijo, ciclo completo y cleanup; scheduler persistente pendiente 7B |
+| **1. Cron / Routines** | Planificación temporal y ciclo de vida | SÍ (CLI/API `hermes cron`) | **SÍ** | SÍ | SÍ | SÍ | **SÍ** | Subsistema cron Hermes; Runner en 7B | Tareas periódicas disparadas por Runner | 7A.7 PASS; perfil aislado, catálogo fijo, ciclo completo y cleanup; integración Cron → Runner → Watchdog → RUN-CONTRACT PASS (T-RUN-009) |
 | **2. Jobs sin Agente** | Mantenimiento determinista sin inferencia LLM | SÍ (Hermes task runner) | **SÍ** | SÍ | SÍ | SÍ | **SÍ** | Scripts stdlib propios, SHA-256 | Scripts PowerShell estándar | 7A.7 PASS; no AIAgent/red, timeout nativo y PID stopped; 0 inferencias |
 | **3. Skills Reutilizables** | Memoria procedimental: guías operativas y SOPs especializados | SÍ (`~/.hermes/skills/`) | **SÍ** | SÍ | SÍ | SÍ | **SÍ** | Markdown estructurado, validadores | Prompts en contexto / instrucciones | Sólo lectura; no alteran seguridad (`T-7A-SKILL-001/002`, `T-7A-HOOK-001` PASS) |
 | **4. Memoria Persistente** | Memoria contextual de Nivel 2: preferencias, decisiones y lecciones | SÍ (`MEMORY.md` / core memory) | **SÍ** | SÍ | SÍ | SÍ | **SÍ** | Storage local Hermes | `QWEN.md` y `.autopilot/` | Auxiliar; Git y tests superan esta memoria (`T-7A-MEM-001/002`, `T-7A-HIERARCHY-001`, `T-7A-HOOK-001` PASS) |
@@ -265,7 +265,7 @@ A continuación se detalla el estado oficial de preparación y gobernanza de las
 
 # 5. Criterio de Transición a Producción (Macrofase 7A)
 
-Para que cualquier capacidad de este catálogo pase del estado actual (`ENABLED: NO`, `TESTED: NO`, `PRODUCTION_READY: NO`) al estado operacional (`PASS` / `PRODUCTION_READY: SÍ`), deberá completar secuencialmente durante su correspondiente subfase de la Macrofase 7A:
+Para que cualquier capacidad de este catálogo pase del estado inicial (`ENABLED: NO`, `TESTED: NO`, `PRODUCTION_READY: NO`) al estado operacional (`PASS` / `PRODUCTION_READY: SÍ`), deberá completar secuencialmente durante su correspondiente subfase de la Macrofase 7A:
 
 1. **FUNCTIONAL TEST:** Demostración de funcionamiento de la capacidad en un caso de uso representativo.
 2. **SECURITY TEST:** Demostración de contención de privilegios, rechazo de inputs maliciosos o confinamiento a límites autorizados.
@@ -273,9 +273,13 @@ Para que cualquier capacidad de este catálogo pase del estado actual (`ENABLED:
 4. **CLEANUP TEST:** Comprobación de que tras finalizar la tarea no quedan procesos huérfanos, locks tomados ni archivos temporales basura.
 5. **INTEGRATION TEST:** Demostración de interoperabilidad armoniosa con el Supervisor, el Inference Lock y el sistema `.autopilot/` (y con el Runner en Macrofase 7B cuando corresponda).
 
-## Cierre de implementación 7A — 2026-10-13
+## Cierre histórico de implementación 7A — 2026-10-13
 
 MACROFASE 7A = PASS. T-CHATGPT-010 y regression gate global PASS; evidencia en
 `evidence/regression-7a-final/`. Modelo qwen36/127.0.0.1:8080/65536/parallel1
 y hashes aprobados preservados. Hermes productivo v0.21.6 intacto. READY FOR 7B YES;
 7B permanece PENDING y no se inició. Límites certificados según cada capacidad.
+
+## Estado actual tras 7B
+
+Macrofase 7B PASS. Integración nativa Cron/Runner/Watchdog validada por T-RUN-009 y smoke final. Capacidades de 7A y hashes conservados; Hermes productivo v0.21.6. La operación nocturna larga corresponde a Macrofase 8, que permanece PENDING y no se inició.

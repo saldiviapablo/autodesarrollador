@@ -1,4 +1,4 @@
-# Runner determinista — F17
+# Runner determinista — F17–F22
 
 PowerShell 5.1, PROJECT_ROOT canónico distinto de la infraestructura, contrato
 estricto existente y RUN-PLAN.json tipado; aprobación una sola vez por digest
@@ -33,3 +33,5 @@ PowerShell7 heredado desde Python se fija a módulos PS5 SOLO en el proceso Runn
 cmdlet Get-FileHash cargado explícitamente; grupo de linters ausente no es comando.
 psutil no instalado en Python principal: prueba usa API Win32 stdlib, sin instalar.
 No actualización ni dependencia nueva. F18 completa y certifica fault recovery.
+
+Estado actual 7B PASS: Completion Gate instalado; sólo evidencias deterministas permiten COMPLETED. Guardian acotado sobrevive al padre para reportar crash y termina. Reintentos/ciclos/reloj persistidos, reportes terminales sanitizados y cleanup verificado. La limitación del gate no instalado descrita arriba es evidencia histórica de F17. E2E y regression final: evidence/e2e-7b/ y evidence/regression-7b-final/.

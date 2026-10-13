@@ -1,0 +1,1 @@
+MACROFASE 7B PASS. 134 integrity/regression checks PASS; F17–F22 PASS; real E2E COMPLETED with one controlled Supervisor restart; cleanup PASS. Source, protected hashes and installed versions verified. No push, no updates or new dependencies. Ready for Macrofase8 YES; not started. Canonical report: docs/MACROPHASE-7B-FINAL-REPORT.md.
