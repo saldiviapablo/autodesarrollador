@@ -978,7 +978,7 @@ no superar límite.
 
 ## T-CHATGPT-010 — Idempotencia y Deduplicación [PRUEBA FUTURA OBLIGATORIA — MACROFASE 7A]
 
-> **Nota de estado:** La deduplicación por `consultation_id` **NO está implementada ni probada todavía** (`ENABLED: NO`, `CONFIGURED: NO`, `TESTED: NO`, `PRODUCTION_READY: NO`). Esta prueba es obligatoria durante la implementación de la Macrofase 7A.
+> **Nota de estado:** T-CHATGPT-010 = PASS (2026-10-13). Evidencia real: `evidence/chatgpt-idempotency/`. Incluye UNKNOWN_DELIVERY, reconciliación sin reenvío, UTF-8 y dominio exacto. Los criterios siguientes siguen siendo obligatorios.
 
 Enviar consulta al bridge con `consultation_id` asignado.
 Reintentar inmediatamente la llamada con idéntico `consultation_id`.

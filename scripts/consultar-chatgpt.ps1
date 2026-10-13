@@ -55,7 +55,7 @@ $bridgeJs = Join-Path $infraRoot "tools\chatgpt-bridge.js"
 $profileDir = Join-Path $infraRoot "data\browser\HERMES-CHATGPT"
 
 if ([string]::IsNullOrWhiteSpace($ConsultationId)) {
-    $ConsultationId = "consult-" + (Get-Date).ToString("yyyyMMdd-HHmmss")
+    $ConsultationId = "consult-" + (Get-Date).ToString("yyyyMMdd-HHmmss") + '-' + [guid]::NewGuid().ToString('N')
 }
 
 # 1. VERIFICACIÓN ESTRICTA DE DOMAIN LOCK
@@ -73,18 +73,40 @@ if (-not $isAllowedDomain) {
 }
 
 # 2. ENFORCEMENT DE PRESUPUESTO GLOBAL DE CONSULTAS (Section 22)
+if($Action -eq 'consult' -and [string]::IsNullOrWhiteSpace($MockResponse)){
+    $lookupRaw=& node.exe $bridgeJs --action consultation-status --consultation-id $ConsultationId --url $TargetUrl
+    $lookup=($lookupRaw -join "`n")|ConvertFrom-Json
+    if($lookup.status -in @('ALREADY_SENT','UNKNOWN_DELIVERY')){
+        return [PSCustomObject]@{Status=$lookup.status;ConsultationId=$ConsultationId;ResultObj=$lookup;RawJson=($lookupRaw -join "`n");Response='';Error=''}
+    }
+    if($lookup.status -ne 'NOT_SEEN'){throw 'CONSULTATION_LEDGER_LOOKUP_FAILED_CLOSED'}
+}
 $stateObj = $null
 $autopilotDir = ""
+if(-not [string]::IsNullOrWhiteSpace($StatePath) -and -not(Test-Path -LiteralPath $StatePath)){
+    return [PSCustomObject]@{Status='INVALID_STATE_DENY';Error='Explicit STATE path is missing';ConsultationId=$ConsultationId}
+}
 if (-not [string]::IsNullOrWhiteSpace($StatePath) -and (Test-Path -LiteralPath $StatePath)) {
     $autopilotDir = Split-Path -Parent $StatePath
+    $keyBytes=[Text.Encoding]::UTF8.GetBytes([IO.Path]::GetFullPath($StatePath).ToLowerInvariant())
+    $keyHash=([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($keyBytes))).Replace('-','')
+    $budgetMutex=New-Object Threading.Mutex($false,('Local\DesarrolladorAutonomo_ChatGPTBudget_'+$keyHash))
+    $budgetHeld=$false
     try {
+        try{$budgetHeld=$budgetMutex.WaitOne(10000)}catch [Threading.AbandonedMutexException]{$budgetHeld=$true}
+        if(-not $budgetHeld){throw 'CHATGPT_BUDGET_LOCK_TIMEOUT'}
         $stateObj = Get-Content -LiteralPath $StatePath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if((Test-FileSchemaValidation -filePath $StatePath -schemaPath (Join-Path $infraRoot 'schemas/autopilot-state.schema.json')) -ne 'VALID'){throw 'STATE_SCHEMA_DENIED'}
+        $policyJson=& C:/Python314/python.exe (Join-Path $infraRoot 'scripts/mcp-sandbox-server.py') --dump-yaml-json (Join-Path $infraRoot 'config/security.yaml')
+        $policy=($policyJson -join "`n")|ConvertFrom-Json
+        $MaxQueries=[Math]::Min($policy.chatgpt.max_queries,[Math]::Max(0,$MaxQueries))
         if (-not $stateObj.PSObject.Properties['chatgpt']) {
             $stateObj | Add-Member -MemberType NoteProperty -Name "chatgpt" -Value ([PSCustomObject]@{
                 queries_used = 0
                 max_queries  = $MaxQueries
             })
         }
+        $stateObj.chatgpt.max_queries=[Math]::Min($stateObj.chatgpt.max_queries,$MaxQueries)
 
         # Comprobar límite presupuestario antes de abrir nada
         if ($Action -eq "consult" -and $stateObj.chatgpt.queries_used -ge $stateObj.chatgpt.max_queries) {
@@ -113,7 +135,12 @@ if (-not [string]::IsNullOrWhiteSpace($StatePath) -and (Test-Path -LiteralPath $
 
             return [PSCustomObject]$budgetExceededObj
         }
-    } catch { }
+        if($Action -eq 'consult'){
+            $stateObj.chatgpt.queries_used += 1
+            $null=Write-AtomicState -StateObj $stateObj -AutopilotDir $autopilotDir -ValidateTransition $false
+        }
+    } catch { return [PSCustomObject]@{Status='INVALID_STATE_DENY';Error=$_.Exception.Message;ConsultationId=$ConsultationId} }
+    finally{if($budgetHeld){$budgetMutex.ReleaseMutex()};$budgetMutex.Dispose()}
 }
 
 # 3. SANITIZACIÓN DE SECRETOS ANTES DE ENVIAR (Section 21)
@@ -176,6 +203,8 @@ $pInfo.CreateNoWindow = $true
 $pInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
 $pInfo.StandardErrorEncoding = [System.Text.Encoding]::UTF8
 
+# The logical attempt was reserved atomically under the per-STATE budget mutex before launch.
+
 $proc = [System.Diagnostics.Process]::Start($pInfo)
 $stdoutTask = $proc.StandardOutput.ReadToEndAsync()
 $stderrTask = $proc.StandardError.ReadToEndAsync()
@@ -183,6 +212,12 @@ $stderrTask = $proc.StandardError.ReadToEndAsync()
 $procExited = $proc.WaitForExit($TimeoutSeconds * 1000 + 8000)
 if (-not $procExited) {
     try { $proc.Kill() } catch {}
+    if($Action -eq 'consult' -and [string]::IsNullOrWhiteSpace($MockResponse)){
+        $lookupRaw=& node.exe $bridgeJs --action consultation-status --consultation-id $ConsultationId --url $TargetUrl
+        $lookup=($lookupRaw -join "`n")|ConvertFrom-Json
+        $lookup.status='UNKNOWN_DELIVERY';$lookup.no_resend=$true
+        return [PSCustomObject]@{Status='UNKNOWN_DELIVERY';Error='Bridge parent deadline expired; reconciliation required, no resend';ConsultationId=$ConsultationId;ResultObj=$lookup;Response='';RawJson=($lookup|ConvertTo-Json -Depth 8)}
+    }
     return [PSCustomObject]@{
         Status         = "TIMEOUT"
         Error          = "Timeout ejecutando chatgpt-bridge.js tras ${TimeoutSeconds}s"
@@ -211,10 +246,12 @@ try {
 }
 
 # 5. ACTUALIZAR CONTADOR DE PRESUPUESTO SI LA CONSULTA FUE EXITOSA
-if ($resultObj.status -eq "SUCCESS" -and $Action -eq "consult" -and $stateObj -and $autopilotDir) {
-    $stateObj.chatgpt.queries_used += 1
-    $null = Write-AtomicState -StateObj $stateObj -AutopilotDir $autopilotDir -ValidateTransition $false
-
+if (($resultObj.status -eq "SUCCESS" -or ($resultObj.status -eq 'UNKNOWN_DELIVERY' -and $resultObj.message_sent -and -not $resultObj.deduplicated)) -and $Action -eq "consult" -and $stateObj -and $autopilotDir) {
+    $eventMutex=New-Object Threading.Mutex($false,('Local\DesarrolladorAutonomo_ChatGPTBudget_'+$keyHash))
+    $eventHeld=$false
+    try{
+        try{$eventHeld=$eventMutex.WaitOne(10000)}catch [Threading.AbandonedMutexException]{$eventHeld=$true}
+        if(-not $eventHeld){throw 'CHATGPT_EVENT_LOCK_TIMEOUT'}
     # Registrar evento CHATGPT_CONSULTED
     $null = Add-AutopilotEvent `
         -AutopilotDir $autopilotDir `
@@ -227,6 +264,7 @@ if ($resultObj.status -eq "SUCCESS" -and $Action -eq "consult" -and $stateObj -a
             max_queries     = $stateObj.chatgpt.max_queries
             purpose         = $Purpose
         }
+    }finally{if($eventHeld){$eventMutex.ReleaseMutex()};$eventMutex.Dispose()}
 }
 
 if (-not [string]::IsNullOrWhiteSpace($OutputPath)) {

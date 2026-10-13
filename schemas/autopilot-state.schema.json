@@ -169,6 +169,15 @@
       },
       "additionalProperties": false
     },
+    "chatgpt": {
+      "type": "object",
+      "required": ["queries_used", "max_queries"],
+      "properties": {
+        "queries_used": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "max_queries": { "type": "integer", "minimum": 0, "maximum": 5 }
+      },
+      "additionalProperties": false
+    },
     "next_action": {
       "type": "string"
     }

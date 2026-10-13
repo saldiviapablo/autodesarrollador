@@ -71,7 +71,7 @@ A continuación se detalla el estado oficial de preparación y gobernanza de las
 | **12. Gateway Multiplataforma**| Alertas unidireccionales; sandbox inicial | SÍ (Hermes WebhookAdapter + transporte HTTP existente) | **SÍ** | SÍ | SÍ | SÍ | **SÍ** | Sin credenciales para mock loopback | Logs en disco y reportes locales | 7A.9 PASS: RUN COMPLETED hacia mock, entrada sin HMAC DENY/UNTRUSTED; plataformas externas todavía no certificadas |
 | **13. Extracción Documentos** | Lectura de especificaciones Markdown, JSON, YAML, DOCX, XLSX, PDF con texto y RTF | SÍ (verificado `read_file` y `extract_document_bytes`) | **SÍ** | SÍ | SÍ | SÍ | **SÍ** | Hermes stdlib + firecrawl-anydoc 0.2.4 ya instalado; sin dependencias nuevas | Rechazo determinista de formatos/casos no cubiertos | 7A.3 PASS; adapter `scripts/extract-document.ps1`, RUN-CONTRACT, Path Guard, macros DENY, secretos redactados, offline, timeout y cleanup. OCR/scans no se certifican |
 | **14. Auto-Update Controlado** | Simulación segura canary y rollback | SÍ (árbol nativo congelado; sin update live) | **SÍ** | SÍ | SÍ | SÍ | **SÍ** | Git archive / stdlib, sin nuevas dependencias | Congelación fija v0.21.6 | 7A.10 PASS: smoke antes de promoción simulada, regresión detectada, rollback y cleanup; Hermes productivo intacto |
-| **15. ChatGPT Idempotency** | Prevención de doble envío y deduplicación estricta de consultas | N/A (custom bridge) | **NO** | **NO** | pendiente de implementación final | **NO** | **NO** | Chrome CDP, `chatgpt-bridge.js` | Modo de error determinista | Pendiente de implementar y probar (`T-CHATGPT-010`) |
+| **15. ChatGPT Idempotency** | Reserva at-most-once + reconciliación | N/A (custom bridge) | **SÍ** | **SÍ** | SÍ | **SÍ** | **SÍ** | Node/CDP ya instalados | UNKNOWN_DELIVERY sin reenvío | T-CHATGPT-010 real PASS; +1 user/+1 assistant, retry ALREADY_SENT; timeout reconciliado sin Send; UTF-8/domain/cleanup PASS |
 
 ---
 
@@ -231,8 +231,8 @@ A continuación se detalla el estado oficial de preparación y gobernanza de las
 - Se prohíbe terminantemente la ejecución desatendida de `hermes update` directamente sobre el entorno en producción.
 
 ## 3.15 Idempotencia y Deduplicación del Bridge ChatGPT (Requisito Pendiente)
-- **Estado Actual:** **NO implementado ni probado todavía.** Actualmente el bridge valida dominio, pestaña única y transporte UTF-8/BOM, pero carece de deduplicación por identificador de consulta.
-- **Requisitos de Diseño Pendientes (a implementar y validar en Macrofase 7A):**
+- **Estado Actual: PASS.** Reserva persistente por ID, ALREADY_SENT, UNKNOWN_DELIVERY y reconcile sin Send; T-CHATGPT-010 real PASS. Detalle en docs/CHATGPT-IDEMPOTENCY.md.
+- **Requisitos de diseño implementados y verificados:**
   - Cada solicitud deberá contar con un identificador único `consultation_id`.
   - El sistema deberá garantizar que un `consultation_id` produzca como máximo un (1) envío real.
   - Si se reintenta una consulta con el mismo identificador, el bridge deberá retornar `ALREADY_SENT` (o estado equivalente) sin pulsar "Send" ni reenviar automáticamente.

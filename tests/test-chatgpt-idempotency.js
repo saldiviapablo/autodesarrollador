@@ -1,0 +1,60 @@
+'use strict';
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const { spawn, spawnSync } = require('child_process');
+const { ConsultationLedger, reconcileObservation } = require('../tools/chatgpt-ledger');
+const ROOT = path.resolve(__dirname, '..');
+const directory = path.join(ROOT, 'sandbox', 'chatgpt-ledger-' + crypto.randomUUID());
+const ledger = new ConsultationLedger(directory);
+const checks = {};
+(async () => {
+  try {
+    const prompt = 'Prueba UTF-8: áéíóú ñ ¿Dónde? — € °';
+    assert(ledger.reserve('completed', prompt));
+    assert(!ledger.reserve('completed', prompt));
+    assert.equal(ledger.result('completed').status, 'UNKNOWN_DELIVERY');
+    ledger.update('completed', { delivery_state: 'DELIVERY_INTENT', send_attempts: 1, user_turns_before: 2, assistant_turns_before: 2 });
+    assert.throws(() => ledger.update('completed', { delivery_state: 'DELIVERY_INTENT', send_attempts: 1 }), /NO_RESEND/);
+    assert.throws(() => ledger.update('completed', { delivery_state: 'COMPLETED', user_turns_after: 4, assistant_turns_after: 3, message_confirmed: true }), /TURN_GATED/);
+    ledger.update('completed', { delivery_state: 'COMPLETED', user_turns_after: 3, assistant_turns_after: 3, message_confirmed: true });
+    assert.equal(ledger.result('completed').status, 'ALREADY_SENT');
+    checks.completed_retry_no_resend = true;
+    checks.exact_turn_gate = true;
+    assert(ledger.reserve('ambiguous', prompt));
+    ledger.update('ambiguous', { delivery_state: 'UNKNOWN_DELIVERY', send_attempts: 1, user_turns_before: 0, assistant_turns_before: 0 });
+    assert.equal(ledger.result('ambiguous').status, 'UNKNOWN_DELIVERY');
+    assert(!ledger.reserve('ambiguous', prompt));
+    const record = ledger.read('ambiguous');
+    assert(reconcileObservation(record, { user: 1, assistant: 1, lastUserText: prompt, isStreaming: false }));
+    assert(!reconcileObservation(record, { user: 1, assistant: 1, lastUserText: 'different', isStreaming: false }));
+    assert(!reconcileObservation(record, { user: 1, assistant: 1, lastUserText: prompt, isStreaming: true }));
+    assert(!reconcileObservation(record, { user: 0, assistant: 0, lastUserText: prompt, isStreaming: false }));
+    ledger.update('ambiguous', { delivery_state: 'COMPLETED_RECONCILED', message_confirmed: true, user_turns_after: 1, assistant_turns_after: 1 });
+    checks.ambiguous_reconciled_without_send = true;
+    assert(ledger.reserve('corrupt', prompt));
+    fs.writeFileSync(ledger.file('corrupt'), '{');
+    assert.equal(ledger.result('corrupt').status, 'UNKNOWN_DELIVERY');
+    assert(!ledger.reserve('corrupt', prompt));
+    checks.corrupt_record_fail_closed = true;
+    assert.throws(() => ledger.reserve('../escape', prompt));
+    assert.throws(() => new ConsultationLedger(path.resolve(ROOT, '..', 'outside')));
+    checks.path_and_id_guard = true;
+    const childCode = `const {ConsultationLedger}=require(${JSON.stringify(path.join(ROOT,'tools/chatgpt-ledger.js'))});process.stdout.write(new ConsultationLedger(${JSON.stringify(directory)}).reserve('race','safe')?'1':'0');`;
+    const races = await Promise.all(Array.from({length:8}, () => new Promise((resolve,reject) => {
+      const child=spawn(process.execPath,['-e',childCode],{windowsHide:true});let output='';child.stdout.on('data',b=>output+=b);child.on('error',reject);child.on('exit',code=>code===0?resolve(output):reject(new Error('Child failed')));
+    })));
+    assert.equal(races.filter(s=>s==='1').length,1);
+    checks.cross_process_atomic_reservation = true;
+    const logText=fs.readFileSync(ledger.file('completed'),'utf8');assert(!logText.includes(prompt));
+    checks.prompt_not_persisted = true;
+    const result={status:'PASS',checks};
+    fs.mkdirSync(path.join(ROOT,'evidence/chatgpt-idempotency'),{recursive:true});
+    fs.writeFileSync(path.join(ROOT,'evidence/chatgpt-idempotency/deterministic.json'),JSON.stringify(result,null,2));
+    process.stdout.write(JSON.stringify(result));
+  } finally {
+    for (const name of fs.readdirSync(directory)) fs.unlinkSync(path.join(directory,name));
+    fs.rmdirSync(directory);
+  }
+})().catch(error=>{process.stderr.write(error.stack);process.exitCode=1;});

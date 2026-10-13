@@ -8,6 +8,20 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
+const { ConsultationLedger, acquireBrowserLease, hash, normalize, reconcileObservation } = require('./chatgpt-ledger');
+let activeLedger;
+async function safeExit(code) {
+  // Give Node WebSocket close handles one turn on Windows before process teardown.
+  await new Promise(resolve => setTimeout(resolve, 75));
+  process.exit(code);
+}
+process.once('exit', () => {
+  if (!activeLedger) return;
+  try {
+    const record = activeLedger.read(consultationId);
+    if (record && !['COMPLETED', 'COMPLETED_RECONCILED'].includes(record.delivery_state)) activeLedger.update(consultationId, { delivery_state: 'UNKNOWN_DELIVERY' });
+  } catch {}
+});
 
 const CHROME_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const CDP_PORT = 9222;
@@ -49,6 +63,42 @@ const consultationId = getArg('--consultation-id', `consult-${Date.now()}`);
 const mockResponse = getArg('--mock-response', '');
 const isRawPrompt = hasFlag('--raw-prompt');
 const timeoutSec = parseInt(getArg('--timeout', '60'), 10);
+function preparedPrompt() {
+  if (isRawPrompt || !(context || (purpose && purpose !== 'Revisión técnica' && purpose !== 'test'))) return question;
+  return `CONSULTA TÉCNICA (ROL CONSULTOR ARQUITECTÓNICO):
+Propósito: ${purpose || 'Revisión técnica'}
+Pregunta: ${question}
+Contexto:
+${context}
+
+Por favor proporciona:
+1. Causa probable
+2. Dos estrategias alternativas
+3. Riesgos técnicos asociados`;
+}
+async function readConversation(ws) {
+  const result = await sendCdp(ws, 'Runtime.evaluate', {
+    expression: `(() => {
+      const role = name => {
+        const messages = Array.from(document.querySelectorAll('[data-message-author-role="' + name + '"]'));
+        if (messages.length) return messages;
+        const articles = Array.from(document.querySelectorAll('article[data-turn="' + name + '"]'));
+        if (articles.length) return articles;
+        // The current ChatGPT UI mirrors DIL content in the approved top document.
+        // Count each outer message once; never attach to the cross-origin renderer iframe.
+        const selector = name === 'user' ? '.bg-user-message' : '[class*="DilResponseRoot"]';
+        return Array.from(document.querySelectorAll(selector)).filter(el => !el.parentElement?.closest(selector));
+      };
+      const users = role('user'), assistants = role('assistant');
+      return { user: users.length, assistant: assistants.length,
+        lastUserText: users.length ? users[users.length - 1].innerText.trim().replace(/^(You said:|Tú dijiste:)\\s*/i, '') : '',
+        lastAssistantText: assistants.length ? assistants[assistants.length - 1].innerText.trim().replace(/^(ChatGPT said:|ChatGPT dijo:)\\s*/i, '') : '',
+        isStreaming: !!document.querySelector('button[data-testid*="stop"],button[aria-label*="Stop"],button[aria-label*="Detener"],.result-streaming'),
+        url: location.href };
+    })()`, returnByValue: true
+  });
+  return result.result ? result.result.value : {};
+}
 
 // 1. Verificación Estricta de Domain Lock
 function validateDomain(urlStr) {
@@ -211,7 +261,7 @@ async function main() {
       timestamp: new Date().toISOString()
     };
     console.log(JSON.stringify(out, null, 2));
-    process.exit(2);
+    await safeExit(2);
   }
 
   // Manejo de Mock Response si explícitamente se solicita
@@ -224,10 +274,29 @@ async function main() {
       timestamp: new Date().toISOString()
     };
     console.log(JSON.stringify(out, null, 2));
-    process.exit(0);
+    await safeExit(0);
   }
 
   // Comprobar Chrome
+  const ledger = new ConsultationLedger();
+  if (action === 'consultation-status') {
+    console.log(JSON.stringify(ledger.result(consultationId), null, 2));
+    await safeExit(0);
+  }
+  if (action === 'consult' && ledger.read(consultationId)) {
+    console.log(JSON.stringify(ledger.result(consultationId), null, 2));
+    await safeExit(0);
+  }
+  if (action === 'reconcile' && ledger.result(consultationId).status === 'ALREADY_SENT') {
+    console.log(JSON.stringify({ ...ledger.result(consultationId), reconciled: true }, null, 2)); await safeExit(0);
+  }
+  acquireBrowserLease();
+  if (action === 'consult') {
+    if (!ledger.reserve(consultationId, preparedPrompt())) {
+      console.log(JSON.stringify(ledger.result(consultationId), null, 2)); await safeExit(0);
+    }
+    activeLedger = ledger;
+  }
   const running = await isChromeRunning();
   if (!running) {
     const launched = await launchDedicatedChrome();
@@ -238,7 +307,7 @@ async function main() {
         consultation_id: consultationId,
         timestamp: new Date().toISOString()
       }, null, 2));
-      process.exit(1);
+      await safeExit(1);
     }
   }
 
@@ -251,7 +320,7 @@ async function main() {
       consultation_id: consultationId,
       timestamp: new Date().toISOString()
     }, null, 2));
-    process.exit(2);
+    await safeExit(2);
   }
 
   const activeTab = tabCheck.tab;
@@ -268,7 +337,7 @@ async function main() {
       }
     } catch {}
     console.log(JSON.stringify({ status: "SUCCESS", message: "Navegador cerrado limpiamente vía CDP Browser.close." }, null, 2));
-    process.exit(0);
+    await safeExit(0);
   }
 
   // Conectar WebSocket a la página activa
@@ -282,7 +351,7 @@ async function main() {
       consultation_id: consultationId,
       timestamp: new Date().toISOString()
     }, null, 2));
-    process.exit(1);
+    await safeExit(1);
   }
 
   try {
@@ -333,7 +402,7 @@ async function main() {
           timestamp: new Date().toISOString()
         }, null, 2));
         try { ws.close(); } catch {}
-        setTimeout(() => process.exit(3), 50);
+        await safeExit(3);
         return;
       } else {
         console.log(JSON.stringify({
@@ -344,7 +413,7 @@ async function main() {
           timestamp: new Date().toISOString()
         }, null, 2));
         try { ws.close(); } catch {}
-        setTimeout(() => process.exit(0), 50);
+        await safeExit(0);
         return;
       }
     }
@@ -389,7 +458,7 @@ async function main() {
           timestamp: new Date().toISOString()
         }, null, 2));
         ws.close();
-        process.exit(1);
+        await safeExit(1);
       }
 
       const normSource = testText.trim().replace(/\r\n/g, '\n').replace(/\n\n+/g, '\n');
@@ -413,9 +482,21 @@ async function main() {
 
       console.log(JSON.stringify(out, null, 2));
       try { ws.close(); } catch {}
-      process.exit(match ? 0 : 1);
+      await safeExit(match ? 0 : 1);
     }
 
+    if (action === 'reconcile') {
+      const record = ledger.read(consultationId);
+      if (!record) { console.log(JSON.stringify({ status: 'NOT_SEEN', consultation_id: consultationId, no_resend: true })); await safeExit(0); }
+      const observation = await readConversation(ws);
+      if (reconcileObservation(record, observation)) {
+        ledger.update(consultationId, { delivery_state: 'COMPLETED_RECONCILED', message_confirmed: true,
+          user_turns_after: observation.user, assistant_turns_after: observation.assistant, conversation_url: observation.url });
+      }
+      const reconciled = ledger.result(consultationId);
+      console.log(JSON.stringify({ ...reconciled, reconciled: reconciled.status === 'ALREADY_SENT', no_resend: true, source: 'chatgpt_web_real' }, null, 2));
+      ws.close(); await safeExit(0);
+    }
     // Acción consult
     if (action === 'consult') {
       if (pageState.hasLoginButton && !pageState.hasPromptBox) {
@@ -426,34 +507,16 @@ async function main() {
           timestamp: new Date().toISOString()
         }, null, 2));
         ws.close();
-        process.exit(3);
+        await safeExit(3);
       }
 
       // Preparar prompt final
-      let fullPrompt = question;
-      if (!isRawPrompt && (context || (purpose && purpose !== 'Revisión técnica' && purpose !== 'test'))) {
-        fullPrompt = `CONSULTA TÉCNICA (ROL CONSULTOR ARQUITECTÓNICO):
-Propósito: ${purpose || 'Revisión técnica'}
-Pregunta: ${question}
-Contexto:
-${context}
-
-Por favor proporciona:
-1. Causa probable
-2. Dos estrategias alternativas
-3. Riesgos técnicos asociados`;
-      }
+      const fullPrompt = preparedPrompt();
 
       // 1. Contar turnos antes de enviar
-      const countResBefore = await sendCdp(ws, 'Runtime.evaluate', {
-        expression: `(() => {
-          const articles = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
-          const userTurns = document.querySelectorAll('[data-message-author-role="user"]');
-          return Math.max(articles.length, userTurns.length);
-        })()`,
-        returnByValue: true
-      });
-      const turnsBefore = countResBefore.result ? countResBefore.result.value : 0;
+      const countsBefore = await readConversation(ws);
+      const turnsBefore = countsBefore.user;
+      ledger.update(consultationId, { user_turns_before: countsBefore.user, assistant_turns_before: countsBefore.assistant, conversation_url: countsBefore.url });
 
       // 2. Inyectar texto en composer
       const injectRes = await sendCdp(ws, 'Runtime.evaluate', {
@@ -488,7 +551,7 @@ Por favor proporciona:
           timestamp: new Date().toISOString()
         }, null, 2));
         ws.close();
-        process.exit(1);
+        await safeExit(1);
       }
 
       // 3. Verificación Pre-Send Obligatoria: SOURCE_TEXT === DOM_TEXT
@@ -520,13 +583,17 @@ Por favor proporciona:
           timestamp: new Date().toISOString()
         }, null, 2));
         ws.close();
-        process.exit(1);
+        await safeExit(1);
       }
 
       // 4. Si el texto coincide exactamente: Pulsar Enviar
+      ledger.update(consultationId, { delivery_state: 'DELIVERY_INTENT', send_attempts: 1 });
       const sendClickRes = await sendCdp(ws, 'Runtime.evaluate', {
         expression: `(() => {
           const prose = document.querySelector('.ProseMirror') || document.querySelector('#prompt-textarea') || document.querySelector('div[contenteditable="true"]');
+          const paragraphs = prose ? Array.from(prose.querySelectorAll('p')) : [];
+          const current = paragraphs.length ? paragraphs.map(p => p.innerText).join('\\n').trim() : (prose?.innerText || '').trim().replace(/\\r\\n/g,'\\n').replace(/\\n\\n+/g,'\\n');
+          if (current !== ${JSON.stringify(normSource)}) return { success: false, reason: 'COMPOSER_CHANGED_NO_SEND' };
           const form = prose ? prose.closest('form') : null;
           const sendBtn = form ? (
             form.querySelector('button[type="submit"]') ||
@@ -559,28 +626,10 @@ Por favor proporciona:
       const sendStart = Date.now();
       while (Date.now() - sendStart < 12000) {
         await new Promise(r => setTimeout(r, 600));
-        const checkTurn = await sendCdp(ws, 'Runtime.evaluate', {
-          expression: `(() => {
-            const articles = document.querySelectorAll('article[data-testid^="conversation-turn-"]');
-            const userTurns = document.querySelectorAll('[data-message-author-role="user"]');
-            const main = document.querySelector('main');
-            const hasUserText = main ? (main.innerText.includes('Tú dijiste:') || main.innerText.includes('You said:')) : false;
-            const isStreaming = !!document.querySelector('button[data-testid*="stop"]') ||
-                                !!document.querySelector('button[aria-label*="Detener"]') ||
-                                !!document.querySelector('button[aria-label*="Stop"]') ||
-                                !!document.querySelector('.result-streaming');
-            return {
-              count: Math.max(articles.length, userTurns.length),
-              hasUserText,
-              isStreaming
-            };
-          })()`,
-          returnByValue: true
-        });
-
-        const turnVal = checkTurn.result ? checkTurn.result.value : {};
-        if (turnVal.count > turnsBefore || turnVal.hasUserText || turnVal.isStreaming) {
+        const turnVal = await readConversation(ws);
+        if (turnVal.user === turnsBefore + 1 && hash(normalize(turnVal.lastUserText || '')) === ledger.read(consultationId).prompt_sha256) {
           messageSent = true;
+          ledger.update(consultationId, { delivery_state: 'SENT', message_confirmed: true, user_turns_after: turnVal.user, conversation_url: turnVal.url });
           break;
         }
       }
@@ -594,36 +643,8 @@ Por favor proporciona:
       while (Date.now() - genStart < timeoutSec * 1000) {
         await new Promise(r => setTimeout(r, 1200));
 
-        const checkRes = await sendCdp(ws, 'Runtime.evaluate', {
-          expression: `(() => {
-            const isStreaming = !!document.querySelector('button[data-testid*="stop"]') ||
-                                !!document.querySelector('button[aria-label*="Detener"]') ||
-                                !!document.querySelector('button[aria-label*="Stop"]') ||
-                                !!document.querySelector('.result-streaming');
-
-            // Estrategia 1: DilResponseRoot / PortalBoundary / agent-turn / markdown
-            const dilRoots = Array.from(document.querySelectorAll('[class*="DilResponseRoot"], [class*="PortalBoundary"], [class*="agent-turn"], [class*="markdown"]'))
-              .map(el => el.innerText.trim())
-              .filter(t => t.length > 0 && !t.includes('Tú dijiste:') && !t.includes('You said:'));
-            let text = dilRoots.length > 0 ? dilRoots[dilRoots.length - 1] : '';
-
-            // Estrategia 2: split por 'ChatGPT dijo:' o 'ChatGPT said:'
-            if (!text) {
-              const main = document.querySelector('main');
-              if (main) {
-                const parts = main.innerText.split(/ChatGPT dijo:|ChatGPT said:/i);
-                if (parts.length > 1) {
-                  text = parts[parts.length - 1].split(/ChatGPT puede cometer|Última respuesta/i)[0].trim();
-                }
-              }
-            }
-
-            return { isStreaming, text: (text || '').trim() };
-          })()`,
-          returnByValue: true
-        });
-
-        const resVal = checkRes.result ? checkRes.result.value : null;
+        const observation = await readConversation(ws);
+        const resVal = { isStreaming: observation.isStreaming, text: observation.assistant === countsBefore.assistant + 1 ? observation.lastAssistantText : '' };
         if (resVal && resVal.text) {
           if (!resVal.isStreaming) {
             if (resVal.text === lastText) {
@@ -643,18 +664,30 @@ Por favor proporciona:
         }
       }
 
-      ws.close();
+      const countsAfter = await readConversation(ws);
 
       if (!finalResponse) {
         console.log(JSON.stringify({
-          status: "TIMEOUT",
+          status: "UNKNOWN_DELIVERY",
           error: `Timeout esperando respuesta completa tras ${timeoutSec}s`,
           message_sent: messageSent,
           consultation_id: consultationId,
+          no_resend: true,
+          user_turns_before: countsBefore.user, user_turns_after: countsAfter.user,
+          assistant_turns_before: countsBefore.assistant, assistant_turns_after: countsAfter.assistant,
           timestamp: new Date().toISOString()
         }, null, 2));
-        process.exit(1);
+        ws.close(); await safeExit(1);
       }
+
+      const turnGate = countsAfter.user === countsBefore.user + 1 && countsAfter.assistant === countsBefore.assistant + 1 && messageSent && hash(normalize(countsAfter.lastUserText || '')) === ledger.read(consultationId).prompt_sha256;
+      if (!turnGate) {
+        console.log(JSON.stringify({ status: 'UNKNOWN_DELIVERY', reason: 'TURN_COUNT_MISMATCH', consultation_id: consultationId, no_resend: true }));
+        ws.close(); await safeExit(1);
+      }
+      ledger.update(consultationId, { delivery_state: 'COMPLETED', message_confirmed: true,
+        user_turns_after: countsAfter.user, assistant_turns_after: countsAfter.assistant, conversation_url: countsAfter.url, response_sha256: hash(finalResponse) });
+      ws.close();
 
       const out = {
         status: "SUCCESS",
@@ -667,11 +700,14 @@ Por favor proporciona:
         dom_text: normDom,
         source_text_equals_dom_text: textMatches,
         url: pageState.url,
+        user_turns_before: countsBefore.user, user_turns_after: countsAfter.user,
+        assistant_turns_before: countsBefore.assistant, assistant_turns_after: countsAfter.assistant,
+        no_resend: false, send_attempts: 1,
         timestamp: new Date().toISOString()
       };
 
       console.log(JSON.stringify(out, null, 2));
-      process.exit(0);
+      await safeExit(0);
     }
   } catch (err) {
     if (ws) {
@@ -683,17 +719,17 @@ Por favor proporciona:
       consultation_id: consultationId,
       timestamp: new Date().toISOString()
     }, null, 2));
-    process.exit(1);
+    await safeExit(1);
   }
 }
 
 module.exports = { validateDomain, guardPageExpression };
 
-if (require.main === module) main().catch(err => {
+if (require.main === module) main().catch(async err => {
   console.log(JSON.stringify({
     status: err.message.includes('DOMAIN_BLOCKED') ? "DOMAIN_BLOCKED" : "ERROR",
     error: err.message,
     timestamp: new Date().toISOString()
   }, null, 2));
-  process.exit(1);
+  await safeExit(1);
 });
