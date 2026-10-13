@@ -1,0 +1,102 @@
+{
+  "test_id": "T-7A-DOC-001",
+  "native_module": "C:\\Users\\Pc\\AppData\\Local\\hermes\\hermes-agent\\tools\\read_extract.py",
+  "native_source_sha256": "d4e117e4e93b55a3d50a5b65ee9dd138790cc0e5797fc52ea159dab523ee5b73",
+  "python": "3.14.7",
+  "packages_already_installed": {
+    "firecrawl-anydoc": "0.2.4",
+    "PyYAML": null,
+    "pypdf": null,
+    "openpyxl": null
+  },
+  "records": [
+    {
+      "format": "md",
+      "status": "PASS",
+      "result": {
+        "content": "1|# Specification\n2|DA_DOCUMENT_SPEC_7A3\n3|Acceptance: local extraction; no macro execution.",
+        "total_lines": 3,
+        "file_size": 88,
+        "truncated": false,
+        "is_binary": false,
+        "is_image": false,
+        "not_found": false
+      }
+    },
+    {
+      "format": "json",
+      "status": "PASS",
+      "result": {
+        "content": "1|{\"title\": \"DA_DOCUMENT_SPEC_7A3\", \"acceptance\": \"local extraction\"}",
+        "total_lines": 1,
+        "file_size": 67,
+        "truncated": false,
+        "is_binary": false,
+        "is_image": false,
+        "not_found": false
+      }
+    },
+    {
+      "format": "yaml",
+      "status": "PASS",
+      "result": {
+        "content": "1|title: DA_DOCUMENT_SPEC_7A3\n2|acceptance: local extraction",
+        "total_lines": 2,
+        "file_size": 59,
+        "truncated": false,
+        "is_binary": false,
+        "is_image": false,
+        "not_found": false
+      }
+    },
+    {
+      "format": "docx",
+      "status": "PASS",
+      "result": {
+        "content": "1|DA_DOCUMENT_SPEC_7A3\n2|Acceptance: local extraction.",
+        "total_lines": 2,
+        "file_size": 564,
+        "truncated": false,
+        "extracted_document": true
+      }
+    },
+    {
+      "format": "xlsx",
+      "status": "PASS",
+      "result": {
+        "content": "1|# ── Sheet: Requirements ──\n2|DA_DOCUMENT_SPEC_7A3\tAcceptance",
+        "total_lines": 2,
+        "file_size": 1114,
+        "truncated": false,
+        "extracted_document": true
+      }
+    },
+    {
+      "format": "pdf",
+      "status": "PASS",
+      "result": {
+        "content": "1|DA_DOCUMENT_SPEC_7A3 Acceptance: local extraction.",
+        "total_lines": 1,
+        "file_size": 639,
+        "truncated": false,
+        "extracted_document": true
+      }
+    },
+    {
+      "format": "rtf",
+      "status": "PASS",
+      "result": {
+        "content": "1|DA_DOCUMENT_SPEC_7A3\n2|\n3|Acceptance: local extraction.",
+        "total_lines": 3,
+        "file_size": 67,
+        "truncated": false,
+        "extracted_document": true
+      }
+    }
+  ],
+  "status": "PASS",
+  "new_dependencies": [],
+  "local_inferences": 0,
+  "network_policy": "DENY",
+  "lazy_installs": false
+}

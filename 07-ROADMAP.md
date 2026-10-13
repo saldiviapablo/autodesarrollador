@@ -25,7 +25,7 @@ Principio:
 | **Macrofase 4** | Integración Hermes ↔ Qwen Code | Fases 7 a 9 | **PASS** |
 | **Macrofase 5** | Memoria y Continuidad | Fases 10 a 12 | **PASS** |
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
-| **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.2 PASS; 7A.3–7A.10 PENDING | **IN_PROGRESS** |
+| **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.3 PASS; 7A.4–7A.10 PENDING | **IN_PROGRESS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PENDING** |
 | **Macrofase 8** | Validación Final | Fases 23 a 28 | **PENDING** |
 
@@ -719,7 +719,7 @@ ANTI_LOOP PASS
 
 # 20. MACROFASE 7A — Capacidades Nativas de Hermes (Hermes Native Capabilities)
 
-**Estado:** IN_PROGRESS (arquitectura congelada; 7A.1 y 7A.2 PASS; 7A.3–7A.10 PENDING)
+**Estado:** IN_PROGRESS (arquitectura congelada; 7A.1–7A.3 PASS; 7A.4–7A.10 PENDING)
 
 Esta macrofase incorpora formalmente las 14 capacidades nativas de Hermes Agent y el componente de hardening de ChatGPT, supeditadas al principio rector **"Prefer Native When Verified"** y a la **Deterministic Control Layer**.
 
@@ -742,6 +742,7 @@ Cada subfase debe superar sus pruebas funcionales, de seguridad, fallo, cleanup 
 ---
 
 ### Subfase 7A.3 — Extracción Estructurada de Documentos
+- **Estado:** PASS; inventario real y adapter gobernado en `evidence/phase-7a3/`; sin dependencias nuevas.
 - **Objetivo:** Dotar a Hermes de la capacidad de ingerir especificaciones en formatos planos y no planos (Markdown, JSON, YAML, DOCX, XLSX, PDF, RTF) aplicando estrictamente `Prefer Native When Verified`: primero inventariar y probar las capacidades reales de `read_file` / extract de Hermes `v0.21.6` instalado; usar la capacidad nativa cuando soporte el formato; instalar una dependencia opcional únicamente para formatos/casos que la implementación nativa no resuelva (quedando librerías externas sólo como candidatas, no como requisito previo).
 - **Entregables:** Inventario y validación del extractor nativo de Hermes `v0.21.6`, módulo de ingesta estructurada, y registro oficial en `config/VERSIONS.lock` de cualquier dependencia finalmente elegida durante `7A.3`.
 - **Condición de salida:** `7A.3 PASS` (Extracción exitosa de especificaciones de proyecto en sandbox usando capacidad nativa verificada y fallback selectivo documentado, sin ejecución de macros maliciosas).

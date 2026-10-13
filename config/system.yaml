@@ -160,3 +160,19 @@ hermes:
     load_timeout_seconds: 10
     hook_callback_timeout_seconds: 30
 
+document_extraction:
+  enabled: true
+  native_source_dir: "C:\\Users\\Pc\\AppData\\Local\\hermes\\hermes-agent"
+  native_python: "C:\\Users\\Pc\\AppData\\Local\\hermes\\installs\\f0a881ae792bab01\\environments\\d6bb9776990441fa960204f0f2b056ed\\venv\\Scripts\\python.exe"
+  native_read_extract_sha256: "d4e117e4e93b55a3d50a5b65ee9dd138790cc0e5797fc52ea159dab523ee5b73"
+  native_file_tools_sha256: "98fd25b1eec21bf9646397bd2733b38670224e3e66862d7d0f9e434368fc1f80"
+  allowed_formats: [".md", ".json", ".yaml", ".yml", ".docx", ".xlsx", ".pdf", ".rtf"]
+  timeout_seconds: 30
+  max_file_bytes: 20971520
+  max_expanded_zip_bytes: 52428800
+  max_output_chars: 100000
+  allow_optional_dependencies: false
+  allow_network: false
+  allow_subprocess_from_parser: false
+  reject_macros: true
+
