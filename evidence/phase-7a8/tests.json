@@ -1,0 +1,110 @@
+{
+  "status": "PASS",
+  "tests": {
+    "T-7A-DASH-001": "PASS",
+    "T-7A-DASH-002": "PASS",
+    "T-7A-DASH-003": "PASS"
+  },
+  "native_endpoints": {
+    "/api/status": {
+      "status": 200,
+      "json_valid": true
+    },
+    "/api/config": {
+      "status": 200,
+      "json_valid": true
+    },
+    "/api/mcp/servers": {
+      "status": 200,
+      "json_valid": true
+    },
+    "/api/memory": {
+      "status": 200,
+      "json_valid": true
+    },
+    "/api/cron/jobs": {
+      "status": 200,
+      "json_valid": true
+    },
+    "/api/skills": {
+      "status": 200,
+      "json_valid": true
+    },
+    "/api/da/state": {
+      "status": 200,
+      "json_valid": true
+    }
+  },
+  "listeners": [
+    {
+      "ip": "127.0.0.1",
+      "port": 9119
+    }
+  ],
+  "rejected": {
+    "/api/config": {
+      "decision": "DENY",
+      "reason": "ADMIN_MUTATION_LOCKED_DURING_RUN"
+    },
+    "/api/config/raw": {
+      "decision": "DENY",
+      "reason": "ADMIN_MUTATION_LOCKED_DURING_RUN"
+    },
+    "/api/mcp/servers": {
+      "decision": "DENY",
+      "reason": "ADMIN_MUTATION_LOCKED_DURING_RUN"
+    },
+    "/api/memory/reset": {
+      "decision": "DENY",
+      "reason": "ADMIN_MUTATION_LOCKED_DURING_RUN"
+    },
+    "/api/cron/jobs": {
+      "decision": "DENY",
+      "reason": "ADMIN_MUTATION_LOCKED_DURING_RUN"
+    },
+    "/api/skills": {
+      "decision": "DENY",
+      "reason": "ADMIN_MUTATION_LOCKED_DURING_RUN"
+    },
+    "/api/ops/restart": {
+      "decision": "DENY",
+      "reason": "ADMIN_MUTATION_LOCKED_DURING_RUN"
+    },
+    "/api/config?profile=desarrollador-autonomo": {
+      "decision": "DENY",
+      "reason": "PROFILE_OR_PATH_OVERRIDE_DENIED"
+    },
+    "/api/mcp/oauth/callback/evil": {
+      "decision": "DENY",
+      "reason": "ENDPOINT_NOT_ADMITTED"
+    },
+    "/api/files?path=C:/": {
+      "decision": "DENY",
+      "reason": "PROFILE_OR_PATH_OVERRIDE_DENIED"
+    }
+  },
+  "protected_hashes_unchanged": true,
+  "contract_unchanged": true,
+  "ui_review": {
+    "cron_panel": "No cron jobs configured. Create one above.",
+    "config_rendered": {
+      "hooks_auto_accept": false,
+      "model": "qwen36",
+      "context": 65536
+    },
+    "limits": "global profiles, catalogs, plugins and writes are denied",
+    "save_rejected_visible": "FAILED TO SAVE: YOU ARE NOT ALLOWED TO DO THAT ON THIS DASHBOARD.",
+    "administrative_surface": true,
+    "mcp_panel": "Your MCP servers (0)",
+    "status": "PASS",
+    "source_sha256": "58d49fe2bf190d110d8c4d3b9b1932bbfbcce21d5cd823ad1aeb274ae8f37717",
+    "observed_at": "2026-10-13T05:51:45.0820636-03:00",
+    "state_rendered": "Gateway Status: Off Active Sessions: 0; v0.21.6",
+    "browser": "Codex in-app browser",
+    "cron_profile": "default"
+  },
+  "forced_termination_pid_stopped": true,
+  "state_read_without_dashboard": true,
+  "runner_dependency_added": false,
+  "local_inferences": 0
+}
