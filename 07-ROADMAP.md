@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final | Path Guard fix PASS; F23 IN_PROGRESS; F24–F26 NOT_RUN | **IN_PROGRESS** |
+| **Macrofase 8** | Validación Final | Path Guard fix PASS; F23 entrega ChatGPT ambigua; F24–F26 NOT_RUN | **FAIL / BLOCKED_REQUIRES_HUMAN** |
 
 Cada fase debe producir:
 
@@ -1375,6 +1375,10 @@ Preflight PASS. F23 FAIL: SECURITY_REGRESSION en Prepare; rechazo de junction po
 
 Prepare fix PASS (b6e421b). PREPARE_ZERO_WRITE_ON_DENY y casos A–H PASS. F23 integral FAIL / SECURITY_REGRESSION: T-F23-PATHGUARD-EXISTING-TARGET-JUNCTION devuelve ALLOW para destino canónico fuera del proyecto. No se efectuó escritura. F24–F26, 2h/4h y regression final NOT_RUN por gate F23 FAIL. Cleanup e integridad PASS; inferencias locales 0. READY FOR REAL PILOT NO. Informe: docs/MACROPHASE-8-STOP-REPORT-ATTEMPT-2.md. Intento 1 y STOP-REPORT original intactos.
 
-## Validación actual Macrofase 8 — intento 3
+## Validación del fix Macrofase 8 — intento 3
 
 Path Guard fix PASS: destino físico central, A–J READ/WRITE PASS, Prepare/MCP/plugin/Runner smokes PASS. Histórico FAIL de intentos 1/2 intacto. F23 integral IN_PROGRESS; F24–F28 NOT_RUN hasta su gate. READY FOR REAL PILOT NO. Informe del fix: docs/PATH-GUARD-FIX.md.
+
+## Estado actual Macrofase 8 — bloqueo del intento 3
+
+Path Guard fix PASS (6e0a507), A–J READ/WRITE y Prepare/MCP/plugin/Runner smokes PASS. F23 integral FAIL / BLOCKED_REQUIRES_HUMAN: consulta real ChatGPT UNKNOWN_DELIVERY persiste tras reconciliación, sin reenvío. Web real obtenida; agentes y recovery de runtime NOT_RUN. F24–F28 y regression final NOT_RUN. Cleanup/locks/integridad PASS. READY FOR REAL PILOT NO. Informe: docs/MACROPHASE-8-BLOCKED-REPORT-ATTEMPT-3.md.

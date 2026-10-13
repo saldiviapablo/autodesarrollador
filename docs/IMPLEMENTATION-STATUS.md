@@ -19,7 +19,7 @@
 | **Macrofase 6** | **Web, ChatGPT, Seguridad y Anti-Loop** (Fases 13 a 16) | **PASS** | Web Research seguro (Fase 13), Chrome dedicado CDP con consulta real a ChatGPT y validación UTF-8/BOM (Fase 14), Guardrails deterministas de rutas, comandos y secretos (Fase 15) y Motor Anti-loop con escalera de escalamiento (Fase 16). Evidencias en `evidence/web/`, `evidence/chatgpt/`, `evidence/security/` y `evidence/anti-loop/`. |
 | **Macrofase 7A** | **Capacidades Nativas de Hermes** (Subfases 7A.1 a 7A.10) | **PASS** | **Subfase 7A.1 = PASS** (Memoria Persistente + Skills SOP + Hook SHA-256; 6/6 pruebas en `evidence/phase-7a1/`). **Subfase 7A.2 = PASS** (Servidores MCP gobernados `da_local_sandbox` + Plugin seguro `desarrollador-autonomo-health` con integridad criptográfica SHA-256 y Security Guard; 7/7 pruebas en `evidence/phase-7a2/`). **Subfase 7A.3 = PASS** (extracción nativa gobernada, 5/5 pruebas y smoke en `evidence/phase-7a3/`). **Subfase 7A.4 = PASS** (native browser local/headless, gobernanza, timeout/cleanup, integración real y smoke en `evidence/phase-7a4/`). **Subfase 7A.5 = PASS** (tres roles reales, subagente nativo, serialización y políticas heredadas; `evidence/phase-7a5/`). **Subfase 7A.6 = PASS** (`evidence/phase-7a6/`). **Subfase 7A.7 = PASS** (`evidence/phase-7a7/`). **Subfase 7A.8 = PASS** (`evidence/phase-7a8/`). **Subfase 7A.9 = PASS** (`evidence/phase-7a9/`). **Subfase 7A.10 = PASS** (`evidence/phase-7a10/`). ChatGPT Idempotency **PASS**; regression gate final **PASS** (`evidence/regression-7a-final/`). |
 | **Macrofase 7B** | **Runner Autónomo Nocturno** (Fases 17 a 22) | **PASS** | Orquestador determinista de procesos, integración obligatoria `Cron → Runner → Watchdog → RUN-CONTRACT` (`T-RUN-009`), Watchdog de fallos, Launchers limpios `INICIAR`/`DETENER`, Completion Gate objetivo, reportes estandarizados y Cleanup garantizado. |
-| **Macrofase 8** | **Validación Final** (Fases 23 a 28) | **IN_PROGRESS** | Suite integral en sandbox, pruebas autónomas prolongadas (E2E corto, 2 horas y nocturna de 6-8 horas), auditoría integral y piloto en proyecto real no crítico. |
+| **Macrofase 8** | **Validación Final** (Fases 23 a 28) | **FAIL / BLOCKED_REQUIRES_HUMAN** | Suite integral en sandbox, pruebas autónomas prolongadas (E2E corto, 2 horas y nocturna de 6-8 horas), auditoría integral y piloto en proyecto real no crítico. |
 
 ---
 
@@ -62,12 +62,12 @@
 | **Fase 20** | Completion Gate | **PASS** | evidence/phase-20/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 21** | Reportes | **PASS** | evidence/phase-21/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 22** | Cleanup garantizado | **PASS** | evidence/phase-22/; pruebas, seguridad, timeout/cleanup y commit local. |
-| **Fase 23** | Sandbox integral | **IN_PROGRESS** | Intentos 1/2 FAIL históricos preservados; Path Guard fix PASS. Falta gate integral del intento 3. evidence/phase-23-attempt-3/. |
+| **Fase 23** | Sandbox integral | **FAIL** | Path Guard fix PASS. Intento 3 bloqueado por UNKNOWN_DELIVERY tras reconciliación real, no resend. evidence/phase-23-attempt-3/. |
 | **Fase 24** | End-to-End corto | **NOT_RUN** | Ciclo completo de 15 a 45 minutos sin intervención humana. |
 | **Fase 25** | Prueba 2 horas | **NOT_RUN** | Validación de estabilidad autónoma continua de 2 horas. |
 | **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
-| **Fase 27** | Piloto con proyecto real | **PENDING** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
-| **Fase 28** | Prueba nocturna 6-8 horas | **PENDING** | Prueba definitiva de autonomía prolongada desatendida. |
+| **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
+| **Fase 28** | Prueba nocturna 6-8 horas | **NOT_RUN** | Prueba definitiva de autonomía prolongada desatendida. |
 
 ---
 
@@ -101,6 +101,10 @@ Preflight PASS. F23 FAIL: SECURITY_REGRESSION en Prepare; rechazo de junction po
 
 Prepare fix PASS (b6e421b). PREPARE_ZERO_WRITE_ON_DENY y casos A–H PASS. F23 integral FAIL / SECURITY_REGRESSION: T-F23-PATHGUARD-EXISTING-TARGET-JUNCTION devuelve ALLOW para destino canónico fuera del proyecto. No se efectuó escritura. F24–F26, 2h/4h y regression final NOT_RUN por gate F23 FAIL. Cleanup e integridad PASS; inferencias locales 0. READY FOR REAL PILOT NO. Informe: docs/MACROPHASE-8-STOP-REPORT-ATTEMPT-2.md. Intento 1 y STOP-REPORT original intactos.
 
-## Validación actual Macrofase 8 — intento 3
+## Validación del fix Macrofase 8 — intento 3
 
 Path Guard fix PASS: destino físico central, A–J READ/WRITE PASS, Prepare/MCP/plugin/Runner smokes PASS. Histórico FAIL de intentos 1/2 intacto. F23 integral IN_PROGRESS; F24–F28 NOT_RUN hasta su gate. READY FOR REAL PILOT NO. Informe del fix: docs/PATH-GUARD-FIX.md.
+
+## Estado actual Macrofase 8 — bloqueo del intento 3
+
+Path Guard fix PASS (6e0a507), A–J READ/WRITE y Prepare/MCP/plugin/Runner smokes PASS. F23 integral FAIL / BLOCKED_REQUIRES_HUMAN: consulta real ChatGPT UNKNOWN_DELIVERY persiste tras reconciliación, sin reenvío. Web real obtenida; agentes y recovery de runtime NOT_RUN. F24–F28 y regression final NOT_RUN. Cleanup/locks/integridad PASS. READY FOR REAL PILOT NO. Informe: docs/MACROPHASE-8-BLOCKED-REPORT-ATTEMPT-3.md.
