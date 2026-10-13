@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-13T19:47:21.031432-03:00",
+  "updated_at": "2026-10-13T19:52:29.820896-03:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -32,7 +32,7 @@
     "6": "PASS",
     "7A": "PASS",
     "7B": "PASS",
-    "8": "IN_PROGRESS"
+    "8": "FAIL"
   },
   "subphases_7a": {
     "7A.1": "PASS",
@@ -72,7 +72,7 @@
   "ready_for_8": false,
   "e2e_scope": "PENDING refers to F24/F25 final validation; e2e_7b is the approved short 7B integration",
   "phases_8": {
-    "23": "IN_PROGRESS",
+    "23": "FAIL",
     "24": "NOT_RUN",
     "25": "NOT_RUN",
     "26": "NOT_RUN",
@@ -80,17 +80,21 @@
     "28": "PENDING"
   },
   "validation_8": {
-    "status": "PREPARE_FIX_PASS_F23_RETEST_PENDING",
-    "test": "T-F23-PREPARE-BOUNDARY",
+    "status": "STOPPED_SECURITY_REGRESSION",
+    "test": "T-F23-PATHGUARD-EXISTING-TARGET-JUNCTION",
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
-    "current_security_revalidation": "PREPARE_FIX_SMOKE_PASS",
+    "current_security_revalidation": "FAIL",
     "checkpoint_4h": "NOT_RUN / PREVIOUS_GATE_FAILED",
     "regression_gate_final": "NOT_RUN / PREVIOUS_GATE_FAILED",
     "ready_for_real_pilot": false,
     "prepare_zero_write_on_deny": "PASS",
     "historical_attempt_1": "FAIL / SECURITY_REGRESSION; unchanged evidence/phase-23/",
-    "attempt_2_evidence": "evidence/phase-23-attempt-2/"
+    "attempt_2_evidence": "evidence/phase-23-attempt-2/",
+    "prepare_fix": "PASS",
+    "prepare_fix_commit": "b6e421bc039877cebbc58531b0549a801f8bc73d",
+    "attempt_2_report": "docs/MACROPHASE-8-STOP-REPORT-ATTEMPT-2.md",
+    "cleanup": "PASS"
   },
   "ready_for_real_pilot": false
 }

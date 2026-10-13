@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final | Prepare fix PASS; F23 IN_PROGRESS; F24–F26 NOT_RUN | **IN_PROGRESS** |
+| **Macrofase 8** | Validación Final | Prepare fix PASS; F23 intento 2 FAIL; F24–F26 NOT_RUN | **FAIL / SECURITY_REGRESSION** |
 
 Cada fase debe producir:
 
@@ -1373,4 +1373,4 @@ Preflight PASS. F23 FAIL: SECURITY_REGRESSION en Prepare; rechazo de junction po
 
 ## Validación actual Macrofase 8 — intento 2
 
-Prepare fix PASS. PREPARE_ZERO_WRITE_ON_DENY y casos A–H PASS. Smokes acotados PASS; sin inferencia local. F23 integral IN_PROGRESS; F24–F26, 2h/4h y regression final NOT_RUN. READY FOR REAL PILOT NO. Informe: docs/PREPARE-BOUNDARY-FIX.md. Evidencia histórica FAIL del intento 1 preservada.
+Prepare fix PASS (b6e421b). PREPARE_ZERO_WRITE_ON_DENY y casos A–H PASS. F23 integral FAIL / SECURITY_REGRESSION: T-F23-PATHGUARD-EXISTING-TARGET-JUNCTION devuelve ALLOW para destino canónico fuera del proyecto. No se efectuó escritura. F24–F26, 2h/4h y regression final NOT_RUN por gate F23 FAIL. Cleanup e integridad PASS; inferencias locales 0. READY FOR REAL PILOT NO. Informe: docs/MACROPHASE-8-STOP-REPORT-ATTEMPT-2.md. Intento 1 y STOP-REPORT original intactos.

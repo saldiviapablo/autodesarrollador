@@ -1,0 +1,41 @@
+﻿$ErrorActionPreference='Stop'
+$root=(Get-Location).Path
+$runMutex=New-Object Threading.Mutex($false,'Local\DesarrolladorAutonomo_RunMutex')
+$runHeld=$false;$removed=@();$errors=@()
+try {
+    try {$runHeld=$runMutex.WaitOne(0)} catch [Threading.AbandonedMutexException] {$runHeld=$true}
+    if(-not $runHeld){throw 'RUN_MUTEX_BUSY'}
+    foreach($name in @('prepare-admission-84593582','prepare-admission-bff2cd21','prepare-admission-9bd45f25','prepare-admission-9e2eb1f3')){
+        foreach($project in @('normal','proyecto válido ñ 漢字')){
+            $directory=Join-Path (Join-Path (Join-Path $root 'sandbox') $name) $project
+            $lock=Join-Path $directory '.autopilot/LOCK.json'
+            if(Test-Path -LiteralPath $lock){
+                foreach($check in @($directory,(Join-Path $directory '.autopilot'),$lock)){
+                    if((Get-Item -LiteralPath $check -Force).Attributes.HasFlag([IO.FileAttributes]::ReparsePoint)){throw 'REPARSE_CLEANUP_DENIED'}
+                }
+                $meta=Get-Content -LiteralPath $lock -Raw -Encoding UTF8|ConvertFrom-Json
+                if(Get-Process -Id $meta.owner_pid -ErrorAction SilentlyContinue){throw 'LOCK_OWNER_ALIVE'}
+                if([IO.Path]::GetFullPath($meta.project_root) -ne $directory){throw 'LOCK_PROJECT_MISMATCH'}
+                Remove-Item -LiteralPath $lock
+                $removed+= $lock
+            }
+        }
+    }
+} catch {$errors+=$_.Exception.Message} finally {if($runHeld){$runMutex.ReleaseMutex()};$runMutex.Dispose()}
+$inferenceMutex=New-Object Threading.Mutex($false,'DesarrolladorAutonomo_InferenceMutex');$inferenceHeld=$false
+try {try{$inferenceHeld=$inferenceMutex.WaitOne(0)}catch [Threading.AbandonedMutexException]{$inferenceHeld=$true}}finally{if($inferenceHeld){$inferenceMutex.ReleaseMutex()};$inferenceMutex.Dispose()}
+$smoke=Get-Content -LiteralPath (Join-Path $root 'evidence/phase-23-attempt-2/runtime-smoke-classification.json') -Raw -Encoding UTF8|ConvertFrom-Json
+$survivors=@()
+foreach($record in $smoke.result.processes){
+    $process=Get-Process -Id $record.pid -ErrorAction SilentlyContinue
+    if($process -and $process.StartTime.ToUniversalTime().Ticks -eq $record.start_ticks){$survivors+= $record}
+}
+$helpers=@(Get-CimInstance Win32_Process | Where-Object {$_.ProcessId -ne $PID -and $_.Name -in @('python.exe','powershell.exe','llama-server.exe','node.exe') -and $_.CommandLine -match '(?:runner[\\/](?:prepare\.py|prepare-apply\.ps1|run\.ps1|watchdog-monitor\.ps1|agent-step\.ps1))'} | Select-Object ProcessId,Name,CreationDate)
+$ports=@(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object {$_.LocalPort -in @(8080,9119,9222)} | Select-Object LocalAddress,LocalPort,OwningProcess)
+$os=Get-CimInstance Win32_OperatingSystem
+$vram=(& nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits) -join ''
+$resource=@{total_ram_gib=[Math]::Round($os.TotalVisibleMemorySize/1MB,3);free_ram_gib=[Math]::Round($os.FreePhysicalMemory/1MB,3);vram_mib=$vram;scope='Final snapshot only; no endurance trend measured';model_started=$false}
+$result=@{status=$(if($runHeld -and $inferenceHeld -and -not $errors.Count -and -not $survivors.Count -and -not $helpers.Count -and -not $ports.Count){'PASS'}else{'FAIL'});run_mutex_free=$runHeld;inference_mutex_free=$inferenceHeld;removed_owned_metadata=$removed;owned_survivors=$survivors;runner_helpers=$helpers;listeners=$ports;errors=$errors;resources=$resource;timestamp=[datetimeoffset]::Now.ToString('o')}
+[IO.File]::WriteAllText((Join-Path $root 'evidence/phase-23-attempt-2/cleanup-final.json'),($result|ConvertTo-Json -Depth 12),(New-Object Text.UTF8Encoding($false)))
+$result|ConvertTo-Json -Depth 12
+if($result.status -ne 'PASS'){exit 1}

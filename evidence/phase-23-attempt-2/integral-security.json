@@ -1,0 +1,38 @@
+{
+  "test_id": "T-F23-PATHGUARD-EXISTING-TARGET-JUNCTION",
+  "status": "FAIL",
+  "classification": "SECURITY_REGRESSION",
+  "expected": "DENY: real target outside canonical workspace",
+  "actual": {
+    "Allowed": true,
+    "Reason": "ALLOWED_WORKSPACE_PATH",
+    "Target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5e261a99\\project\\escape-junction\\nested\\existing.txt",
+    "Detail": "Ruta validada dentro del workspace canónico."
+  },
+  "canonical_project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5e261a99\\project",
+  "canonical_target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5e261a99\\outside-approved-project\\nested\\existing.txt",
+  "target_outside_workspace": true,
+  "sentinel_preserved": true,
+  "attempted_write": false,
+  "production_touched": false,
+  "local_inferences": 0,
+  "case_root": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-integral-5e261a99",
+  "baseline_test_exit": 1,
+  "baseline_build_exit": 0,
+  "fixture_requirements": [
+    "bug",
+    "feature",
+    "initially failing test",
+    "build",
+    "incomplete documentation",
+    "web research",
+    "real ChatGPT",
+    "prohibited operation",
+    "controlled recovery"
+  ],
+  "later_gates": "NOT_RUN / STOP immediately at security gate",
+  "guard_sha256": "2294a5e9d5338feab4f7c6945a4250a350f1c72b0c17ade17c993bbd21640b66",
+  "fix_commit": "b6e421bc039877cebbc58531b0549a801f8bc73d",
+  "timestamp": "2026-10-13T19:48:24.795118-03:00",
+  "junction_cleanup": "PASS"
+}
