@@ -523,7 +523,8 @@ Macrofase 7A: Hermes Native Capabilities (7A.1 a 7A.10) — IN_PROGRESS
   7A.6 — PASS
   7A.7 — PASS
   7A.8 — PASS
-  7A.9–7A.10 — PENDING
+  7A.9 — PASS
+  7A.10–7A.10 — PENDING
 Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — PENDING
 Macrofase 8:  Validación Final (Fases 23 a 28) — PENDING
 ```

@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "tests": {
+    "T-7A-GATEWAY-001": "PASS",
+    "T-7A-GATEWAY-002": "PASS",
+    "TIMEOUT_CLEANUP": "PASS"
+  },
+  "results": {
+    "outbound": {
+      "status": "PASS",
+      "payload": {
+        "schema_version": "1.0",
+        "event": "RUN COMPLETED",
+        "run_id": "run-20261013-055457",
+        "status": "COMPLETED",
+        "trust": "DETERMINISTIC_STATE",
+        "local_inferences": 0
+      },
+      "destination": "http://127.0.0.1:56103/notify",
+      "incoming_commands_enabled": false
+    },
+    "incoming_unsigned": {
+      "trust": "UNTRUSTED",
+      "decision": "DENY",
+      "reason": "INVALID_SIGNATURE"
+    },
+    "timeout": "PASS"
+  },
+  "received_notifications": 1,
+  "native_inbound_hmac_validation": true,
+  "local_mock_transport": "aiohttp already used by native gateway",
+  "outbound_only": true,
+  "cleanup_listener_closed": true,
+  "local_inferences": 0,
+  "protected_hash_unchanged": true
+}
