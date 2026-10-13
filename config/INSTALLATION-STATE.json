@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-13T18:49:21.488430-03:00",
+  "updated_at": "2026-10-13T18:54:41.560782-03:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -32,7 +32,7 @@
     "6": "PASS",
     "7A": "PASS",
     "7B": "PASS",
-    "8": "PENDING"
+    "8": "FAIL"
   },
   "subphases_7a": {
     "7A.1": "PASS",
@@ -69,6 +69,25 @@
   },
   "regression_gate_7b": "PASS",
   "e2e_7b": "PASS",
-  "ready_for_8": true,
-  "e2e_scope": "PENDING refers to F24/F25 final validation; e2e_7b is the approved short 7B integration"
+  "ready_for_8": false,
+  "e2e_scope": "PENDING refers to F24/F25 final validation; e2e_7b is the approved short 7B integration",
+  "phases_8": {
+    "23": "FAIL",
+    "24": "NOT_RUN",
+    "25": "NOT_RUN",
+    "26": "NOT_RUN",
+    "27": "PENDING",
+    "28": "PENDING"
+  },
+  "validation_8": {
+    "status": "STOPPED_SECURITY_REGRESSION",
+    "test": "T-F23-PREPARE-BOUNDARY",
+    "preflight": "PASS",
+    "historical_7b_approval": "PASS (limited to tests executed at that closure)",
+    "current_security_revalidation": "FAIL",
+    "checkpoint_4h": "NOT_RUN / PREVIOUS_GATE_FAILED",
+    "regression_gate_final": "NOT_RUN / PREVIOUS_GATE_FAILED",
+    "ready_for_real_pilot": false
+  },
+  "ready_for_real_pilot": false
 }

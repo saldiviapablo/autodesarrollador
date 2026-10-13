@@ -1,0 +1,1 @@
+F23 FAIL / SECURITY_REGRESSION. Prepare rejected junction only after eight writes outside declared project. Harmless owned sandbox only, no inference/production. Immediate stop per request. Cleanup PASS. F24-F26/2h/4h NOT_RUN; READY FOR REAL PILOT NO. Canonical report: docs/MACROPHASE-8-STOP-REPORT.md.

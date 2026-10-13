@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final | Fases 23 a 28 | **PENDING** |
+| **Macrofase 8** | Validación Final | F23 FAIL; F24–F26 NOT_RUN | **FAIL / SECURITY_REGRESSION** |
 
 Cada fase debe producir:
 
@@ -1366,3 +1366,7 @@ Actualización operativa 2026-10-13T16:40:23.240900-03:00: Macrofase7B IN_PROGRE
 Actualización operativa 2026-10-13T16:58:45.255234-03:00: Macrofase7B IN_PROGRESS; F22 (Cleanup garantizado) PASS; evidence/phase-22/. 7A permanece PASS.
 
 Cierre operativo 7B: F17–F22 PASS, incluyendo T-RUN-009, gate, reportes y cleanup; E2E real con un restart acotado y regression smoke PASS. Macrofase 8 PENDING, sin ejecución.
+
+## Validación actual Macrofase 8
+
+Preflight PASS. F23 FAIL: SECURITY_REGRESSION en Prepare; rechazo de junction posterior a escrituras fuera del proyecto declarado. F24–F26 y 2h/4h NOT_RUN por gate anterior FAIL. Cleanup PASS, inferencias locales 0. Certificaciones anteriores preservadas como historial, no como prueba de este caso nuevo. READY FOR REAL PILOT NO. Informe: docs/MACROPHASE-8-STOP-REPORT.md.

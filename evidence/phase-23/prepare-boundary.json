@@ -1,0 +1,28 @@
+{
+  "test_id": "T-F23-PREPARE-BOUNDARY",
+  "status": "FAIL",
+  "classification": "SECURITY_REGRESSION",
+  "expected": "DENY before any write through a rejected project junction",
+  "actual_admission_denied": true,
+  "exit_code": 2,
+  "outside_approved_project_changed_files": [
+    ".autopilot\\EVENTS.jsonl",
+    ".autopilot\\HEARTBEAT.json",
+    ".autopilot\\LOCK.json",
+    ".autopilot\\RUN-CONTRACT.yaml",
+    ".autopilot\\RUN-PLAN.json",
+    ".autopilot\\STATE.json",
+    ".autopilot\\STATE.md",
+    "QWEN.md"
+  ],
+  "sentinel_preserved": true,
+  "case_root": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase23-boundary-6da7356f",
+  "junction": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase23-boundary-6da7356f\\declared-project",
+  "target": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase23-boundary-6da7356f\\outside-approved-project",
+  "target_is_owned_sandbox": true,
+  "production_touched": false,
+  "local_inferences": 0,
+  "runner_source_sha256": "ed7148882467697be392a9bdf59e4fffd3c66f356ead8830ff69cb4a5567a9ea",
+  "baseline_commit": "fcc313921658a302036a20f75f6900075672630f",
+  "timestamp": "2026-10-13T18:51:25.036064-03:00"
+}
