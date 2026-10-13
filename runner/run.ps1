@@ -5,6 +5,7 @@ $ErrorActionPreference='Stop'
 if($PSVersionTable.PSVersion.Major -le 5){$env:PSModulePath=(Join-Path $PSHOME 'Modules')}
 . (Join-Path $PSScriptRoot 'core.ps1')
 . (Join-Path $PSScriptRoot 'report.ps1')
+. (Join-Path $PSScriptRoot 'cleanup.ps1')
 if($Action -eq 'Prepare'){
     if(-not $Objective -or -not $AcceptanceCriteria -or -not(Test-Path -LiteralPath $PlanPath)){throw 'PREPARE_REQUIRES_OBJECTIVE_CRITERIA_AND_PLAN'}
     if(Test-Path -LiteralPath (Join-Path $ProjectRoot '.autopilot')){throw 'EXISTING_AUTOPILOT_PRESERVED_USE_PREFLIGHT_OR_RECOVERY'}
@@ -38,6 +39,11 @@ $runMutex=New-Object Threading.Mutex($false,'Local\DesarrolladorAutonomo_RunMute
 try{
     try{$held=$runMutex.WaitOne(0)}catch [Threading.AbandonedMutexException]{$held=$true}
     if(-not $held){throw 'RUN_ALREADY_ACTIVE'}
+    # The approved run's wall-clock budget survives crashes and resume attempts.
+    $clockDirectory=Join-Path $script:RunnerInfra 'runtime/run-clocks';$null=New-Item -ItemType Directory -Path $clockDirectory -Force
+    $clockPath=Join-Path $clockDirectory (Split-Path -Leaf $script:Admission.receipt_path)
+    if(Test-Path -LiteralPath $clockPath){$clock=Get-Content -LiteralPath $clockPath -Raw -Encoding UTF8|ConvertFrom-Json;if($clock.run_id -ne $script:RunId){throw 'RUN_CLOCK_ID_MISMATCH'};$script:Started=[datetimeoffset]::Parse($clock.started_at)}else{Write-RunnerJson $clockPath @{run_id=$script:RunId;started_at=$script:Started.ToString('o')}}
+    if($script:Started -gt [datetimeoffset]::Now){throw 'RUN_CLOCK_INVALID'}
     $script:RunJob=New-Object DaOwnedProcessJob
     $statePath=Join-Path $script:Auto 'STATE.json'
     if($Recover -or (Test-FileSchemaValidation $statePath (Join-Path $script:RunnerInfra 'schemas/autopilot-state.schema.json')) -ne 'VALID'){
@@ -54,12 +60,25 @@ try{
         $recovered=& (Join-Path $script:RunnerInfra 'scripts/recover-autopilot.ps1') -ProjectPath $script:Admission.project
         $script:RunState=$recovered.State;Runner-Event 'RUN_RECOVERED_FROM_DISK' @{status=$recovered.Status}
     }
+    if($Recover){
+        $archive=Join-Path $script:Auto ('recovered-signals/'+[datetime]::Now.ToString('yyyyMMddHHmmssfff'))
+        foreach($name in @('WATCHDOG-SIGNAL.json','STOP')){
+            $path=Join-Path $script:Auto $name
+            if(Test-Path -LiteralPath $path){
+                $flag=Get-Content -LiteralPath $path -Raw -Encoding UTF8|ConvertFrom-Json
+                $ownedFlag=($name -eq 'STOP' -and $flag.run_id -eq $script:RunId)
+                if($name -eq 'WATCHDOG-SIGNAL.json'){$oldParent=Get-Process -Id $flag.parent_pid -ErrorAction SilentlyContinue;$ownedFlag=(-not $oldParent -or $oldParent.StartTime.ToUniversalTime().Ticks -ne $flag.start_ticks)}
+                if(-not $ownedFlag){throw 'ACTIVE_OR_FOREIGN_SIGNAL_PRESERVED'}
+                $null=New-Item -ItemType Directory -Path $archive -Force;Move-Item -LiteralPath $path -Destination (Join-Path $archive $name)
+            }
+        }
+    }
     Save-RunnerState 'RUNNING' 'preflight passed'
     Write-RunnerJson (Join-Path $script:Auto 'RESTARTS.json') $script:Restarts
     $null=Write-RunLockMeta -AutopilotDir $script:Auto -RunId $script:RunId -OwnerPid $PID -ProjectRoot $script:Admission.project
     Runner-Event 'RUN_STARTED' @{approval_digest=$script:Admission.digest;backend=$script:Admission.plan.backend;git_head=(& git -C $script:Admission.project rev-parse HEAD).Trim()}
     $stale=120;if($script:Admission.plan.heartbeat_stale_seconds){$stale=[Math]::Min($stale,$script:Admission.plan.heartbeat_stale_seconds)}
-    $watch=Start-RunnerProcess 'watchdog' 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'watchdog-monitor.ps1'),'-ProjectRoot',$script:Admission.project,'-ParentId',$PID,'-ParentStartTicks',(Get-Process -Id $PID).StartTime.ToUniversalTime().Ticks,'-StaleSeconds',$stale) $script:Admission.project
+    $watch=Start-RunnerProcess 'watchdog' 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'watchdog-monitor.ps1'),'-ProjectRoot',$script:Admission.project,'-ParentId',$PID,'-ParentStartTicks',(Get-Process -Id $PID).StartTime.ToUniversalTime().Ticks,'-StaleSeconds',$stale) $script:Admission.project -Guardian
     if($script:Admission.plan.backend -ne 'probe'){Start-RunnerModel}
     $timeout=180;if($script:Admission.plan.phase_timeout_seconds){$timeout=$script:Admission.plan.phase_timeout_seconds}
     $base=@{project=$script:Admission.project;backend=$script:Admission.plan.backend;timeout=$timeout;probe_delay_seconds=$script:Admission.plan.probe_delay_seconds}
@@ -114,19 +133,39 @@ try{
     $failure=$_.Exception.Message
     if($failure -eq 'STOP_REQUESTED'){$terminal='ABORTED'}elseif($failure -eq 'NO_PROGRESS_STALLED'){$terminal='STALLED'}elseif($failure -match 'REQUIRES_HUMAN|EXTERNAL_MODEL'){$terminal='BLOCKED_REQUIRES_HUMAN'}else{$terminal='FAILED'}
 }finally{
+    $cleanup=[ordered]@{job_closed=$false;owned_survivors=@();run_mutex_released=$false;run_lock_removed=$false;inference_mutex='NOT_CHECKED';external_model_preserved=($null -ne $script:ExternalModel);errors=@()}
     if($held){
-        if($script:RunJob){$script:RunJob.Dispose()}
-        foreach($item in $script:Owned.Values){try{$null=$item.process.WaitForExit(5000)}catch{}}
-        if($script:RunState){
-            Save-RunnerState $terminal ('terminal: '+$failure)
-            Runner-Event 'RUN_FINISHED' @{status=$terminal;technical=$technical;reason=$failure}
-            $null=& (Join-Path $script:RunnerInfra 'scripts/create-autopilot-checkpoint.ps1') -ProjectPath $script:Admission.project -CheckpointId ('chk-runner-'+[datetime]::Now.ToString('yyyyMMddHHmmssfff')) -Reason ('Runner terminal '+$terminal)
-            $null=Write-RunnerReport -Project $script:Admission.project -RunId $script:RunId -State $script:RunState -Status $terminal -Technical $technical -Reason $failure -Duration ([datetimeoffset]::Now-$script:Started).TotalSeconds -Cleanup @{job_closed=$true;external_model_preserved=($null -ne $script:ExternalModel)}
-            if(Test-Path -LiteralPath (Join-Path $script:Auto 'LOCK.json')){Remove-Item -LiteralPath (Join-Path $script:Auto 'LOCK.json')}
+        try{
+            try{if($script:RunJob){$script:RunJob.Dispose()};$cleanup.job_closed=$true}catch{$cleanup.errors+=@('JOB_CLOSE: '+$_.Exception.Message)}
+            foreach($name in @($script:Owned.Keys|Where-Object{$_ -ne 'watchdog'})){try{$null=$script:Owned[$name].process.WaitForExit(5000)}catch{$cleanup.errors+=@('PROCESS_WAIT: '+$name)}}
+            if($script:RunState){
+                try{Save-RunnerState $terminal ('terminal: '+$failure)}catch{$cleanup.errors+=@('STATE_SAVE: '+$_.Exception.Message)}
+                try{$null=& (Join-Path $script:RunnerInfra 'scripts/create-autopilot-checkpoint.ps1') -ProjectPath $script:Admission.project -CheckpointId ('chk-runner-'+[datetime]::Now.ToString('yyyyMMddHHmmssfff')) -Reason ('Runner terminal '+$terminal)}catch{$cleanup.errors+=@('CHECKPOINT: '+$_.Exception.Message)}
+            }
+            # Guardian exits on a terminal heartbeat; identity-checked fallback is bounded.
+            if($script:Owned.watchdog){try{if(-not $script:Owned.watchdog.process.WaitForExit(2000)){Stop-RunnerProcess $script:Owned.watchdog}}catch{$cleanup.errors+=@('GUARDIAN_STOP: '+$_.Exception.Message)}}
+            $cleanup.owned_survivors=@(Get-RunnerSurvivors $script:Auto)
+            if($cleanup.owned_survivors.Count){$cleanup.errors+=@('OWNED_PROCESS_SURVIVED')}
+            try{Remove-RunnerOwnedLock $script:Auto $script:RunId $PID;$cleanup.run_lock_removed=$true}catch{$cleanup.errors+=@('LOCK_CLEANUP: '+$_.Exception.Message)}
+            try{$cleanup.inference_mutex=Test-RunnerInferenceReleased}catch{$cleanup.errors+=@('INFERENCE_CHECK: '+$_.Exception.Message)}
+        }finally{
+            try{$runMutex.ReleaseMutex();$cleanup.run_mutex_released=$true}catch{$cleanup.errors+=@('RUN_MUTEX_RELEASE: '+$_.Exception.Message)}
+            $runMutex.Dispose()
         }
-        $runMutex.ReleaseMutex()
+        if($cleanup.errors.Count){$terminal='FAILED';$failure='FINALIZATION_FAILED: '+($cleanup.errors -join '; ');try{Save-RunnerState $terminal $failure}catch{}}
+        $reportState=$script:RunState
+        if(-not $reportState){$reportState=[pscustomobject]@{objective=$script:Admission.contract.objective;completed_tasks=@();pending_tasks=@($script:Admission.contract.objective);chatgpt=@{queries_used=0}}}
+        if($reportState){
+            try{Runner-Event 'RUN_FINISHED' @{status=$terminal;technical=$technical;reason=$failure;cleanup=$cleanup}}catch{}
+            try{$null=Write-RunnerReport -Project $script:Admission.project -RunId $script:RunId -State $reportState -Status $terminal -Technical $technical -Reason $failure -Duration ([datetimeoffset]::Now-$script:Started).TotalSeconds -Cleanup $cleanup}catch{
+                $terminal='FAILED';$failure='FINAL_REPORT_WRITE_FAILED: '+$_.Exception.Message;try{Save-RunnerState $terminal $failure}catch{}
+                $fallback=Join-Path $script:RunnerInfra ('runtime/emergency-reports/'+$script:RunId+'-'+$PID)
+                $null=Write-RunnerReport -Project $script:Admission.project -RunId $script:RunId -State $reportState -Status $terminal -Technical $technical -Reason $failure -Duration ([datetimeoffset]::Now-$script:Started).TotalSeconds -Cleanup $cleanup -ReportRoot $fallback
+            }
+        }
+    }else{
+        $runMutex.Dispose()
     }
-    $runMutex.Dispose()
 }
 @{status=$terminal;technical_status=$technical;run_id=$script:RunId;reason=$failure}|ConvertTo-Json
 if($terminal -ne 'COMPLETED'){exit 1}

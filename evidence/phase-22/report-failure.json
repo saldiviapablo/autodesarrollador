@@ -1,0 +1,125 @@
+{
+  "status": "PASS",
+  "report_directory_obstructed": true,
+  "fallback_json_and_human": true,
+  "physical_cleanup_not_masked_by_report_failure": true,
+  "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-cleanup22-report-write-failure-7b0cdd19",
+  "report": {
+    "schema_version": "1.0",
+    "run_id": "run-20261013-165108",
+    "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-cleanup22-report-write-failure-7b0cdd19",
+    "objective": "Implement correct addition with verified tests",
+    "duration_seconds": 4.2771867,
+    "status": "FAILED",
+    "technical_status": "SUCCESS",
+    "reason": "FINAL_REPORT_WRITE_FAILED: Excepci\u00f3n al llamar a \"WriteAllText\" con los argumentos \"3\": \"No se puede encontrar una parte de la ruta de acceso 'C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-cleanup22-report-write-failure-7b0cdd19\\.autopilot\\reports\\runner-result.json.9f2ed96394074b929248861eac03fd3a.tmp'.\"",
+    "tasks_completed": [
+      "Implement correct addition with verified tests"
+    ],
+    "pending_tasks": [],
+    "changed_files": [],
+    "commits": [],
+    "tests": [
+      {
+        "output": "RUNNER_TEST_PASS\r\n",
+        "status": "PASS",
+        "marker_present": true,
+        "id": "unit",
+        "exit_code": 0
+      }
+    ],
+    "builds": [],
+    "linters": [],
+    "errors": [
+      "FINAL_REPORT_WRITE_FAILED: Excepci\u00f3n al llamar a \"WriteAllText\" con los argumentos \"3\": \"No se puede encontrar una parte de la ruta de acceso 'C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-cleanup22-report-write-failure-7b0cdd19\\.autopilot\\reports\\runner-result.json.9f2ed96394074b929248861eac03fd3a.tmp'.\""
+    ],
+    "retries": {
+      "llama": 0,
+      "supervisor": 0,
+      "reviewer": 0,
+      "worker": 0
+    },
+    "recoveries": [],
+    "web_queries": [],
+    "chatgpt_queries_used": null,
+    "blocks": [],
+    "completion_gate": {
+      "status": "FAILED",
+      "checks": {
+        "state_schema_valid": true,
+        "native_live_backend": false,
+        "roles_success": true,
+        "independent_reviewer_accepted": true,
+        "run_id_consistent": true,
+        "tests_all_required": true,
+        "builds_all_required": true,
+        "linters_all_required": true,
+        "tests_exist": true,
+        "no_build_approved_or_passed": true,
+        "criteria_all_mapped_and_passed": true,
+        "pending_empty": true,
+        "failures_not_pending": true,
+        "state_tests_pass": true,
+        "immutable_test_calculator.py": true,
+        "artifact_calculator.py": true,
+        "diff_only_approved_files": true,
+        "relevant_diff_exists": false,
+        "state_git_head_consistent": true
+      },
+      "failed": [
+        "native_live_backend",
+        "relevant_diff_exists"
+      ],
+      "changed_files": [],
+      "run_id": "run-20261013-165108",
+      "source": "DETERMINISTIC_COMPLETION_GATE"
+    },
+    "cleanup": {
+      "job_closed": true,
+      "owned_survivors": [],
+      "run_mutex_released": true,
+      "run_lock_removed": true,
+      "inference_mutex": "FREE",
+      "external_model_preserved": false,
+      "errors": []
+    },
+    "processes": [
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 15904,
+        "name": "watchdog",
+        "executable": "powershell.exe",
+        "start_ticks": 639275178713768316
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 34380,
+        "name": "supervisor",
+        "executable": "powershell.exe",
+        "start_ticks": 639275178716919217
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 33600,
+        "name": "worker",
+        "executable": "powershell.exe",
+        "start_ticks": 639275178721807207
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 23840,
+        "name": "check-unit",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639275178726475262
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 33488,
+        "name": "reviewer",
+        "executable": "powershell.exe",
+        "start_ticks": 639275178727326132
+      }
+    ],
+    "generated_at": "2026-10-13T16:51:15.1122787-03:00"
+  }
+}

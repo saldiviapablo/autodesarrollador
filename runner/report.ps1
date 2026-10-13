@@ -17,8 +17,10 @@ function Write-RunnerPrestartBlock($Info,[string]$Reason){
         $null=Write-RunnerReport -Project $Info.project -RunId $state.run_id -State $state -Status 'BLOCKED_REQUIRES_HUMAN' -Technical 'NOT_STARTED' -Reason $Reason -Duration 0 -Cleanup @{started=$false;owned_processes=0;job_closed=$true}
     }finally{if($acquired){$mutex.ReleaseMutex()};$mutex.Dispose()}
 }
-function Write-RunnerReport([string]$Project,[string]$RunId,$State,[string]$Status,[string]$Technical,[string]$Reason,[double]$Duration,$Cleanup){
+function Write-RunnerReport([string]$Project,[string]$RunId,$State,[string]$Status,[string]$Technical,[string]$Reason,[double]$Duration,$Cleanup,[string]$ReportRoot=''){
     $auto=Join-Path $Project '.autopilot';$events=@()
+    if(-not $ReportRoot){$ReportRoot=Join-Path $auto 'reports'}
+    $null=New-Item -ItemType Directory -Path $ReportRoot -Force
     foreach($line in @(Get-Content -LiteralPath (Join-Path $auto 'EVENTS.jsonl') -Encoding UTF8 -ErrorAction SilentlyContinue)){try{$evt=$line|ConvertFrom-Json;if($evt.run_id -eq $RunId){$events+=@($evt)}}catch{}}
     $checks=Read-RunnerEvidence (Join-Path $auto 'evidence/checks.json') @{tests=@();builds=@();linters=@();evidence_missing=$true}
     $gate=Read-RunnerEvidence (Join-Path $auto 'evidence/completion-gate.json') @{status='NOT_EVALUATED';reason=$Reason}
@@ -37,20 +39,20 @@ function Write-RunnerReport([string]$Project,[string]$RunId,$State,[string]$Stat
         duration_seconds=$Duration;status=$Status;technical_status=$Technical;reason=$Reason
         tasks_completed=@($State.completed_tasks);pending_tasks=@($State.pending_tasks)
         changed_files=$changed;commits=$commits;tests=@($checks.tests);builds=@($checks.builds);linters=@($checks.linters)
-        errors=$errors;retries=$restarts;recoveries=@($events|Where-Object{$_.type -eq 'RUN_RECOVERED_FROM_DISK' -or $_.type -match 'WATCHDOG_.*RESTART'})
+        errors=$errors;retries=$restarts;recoveries=@($events|Where-Object{$_.type -in @('RUN_RECOVERED_FROM_DISK','PARENT_CRASH_RECOVERED') -or $_.type -match 'WATCHDOG_.*RESTART'})
         web_queries=@($events|Where-Object{$_.type -eq 'WEB_QUERY'});chatgpt_queries_used=$State.chatgpt.queries_used
         blocks=@($(if($Status -eq 'BLOCKED_REQUIRES_HUMAN'){$Reason}));completion_gate=$gate
         cleanup=$Cleanup;processes=$processes;generated_at=[datetimeoffset]::Now.ToString('o')
     }
     $safe=Sanitize-ObjectDeep $report
-    Write-RunnerJson (Join-Path $auto 'reports/runner-result.json') $safe
+    Write-RunnerJson (Join-Path $ReportRoot 'runner-result.json') $safe
     $lines=@('# Runner final report', '',('Run: '+$RunId),('Project: '+$Project),('Objective: '+$State.objective),('Status: '+$Status),('Duration seconds: '+[Math]::Round($Duration,2)),('Reason: '+$Reason),'', '## Evidence')
     foreach($name in @('tasks_completed','pending_tasks','changed_files','commits','tests','builds','linters','errors','retries','recoveries','web_queries','chatgpt_queries_used','blocks','completion_gate','cleanup')){
         $lines+=@('',('### '+$name),'', '```json',($safe[$name]|ConvertTo-Json -Depth 20),'```')
     }
     $markdown=Sanitize-StringContent ($lines -join "`n")
-    [IO.File]::WriteAllText((Join-Path $auto 'reports/FINAL.md'),$markdown,(New-Object Text.UTF8Encoding($false)))
+    [IO.File]::WriteAllText((Join-Path $ReportRoot 'FINAL.md'),$markdown,(New-Object Text.UTF8Encoding($false)))
     $special=@{FAILED='FAILURE.md';STALLED='STALLED.md';BLOCKED_REQUIRES_HUMAN='BLOCKED.md';ABORTED='ABORTED.md'}
-    if($special.ContainsKey($Status)){[IO.File]::WriteAllText((Join-Path $auto ('reports/'+$special[$Status])),$markdown,(New-Object Text.UTF8Encoding($false)))}
+    if($special.ContainsKey($Status)){[IO.File]::WriteAllText((Join-Path $ReportRoot $special[$Status]),$markdown,(New-Object Text.UTF8Encoding($false)))}
     return $safe
 }

@@ -26,7 +26,7 @@ def inspect(project):
     ids=[c['id'] for c in commands]
     if len(set(ids))!=len(ids) or not plan['tests']:raise ValueError('TESTS_REQUIRED_OR_DUPLICATE_ID')
     if any(c['test_id'] not in ids for c in plan['criteria']):raise ValueError('CRITERION_CHECK_MISSING')
-    frozen=[ROOT/'config/security.yaml',ROOT/'config/VERSIONS.lock',ROOT/'scripts/inference-lock.ps1',ROOT/'scripts/hermes-pre-tool-hook.py',ROOT/'schemas/runner-plan.schema.json']
+    frozen=[ROOT/'config/system.yaml',ROOT/'config/security.yaml',ROOT/'config/VERSIONS.lock',ROOT/'scripts/inference-lock.ps1',ROOT/'scripts/hermes-pre-tool-hook.py',ROOT/'schemas/runner-plan.schema.json']
     frozen+=sorted(f for f in (ROOT/'runner').iterdir() if f.suffix in ('.ps1','.py'))
     hashes={str(contract_path):sha(contract_path),str(plan_path):sha(plan_path),**{str(f):sha(f) for f in frozen}}
     digest=hashlib.sha256(json.dumps(hashes,sort_keys=True).encode()).hexdigest()

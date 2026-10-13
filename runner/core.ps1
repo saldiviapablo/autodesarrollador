@@ -38,12 +38,14 @@ function Save-RunnerState([string]$Status,[string]$Task){
 }
 function Runner-Event([string]$Type,$Payload){$null=Add-AutopilotEvent -AutopilotDir $script:Auto -RunId $script:RunId -Actor 'runner' -Type $Type -Payload $Payload}
 function Save-RunnerProcesses {Write-RunnerJson (Join-Path $script:Auto 'PROCESSES.json') @{run_id=$script:RunId;runner_pid=$PID;processes=@($script:Owned.Values|ForEach-Object{$_.record});external_model=$script:ExternalModel}}
-function Start-RunnerProcess([string]$Name,[string]$Exe,[array]$Arguments,[string]$WorkingDir){
+function Start-RunnerProcess([string]$Name,[string]$Exe,[array]$Arguments,[string]$WorkingDir,[switch]$Guardian){
+    if($Guardian -and $Name -ne 'watchdog'){throw 'ONLY_WATCHDOG_MAY_SURVIVE_PARENT_FOR_FINALIZATION'}
     $psi=New-Object Diagnostics.ProcessStartInfo;$psi.FileName=$Exe;$psi.Arguments=($Arguments|ForEach-Object{Quote-RunnerArg $_}) -join ' '
     $psi.WorkingDirectory=$WorkingDir;$psi.UseShellExecute=$false;$psi.CreateNoWindow=$true;$psi.RedirectStandardOutput=$true;$psi.RedirectStandardError=$true
     $psi.StandardOutputEncoding=[Text.Encoding]::UTF8;$psi.StandardErrorEncoding=[Text.Encoding]::UTF8
     $psi.EnvironmentVariables['PYTHONDONTWRITEBYTECODE']='1';$psi.EnvironmentVariables['PYTHONUTF8']='1'
-    $proc=[Diagnostics.Process]::Start($psi);$script:RunJob.Assign($proc.Handle)
+    $proc=[Diagnostics.Process]::Start($psi)
+    try{if(-not $Guardian){$script:RunJob.Assign($proc.Handle)}}catch{$proc.Kill();$proc.Dispose();throw}
     $item=@{process=$proc;stdout=$proc.StandardOutput.ReadToEndAsync();stderr=$proc.StandardError.ReadToEndAsync();record=@{name=$Name;pid=$proc.Id;start_ticks=$proc.StartTime.ToUniversalTime().Ticks;executable=$Exe;ownership='OWNED_BY_RUN'}}
     $script:Owned[$Name]=$item;Save-RunnerProcesses;Runner-Event 'PROCESS_STARTED' $item.record
     return $item
@@ -72,6 +74,9 @@ function Start-RunnerModel {
     if($listeners.Count){
         $existing=Get-CimInstance Win32_Process -Filter ('ProcessId='+$listeners[0].OwningProcess)
         if($existing.ExecutablePath -ne $llama.executable -or $existing.CommandLine -notmatch '--ctx-size\s+65536' -or $existing.CommandLine -notmatch '--parallel\s+1' -or $existing.CommandLine -notmatch '--host\s+127.0.0.1' -or $existing.CommandLine -notmatch '--alias\s+qwen36' -or -not(Test-RunnerHealth)){throw 'EXTERNAL_MODEL_NOT_COMPATIBLE'}
+        if($existing.CommandLine -notmatch ('(?:^|\s)(?:-m|--model)\s+"?'+[regex]::Escape($llama.model)+'"?(?:\s|$)')){throw 'EXTERNAL_MODEL_NOT_COMPATIBLE'}
+        $models=Invoke-RestMethod -Uri ('http://'+$llama.host+':'+$llama.port+'/v1/models') -TimeoutSec 2
+        if(@($models.data.id) -notcontains $llama.alias){throw 'EXTERNAL_MODEL_NOT_COMPATIBLE'}
         $script:ExternalModel=@{pid=$existing.ProcessId;start_time=$existing.CreationDate.ToString('o');ownership='PREEXISTING_EXTERNAL'};Save-RunnerProcesses
         Runner-Event 'MODEL_ADOPTED_EXTERNAL' $script:ExternalModel;return
     }
