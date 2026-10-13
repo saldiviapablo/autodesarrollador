@@ -511,10 +511,13 @@ Macrofase 5: Memoria y Continuidad (Fases 10 a 12) — PASS
 Macrofase 6: Web, ChatGPT, Seguridad y Anti-Loop (Fases 13 a 16) — PASS
 ```
 
-Pendiente de Implementación:
+Estado de las macrofases restantes:
 
 ```text
-Macrofase 7A: Hermes Native Capabilities (7A.1 a 7A.10) — PENDING
+Macrofase 7A: Hermes Native Capabilities (7A.1 a 7A.10) — IN_PROGRESS
+  7A.1 — PASS
+  7A.2 — PASS
+  7A.3–7A.10 — PENDING
 Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — PENDING
 Macrofase 8:  Validación Final (Fases 23 a 28) — PENDING
 ```

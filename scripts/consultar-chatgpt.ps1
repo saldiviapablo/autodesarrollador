@@ -59,22 +59,10 @@ if ([string]::IsNullOrWhiteSpace($ConsultationId)) {
 }
 
 # 1. VERIFICACIÓN ESTRICTA DE DOMAIN LOCK
-$allowedDomains = @("chatgpt.com", "openai.com")
-$isAllowedDomain = $false
-try {
-    $u = [System.Uri]$TargetUrl
-    $hostLower = $u.Host.ToLowerInvariant()
-    foreach ($ad in $allowedDomains) {
-        if ($hostLower -eq $ad -or $hostLower.EndsWith(".$ad")) {
-            $isAllowedDomain = $true
-            break
-        }
-    }
-} catch {
-    $isAllowedDomain = $false
-}
+. (Join-Path $scriptDir 'chatgpt-domain-policy.ps1')
+$isAllowedDomain = Test-ChatGptUrl -Url $TargetUrl
 
-if (-not $isAllowedDomain -and $TargetUrl -ne "about:blank") {
+if (-not $isAllowedDomain) {
     $blockedObj = [ordered]@{
         status          = "DOMAIN_BLOCKED"
         error           = "Navegación rechazada: dominio no autorizado por política estricta de Domain Lock ($TargetUrl)."

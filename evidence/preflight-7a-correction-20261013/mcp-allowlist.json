@@ -1,0 +1,29 @@
+﻿{
+    "check_id":  "mcp-allowlist",
+    "status":  "PASS",
+    "timestamp":  "2026-10-13T01:29:55.6385661-03:00",
+    "data":  {
+                 "denied":  {
+                                "allowed":  false,
+                                "status":  "TOOL_NOT_ALLOWED",
+                                "decision":  "DENY",
+                                "server":  "da_local_sandbox",
+                                "tool":  "da_forbidden_test",
+                                "allowed_tools":  [
+                                                      "da_echo",
+                                                      "da_read_sandbox",
+                                                      "da_health",
+                                                      "da_slow_test"
+                                                  ],
+                                "reason":  "DENY [TOOL_NOT_ALLOWED]: Tool \u0027da_forbidden_test\u0027 is not in the approved allowlist for server \u0027da_local_sandbox\u0027."
+                            },
+                 "allowed":  {
+                                 "allowed":  true,
+                                 "status":  "ALLOW",
+                                 "decision":  "ALLOW",
+                                 "server":  "da_local_sandbox",
+                                 "tool":  "da_echo",
+                                 "reason":  "MCP tool call allowed by security policy and sandbox confinement."
+                             }
+             }
+}

@@ -12,7 +12,6 @@ const { spawn } = require('child_process');
 const CHROME_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const CDP_PORT = 9222;
 const CDP_BASE = `http://127.0.0.1:${CDP_PORT}`;
-const ALLOWED_DOMAINS = ['chatgpt.com', 'openai.com'];
 
 const CANONICAL_UNICODE_STRING = `Prueba UTF-8:
 áéíóú ÁÉÍÓÚ
@@ -54,11 +53,10 @@ const timeoutSec = parseInt(getArg('--timeout', '60'), 10);
 // 1. Verificación Estricta de Domain Lock
 function validateDomain(urlStr) {
   try {
-    if (!urlStr || urlStr === 'about:blank') return true;
+    if (typeof urlStr !== 'string' || !urlStr.trim()) return false;
     const u = new URL(urlStr);
-    const host = u.hostname.toLowerCase();
-    const isAllowed = ALLOWED_DOMAINS.some(d => host === d || host.endsWith('.' + d));
-    return isAllowed;
+    return u.protocol === 'https:' && u.hostname === 'chatgpt.com' &&
+      !u.username && !u.password;
   } catch {
     return false;
   }
@@ -118,7 +116,7 @@ function connectCdp(wsUrl) {
   });
 }
 
-function sendCdp(ws, method, params = {}) {
+function sendCdpRaw(ws, method, params = {}) {
   return new Promise((resolve, reject) => {
     const id = Math.floor(Math.random() * 1000000) + 1;
     const timeout = setTimeout(() => {
@@ -141,6 +139,32 @@ function sendCdp(ws, method, params = {}) {
     ws.addEventListener('message', handler);
     ws.send(JSON.stringify({ id, method, params }));
   });
+}
+
+function guardPageExpression(expression) {
+  // Check in the same renderer operation as the DOM action, including redirects.
+  return `(() => {
+    const pageUrl = new URL(window.location.href);
+    if (pageUrl.protocol !== 'https:' || pageUrl.hostname !== 'chatgpt.com' ||
+        pageUrl.username || pageUrl.password) throw new Error('DOMAIN_BLOCKED');
+    const result = (${expression});
+    const afterUrl = new URL(window.location.href);
+    if (afterUrl.protocol !== 'https:' || afterUrl.hostname !== 'chatgpt.com' ||
+        afterUrl.username || afterUrl.password) throw new Error('DOMAIN_BLOCKED');
+    return result;
+  })()`;
+}
+
+async function sendCdp(ws, method, params = {}) {
+  const guarded = method === 'Runtime.evaluate'
+    ? { ...params, expression: guardPageExpression(params.expression) }
+    : params;
+  const result = await sendCdpRaw(ws, method, guarded);
+  if (result.exceptionDetails) {
+    throw new Error(result.exceptionDetails.exception?.description ||
+      result.exceptionDetails.text || 'CDP evaluation failed');
+  }
+  return result;
 }
 
 // 5. Enforzar 1 sola pestaña y Domain Lock
@@ -262,6 +286,24 @@ async function main() {
   }
 
   try {
+    // CDP may expose the intended tab before its initial about:blank document
+    // has committed. Read only URL/readiness metadata; perform no DOM action
+    // until the exact approved origin has loaded. Every DOM operation below
+    // still checks the origin inside the same Runtime.evaluate call.
+    const readinessStarted = Date.now();
+    while (true) {
+      const metadata = await sendCdpRaw(ws, 'Runtime.evaluate', {
+        expression: '({ url: window.location.href, ready: document.readyState })',
+        returnByValue: true,
+      });
+      const current = metadata.result?.value;
+      if (current && validateDomain(current.url) && current.ready !== 'loading') break;
+      if (current && current.url !== 'about:blank' && !validateDomain(current.url)) {
+        throw new Error('DOMAIN_BLOCKED');
+      }
+      if (Date.now() - readinessStarted >= 15000) throw new Error('PAGE_READINESS_TIMEOUT');
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
     // Evaluar estado de sesión en chatgpt.com
     const evalResult = await sendCdp(ws, 'Runtime.evaluate', {
       expression: `(() => {
@@ -636,7 +678,7 @@ Por favor proporciona:
       try { ws.close(); } catch {}
     }
     console.log(JSON.stringify({
-      status: "ERROR",
+      status: err.message.includes('DOMAIN_BLOCKED') ? "DOMAIN_BLOCKED" : "ERROR",
       error: `Fallo durante interacción CDP: ${err.message}`,
       consultation_id: consultationId,
       timestamp: new Date().toISOString()
@@ -645,9 +687,11 @@ Por favor proporciona:
   }
 }
 
-main().catch(err => {
+module.exports = { validateDomain, guardPageExpression };
+
+if (require.main === module) main().catch(err => {
   console.log(JSON.stringify({
-    status: "ERROR",
+    status: err.message.includes('DOMAIN_BLOCKED') ? "DOMAIN_BLOCKED" : "ERROR",
     error: err.message,
     timestamp: new Date().toISOString()
   }, null, 2));

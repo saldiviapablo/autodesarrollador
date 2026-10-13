@@ -1,7 +1,7 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-12T23:12:30-03:00  
+**Última actualización:** 2026-10-13T01:30:08-03:00
 **Estado documental:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A  
 **Baseline de arquitectura:** Hermes Agent (v0.21.6) + Qwen Code CLI (@qwen-code/qwen-code@0.25.1) + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
@@ -64,4 +64,5 @@
 
 ## Próximo Paso Recomendado
 
-- **Subfase 7A.3 (Extracción y Lectura Estructurada de Documentos):** Proceder únicamente tras la revisión y aprobación de la Subfase 7A.2.
+- **Preflight correctivo 7A:** estados reconciliados; URL absoluta HTTPS y hostname exacto `chatgpt.com` en bridge, wrapper e iniciador. Smoke acotado del hook/sanitización, MCP health/allowlist, plugin SHA-256 y bridge REAL/UTF-8 PASS, con cleanup PASS. Evidencia: `evidence/preflight-7a-correction-20261013/`. 7A.1 y 7A.2 siguen PASS; sus suites completas no se repitieron.
+- **Subfase 7A.3 (Extracción y Lectura Estructurada de Documentos):** Continuar tras el commit correctivo local y el gate `PREFLIGHT_7A_CONTINUATION`, según autorización vigente. 7A.3–7A.10 siguen PENDING.

@@ -1,0 +1,281 @@
+{
+  "schema_version": "1.0",
+  "timestamp": "2026-10-13T01:13:10.117076-03:00",
+  "phase": "INSPECT / PRE-7A.3",
+  "status": "STOPPED",
+  "preflight_gate": "FAIL",
+  "stop_reason": "Inconsistencias encontradas; instruccion explicita del usuario de detenerse y reportar.",
+  "git": {
+    "head": "8502d793164aba42fae4e00bab60d1ae22a0ea08",
+    "branch": "phase/7a2-mcp-plugins",
+    "status_before_report": "",
+    "branches": "docs/hermes-native-capabilities 7fd0bb7 docs: correct native hermes architecture baseline\n  master                          2792786 fix: enforce cryptographic integrity for hermes hooks\n  phase/03-llama-validation       37ad5d6 test: validate local qwen 64k runtime\n  phase/04-central-config         ebb9b10 config: centralize autonomous developer settings\n  phase/05-qwen-code              075cbb6 feat: install and validate qwen code worker\n  phase/06-hermes-agent           e9d717c feat: install and validate hermes supervisor\n  phase/07-09-agent-integration   0c3f3f4 feat: integrate hermes supervisor with qwen code worker (macrofase 4)\n  phase/10-12-state-continuity    070725d feat: add persistent state recovery and session continuity\n  phase/13-16-web-security        5a63be5 fix: preserve utf8 through chatgpt browser bridge\n  phase/7a1-memory-skills         2792786 fix: enforce cryptographic integrity for hermes hooks\n* phase/7a2-mcp-plugins           8502d79 feat: add governed mcp and plugin capabilities",
+    "recent_log": "8502d79 (HEAD -> phase/7a2-mcp-plugins) feat: add governed mcp and plugin capabilities\n2792786 (phase/7a1-memory-skills, master) fix: enforce cryptographic integrity for hermes hooks\n25f3840 feat: implement hermes persistent memory and reusable skills\n7fd0bb7 (docs/hermes-native-capabilities) docs: correct native hermes architecture baseline\n788eb0f docs: expand architecture with native hermes capabilities\n5a63be5 (phase/13-16-web-security) fix: preserve utf8 through chatgpt browser bridge\n8fe7291 fix: validate real chatgpt browser consultation\n6e73dea feat: implement web research, dedicated chrome chatgpt, security guardrails, and anti-loop engine (macrofase 6)\n070725d (phase/10-12-state-continuity) feat: add persistent state recovery and session continuity\n0c3f3f4 (phase/07-09-agent-integration) feat: integrate hermes supervisor with qwen code worker (macrofase 4)\ne9d717c (phase/06-hermes-agent) feat: install and validate hermes supervisor\n075cbb6 (phase/05-qwen-code) feat: install and validate qwen code worker"
+  },
+  "findings": [
+    {
+      "id": "I-001",
+      "status": "FAIL",
+      "kind": "documented_state_conflict",
+      "sources": [
+        "00-README.md:517",
+        "07-ROADMAP.md:28",
+        "07-ROADMAP.md:722",
+        "MANIFEST.md:99",
+        "docs/IMPLEMENTATION-STATUS.md:20"
+      ],
+      "detail": "README y ROADMAP declaran 7A PENDING; MANIFEST e IMPLEMENTATION-STATUS declaran IN_PROGRESS con 7A.1/7A.2 PASS."
+    },
+    {
+      "id": "I-002",
+      "status": "FAIL",
+      "kind": "security_policy_conflict",
+      "sources": [
+        "AGENTS.md:752",
+        "04-AUTONOMIA-Y-SEGURIDAD.md:495",
+        "04-AUTONOMIA-Y-SEGURIDAD.md:1279",
+        "config/security.yaml:43",
+        "config/system.yaml:85",
+        "tools/chatgpt-bridge.js:15",
+        "scripts/consultar-chatgpt.ps1:62"
+      ],
+      "detail": "El bridge y wrapper permiten openai.com y subdominios; la politica autoritativa exige https://chatgpt.com/* exclusivamente. La funcion original validateDomain fue evaluada aisladamente sin navegador ni inferencia y acepta los destinos fuera de scope."
+    },
+    {
+      "id": "I-003",
+      "status": "FAIL",
+      "kind": "historical_evidence_version_conflict",
+      "sources": [
+        "evidence/installation/qwen-code-phase05-summary.md:5",
+        "evidence/installation/qwen-code-phase05-summary.md:20",
+        "config/VERSIONS.lock:33",
+        "config/VERSIONS.lock:49",
+        "evidence/installation/llama-phase03-summary.md"
+      ],
+      "detail": "El resumen de Fase 5 registra llama.cpp b4653 y Python 3.14.0, mientras VERSIONS.lock registra build 11368 y Python 3.14.4; no se atribuye este conflicto a una actualizacion real sin evidencia."
+    }
+  ],
+  "historical_tests": [
+    {
+      "test_id": "T-7A-HOOK-001",
+      "status": "PASS",
+      "file": "evidence\\phase-7a1\\hook-integrity-hardening.json",
+      "sha256": "e1de9f70aade9e96dc7bcb3987c17aec0ce0bcd9575ef5f7af81f6501a7df925",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-HIERARCHY-001",
+      "status": "PASS",
+      "file": "evidence\\phase-7a1\\T-7A-HIERARCHY-001.json",
+      "sha256": "fd1254bdbc7594275724431b601a59af6991dd16ae08680b4b9a00795ab4a82d",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-MEM-001",
+      "status": "PASS",
+      "file": "evidence\\phase-7a1\\T-7A-MEM-001.json",
+      "sha256": "9ed182eda7a49ca1fc577f2c7570905fee477ecc9945af2f7f69ba0616b76078",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-MEM-002",
+      "status": "PASS",
+      "file": "evidence\\phase-7a1\\T-7A-MEM-002.json",
+      "sha256": "ae3a7a71d7591b176729f4cb0a944d20f96540cd6febfc382d3b1c41455b66e5",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-SKILL-001",
+      "status": "PASS",
+      "file": "evidence\\phase-7a1\\T-7A-SKILL-001.json",
+      "sha256": "35d2354848f03c1a7375675b56aae7da0767dde725be8e1b4bd91f4580eba112",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-SKILL-002",
+      "status": "PASS",
+      "file": "evidence\\phase-7a1\\T-7A-SKILL-002.json",
+      "sha256": "a8b13781b7cae63c7c428cc88cd68edd01e1dfdf30d73eff16caf7d90c3b2b24",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-MCP-001",
+      "status": "PASS",
+      "file": "evidence\\phase-7a2\\T-7A-MCP-001.json",
+      "sha256": "b70b015d92385f4ae426b90d0d4f5d10326614380dd08fd6a1035212478aeb5f",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-MCP-002",
+      "status": "PASS",
+      "file": "evidence\\phase-7a2\\T-7A-MCP-002.json",
+      "sha256": "0ae59608c422ae707ae58e023222a29d105e93ee4551cbcbf3ab684bf1819c42",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-MCP-003",
+      "status": "PASS",
+      "file": "evidence\\phase-7a2\\T-7A-MCP-003.json",
+      "sha256": "bb22b7af641ba47bcb6f9a017dc6a0bef6e539d66c1bd7156e358d6c8af1114f",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-MCP-004",
+      "status": "PASS",
+      "file": "evidence\\phase-7a2\\T-7A-MCP-004.json",
+      "sha256": "ab004223a69d4948ff801cebba9502b62caa9426c9d873fc4193e980dd9150c5",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-MCP-005",
+      "status": "PASS",
+      "file": "evidence\\phase-7a2\\T-7A-MCP-005.json",
+      "sha256": "6d107f34ec7c746e35d998698dd5699c11ed60590bb8a01f8c8b8ed821974dcf",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-PLUGIN-001",
+      "status": "PASS",
+      "file": "evidence\\phase-7a2\\T-7A-PLUGIN-001.json",
+      "sha256": "fb5431f13c810b5ab8b52fa7343e5638ee17aac003883d3a2bc0124aca87fc80",
+      "rerun": false
+    },
+    {
+      "test_id": "T-7A-PLUGIN-002",
+      "status": "PASS",
+      "file": "evidence\\phase-7a2\\T-7A-PLUGIN-002.json",
+      "sha256": "318baf02824c750ac213e5556fd9dbeef54507738f89a50118925aae90a15208",
+      "rerun": false
+    }
+  ],
+  "protected_hash_checks": [
+    {
+      "path": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\hermes-pre-tool-hook.py",
+      "approved": "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+      "actual": "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\mcp-sandbox-server.py",
+      "approved": "ab4c23e4c68dde352c63fbac9bef53dbdb747a411d52fb949d996413b20807c3",
+      "actual": "ab4c23e4c68dde352c63fbac9bef53dbdb747a411d52fb949d996413b20807c3",
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\plugins\\desarrollador-autonomo-health\\__init__.py",
+      "approved": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+      "actual": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\plugins\\desarrollador-autonomo-health\\plugin.yaml",
+      "approved": "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+      "actual": "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py",
+      "approved": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+      "actual": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\plugin.yaml",
+      "approved": "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+      "actual": "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+      "status": "PASS"
+    }
+  ],
+  "domain_check": {
+    "status": "FAIL",
+    "cases": [
+      {
+        "url": "https://chatgpt.com/",
+        "expected_allowed": true,
+        "actual_allowed": true
+      },
+      {
+        "url": "https://openai.com/",
+        "expected_allowed": false,
+        "actual_allowed": true
+      },
+      {
+        "url": "https://sub.chatgpt.com/",
+        "expected_allowed": false,
+        "actual_allowed": true
+      }
+    ],
+    "browser_started": false,
+    "inference_calls": 0
+  },
+  "process_and_mutex_snapshot": {
+    "matching_processes": [
+      {
+        "ProcessId": 29004,
+        "ParentProcessId": 1176,
+        "Name": "python.exe"
+      }
+    ],
+    "mutex_exists": false,
+    "mutex_held_by_other": false,
+    "mutex_abandoned": false
+  },
+  "inference_metadata": {
+    "owner": "hermes",
+    "pid": 7164,
+    "invocation_id": "inv-113db191877e",
+    "released_at": "2026-10-12T22:28:49.5726219-03:00",
+    "status": "RELEASED"
+  },
+  "installed_hermes": {
+    "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+    "tag": "v0.21.6"
+  },
+  "llama_config": {
+    "alias": "qwen36",
+    "host": "127.0.0.1",
+    "port": 8080,
+    "ctx_size": 65536,
+    "parallel": 1
+  },
+  "subphases": {
+    "7A.3": "PENDING / NOT_RUN",
+    "7A.4": "PENDING / NOT_RUN",
+    "7A.5": "PENDING / NOT_RUN",
+    "7A.6": "PENDING / NOT_RUN",
+    "7A.7": "PENDING / NOT_RUN",
+    "7A.8": "PENDING / NOT_RUN",
+    "7A.9": "PENDING / NOT_RUN",
+    "7A.10": "PENDING / NOT_RUN",
+    "CHATGPT_IDEMPOTENCY": "PENDING / NOT_RUN"
+  },
+  "regression_gate": "NOT_RUN: detencion durante INSPECT; no implementacion nueva",
+  "new_dependencies": [],
+  "new_commits": [],
+  "autocorrections": [],
+  "production_changes": [],
+  "macrophase_7a": "IN_PROGRESS; NO PASS",
+  "ready_for_7b": false,
+  "cleanup": {
+    "started_inference_or_browser": false,
+    "terminated_processes": [],
+    "locks_deleted": [],
+    "note": "No se iniciaron workers, llama ni browser. Mutex sondeado y handle cerrado en finally. Metadata RELEASED conservada."
+  },
+  "report_files": [
+    "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\inspection-7a-20261013-011310\\inspection.json",
+    "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\inspection-7a-20261013-011310\\REPORT.md"
+  ],
+  "resume_requirements": [
+    "Reconciliar estados documentales contra evidencia sin falsificar PASS.",
+    "Corregir y probar el domain-lock segun politica canonica antes de continuar.",
+    "Reconciliar versiones del resumen historico contra evidencia original.",
+    "Repetir preflight y regression smoke antes de 7A.3."
+  ],
+  "final_process_check": {
+    "matching_processes": [],
+    "count": 0,
+    "note": "Verificacion desde PowerShell despues de finalizar el proceso Python de captura. El snapshot anterior incluia un python.exe transitorio; no se reporta como huerfano."
+  },
+  "final_git_status": "## phase/7a2-mcp-plugins\n?? evidence/inspection-7a-20261013-011310/"
+}

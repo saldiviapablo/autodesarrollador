@@ -1,6 +1,9 @@
 # Resumen de Validación — Fase 5: Qwen Code CLI
 ## Proyecto: Desarrollador Autónomo
 **Fecha de ejecución:** 2026-10-11  
+> HISTORICAL SNAPSHOT — current versions are defined by VERSIONS.lock
+> Aclaración de preflight (2026-10-13): se conservan los datos originales de esta ejecución histórica. Las versiones vigentes fueron verificadas contra `config/VERSIONS.lock`; esta nota no certifica retroactivamente las versiones mencionadas en el snapshot.
+
 **Estado general:** PASS (100% pruebas superadas exitosamente)  
 **Entorno de ejecución:** Windows 11 Pro 24H2 | Node.js v24.14.1 | npm 11.11.0 | Python 3.14.0
 

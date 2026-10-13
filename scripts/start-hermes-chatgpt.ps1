@@ -22,6 +22,10 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 if (-not $scriptDir) { $scriptDir = $PSScriptRoot }
 if (-not $scriptDir) { $scriptDir = (Get-Location).Path }
 $infraRoot = (Resolve-Path "$scriptDir\..").Path
+. (Join-Path $scriptDir 'chatgpt-domain-policy.ps1')
+if (-not (Test-ChatGptUrl -Url $TargetUrl)) {
+    return [PSCustomObject]@{ Status = 'DOMAIN_BLOCKED'; Url = $TargetUrl }
+}
 
 $chromePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
 if (-not (Test-Path -LiteralPath $chromePath)) {
