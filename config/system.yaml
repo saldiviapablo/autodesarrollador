@@ -127,6 +127,7 @@ hermes:
       - "technical-audit-review"
       - "safe-refactoring"
   hooks:
-    auto_accept: true
+    auto_accept: false
+    require_sha256_integrity: true
     pre_tool_call_script: "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\hermes-pre-tool-hook.py"
     fail_closed: true

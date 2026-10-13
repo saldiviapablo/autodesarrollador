@@ -63,6 +63,13 @@ hermes_capabilities:
   skills_can_bypass_guardrails: false
   enforce_pre_tool_hook: true
 
+hooks:
+  pre_tool_call:
+    path: "scripts/hermes-pre-tool-hook.py"
+    sha256: "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c"
+    auto_accept: false
+    on_mismatch: "HOOK_INTEGRITY_MISMATCH"
+
 protected_paths:
   - "C:\\AI\\llama.cpp"
   - "C:\\Users\\Pc\\.cache\\huggingface\\hub\\models--ggml-org--Qwen3.6-35B-A3B-GGUF"

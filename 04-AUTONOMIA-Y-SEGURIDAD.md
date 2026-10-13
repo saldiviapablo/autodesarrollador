@@ -1290,12 +1290,17 @@ La memoria persistente de Hermes (Nivel 2) debe protegerse contra contaminación
 
 ---
 
-# 72. Revisión de Seguridad de Skills Reutilizables
+# 72. Revisión de Seguridad de Skills Reutilizables e Integridad Criptográfica de Hooks
 
-Los Skills (Memoria Procedimental):
-- Deben ser archivos de texto plano o Markdown auditables por humanos en `~/.hermes/skills/`.
+Los Skills (Memoria Procedimental) y los hooks de seguridad de Hermes deben cumplir:
+- Los Skills deben ser archivos de texto plano o Markdown auditables por humanos en `~/.hermes/skills/`.
 - No pueden contener código ejecutable ofuscado ni invocaciones arbitrarias a shell scripts no autorizados.
 - **Inviolabilidad de Políticas:** Un Skill no tiene potestad para modificar, ampliar o relajar ninguna regla de `security.yaml` o del contrato de ejecución.
+- **Integridad Criptográfica SHA-256 de Hooks (`pre_tool_call`):**
+  - Queda terminantemente prohibido activar `HERMES_ACCEPT_HOOKS=1` o `hooks_auto_accept: true` por defecto en el runtime normal.
+  - El hash SHA-256 aprobado del hook (`scripts/hermes-pre-tool-hook.py`) se registra canónicamente en `config/security.yaml` (`hooks.pre_tool_call.sha256`).
+  - Antes de iniciar Hermes, `scripts/invoke-hermes.ps1` calcula el SHA-256 actual del hook y lo compara contra el hash aprobado; cualquier discrepancia detiene inmediatamente la ejecución con estado `HOOK_INTEGRITY_MISMATCH` (`DENY`).
+  - La sincronización de `script_mtime_at_approval` en `shell-hooks-allowlist.json` sólo se permite después de haber comprobado criptográficamente que `SHA-256 actual == SHA-256 aprobado`.
 
 ---
 

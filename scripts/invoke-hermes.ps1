@@ -46,6 +46,12 @@ param(
     [string[]]$Skills = @(),
 
     [Parameter(Mandatory = $false)]
+    [string]$SecurityYamlPath = "",
+
+    [Parameter(Mandatory = $false)]
+    [string]$HookScriptOverride = "",
+
+    [Parameter(Mandatory = $false)]
     [string[]]$ExtraArgs = @()
 )
 
@@ -188,13 +194,52 @@ $psi.StandardErrorEncoding = [System.Text.Encoding]::UTF8
 $psi.UseShellExecute = $false
 $psi.CreateNoWindow = $true
 
-# Variables de entorno seguras locales
+# Variables de entorno seguras locales (HERMES_ACCEPT_HOOKS explícitamente ausente)
 $psi.EnvironmentVariables["OPENAI_BASE_URL"] = $baseUrl
 $psi.EnvironmentVariables["OPENAI_API_KEY"] = "local-not-required"
 $psi.EnvironmentVariables["OPENAI_MODEL"] = $modelName
-$psi.EnvironmentVariables["HERMES_ACCEPT_HOOKS"] = "1"
 $psi.EnvironmentVariables["PYTHONUTF8"] = "1"
 $psi.EnvironmentVariables["PYTHONIOENCODING"] = "utf-8"
+if ($psi.EnvironmentVariables.ContainsKey("HERMES_ACCEPT_HOOKS")) {
+    $psi.EnvironmentVariables.Remove("HERMES_ACCEPT_HOOKS")
+}
+$hermesAcceptHooksActive = $psi.EnvironmentVariables.ContainsKey("HERMES_ACCEPT_HOOKS")
+
+# 5.1 Verificación determinista de integridad criptográfica (SHA-256) del hook antes de iniciar Hermes
+$memoryGuardScript = Join-Path $infraRoot "scripts\hermes-memory-guard.ps1"
+$secYamlEffective = if (-not [string]::IsNullOrWhiteSpace($SecurityYamlPath)) { $SecurityYamlPath } else { Join-Path $infraRoot "config\security.yaml" }
+$guardArgs = @{
+    Action           = "VerifyHookIntegrity"
+    SecurityYamlPath = $secYamlEffective
+}
+if (-not [string]::IsNullOrWhiteSpace($HookScriptOverride)) {
+    $guardArgs["HookScriptPath"] = $HookScriptOverride
+}
+$integrityRaw = & $memoryGuardScript @guardArgs
+$integrityObj = ($integrityRaw -join "`n") | ConvertFrom-Json
+
+if (-not $integrityObj.allowed -or $integrityObj.status -ne "PASS") {
+    return [PSCustomObject]@{
+        Success            = $false
+        Status             = "HOOK_INTEGRITY_MISMATCH"
+        Decision           = "DENY"
+        HookIntegrity      = "HOOK_INTEGRITY_MISMATCH"
+        ApprovedHookSha256 = $integrityObj.approved_sha256
+        RuntimeHookSha256  = $integrityObj.runtime_sha256
+        HookPath           = $integrityObj.hook_path
+        HermesAcceptHooks  = $hermesAcceptHooksActive
+        ExitCode           = -3
+        TimedOut           = $false
+        Duration           = 0
+        Stdout             = ""
+        Stderr             = "DENY [HOOK_INTEGRITY_MISMATCH]: SHA-256 mismatch for hook '$($integrityObj.hook_path)'. Approved=$($integrityObj.approved_sha256), Runtime=$($integrityObj.runtime_sha256)."
+        SessionId          = ""
+        BaseUrl            = $baseUrl
+        Model              = $modelName
+        Profile            = $Profile
+        WorkingDir         = $targetWorkDir
+    }
+}
 
 $lockToken = $null
 if (-not $SkipLock) {
@@ -202,18 +247,25 @@ if (-not $SkipLock) {
     $lockToken = Acquire-InferenceLock -Owner "hermes" -Purpose "supervisor-orchestration" -TimeoutSeconds $TimeoutSeconds -InfraPath $infraRoot
     if (-not $lockToken.Acquired) {
         return [PSCustomObject]@{
-            Success       = $false
-            ExitCode      = -2
-            TimedOut      = $false
-            LockStatus    = $lockToken.Status
-            Duration      = 0
-            Stdout        = ""
-            Stderr        = "Error de adquisicion de Inference Lock: $($lockToken.Error)"
-            SessionId     = ""
-            BaseUrl       = $baseUrl
-            Model         = $modelName
-            Profile       = $Profile
-            WorkingDir    = $targetWorkDir
+            Success            = $false
+            Status             = "LOCK_FAILURE"
+            Decision           = "DENY"
+            HookIntegrity      = "PASS"
+            ApprovedHookSha256 = $integrityObj.approved_sha256
+            RuntimeHookSha256  = $integrityObj.runtime_sha256
+            HookPath           = $integrityObj.hook_path
+            HermesAcceptHooks  = $hermesAcceptHooksActive
+            ExitCode           = -2
+            TimedOut           = $false
+            LockStatus         = $lockToken.Status
+            Duration           = 0
+            Stdout             = ""
+            Stderr             = "Error de adquisicion de Inference Lock: $($lockToken.Error)"
+            SessionId          = ""
+            BaseUrl            = $baseUrl
+            Model              = $modelName
+            Profile            = $Profile
+            WorkingDir         = $targetWorkDir
         }
     }
 }
@@ -267,17 +319,24 @@ if ($rawOut -match 'session[_-]id[:\s]+([a-zA-Z0-9_\-]+)') {
 }
 
 $resultObj = [PSCustomObject]@{
-    Success       = (-not $timedOut -and ($exitCode -eq 0))
-    ExitCode      = $exitCode
-    TimedOut      = $timedOut
-    Duration      = $duration
-    Stdout        = $rawOut
-    Stderr        = $rawErr
-    SessionId     = $extractedSessionId
-    BaseUrl       = $baseUrl
-    Model         = $modelName
-    Profile       = $Profile
-    WorkingDir    = $targetWorkDir
+    Success            = (-not $timedOut -and ($exitCode -eq 0))
+    Status             = if (-not $timedOut -and ($exitCode -eq 0)) { "OK" } else { "ERROR" }
+    Decision           = "ALLOW"
+    HookIntegrity      = "PASS"
+    ApprovedHookSha256 = $integrityObj.approved_sha256
+    RuntimeHookSha256  = $integrityObj.runtime_sha256
+    HookPath           = $integrityObj.hook_path
+    HermesAcceptHooks  = $hermesAcceptHooksActive
+    ExitCode           = $exitCode
+    TimedOut           = $timedOut
+    Duration           = $duration
+    Stdout             = $rawOut
+    Stderr             = $rawErr
+    SessionId          = $extractedSessionId
+    BaseUrl            = $baseUrl
+    Model              = $modelName
+    Profile            = $Profile
+    WorkingDir         = $targetWorkDir
 }
 
 return $resultObj

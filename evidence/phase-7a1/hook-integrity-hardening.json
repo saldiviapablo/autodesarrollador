@@ -1,0 +1,49 @@
+{
+    "test_id":  "T-7A-HOOK-001",
+    "name":  "Hardening de Integridad Criptográfica SHA-256 para Hooks de Hermes",
+    "status":  "PASS",
+    "timestamp":  "2026-10-12T22:28:53.5673205-03:00",
+    "hook_path":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\hermes-pre-tool-hook.py",
+    "approved_sha256":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+    "runtime_sha256":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+    "hermes_accept_hooks_default_absent":  true,
+    "hooks_doctor_output":  "Checking 1 configured shell hook(s)...\n\n  [pre_tool_call] \"C:/Python314/python.exe\" \"C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/scripts/hermes-pre-tool-hook.py\"\n      ✓ script exists and is executable\n      ✓ allowlisted (approved 2026-10-12T22:59:48.928501Z)\n      ✓ script unchanged since approval\n      ✓ ran clean with empty stdout (exit=0, 0.127s) — hook is observer-only\n\nAll shell hooks look healthy.",
+    "positive_test":  {
+                          "status":  "PASS",
+                          "decision":  "ALLOW",
+                          "hermes_accept_hooks":  false,
+                          "hermes_exit_code":  0,
+                          "hermes_stdout":  "HOOK_INTEGRITY_POSITIVE_OK",
+                          "passed":  true
+                      },
+    "tampering_test":  {
+                           "tampered_sha256":  "56337aaf7a7b2a6de90a2a511862fb29a5114f29dce542e81cf2e930bdf6735c",
+                           "approved_sha256":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+                           "status":  "HOOK_INTEGRITY_MISMATCH",
+                           "decision":  "DENY",
+                           "exit_code":  -3,
+                           "stderr":  "DENY [HOOK_INTEGRITY_MISMATCH]: SHA-256 mismatch for hook \u0027C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\hermes-pre-tool-hook.py\u0027. Approved=49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c, Runtime=56337aaf7a7b2a6de90a2a511862fb29a5114f29dce542e81cf2e930bdf6735c.",
+                           "rejected":  true
+                       },
+    "restoration_test":  {
+                             "restored_sha256":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+                             "matches_approved":  true,
+                             "status":  "PASS",
+                             "decision":  "ALLOW",
+                             "verified":  true
+                         },
+    "legitimate_change_sandbox_test":  {
+                                           "unapproved_change_status":  "HOOK_INTEGRITY_MISMATCH",
+                                           "unapproved_change_decision":  "DENY",
+                                           "step1_denied":  true,
+                                           "explicitly_updated_sha256":  "83ff9073fab236516a439c570ae9ca37d3fc2dc651951438262056b12296c6c7",
+                                           "approved_change_status":  "PASS",
+                                           "approved_change_decision":  "ALLOW",
+                                           "step2_allowed":  true
+                                       },
+    "secret_sanitization_smoke_t_7a_mem_002":  {
+                                                   "status":  "PASS",
+                                                   "pre_tool_hook_action":  "modify",
+                                                   "plaintext_secret_leaked":  false
+                                               }
+}

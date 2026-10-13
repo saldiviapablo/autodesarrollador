@@ -10,7 +10,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("SanitizeText", "WriteMemoryEntry", "SanitizeMemoryStore", "AuditSkill", "GetMemoryStatus")]
+    [ValidateSet("SanitizeText", "WriteMemoryEntry", "SanitizeMemoryStore", "AuditSkill", "GetMemoryStatus", "VerifyHookIntegrity")]
     [string]$Action = "GetMemoryStatus",
 
     [Parameter(Mandatory = $false)]
@@ -24,6 +24,12 @@ param(
     [string]$SkillPath = "",
 
     [Parameter(Mandatory = $false)]
+    [string]$SecurityYamlPath = "",
+
+    [Parameter(Mandatory = $false)]
+    [string]$HookScriptPath = "",
+
+    [Parameter(Mandatory = $false)]
     [string]$ProfileDir = "C:\Users\Pc\AppData\Local\hermes\profiles\desarrollador-autonomo"
 )
 
@@ -35,6 +41,7 @@ $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
 $PythonExe = "C:\Python314\python.exe"
 $HookScript = Join-Path $PSScriptRoot "hermes-pre-tool-hook.py"
 $SecurityGuardScript = Join-Path $PSScriptRoot "security-guard.ps1"
+$DefaultSecurityYaml = Join-Path $WorkspaceRoot "config\security.yaml"
 $MemoriesDir = Join-Path $ProfileDir "memories"
 $MemoryFile = Join-Path $MemoriesDir "MEMORY.md"
 $UserFile = Join-Path $MemoriesDir "USER.md"
@@ -158,5 +165,80 @@ switch ($Action) {
             user_entries       = $usrEntries.Count
         }
         Write-Output ($status | ConvertTo-Json -Depth 5)
+    }
+
+    "VerifyHookIntegrity" {
+        $secYamlToUse = if (-not [string]::IsNullOrWhiteSpace($SecurityYamlPath)) { $SecurityYamlPath } else { $DefaultSecurityYaml }
+        if (-not (Test-Path -LiteralPath $secYamlToUse)) {
+            throw "No se encontró el archivo de políticas de seguridad: $secYamlToUse"
+        }
+        $pyReadSec = 'import yaml, json, sys; print(json.dumps(yaml.safe_load(open(sys.argv[1], encoding=\"utf-8-sig\"))))'
+        $secJson = & $PythonExe -c $pyReadSec "$secYamlToUse"
+        $secCfg = $secJson | ConvertFrom-Json
+
+        $relHookPath = [string]$secCfg.hooks.pre_tool_call.path
+        $approvedSha256 = ([string]$secCfg.hooks.pre_tool_call.sha256).Trim().ToLowerInvariant()
+        $autoAcceptCfg = [bool]$secCfg.hooks.pre_tool_call.auto_accept
+
+        $targetHookFull = if (-not [string]::IsNullOrWhiteSpace($HookScriptPath)) {
+            $HookScriptPath
+        } elseif ([System.IO.Path]::IsPathRooted($relHookPath)) {
+            $relHookPath
+        } else {
+            Join-Path $WorkspaceRoot ($relHookPath -replace '/', '\')
+        }
+
+        $exists = Test-Path -LiteralPath $targetHookFull
+        $runtimeSha256 = if ($exists) {
+            (Get-FileHash -LiteralPath $targetHookFull -Algorithm SHA256).Hash.ToLowerInvariant()
+        } else {
+            "FILE_NOT_FOUND"
+        }
+
+        $hashMatches = ($exists -and ($runtimeSha256 -eq $approvedSha256) -and (-not $autoAcceptCfg))
+        $mtimeSynced = $false
+
+        if ($hashMatches) {
+            # Sólo después de verificar criptográficamente SHA-256 == SHA-256 aprobado,
+            # sincronizar script_mtime_at_approval en shell-hooks-allowlist.json si corresponde al hook productivo
+            $allowlistPath = Join-Path $ProfileDir "shell-hooks-allowlist.json"
+            $prodHookResolved = (Resolve-Path $HookScript).Path
+            $targetResolved = (Resolve-Path $targetHookFull).Path
+            if ((Test-Path -LiteralPath $allowlistPath) -and ($targetResolved -eq $prodHookResolved)) {
+                $pySyncMtime = @'
+import json, os, sys
+from datetime import datetime, timezone
+hook_path, allowlist_path = sys.argv[1], sys.argv[2]
+mtime_iso = datetime.fromtimestamp(os.path.getmtime(hook_path), tz=timezone.utc).isoformat().replace('+00:00', 'Z')
+with open(allowlist_path, 'r', encoding='utf-8-sig') as f:
+    data = json.load(f)
+changed = False
+for entry in data.get('approvals', []):
+    if entry.get('event') == 'pre_tool_call':
+        if entry.get('script_mtime_at_approval') != mtime_iso:
+            entry['script_mtime_at_approval'] = mtime_iso
+            changed = True
+if changed:
+    with open(allowlist_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2)
+print(mtime_iso)
+'@
+                $null = & $PythonExe -c $pySyncMtime "$targetResolved" "$allowlistPath"
+                $mtimeSynced = $true
+            }
+        }
+
+        $integrityRes = [ordered]@{
+            allowed              = $hashMatches
+            decision             = if ($hashMatches) { "ALLOW" } else { "DENY" }
+            status               = if ($hashMatches) { "PASS" } else { "HOOK_INTEGRITY_MISMATCH" }
+            hook_path            = $targetHookFull
+            security_config_path = $secYamlToUse
+            approved_sha256      = $approvedSha256
+            runtime_sha256       = $runtimeSha256
+            auto_accept_config   = $autoAcceptCfg
+            mtime_synced         = $mtimeSynced
+        }
+        Write-Output ($integrityRes | ConvertTo-Json -Depth 5)
     }
 }
