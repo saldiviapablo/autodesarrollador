@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "tests": {
+    "T-7A-UPDATE-001": "PASS",
+    "T-7A-UPDATE-002": "PASS"
+  },
+  "candidate_smoke": {
+    "status": "PASS",
+    "checks": {
+      "native_inside_path_allow": true,
+      "native_escape_path_deny": true,
+      "native_traversal_detected": true,
+      "native_control_character_denied": true,
+      "run_agent.py": true,
+      "tools/read_extract.py": true,
+      "tools/delegate_tool.py": true,
+      "hermes_cli/web_server.py": true,
+      "gateway/platforms/webhook.py": true
+    }
+  },
+  "injected_regression_smoke": {
+    "status": "FAIL",
+    "checks": {
+      "native_inside_path_allow": true,
+      "native_escape_path_deny": false,
+      "native_traversal_detected": true,
+      "native_control_character_denied": true,
+      "run_agent.py": true,
+      "tools/read_extract.py": true,
+      "tools/delegate_tool.py": true,
+      "hermes_cli/web_server.py": true,
+      "gateway/platforms/webhook.py": true
+    }
+  },
+  "simulated_promotion_after_smoke": true,
+  "automatic_rollback": true,
+  "production_hashes_unchanged": true,
+  "live_hermes_commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+  "live_version": "0.21.6",
+  "versions_lock_unchanged": true,
+  "backup": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\backups\\controlled-update-7d86acb46f1542fca2d7b1ad0dbcd016",
+  "archive_sha256": "d75b6c0c846613dbe93f327c1f1960f8ecce1ca7444e25e6c4ae215827c75670",
+  "new_dependencies": [],
+  "actual_update_executed": false,
+  "local_inferences": 0
+}
