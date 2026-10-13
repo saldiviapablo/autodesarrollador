@@ -26,6 +26,11 @@ if($Action -ne 'Start'){@{status='PASS';action=$Action;project=$script:Admission
 $script:Cfg=((& C:/Python314/python.exe (Join-Path $script:RunnerInfra 'scripts/mcp-sandbox-server.py') --dump-yaml-json (Join-Path $script:RunnerInfra 'config/system.yaml')) -join "`n")|ConvertFrom-Json
 $script:Auto=$script:Admission.auto;$script:RunId=$script:Admission.contract.run_id;$script:Started=[datetimeoffset]::Now
 $script:Owned=@{};$script:ExternalModel=$null;$script:CurrentTask='startup';$script:RunJob=$null
+$script:Restarts=@{llama=0;supervisor=0;worker=0;reviewer=0}
+if(Test-Path -LiteralPath (Join-Path $script:Auto 'RESTARTS.json')){
+    $savedRestarts=Get-Content -LiteralPath (Join-Path $script:Auto 'RESTARTS.json') -Raw -Encoding UTF8|ConvertFrom-Json
+    foreach($name in @('llama','supervisor','worker','reviewer')){if($savedRestarts.$name -ne $null){$script:Restarts[$name]=[int]$savedRestarts.$name}}
+}
 $script:GlobalSeconds=[Math]::Min($script:Admission.contract.time_budget_minutes*60,$script:Cfg.runner.global_timeout_minutes*60)
 if($script:Admission.plan.global_timeout_seconds){$script:GlobalSeconds=[Math]::Min($script:GlobalSeconds,$script:Admission.plan.global_timeout_seconds)}
 $runMutex=New-Object Threading.Mutex($false,'Local\DesarrolladorAutonomo_RunMutex');$held=$false;$terminal='FAILED';$failure='';$technical='FAIL'
@@ -49,9 +54,11 @@ try{
         $script:RunState=$recovered.State;Runner-Event 'RUN_RECOVERED_FROM_DISK' @{status=$recovered.Status}
     }
     Save-RunnerState 'RUNNING' 'preflight passed'
+    Write-RunnerJson (Join-Path $script:Auto 'RESTARTS.json') $script:Restarts
     $null=Write-RunLockMeta -AutopilotDir $script:Auto -RunId $script:RunId -OwnerPid $PID -ProjectRoot $script:Admission.project
     Runner-Event 'RUN_STARTED' @{approval_digest=$script:Admission.digest;backend=$script:Admission.plan.backend}
-    $watch=Start-RunnerProcess 'watchdog' 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'watchdog-monitor.ps1'),'-ProjectRoot',$script:Admission.project,'-ParentId',$PID,'-ParentStartTicks',(Get-Process -Id $PID).StartTime.ToUniversalTime().Ticks) $script:Admission.project
+    $stale=120;if($script:Admission.plan.heartbeat_stale_seconds){$stale=[Math]::Min($stale,$script:Admission.plan.heartbeat_stale_seconds)}
+    $watch=Start-RunnerProcess 'watchdog' 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'watchdog-monitor.ps1'),'-ProjectRoot',$script:Admission.project,'-ParentId',$PID,'-ParentStartTicks',(Get-Process -Id $PID).StartTime.ToUniversalTime().Ticks,'-StaleSeconds',$stale) $script:Admission.project
     if($script:Admission.plan.backend -ne 'probe'){Start-RunnerModel}
     $timeout=180;if($script:Admission.plan.phase_timeout_seconds){$timeout=$script:Admission.plan.phase_timeout_seconds}
     $base=@{project=$script:Admission.project;backend=$script:Admission.plan.backend;timeout=$timeout;probe_delay_seconds=$script:Admission.plan.probe_delay_seconds}
@@ -72,7 +79,7 @@ try{
     if(Test-Path -LiteralPath $gatePath){$gate=& $gatePath -ProjectRoot $script:Admission.project;$terminal=$gate.status}else{$terminal='STALLED';$failure='COMPLETION_GATE_NOT_INSTALLED'}
 }catch{
     $failure=$_.Exception.Message
-    if($failure -eq 'STOP_REQUESTED'){$terminal='ABORTED'}elseif($failure -match 'REQUIRES_HUMAN|EXTERNAL_MODEL'){$terminal='BLOCKED_REQUIRES_HUMAN'}else{$terminal='FAILED'}
+    if($failure -eq 'STOP_REQUESTED'){$terminal='ABORTED'}elseif($failure -eq 'NO_PROGRESS_STALLED'){$terminal='STALLED'}elseif($failure -match 'REQUIRES_HUMAN|EXTERNAL_MODEL'){$terminal='BLOCKED_REQUIRES_HUMAN'}else{$terminal='FAILED'}
 }finally{
     if($held){
         if($script:RunJob){$script:RunJob.Dispose()}

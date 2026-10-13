@@ -57,7 +57,7 @@
 | **ChatGPT Idempotency** | Reserva, deduplicación y reconciliación | **PASS** | T-CHATGPT-010 real + UTF-8/domain/budget/security/cleanup PASS; evidence/chatgpt-idempotency/. |
 | **Gate final 7A** | Regression global | **PASS** | 11 gates ejecutables, auditoría de 38 tests obligatorios, 67 checks de integridad, recovery/delegation real y cleanup/hash PASS; `evidence/regression-7a-final/`. |
 | **Fase 17** | Runner | **PASS** | evidence/phase-17/; pruebas, seguridad, timeout/cleanup y commit local. |
-| **Fase 18** | Watchdog | **PENDING** | Monitor de heartbeat, detección de procesos caídos y recuperación limitada. |
+| **Fase 18** | Watchdog | **PASS** | evidence/phase-18/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 19** | Launcher único | **PENDING** | Scripts ejecutables limpios `INICIAR` y `DETENER`. |
 | **Fase 20** | Completion Gate | **PENDING** | Validación objetiva multi-criterio antes de permitir estado COMPLETED. |
 | **Fase 21** | Reportes | **PENDING** | Generación estandarizada de `FINAL.md`, `BLOCKED.md`, `FAILURE.md`, `STALLED.md`. |
@@ -78,3 +78,5 @@
 - **Subfase 7A.4:** funcional, seguridad, timeout, cleanup, integración Hermes real y smoke PASS. 7A.5 aprobada: flujo real Supervisor → Qwen Code → Reviewer, hijo nativo y smoke PASS. 7A.6 PASS. 7A.7 PASS. 7A.8 PASS. 7A.9 PASS. 7A.10 PASS. ChatGPT Idempotency PASS. Regression gate global **PASS**. **MACROFASE 7A = PASS; READY FOR 7B YES**. Detenido; no iniciar 7B sin nueva instrucción.
 
 F17 = PASS. Próximo gate de 7B tras commit local: F18. No iniciar Macrofase8.
+
+F18 = PASS. Próximo gate de 7B tras commit local: F19. No iniciar Macrofase8.

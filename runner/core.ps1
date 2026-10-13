@@ -10,7 +10,12 @@ function Write-RunnerJson([string]$Path,$Value){
     $temporary=$Path+'.'+[guid]::NewGuid().ToString('N')+'.tmp'
     $safe=Sanitize-ObjectDeep $Value
     [IO.File]::WriteAllText($temporary,($safe|ConvertTo-Json -Depth 24),(New-Object Text.UTF8Encoding($false)))
-    if(Test-Path -LiteralPath $Path){[IO.File]::Replace($temporary,$Path,($Path+'.previous'))}else{[IO.File]::Move($temporary,$Path)}
+    for($attempt=0;$attempt -lt 6;$attempt++){
+        try{
+            if(Test-Path -LiteralPath $Path){[IO.File]::Replace($temporary,$Path,($Path+'.previous'))}else{[IO.File]::Move($temporary,$Path)}
+            return
+        }catch [IO.IOException]{if($attempt -eq 5){throw};Start-Sleep -Milliseconds 30}
+    }
 }
 function Get-RunnerAdmission([string]$Action,[string]$Project,[string]$Digest=''){
     $argsList=@((Join-Path $script:RunnerInfra 'runner/contract.py'),$Action,'--project',$Project)
@@ -57,6 +62,7 @@ function Tick-Runner {
     if(Test-Path -LiteralPath (Join-Path $script:Auto 'STOP')){throw 'STOP_REQUESTED'}
     if(Test-Path -LiteralPath (Join-Path $script:Auto 'WATCHDOG-SIGNAL.json')){throw 'WATCHDOG_HEARTBEAT_STALE'}
     if(([datetimeoffset]::Now-$script:Started).TotalSeconds -gt $script:GlobalSeconds){throw 'GLOBAL_TIMEOUT'}
+    if($script:RunState.progress.no_progress_cycles -ge $script:Cfg.limits.max_no_progress_cycles){throw 'NO_PROGRESS_STALLED'}
     Save-RunnerState 'RUNNING' $script:CurrentTask
 }
 function Start-RunnerModel {
@@ -77,6 +83,8 @@ function Start-RunnerModel {
 }
 function Invoke-RunnerManaged([string]$Name,[string]$Exe,[array]$Arguments,[int]$Timeout){
     $item=Start-RunnerProcess $Name $Exe $Arguments $script:Admission.project
+    $stageJob=New-Object DaOwnedProcessJob;$stageJob.Assign($item.process.Handle)
+    try{
     $deadline=[datetimeoffset]::Now.AddSeconds($Timeout)
     while(-not $item.process.WaitForExit(200)){
         Tick-Runner
@@ -89,13 +97,34 @@ function Invoke-RunnerManaged([string]$Name,[string]$Exe,[array]$Arguments,[int]
     [IO.File]::WriteAllText((Join-Path $script:Auto ('logs/'+$Name+'.stderr.txt')),(Sanitize-StringContent $errorText),[Text.Encoding]::UTF8)
     Runner-Event 'PROCESS_EXITED' @{name=$Name;exit_code=$item.process.ExitCode}
     return @{exit_code=$item.process.ExitCode;stdout=$output;stderr=$errorText;pid=$item.record.pid}
+    }finally{$stageJob.Dispose();$null=$item.process.WaitForExit(5000)}
 }
 function Invoke-RunnerAgent([string]$Role,$Packet){
     $script:CurrentTask=$Role
     $packetPath=Join-Path $script:Auto ('packet-'+$Role+'.json');Write-RunnerJson $packetPath $Packet
-    $result=Invoke-RunnerManaged $Role 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $script:RunnerInfra 'runner/agent-step.ps1'),'-PacketPath',$packetPath) ($Packet.timeout+10)
-    if($result.exit_code -ne 0){throw ('AGENT_FAILED:'+ $Role)}
-    return ($result.stdout|ConvertFrom-Json)
+    $limit=3;if($script:Admission.plan.restart_budget -ne $null){$limit=[Math]::Min($limit,$script:Admission.plan.restart_budget)}
+    while($true){
+        try{
+            $result=Invoke-RunnerManaged $Role 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $script:RunnerInfra 'runner/agent-step.ps1'),'-PacketPath',$packetPath) ($Packet.timeout+10)
+            if($result.exit_code -ne 0){throw ('AGENT_FAILED:'+ $Role)}
+            return ($result.stdout|ConvertFrom-Json)
+        }catch{
+            $reason=$_.Exception.Message
+            if($reason -notmatch 'AGENT_FAILED|LLAMA_LOST|PHASE_TIMEOUT'){throw}
+            if($reason -eq 'LLAMA_LOST'){
+                if($script:ExternalModel){throw 'BLOCKED_REQUIRES_HUMAN_EXTERNAL_MODEL_LOST'}
+                if($script:Restarts.llama -ge $limit){throw 'LLAMA_RESTART_BUDGET_EXHAUSTED'}
+                $script:Restarts.llama++;Write-RunnerJson (Join-Path $script:Auto 'RESTARTS.json') $script:Restarts
+                Runner-Event 'WATCHDOG_MODEL_RESTART' @{count=$script:Restarts.llama;reason=$reason}
+                Stop-RunnerProcess $script:Owned.llama;Start-RunnerModel
+            }
+            if($script:Restarts[$Role] -ge $limit){throw ('AGENT_RESTART_BUDGET_EXHAUSTED:'+ $Role)}
+            $script:Restarts[$Role]++;Write-RunnerJson (Join-Path $script:Auto 'RESTARTS.json') $script:Restarts
+            Runner-Event 'WATCHDOG_AGENT_RESTART' @{role=$Role;count=$script:Restarts[$Role];reason=$reason}
+            $recovered=& (Join-Path $script:RunnerInfra 'scripts/recover-autopilot.ps1') -ProjectPath $script:Admission.project
+            $script:RunState=$recovered.State;Save-RunnerState 'RUNNING' ('recovered '+$Role)
+        }
+    }
 }
 function Invoke-RunnerCommands([array]$Commands,[string]$Group){
     $results=@()
