@@ -1,0 +1,70 @@
+{
+  "phase": "7A.2",
+  "component": "Hermes Native Plugin / Custom Tool Architecture Inventory",
+  "timestamp": "2026-10-12T22:48:30-03:00",
+  "hermes_version": "0.21.6",
+  "hermes_commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+  "profile": "desarrollador-autonomo",
+  "plugin_discovery_locations": [
+    {
+      "scope": "profile_user_plugins",
+      "path": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins",
+      "description": "Profile-scoped user plugins directory (<HERMES_HOME>/plugins/<plugin-name>/)"
+    },
+    {
+      "scope": "repo_mirror",
+      "path": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\plugins",
+      "description": "Version-controlled repository mirror of governed plugins"
+    },
+    {
+      "scope": "project_local",
+      "path": ".hermes/plugins",
+      "description": "Project-level plugins (requiresHERMES_ENABLE_PROJECT_PLUGINS=1, disabled by default for security)"
+    }
+  ],
+  "plugin_structure": {
+    "manifest_file": "plugin.yaml",
+    "entrypoint_file": "__init__.py",
+    "entrypoint_function": "register(ctx: PluginContext)",
+    "registration_methods": [
+      "ctx.register_tool(name, toolset, schema, handler, check_fn, description, override=False)",
+      "ctx.register_hook(hook_name, callback)",
+      "ctx.register_cli_command(name, help, setup_fn, handler_fn)",
+      "ctx.register_command(name, handler, description)"
+    ]
+  },
+  "opt_in_and_security_controls": {
+    "opt_in_by_default": true,
+    "enabled_config_key": "plugins.enabled",
+    "disabled_config_key": "plugins.disabled",
+    "load_timeout_key": "plugins.load_timeout_seconds",
+    "hook_callback_timeout_key": "plugins.hook_callback_timeout",
+    "tool_override_default_denied": true,
+    "mcp_access_default_denied": true,
+    "cryptographic_integrity_policy": {
+      "enforced_by": [
+        "config/security.yaml (plugins.<name>.sha256)",
+        "scripts/hermes-mcp-plugin-guard.ps1 (VerifyPluginIntegrity)",
+        "scripts/invoke-hermes.ps1 (pre-launch SHA-256 verification)"
+      ],
+      "on_mismatch": "PLUGIN_INTEGRITY_MISMATCH",
+      "decision_on_mismatch": "DENY"
+    }
+  },
+  "cli_commands": {
+    "list": "hermes -p desarrollador-autonomo plugins list --plain --no-bundled",
+    "validate": "hermes -p desarrollador-autonomo plugins validate <path>",
+    "doctor": "hermes -p desarrollador-autonomo plugins doctor <name>",
+    "show": "hermes -p desarrollador-autonomo plugins show <name>",
+    "enable": "hermes -p desarrollador-autonomo plugins enable <name>",
+    "disable": "hermes -p desarrollador-autonomo plugins disable <name>",
+    "capabilities": "hermes -p desarrollador-autonomo plugins capabilities"
+  },
+  "governed_plugin_implemented": {
+    "name": "desarrollador-autonomo-health",
+    "version": "1.0.0",
+    "registered_tools": ["da_project_health"],
+    "registered_hooks": ["pre_tool_call"],
+    "privilege_escalation_allowed": false
+  }
+}

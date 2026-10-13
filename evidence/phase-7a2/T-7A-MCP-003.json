@@ -1,0 +1,48 @@
+﻿{
+    "test_id":  "T-7A-MCP-003",
+    "name":  "Deterministic MCP Timeout and Clean Child Process Termination",
+    "status":  "PASS",
+    "timestamp":  "2026-10-12T23:12:11.5769586-03:00",
+    "configured_timeout_seconds":  30,
+    "requested_sleep_seconds":  38,
+    "timeout_response":  {
+                             "status":  "MCP_TIMEOUT",
+                             "decision":  "DENY",
+                             "is_error":  true,
+                             "server":  "da_local_sandbox",
+                             "tool":  "da_slow_test",
+                             "child_pid":  29308,
+                             "duration_seconds":  30.012,
+                             "timeout_seconds":  30.0,
+                             "reason":  "MCP tool \u0027da_slow_test\u0027 exceeded deterministic timeout of 30.0s and was terminated cleanly."
+                         },
+    "child_process_alive_after_kill":  false,
+    "post_timeout_health":  {
+                                "health_state":  "HEALTHY",
+                                "probe":  {
+                                              "status":  "HEALTHY",
+                                              "decision":  "ALLOW",
+                                              "is_error":  false,
+                                              "server":  "da_local_sandbox",
+                                              "tool":  "da_health",
+                                              "child_pid":  7528,
+                                              "duration_seconds":  0.089,
+                                              "result":  {
+                                                             "status":  "HEALTHY",
+                                                             "decision":  "ALLOW",
+                                                             "server":  "da_local_sandbox",
+                                                             "version":  "1.0.0",
+                                                             "tool":  "da_health",
+                                                             "pid":  7528,
+                                                             "sandbox_root":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp",
+                                                             "allowed_tools":  [
+                                                                                   "da_echo",
+                                                                                   "da_health",
+                                                                                   "da_read_sandbox",
+                                                                                   "da_slow_test"
+                                                                               ],
+                                                             "timestamp":  "2026-10-13T02:12:11.555354Z"
+                                                         }
+                                          }
+                            }
+}

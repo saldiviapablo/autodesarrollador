@@ -1,0 +1,64 @@
+{
+  "phase": "7A.2",
+  "component": "Hermes Native MCP Support Inventory",
+  "timestamp": "2026-10-12T22:48:30-03:00",
+  "hermes_version": "0.21.6",
+  "hermes_commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+  "profile": "desarrollador-autonomo",
+  "profile_config_path": "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\config.yaml",
+  "repo_config_mirror_path": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\hermes-profile\\config.yaml",
+  "mcp_sdk_available": true,
+  "mcp_sdk_version": "2.0.0",
+  "mcp_sdk_python": "C:\\Users\\Pc\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+  "local_server_python": "C:\\Python314\\python.exe",
+  "cli_commands": {
+    "list": "hermes -p desarrollador-autonomo mcp list",
+    "test": "hermes -p desarrollador-autonomo mcp test <server_name>",
+    "add": "hermes -p desarrollador-autonomo mcp add <name> --command <cmd> --args <args...>",
+    "remove": "hermes -p desarrollador-autonomo mcp remove <name>",
+    "configure": "hermes -p desarrollador-autonomo mcp configure <name>",
+    "serve": "hermes -p desarrollador-autonomo mcp serve"
+  },
+  "supported_transports": [
+    {
+      "transport": "stdio",
+      "config_keys": ["command", "args", "env", "enabled", "timeout", "connect_timeout", "trust", "tools", "sampling"],
+      "description": "Local subprocess communicating over JSON-RPC 2.0 stdin/stdout."
+    },
+    {
+      "transport": "streamable_http",
+      "config_keys": ["url", "headers", "auth", "ssl_verify", "client_cert", "client_key", "timeout", "connect_timeout", "keepalive_interval", "trust", "tools"],
+      "description": "Remote or local HTTP/HTTPS MCP server using Streamable HTTP."
+    },
+    {
+      "transport": "sse",
+      "config_keys": ["url", "transport: sse", "headers", "auth", "timeout", "connect_timeout"],
+      "description": "Legacy Server-Sent Events HTTP transport."
+    }
+  ],
+  "tool_naming_convention": {
+    "prefix": "mcp__",
+    "pattern": "mcp__<sanitized_server_name>__<sanitized_tool_name>",
+    "max_length": 64,
+    "example": "mcp__da_local_sandbox__da_echo"
+  },
+  "native_filtering_capabilities": {
+    "tools_include": "Allowlist (whitelist) of exact tool names or fnmatch globs under mcp_servers.<name>.tools.include. Takes precedence over exclude. [] disables all tools.",
+    "tools_exclude": "Blocklist (blacklist) of tool names or globs under mcp_servers.<name>.tools.exclude.",
+    "tools_resources": "Boolean flag (default true) controlling registration of list_resources/read_resource utility tools. Set to false for minimum surface.",
+    "tools_prompts": "Boolean flag (default true) controlling registration of list_prompts/get_prompt utility tools. Set to false for minimum surface."
+  },
+  "native_timeouts_and_resilience": {
+    "tool_timeout_key": "mcp_servers.<name>.timeout",
+    "default_tool_timeout_seconds": 120,
+    "governed_tool_timeout_seconds": 30,
+    "connect_timeout_key": "mcp_servers.<name>.connect_timeout",
+    "default_connect_timeout_seconds": 60,
+    "governed_connect_timeout_seconds": 15,
+    "single_query_discovery_timeout_key": "mcp_single_query_discovery_timeout",
+    "governed_single_query_discovery_timeout_seconds": 15.0,
+    "circuit_breaker": "Opens after 3 consecutive failures for 60s cooldown; reconnects automatically when stdio child dies or on next call.",
+    "credential_stripping": "Stdio subprocess environment strips unrelated API keys/tokens unless explicitly passed in mcp_servers.<name>.env."
+  },
+  "initial_configured_servers": []
+}

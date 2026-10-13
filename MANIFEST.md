@@ -96,7 +96,7 @@ Parámetros validados:
 - **Macrofase 4 (Integración Hermes ↔ Qwen Code - Fases 7 a 9):** **PASS**
 - **Macrofase 5 (Memoria y Continuidad - Fases 10 a 12):** **PASS**
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
-- **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **IN_PROGRESS** (`Subfase 7A.1 — Memoria Persistente + Skills Reutilizables`: **PASS**; `7A.2–7A.10`: **PENDING**)
+- **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **IN_PROGRESS** (`Subfase 7A.1 — Memoria Persistente + Skills Reutilizables`: **PASS**; `Subfase 7A.2 — Servidores MCP + Plugins / Custom Tools`: **PASS**; `7A.3–7A.10`: **PENDING**)
 - **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PENDING**
 - **Macrofase 8 (Validación Final - Fases 23 a 28):** **PENDING**
 

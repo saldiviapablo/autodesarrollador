@@ -1,0 +1,64 @@
+﻿{
+    "test_id":  "T-7A-MCP-005",
+    "name":  "MCP Server Process Crash Handling and Recovery",
+    "status":  "PASS",
+    "timestamp":  "2026-10-12T23:12:16.0458861-03:00",
+    "initial_live_pid":  13216,
+    "initial_handshake_ok":  true,
+    "process_terminated_clean":  true,
+    "unavailable_state_probe":  {
+                                    "health_state":  "UNAVAILABLE",
+                                    "allowed":  false,
+                                    "decision":  "DENY",
+                                    "server":  "da_local_sandbox",
+                                    "script_path":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp\\non-existent-mcp-server.py",
+                                    "reason":  "MCP server script not found: C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp\\non-existent-mcp-server.py"
+                                },
+    "recovered_health_probe":  {
+                                   "health_state":  "HEALTHY",
+                                   "probe":  {
+                                                 "status":  "HEALTHY",
+                                                 "decision":  "ALLOW",
+                                                 "is_error":  false,
+                                                 "server":  "da_local_sandbox",
+                                                 "tool":  "da_health",
+                                                 "child_pid":  34872,
+                                                 "duration_seconds":  0.091,
+                                                 "result":  {
+                                                                "status":  "HEALTHY",
+                                                                "decision":  "ALLOW",
+                                                                "server":  "da_local_sandbox",
+                                                                "version":  "1.0.0",
+                                                                "tool":  "da_health",
+                                                                "pid":  34872,
+                                                                "sandbox_root":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp",
+                                                                "allowed_tools":  [
+                                                                                      "da_echo",
+                                                                                      "da_health",
+                                                                                      "da_read_sandbox",
+                                                                                      "da_slow_test"
+                                                                                  ],
+                                                                "timestamp":  "2026-10-13T02:12:13.104658Z"
+                                                            }
+                                             }
+                               },
+    "recovered_tool_call":  {
+                                "status":  "OK",
+                                "decision":  "ALLOW",
+                                "is_error":  false,
+                                "server":  "da_local_sandbox",
+                                "tool":  "da_echo",
+                                "child_pid":  34956,
+                                "duration_seconds":  0.092,
+                                "result":  {
+                                               "status":  "OK",
+                                               "decision":  "ALLOW",
+                                               "server":  "da_local_sandbox",
+                                               "tool":  "da_echo",
+                                               "echo":  "Recovered after crash",
+                                               "pid":  34956,
+                                               "timestamp":  "2026-10-13T02:12:13.395896Z"
+                                           }
+                            },
+    "hermes_cli_retest":  "Testing \u0027da_local_sandbox\u0027...\r\n  Transport: stdio → C:/Python314/python.exe\r\n  Auth: none\r\n  ✓ Connected (983ms)\r\n  ✓ Tools discovered: 5\r\n\r\n    da_echo                              Echoes a sanitized message back deterministically from ...\r\n    da_read_sandbox                      Reads a UTF-8 file strictly confined to sandbox/phase7a...\r\n    da_health                            Returns deterministic health status of the local govern...\r\n    da_slow_test                         Simulates a slow MCP operation that sleeps for sleep_se...\r\n    da_forbidden_test                    Unapproved test tool exposed by the server to verify th..."
+}

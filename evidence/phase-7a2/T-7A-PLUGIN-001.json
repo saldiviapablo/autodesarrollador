@@ -1,0 +1,100 @@
+﻿{
+    "test_id":  "T-7A-PLUGIN-001",
+    "name":  "Plugin Integration and Cryptographic SHA-256 Integrity Verification",
+    "status":  "PASS",
+    "timestamp":  "2026-10-12T23:12:20.4364758-03:00",
+    "case_a_intact_verification":  {
+                                       "allowed":  true,
+                                       "status":  "PASS",
+                                       "decision":  "ALLOW",
+                                       "plugin_name":  "desarrollador-autonomo-health",
+                                       "entrypoint_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py",
+                                       "manifest_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\plugin.yaml",
+                                       "approved_sha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                                       "runtime_sha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                                       "approved_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                                       "runtime_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                                       "reason":  "Plugin SHA-256 cryptographic integrity verified."
+                                   },
+    "case_a_hermes_plugins_doctor":  "Plugin Doctor: \r\nC:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarr\r\nollador-autonomo-health\r\n  manifest: desarrollador-autonomo-health 1.0.0 (standalone)\r\n  OK: runtime discovery, manifest parsing, import, and registration passed\r\n  registrations: 1 tool(s), 1 hook(s)",
+    "case_a_hermes_plugins_validate":  "✓ manifest — plugin.yaml parses\r\n✓ manifest fields — name, version, description present\r\n✓ requires_hermes — spec \u0027\u003e=0.21.0\u0027 parses\r\n✓ config schema — not declared\r\n✓ requires_env — all entries UPPER_SNAKE\r\n✓ loadable — entry: __init__.py\r\n✓ python dependencies — none declared\r\n✓ capability probe — register() ran in isolation\r\n✓ declared tools — matches registrations\r\n✓ declared hooks — matches registrations\r\n✓ declared middleware — matches registrations\r\n✓ built-in tool collisions — no collisions\r\n✓ security scan — safe\r\n✓ no core override — no runtime rebinds of Hermes core\r\n◆ Isolation — runs in the plugin host (plugins.isolation: host)\r\n\r\nValidation passed.",
+    "case_a_tool_execution":  {
+                                  "status":  "HEALTHY",
+                                  "decision":  "ALLOW",
+                                  "plugin":  "desarrollador-autonomo-health",
+                                  "version":  "1.0.0",
+                                  "tool":  "da_project_health",
+                                  "requested_action":  "read_health",
+                                  "workspace_root":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo",
+                                  "checks":  {
+                                                 "system_yaml_present":  true,
+                                                 "security_yaml_present":  true,
+                                                 "versions_lock_present":  true,
+                                                 "pre_tool_hook_present":  true,
+                                                 "mcp_sandbox_server_present":  true,
+                                                 "mcp_sandbox_dir_present":  true
+                                             },
+                                  "timestamp":  "2026-10-13T02:12:19.759776Z",
+                                  "allowed":  true
+                              },
+    "case_b_tampered_guard_verify":  {
+                                         "allowed":  false,
+                                         "status":  "PLUGIN_INTEGRITY_MISMATCH",
+                                         "decision":  "DENY",
+                                         "plugin_name":  "desarrollador-autonomo-health",
+                                         "entrypoint_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py",
+                                         "manifest_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\plugin.yaml",
+                                         "approved_sha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                                         "runtime_sha256":  "507e6e2c25d98cc219183b37525afa95c70909cdb739ca8748364e34dc9ec7c4",
+                                         "approved_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                                         "runtime_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                                         "reason":  "DENY [PLUGIN_INTEGRITY_MISMATCH]: SHA-256 mismatch for plugin \u0027desarrollador-autonomo-health\u0027 entrypoint \u0027C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py\u0027. Approved=88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e, Runtime=507e6e2c25d98cc219183b37525afa95c70909cdb739ca8748364e34dc9ec7c4."
+                                     },
+    "case_b_tampered_tool_invoke":  {
+                                        "allowed":  false,
+                                        "status":  "PLUGIN_INTEGRITY_MISMATCH",
+                                        "decision":  "DENY",
+                                        "plugin_name":  "desarrollador-autonomo-health",
+                                        "entrypoint_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py",
+                                        "manifest_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\plugin.yaml",
+                                        "approved_sha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                                        "runtime_sha256":  "507e6e2c25d98cc219183b37525afa95c70909cdb739ca8748364e34dc9ec7c4",
+                                        "approved_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                                        "runtime_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                                        "reason":  "DENY [PLUGIN_INTEGRITY_MISMATCH]: SHA-256 mismatch for plugin \u0027desarrollador-autonomo-health\u0027 entrypoint \u0027C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py\u0027. Approved=88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e, Runtime=507e6e2c25d98cc219183b37525afa95c70909cdb739ca8748364e34dc9ec7c4."
+                                    },
+    "case_b_tampered_hermes_launcher":  {
+                                            "Status":  "PLUGIN_INTEGRITY_MISMATCH",
+                                            "Decision":  "DENY",
+                                            "PluginIntegrity":  "PLUGIN_INTEGRITY_MISMATCH",
+                                            "ApprovedPluginSha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                                            "RuntimePluginSha256":  "507e6e2c25d98cc219183b37525afa95c70909cdb739ca8748364e34dc9ec7c4",
+                                            "ExitCode":  -4
+                                        },
+    "case_b_restored_verification":  {
+                                         "allowed":  true,
+                                         "status":  "PASS",
+                                         "decision":  "ALLOW",
+                                         "plugin_name":  "desarrollador-autonomo-health",
+                                         "entrypoint_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py",
+                                         "manifest_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\plugin.yaml",
+                                         "approved_sha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                                         "runtime_sha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                                         "approved_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                                         "runtime_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                                         "reason":  "Plugin SHA-256 cryptographic integrity verified."
+                                     },
+    "case_c_legitimate_update_flow":  {
+                                          "allowed":  true,
+                                          "status":  "PASS",
+                                          "decision":  "ALLOW",
+                                          "plugin_name":  "desarrollador-autonomo-health",
+                                          "entrypoint_path":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp\\plugin-update-test\\__init__.py",
+                                          "manifest_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\plugin.yaml",
+                                          "approved_sha256":  "077866b84f2ad33cd45ed0626caff12335849b1252e1c74492a46b75a2784cc8",
+                                          "runtime_sha256":  "077866b84f2ad33cd45ed0626caff12335849b1252e1c74492a46b75a2784cc8",
+                                          "approved_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                                          "runtime_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                                          "reason":  "Plugin SHA-256 cryptographic integrity verified."
+                                      }
+}

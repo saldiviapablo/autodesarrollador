@@ -1,0 +1,44 @@
+﻿{
+    "test_id":  "T-7A-MCP-002",
+    "name":  "MCP Tool Allowlist Enforcement (da_forbidden_test -\u003e DENY)",
+    "status":  "PASS",
+    "timestamp":  "2026-10-12T23:11:41.0859806-03:00",
+    "hermes_and_hook_layer":  {
+                                  "hermes_native_filter_allows_da_echo":  true,
+                                  "hermes_native_filter_allows_da_forbidden_test":  false,
+                                  "plugin_pre_tool_hook_verdict":  {
+                                                                       "action":  "block",
+                                                                       "message":  "DENY [TOOL_NOT_ALLOWED]: MCP tool \u0027da_forbidden_test\u0027 on server \u0027da_local_sandbox\u0027 is not in the approved allowlist."
+                                                                   }
+                              },
+    "powershell_guard_verdict":  {
+                                     "allowed":  false,
+                                     "status":  "TOOL_NOT_ALLOWED",
+                                     "decision":  "DENY",
+                                     "server":  "da_local_sandbox",
+                                     "tool":  "da_forbidden_test",
+                                     "allowed_tools":  [
+                                                           "da_echo",
+                                                           "da_read_sandbox",
+                                                           "da_health",
+                                                           "da_slow_test"
+                                                       ],
+                                     "reason":  "DENY [TOOL_NOT_ALLOWED]: Tool \u0027da_forbidden_test\u0027 is not in the approved allowlist for server \u0027da_local_sandbox\u0027."
+                                 },
+    "mcp_server_inner_verdict":  {
+                                     "status":  "TOOL_NOT_ALLOWED",
+                                     "decision":  "DENY",
+                                     "is_error":  true,
+                                     "server":  "da_local_sandbox",
+                                     "tool":  "da_forbidden_test",
+                                     "child_pid":  30120,
+                                     "duration_seconds":  0.088,
+                                     "result":  {
+                                                    "status":  "TOOL_NOT_ALLOWED",
+                                                    "decision":  "DENY",
+                                                    "reason":  "DENY [TOOL_NOT_ALLOWED]: Tool \u0027da_forbidden_test\u0027 is not in the approved allowlist [\u0027da_echo\u0027, \u0027da_health\u0027, \u0027da_read_sandbox\u0027, \u0027da_slow_test\u0027].",
+                                                    "tool":  "da_forbidden_test",
+                                                    "server":  "da_local_sandbox"
+                                                }
+                                 }
+}

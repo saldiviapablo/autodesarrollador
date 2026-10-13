@@ -26,4 +26,28 @@ hooks:
     - command: '"C:/Python314/python.exe" "C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/scripts/hermes-pre-tool-hook.py"'
       timeout: 30
       fail_closed: true
+mcp_single_query_discovery_timeout: 15.0
+mcp_servers:
+  da_local_sandbox:
+    command: "C:/Python314/python.exe"
+    args:
+      - "C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/scripts/mcp-sandbox-server.py"
+    enabled: true
+    trust: full
+    timeout: 30
+    connect_timeout: 15
+    tools:
+      include:
+        - da_echo
+        - da_read_sandbox
+        - da_health
+        - da_slow_test
+      resources: false
+      prompts: false
+plugins:
+  enabled:
+    - desarrollador-autonomo-health
+  load_timeout_seconds: 10
+  hook_callback_timeout: 30
 _config_version: 50
+

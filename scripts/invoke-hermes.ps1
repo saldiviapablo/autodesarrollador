@@ -1,4 +1,4 @@
-﻿# ==============================================================================
+# ==============================================================================
 # scripts/invoke-hermes.ps1 — Wrapper de Invocación para Hermes Agent CLI
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fase 6 — Hermes Agent)
@@ -50,6 +50,12 @@ param(
 
     [Parameter(Mandatory = $false)]
     [string]$HookScriptOverride = "",
+
+    [Parameter(Mandatory = $false)]
+    [string]$PluginEntrypointOverride = "",
+
+    [Parameter(Mandatory = $false)]
+    [string]$PluginManifestOverride = "",
 
     [Parameter(Mandatory = $false)]
     [string[]]$ExtraArgs = @()
@@ -241,6 +247,45 @@ if (-not $integrityObj.allowed -or $integrityObj.status -ne "PASS") {
     }
 }
 
+# 5.2 Verificación determinista de integridad criptográfica (SHA-256) de plugins antes de iniciar Hermes
+$mcpPluginGuardScript = Join-Path $infraRoot "scripts\hermes-mcp-plugin-guard.ps1"
+$pluginGuardArgs = @{
+    Action           = "VerifyPluginIntegrity"
+    SecurityYamlPath = $secYamlEffective
+}
+if (-not [string]::IsNullOrWhiteSpace($PluginEntrypointOverride)) {
+    $pluginGuardArgs["PluginEntrypointOverride"] = $PluginEntrypointOverride
+}
+if (-not [string]::IsNullOrWhiteSpace($PluginManifestOverride)) {
+    $pluginGuardArgs["PluginManifestOverride"] = $PluginManifestOverride
+}
+$pluginIntegrityRaw = & $mcpPluginGuardScript @pluginGuardArgs
+$pluginIntegrityObj = ($pluginIntegrityRaw -join "`n") | ConvertFrom-Json
+
+if (-not $pluginIntegrityObj.allowed -or $pluginIntegrityObj.status -ne "PASS") {
+    return [PSCustomObject]@{
+        Success              = $false
+        Status               = "PLUGIN_INTEGRITY_MISMATCH"
+        Decision             = "DENY"
+        HookIntegrity        = "PASS"
+        PluginIntegrity      = "PLUGIN_INTEGRITY_MISMATCH"
+        ApprovedPluginSha256 = $pluginIntegrityObj.approved_sha256
+        RuntimePluginSha256  = $pluginIntegrityObj.runtime_sha256
+        PluginPath           = $pluginIntegrityObj.entrypoint_path
+        HermesAcceptHooks    = $hermesAcceptHooksActive
+        ExitCode             = -4
+        TimedOut             = $false
+        Duration             = 0
+        Stdout               = ""
+        Stderr               = $pluginIntegrityObj.reason
+        SessionId            = ""
+        BaseUrl              = $baseUrl
+        Model                = $modelName
+        Profile              = $Profile
+        WorkingDir           = $targetWorkDir
+    }
+}
+
 $lockToken = $null
 if (-not $SkipLock) {
     . (Join-Path $infraRoot "scripts\inference-lock.ps1")
@@ -319,24 +364,28 @@ if ($rawOut -match 'session[_-]id[:\s]+([a-zA-Z0-9_\-]+)') {
 }
 
 $resultObj = [PSCustomObject]@{
-    Success            = (-not $timedOut -and ($exitCode -eq 0))
-    Status             = if (-not $timedOut -and ($exitCode -eq 0)) { "OK" } else { "ERROR" }
-    Decision           = "ALLOW"
-    HookIntegrity      = "PASS"
-    ApprovedHookSha256 = $integrityObj.approved_sha256
-    RuntimeHookSha256  = $integrityObj.runtime_sha256
-    HookPath           = $integrityObj.hook_path
-    HermesAcceptHooks  = $hermesAcceptHooksActive
-    ExitCode           = $exitCode
-    TimedOut           = $timedOut
-    Duration           = $duration
-    Stdout             = $rawOut
-    Stderr             = $rawErr
-    SessionId          = $extractedSessionId
-    BaseUrl            = $baseUrl
-    Model              = $modelName
-    Profile            = $Profile
-    WorkingDir         = $targetWorkDir
+    Success              = (-not $timedOut -and ($exitCode -eq 0))
+    Status               = if (-not $timedOut -and ($exitCode -eq 0)) { "OK" } else { "ERROR" }
+    Decision             = "ALLOW"
+    HookIntegrity        = "PASS"
+    ApprovedHookSha256   = $integrityObj.approved_sha256
+    RuntimeHookSha256    = $integrityObj.runtime_sha256
+    HookPath             = $integrityObj.hook_path
+    PluginIntegrity      = "PASS"
+    ApprovedPluginSha256 = $pluginIntegrityObj.approved_sha256
+    RuntimePluginSha256  = $pluginIntegrityObj.runtime_sha256
+    PluginPath           = $pluginIntegrityObj.entrypoint_path
+    HermesAcceptHooks    = $hermesAcceptHooksActive
+    ExitCode             = $exitCode
+    TimedOut             = $timedOut
+    Duration             = $duration
+    Stdout               = $rawOut
+    Stderr               = $rawErr
+    SessionId            = $extractedSessionId
+    BaseUrl              = $baseUrl
+    Model                = $modelName
+    Profile              = $Profile
+    WorkingDir           = $targetWorkDir
 }
 
 return $resultObj

@@ -131,3 +131,33 @@ hermes:
     require_sha256_integrity: true
     pre_tool_call_script: "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\hermes-pre-tool-hook.py"
     fail_closed: true
+  mcp:
+    enabled: true
+    single_query_discovery_timeout_seconds: 15.0
+    default_timeout_seconds: 30
+    connect_timeout_seconds: 15
+    servers:
+      da_local_sandbox:
+        enabled: true
+        transport: "stdio"
+        command: "C:\\Python314\\python.exe"
+        script: "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\mcp-sandbox-server.py"
+        sandbox_root: "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp"
+        timeout_seconds: 30
+        connect_timeout_seconds: 15
+        tools_include:
+          - "da_echo"
+          - "da_read_sandbox"
+          - "da_health"
+          - "da_slow_test"
+        resources_enabled: false
+        prompts_enabled: false
+  plugins:
+    enabled:
+      - "desarrollador-autonomo-health"
+    profile_plugins_dir: "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins"
+    repo_plugins_dir: "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\plugins"
+    require_sha256_integrity: true
+    load_timeout_seconds: 10
+    hook_callback_timeout_seconds: 30
+

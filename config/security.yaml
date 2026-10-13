@@ -70,6 +70,51 @@ hooks:
     auto_accept: false
     on_mismatch: "HOOK_INTEGRITY_MISMATCH"
 
+mcp:
+  enabled: true
+  minimum_surface_policy: true
+  allow_dynamic_unapproved_servers: false
+  allow_dynamic_unapproved_tools: false
+  default_timeout_seconds: 30
+  connect_timeout_seconds: 15
+  servers:
+    da_local_sandbox:
+      enabled: true
+      transport: "stdio"
+      script_path: "scripts/mcp-sandbox-server.py"
+      sha256: "ab4c23e4c68dde352c63fbac9bef53dbdb747a411d52fb949d996413b20807c3"
+      sandbox_root: "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp"
+      allowed_tools:
+        - "da_echo"
+        - "da_read_sandbox"
+        - "da_health"
+        - "da_slow_test"
+      denied_tools:
+        - "da_forbidden_test"
+      allow_resources: false
+      allow_prompts: false
+      timeout_seconds: 30
+      connect_timeout_seconds: 15
+
+plugins:
+  require_sha256_integrity: true
+  allow_privilege_escalation: false
+  allow_unapproved_plugins: false
+  on_mismatch: "PLUGIN_INTEGRITY_MISMATCH"
+  approved_plugins:
+    desarrollador-autonomo-health:
+      enabled: true
+      version: "1.0.0"
+      repo_dir: "config/plugins/desarrollador-autonomo-health"
+      profile_dir: "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health"
+      entrypoint: "__init__.py"
+      sha256: "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e"
+      manifest_sha256: "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c"
+      allowed_tools:
+        - "da_project_health"
+      allowed_hooks:
+        - "pre_tool_call"
+
 protected_paths:
   - "C:\\AI\\llama.cpp"
   - "C:\\Users\\Pc\\.cache\\huggingface\\hub\\models--ggml-org--Qwen3.6-35B-A3B-GGUF"

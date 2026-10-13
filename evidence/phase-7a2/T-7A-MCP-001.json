@@ -1,0 +1,74 @@
+﻿{
+    "test_id":  "T-7A-MCP-001",
+    "name":  "MCP Functional Connection and Allowlisted Tool Execution",
+    "status":  "PASS",
+    "timestamp":  "2026-10-12T23:11:40.5244757-03:00",
+    "hermes_mcp_list":  "MCP Servers:\r\n\r\n  Name             Transport                      Tools        Status    \r\n  ──────────────── ────────────────────────────── ──────────── ──────────\r\n  da_local_sandbox C:/Python314/python.exe C...   4 selected   ✓ enabled",
+    "hermes_mcp_test":  "Testing \u0027da_local_sandbox\u0027...\r\n  Transport: stdio → C:/Python314/python.exe\r\n  Auth: none\r\n  ✓ Connected (721ms)\r\n  ✓ Tools discovered: 5\r\n\r\n    da_echo                              Echoes a sanitized message back deterministically from ...\r\n    da_read_sandbox                      Reads a UTF-8 file strictly confined to sandbox/phase7a...\r\n    da_health                            Returns deterministic health status of the local govern...\r\n    da_slow_test                         Simulates a slow MCP operation that sleeps for sleep_se...\r\n    da_forbidden_test                    Unapproved test tool exposed by the server to verify th...",
+    "health_check":  {
+                         "health_state":  "HEALTHY",
+                         "probe":  {
+                                       "status":  "HEALTHY",
+                                       "decision":  "ALLOW",
+                                       "is_error":  false,
+                                       "server":  "da_local_sandbox",
+                                       "tool":  "da_health",
+                                       "child_pid":  18760,
+                                       "duration_seconds":  0.089,
+                                       "result":  {
+                                                      "status":  "HEALTHY",
+                                                      "decision":  "ALLOW",
+                                                      "server":  "da_local_sandbox",
+                                                      "version":  "1.0.0",
+                                                      "tool":  "da_health",
+                                                      "pid":  18760,
+                                                      "sandbox_root":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp",
+                                                      "allowed_tools":  [
+                                                                            "da_echo",
+                                                                            "da_health",
+                                                                            "da_read_sandbox",
+                                                                            "da_slow_test"
+                                                                        ],
+                                                      "timestamp":  "2026-10-13T02:11:39.843369Z"
+                                                  }
+                                   }
+                     },
+    "da_echo_call":  {
+                         "status":  "OK",
+                         "decision":  "ALLOW",
+                         "is_error":  false,
+                         "server":  "da_local_sandbox",
+                         "tool":  "da_echo",
+                         "child_pid":  15508,
+                         "duration_seconds":  0.095,
+                         "result":  {
+                                        "status":  "OK",
+                                        "decision":  "ALLOW",
+                                        "server":  "da_local_sandbox",
+                                        "tool":  "da_echo",
+                                        "echo":  "Hola desde MCP 7A.2",
+                                        "pid":  15508,
+                                        "timestamp":  "2026-10-13T02:11:40.143009Z"
+                                    }
+                     },
+    "da_read_call":  {
+                         "status":  "OK",
+                         "decision":  "ALLOW",
+                         "is_error":  false,
+                         "server":  "da_local_sandbox",
+                         "tool":  "da_read_sandbox",
+                         "child_pid":  23944,
+                         "duration_seconds":  0.09,
+                         "result":  {
+                                        "status":  "OK",
+                                        "decision":  "ALLOW",
+                                        "server":  "da_local_sandbox",
+                                        "tool":  "da_read_sandbox",
+                                        "requested_path":  "sample-allowed.txt",
+                                        "canonical_path":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp\\sample-allowed.txt",
+                                        "content":  "﻿Desarrollador Autonomo - Subfase 7A.2 MCP Sandbox Fixture\nStatus: ALLOWED_SANDBOX_READ\nScope: sandbox/phase7a2-mcp\n",
+                                        "bytes":  118,
+                                        "timestamp":  "2026-10-13T02:11:40.503212Z"
+                                    }
+                     }
+}

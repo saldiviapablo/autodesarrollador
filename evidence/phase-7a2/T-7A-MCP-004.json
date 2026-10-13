@@ -1,0 +1,48 @@
+﻿{
+    "test_id":  "T-7A-MCP-004",
+    "name":  "MCP Canonical Path Confinement (Traversal, Outside Path, NTFS Junction)",
+    "status":  "PASS",
+    "timestamp":  "2026-10-12T23:12:12.3290316-03:00",
+    "relative_traversal_attempt":  {
+                                       "allowed":  false,
+                                       "status":  "PATH_CONFINEMENT_VIOLATION",
+                                       "decision":  "DENY",
+                                       "server":  "da_local_sandbox",
+                                       "tool":  "da_read_sandbox",
+                                       "reason":  "DENY [PATH_CONFINEMENT_VIOLATION]: Relative path traversal (\u0027..\u0027) is forbidden in \u0027../../config/security.yaml\u0027."
+                                   },
+    "outside_path_attempt":  {
+                                 "allowed":  false,
+                                 "status":  "PATH_CONFINEMENT_VIOLATION",
+                                 "decision":  "DENY",
+                                 "server":  "da_local_sandbox",
+                                 "tool":  "da_read_sandbox",
+                                 "reason":  "DENY [PATH_CONFINEMENT_VIOLATION]: Canonical path \u0027C:\\Windows\\win.ini\u0027 is outside allowed sandbox root \u0027C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp\u0027."
+                             },
+    "junction_escape_guard":  {
+                                  "allowed":  false,
+                                  "status":  "PATH_CONFINEMENT_VIOLATION",
+                                  "decision":  "DENY",
+                                  "server":  "da_local_sandbox",
+                                  "tool":  "da_read_sandbox",
+                                  "reason":  "DENY [PATH_CONFINEMENT_VIOLATION]: Symlink or NTFS junction escape detected at \u0027C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp\\junction-escape\u0027."
+                              },
+    "junction_escape_server":  {
+                                   "status":  "PATH_CONFINEMENT_VIOLATION",
+                                   "decision":  "DENY",
+                                   "is_error":  true,
+                                   "server":  "da_local_sandbox",
+                                   "tool":  "da_read_sandbox",
+                                   "child_pid":  22728,
+                                   "duration_seconds":  0.093,
+                                   "result":  {
+                                                  "status":  "PATH_CONFINEMENT_VIOLATION",
+                                                  "decision":  "DENY",
+                                                  "server":  "da_local_sandbox",
+                                                  "tool":  "da_read_sandbox",
+                                                  "requested_path":  "junction-escape/security.yaml",
+                                                  "reason":  "DENY [PATH_CONFINEMENT_VIOLATION]: Symlink or NTFS junction escape detected at \u0027C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\phase7a2-mcp\\junction-escape\u0027.",
+                                                  "timestamp":  "2026-10-13T02:12:12.295877Z"
+                                              }
+                               }
+}

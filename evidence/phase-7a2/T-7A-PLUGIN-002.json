@@ -1,0 +1,53 @@
+﻿{
+    "test_id":  "T-7A-PLUGIN-002",
+    "name":  "Plugin Security Guardrail Enforcement (PLUGIN != PRIVILEGE ESCALATION)",
+    "status":  "PASS",
+    "timestamp":  "2026-10-12T23:12:21.2231509-03:00",
+    "blocked_command_attempt":  {
+                                    "status":  "SECURITY_BLOCKED",
+                                    "decision":  "DENY",
+                                    "allowed":  false,
+                                    "blocked_by":  "pre_tool_call_hook",
+                                    "plugin":  "desarrollador-autonomo-health",
+                                    "tool":  "da_project_health",
+                                    "reason":  "DENY [PLUGIN_SECURITY_GUARD]: Prohibited plugin action \u0027git push --force\u0027 blocked by Security Guard (PLUGIN != PRIVILEGE ESCALATION)."
+                                },
+    "protected_config_attempt":  {
+                                     "status":  "SECURITY_BLOCKED",
+                                     "decision":  "DENY",
+                                     "allowed":  false,
+                                     "blocked_by":  "pre_tool_call_hook",
+                                     "plugin":  "desarrollador-autonomo-health",
+                                     "tool":  "da_project_health",
+                                     "reason":  "DENY [PLUGIN_SECURITY_GUARD]: Unauthorized action \u0027modify_security_yaml\u0027. Plugin \u0027desarrollador-autonomo-health\u0027 is strictly read-only (\u0027read_health\u0027)."
+                                 },
+    "outside_workspace_path_attempt":  {
+                                           "status":  "SECURITY_BLOCKED",
+                                           "decision":  "DENY",
+                                           "allowed":  false,
+                                           "blocked_by":  "pre_tool_call_hook",
+                                           "plugin":  "desarrollador-autonomo-health",
+                                           "tool":  "da_project_health",
+                                           "reason":  "DENY [PLUGIN_SECURITY_GUARD]: Target path \u0027C:\\Windows\\System32\\cmd.exe\u0027 is outside workspace \u0027C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\u0027."
+                                       },
+    "path_traversal_attempt":  {
+                                   "status":  "SECURITY_BLOCKED",
+                                   "decision":  "DENY",
+                                   "allowed":  false,
+                                   "blocked_by":  "pre_tool_call_hook",
+                                   "plugin":  "desarrollador-autonomo-health",
+                                   "tool":  "da_project_health",
+                                   "reason":  "DENY [PLUGIN_SECURITY_GUARD]: Path traversal (\u0027..\u0027) in target_path \u0027..\\..\\Outside\\secret.txt\u0027 blocked by Security Guard."
+                               },
+    "hook_7a1_integrity_preserved":  {
+                                         "allowed":  true,
+                                         "decision":  "ALLOW",
+                                         "status":  "PASS",
+                                         "hook_path":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\hermes-pre-tool-hook.py",
+                                         "security_config_path":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\security.yaml",
+                                         "approved_sha256":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+                                         "runtime_sha256":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+                                         "auto_accept_config":  false,
+                                         "mtime_synced":  true
+                                     }
+}
