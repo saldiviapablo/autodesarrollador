@@ -132,3 +132,7 @@ Adaptador F24 PASS (A–H, ejecución única, UTF-8, vacío, exit code, stdout/s
 ## Estado vigente — F24 intento 2 — 2026-10-14
 
 Adaptador F24 A–H PASS (fea2a71). F23 PASS preservada. F24 real intento 2 FAIL / BLOCKED_REQUIRES_HUMAN: launcher/Runner/Supervisor/Worker, tests/build, checkpoint, crash y Watchdog ejecutados; ChatGPT UNKNOWN_DELIVERY, un intento, sin reenvío. Reviewer final/Completion Gate no alcanzados. F25/4H/F26 y regression final NOT_RUN. Cleanup e integridad PASS. READY FOR REAL PILOT NO. docs/F24-ATTEMPT-2-BLOCKED-REPORT.md.
+
+## Reconciliación humana F24 sin envío — 2026-10-14
+
+BASELINE_PROVEN YES: 1/1 persistido antes de DELIVERY_INTENT. Fix de la ruta humana PASS para conversaciones existentes; reconciliación automática intacta. Mismo ID f24-7257c739e1fd449aae1f1f93856aef7f: NOT_DELIVERED_CONFIRMED / RETRY_SAFE, una habilitación pendiente, send_attempts permanece 1, cero envíos físicos adicionales. Composer original sin reescribir; turnos 1/1, presupuesto 1/5 y STATE sin cambios. Histórico UNKNOWN_DELIVERY/DELIVERY_INTENT conservado. F23 PASS y evidencias históricas intactas. F24 E2E no certificado y detenido por instrucción humana; F25–F28 no iniciadas. docs/F24-HUMAN-BASELINE-RECONCILIATION.md; evidence/f24-human-baseline-reconciliation-20261014/.

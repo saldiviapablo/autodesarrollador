@@ -5,6 +5,33 @@ const crypto = require('crypto');
 const ROOT = path.resolve(__dirname, '..');
 const hash = text => crypto.createHash('sha256').update(text, 'utf8').digest('hex');
 function normalize(text) { return text.trim().replace(/\r\n/g, '\n').replace(/\n\n+/g, '\n'); }
+// Human-only checks. Automatic reconciliation must never infer non-delivery.
+function humanConversation(url) {
+  try {
+    const parsed = new URL(url);
+    if (parsed.origin !== 'https://chatgpt.com' || parsed.username || parsed.password) return undefined;
+    if (parsed.pathname === '/') return null; // New conversation, only with a 0/0 baseline.
+    return /^\/c\/([A-Za-z0-9-]{1,120})\/?$/.exec(parsed.pathname)?.[1];
+  } catch { return undefined; }
+}
+// Old history entries omit changed fields. Provenance must be audited separately
+// and bound to the exact ledger in the explicit human receipt; this is only a
+// consistency check and cannot authorize a retry on its own.
+function humanHistoryConsistent(record) {
+  if (![record.user_turns_before, record.assistant_turns_before].every(n => Number.isSafeInteger(n) && n >= 0) ||
+      !Array.isArray(record.history)) return false;
+  let state = 'RESERVED', attempts = 0, baselineWrite = false, intent = false;
+  let previousTime = Date.parse(record.created_at);
+  if (!Number.isFinite(previousTime)) return false;
+  for (const event of record.history) {
+    if (!event || event.from !== state || !Number.isFinite(Date.parse(event.at)) || Date.parse(event.at) < previousTime) return false;
+    if (event.to === 'RESERVED' && !intent && event.send_attempts === 0) baselineWrite = true;
+    else if (event.to === 'DELIVERY_INTENT' && baselineWrite && !intent && event.send_attempts === 1) intent = true;
+    else if (!(event.to === 'UNKNOWN_DELIVERY' && intent && event.send_attempts === 1)) return false;
+    state = event.to; attempts = event.send_attempts; previousTime = Date.parse(event.at);
+  }
+  return baselineWrite && intent && state === record.delivery_state && attempts === record.send_attempts;
+}
 function directoryChecked(directory) {
   const target = path.resolve(directory);
   const allowed = ['runtime', 'sandbox'].some(name => {
@@ -72,10 +99,27 @@ class ConsultationLedger {
   confirmNotDelivered(id, receipt, observation, receiptHash) {
     const record = this.read(id);
     if (!record || record.message_confirmed || record.human_retry_consumed || record.human_retry_remaining || !['UNKNOWN_DELIVERY','DELIVERY_INTENT'].includes(record.delivery_state)) throw new Error('HUMAN_RECONCILIATION_STATE_DENIED');
-    if (receipt.source !== 'HUMAN_VISUAL_RECONCILIATION' || receipt.resolution !== 'DELIVERY_NOT_OCCURRED' || receipt.consultation_id !== id || receipt.prompt_sha256 !== record.prompt_sha256 || receipt.authorized_additional_physical_attempts !== 1) throw new Error('HUMAN_RECEIPT_INVALID');
-    if (record.send_attempts !== 1 || observation.user !== record.user_turns_before || observation.assistant !== record.assistant_turns_before || observation.user !== 0 || observation.assistant !== 0 || observation.isStreaming || hash(normalize(observation.composer)) !== record.prompt_sha256 || !observation.sendAvailable) throw new Error('NOT_DELIVERED_OBSERVATION_MISMATCH');
+    if (record.schema_version !== '1.0' || record.consultation_id !== id || !/^[a-f0-9]{64}$/.test(record.prompt_sha256 || '') ||
+        record.send_attempts !== 1 || !humanHistoryConsistent(record) ||
+        ['user_turns_after','assistant_turns_after','response_sha256','human_source','human_receipt_sha256'].some(key => Object.hasOwn(record, key))) throw new Error('HUMAN_LEDGER_INCONSISTENT');
+    if (!receipt || receipt.source !== 'HUMAN_VISUAL_RECONCILIATION' || receipt.resolution !== 'DELIVERY_NOT_OCCURRED' ||
+        receipt.consultation_id !== id || receipt.prompt_sha256 !== record.prompt_sha256 || receipt.authorized_additional_physical_attempts !== 1 ||
+        receipt.baseline_user_turns !== record.user_turns_before || receipt.baseline_assistant_turns !== record.assistant_turns_before ||
+        receipt.baseline_proven !== true || !/^[a-f0-9]{64}$/.test(receipt.baseline_proof_sha256 || '') ||
+        receipt.baseline_proof_ledger_sha256 !== receipt.ledger_sha256 ||
+        receipt.ledger_sha256 !== hash(fs.readFileSync(this.file(id), 'utf8')) || !/^[a-f0-9]{64}$/.test(receiptHash || '')) throw new Error('HUMAN_RECEIPT_INVALID');
+    const conversationId = humanConversation(record.conversation_url);
+    if (!observation || conversationId === undefined ||
+        (conversationId === null && (record.user_turns_before !== 0 || record.assistant_turns_before !== 0)) ||
+        receipt.conversation_id !== conversationId || humanConversation(receipt.conversation_url) !== conversationId ||
+        humanConversation(observation.url) !== conversationId) throw new Error('HUMAN_CONVERSATION_MISMATCH');
+    if (observation.user !== record.user_turns_before || observation.assistant !== record.assistant_turns_before ||
+        observation.isStreaming !== false || typeof observation.composer !== 'string' ||
+        Buffer.from(observation.composer, 'utf8').toString('utf8') !== observation.composer ||
+        hash(normalize(observation.composer)) !== record.prompt_sha256 || observation.sendAvailable !== true) throw new Error('NOT_DELIVERED_OBSERVATION_MISMATCH');
     this.#write(id, { ...record, delivery_state: 'NOT_DELIVERED_CONFIRMED', human_retry_remaining: 1,
-      human_receipt_sha256: receiptHash, human_source: receipt.source,
+      human_receipt_sha256: receiptHash, human_source: receipt.source, human_conversation_id: conversationId,
+      human_baseline_proof_sha256: receipt.baseline_proof_sha256,
       history: [...(record.history || []), { at:new Date().toISOString(), from:record.delivery_state, logical_previous:'UNKNOWN_DELIVERY', to:'NOT_DELIVERED_CONFIRMED', source:receipt.source, receipt_sha256:receiptHash, send_attempts:record.send_attempts }] });
   }
   result(id) {
