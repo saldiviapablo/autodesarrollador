@@ -24,3 +24,5 @@ El harness nuevo exige START-Recover ANTES de ChatGPT. Un boundary de crash apro
 
 ATTEMPT4 exige todos esos gates y 2700s/restart2/maxcycles5. No se modifican relojes ni ledgers anteriores.
 Regresión conjunta PASS: estados/idempotencia/human/domain/UTF-8, syntax, Runner/Watchdog/checkpoint/recovery, presupuesto concurrente, Inference Lock real entre procesos y cleanup. Modelo y hashes de seguridad preservados. ATTEMPT4 autorizado por gate, aún no iniciado al certificar estas fronteras. NO PUSH; F25/F27/F28 no iniciadas. Sin dependencias nuevas ni actualizaciones.
+
+Resultado posterior: ATTEMPT4 FAIL / MANDATORY_TEST_FAILED en consumo web real; el modelo recibió el envelope pero no produjo marcador/SHA. Los PASS deterministas previos se conservan con su alcance. ChatGPT y START-Recover E2E ATTEMPT4 NOT_RUN. Informe: docs/F24-ATTEMPT-4-STOP-REPORT.md. STOP, F25 no iniciada.

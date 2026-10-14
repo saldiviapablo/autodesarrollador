@@ -63,7 +63,7 @@
 | **Fase 21** | Reportes | **PASS** | evidence/phase-21/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 22** | Cleanup garantizado | **PASS** | evidence/phase-22/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 23** | Sandbox integral | **PASS** | Reviewer real ACCEPTED, Completion Gate PASS; histórico preservado. evidence/hermes-prompt-transport-20261014/. |
-| **Fase 24** | End-to-End corto | **FAIL / BLOCKED_REQUIRES_HUMAN** | ATTEMPT 3: Worker SUCCESS, 13 tests/build y Watchdog PASS; ChatGPT UNKNOWN_DELIVERY, sin reenvío. Reviewer/gate final NOT_RUN. evidence/phase-24-attempt-3-20261014/. |
+| **Fase 24** | End-to-End corto | **FAIL / MANDATORY_TEST_FAILED** | ATTEMPT 4: entrega web explícita PASS, consumo por Qwen NOT_PROVEN. Worker SUCCESS tras 1 reinicio; ChatGPT/Reviewer/gate NOT_RUN. evidence/phase-24-attempt-4-20261014/. |
 | **Fase 25** | Prueba 2 horas | **NOT_RUN** | Validación de estabilidad autónoma continua de 2 horas. |
 | **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
 | **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
@@ -160,3 +160,7 @@ ATTEMPT 3 queda HISTORICAL FAIL / BLOCKED_REQUIRES_HUMAN, ledger intacto y no re
 ## Gate de fronteras A/B/C antes de ATTEMPT 4 — 2026-10-14
 
 CHATGPT_BRIDGE_FIX PASS; WEB_HANDOFF PASS determinista; RECOVERY_CONTINUATION PASS con crash/START-Recover reales y roles probe explícitos. Regresión conjunta PASS; 419 archivos históricos intactos, incluido ledger de ATTEMPT3. Preparado harness ATTEMPT4 nuevo, sin aumentar 2700/restart2/maxcycles5. F24 aún no recertificada; F25/F27/F28 no iniciadas. docs/F24-FRONTIER-HARDENING.md; evidence/f24-frontiers-20261014/REGRESSION-GATE.json.
+
+## Estado vigente — F24 ATTEMPT 4 — 2026-10-14
+
+Fronteras A/B/C y smokes previos PASS (aabf021, 7de9bf9, c846e2a). Nuevo run-20261014-201149: Prepare/preflight/aprobación/launcher/Supervisor/diagnóstico FAIL inicial/fetch/entrega explícita PASS. Worker TIMEOUT y un reinicio normal 1/2; Worker final SUCCESS con 13 tests/build PASS en sus herramientas, pero consumo web NOT_PROVEN (marcador/SHA ausentes). Runner STOP RESEARCH_CONSUMPTION_NOT_PROVEN; F24 FAIL / MANDATORY_TEST_FAILED. Crash/START-Recover E2E/ChatGPT/Reviewer/Completion Gate NOT_RUN. Consulta nueva no ejecutada, cero envíos. Duración 729.54s; límites 2700/fase300/restart2/maxcycles5 sin ampliar. Cleanup/integridad PASS, 419 archivos históricos intactos. ATTEMPT3 permanece HISTORICAL FAIL / BLOCKED_REQUIRES_HUMAN y su ledger no se tocó. F23 PASS; READY_FOR_F25 NO; F25/F27/F28 no iniciadas. docs/F24-ATTEMPT-4-STOP-REPORT.md; evidence/phase-24-attempt-4-20261014/.

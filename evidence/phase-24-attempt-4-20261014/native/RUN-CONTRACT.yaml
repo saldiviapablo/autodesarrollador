@@ -1,0 +1,24 @@
+schema_version: '1.0'
+run_id: run-20261014-201149
+project_id: project
+project_root: C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/f24-attempt4-2fbcc7d8/project
+objective: Implement precise invoice arithmetic and cent-conserving allocation in
+  isolated sandbox
+acceptance_criteria:
+- precise invoice totals, fair allocations and documented behavior verified
+autonomy_mode: unattended
+authorized: true
+authorized_at: '2026-10-14T20:11:52.099653-03:00'
+created_at: '2026-10-14T20:11:49.5757737-03:00'
+time_budget_minutes: 120
+allowed_actions:
+- edit_file
+- run_test
+- git_commit_local
+forbidden_actions:
+- git_push
+- delete_root
+- modify_runner_guardrails
+test_commands: []
+build_commands: []
+security_policy_reference: config/security.yaml

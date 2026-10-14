@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final | F23 PASS; F24 ATTEMPT 3 UNKNOWN_DELIVERY | **FAIL / BLOCKED_REQUIRES_HUMAN** |
+| **Macrofase 8** | Validación Final | F23 PASS; F24 ATTEMPT 4 consumo web no demostrado | **FAIL / MANDATORY_TEST_FAILED** |
 
 Cada fase debe producir:
 
@@ -1410,3 +1410,7 @@ Adaptador F24 A–H PASS (fea2a71). F23 PASS preservada. F24 real intento 2 FAIL
 ## Estado vigente — F24 ATTEMPT 3 — 2026-10-14
 
 ATTEMPT 2 (run-20261014-020920) cerrado como FAIL / GLOBAL_TIMEOUT; sus 216 archivos, sandbox, STATE, reloj y presupuestos permanecen intactos. ATTEMPT 3 nuevo run-20261014-143502: launcher/Prepare/preflight/aprobación única, Supervisor, Worker SUCCESS tras 2 reinicios normales, 13 tests/build, checkpoint y crash/Watchdog PASS. Consulta nueva f24-a3-run-20261014-143502-bfca6e98 UNKNOWN_DELIVERY / NO RESEND; F24 FAIL / BLOCKED_REQUIRES_HUMAN. Recovery E2E posterior al crash, Reviewer final y Completion Gate NOT_RUN. Fetch web oficial PASS; lectura de WEB.json por Worker no demostrada. Duración nativa 920.52s dentro de 2700s, sin ampliación. Cleanup/integridad PASS. F23 PASS conservada. READY_FOR_F25 NO; F25–F28 no iniciadas. Informe: docs/F24-ATTEMPT-3-STOP-REPORT.md; evidence/phase-24-attempt-3-20261014/.
+
+## Estado vigente — F24 ATTEMPT 4 — 2026-10-14
+
+Fronteras A/B/C y smokes previos PASS (aabf021, 7de9bf9, c846e2a). Nuevo run-20261014-201149: Prepare/preflight/aprobación/launcher/Supervisor/diagnóstico FAIL inicial/fetch/entrega explícita PASS. Worker TIMEOUT y un reinicio normal 1/2; Worker final SUCCESS con 13 tests/build PASS en sus herramientas, pero consumo web NOT_PROVEN (marcador/SHA ausentes). Runner STOP RESEARCH_CONSUMPTION_NOT_PROVEN; F24 FAIL / MANDATORY_TEST_FAILED. Crash/START-Recover E2E/ChatGPT/Reviewer/Completion Gate NOT_RUN. Consulta nueva no ejecutada, cero envíos. Duración 729.54s; límites 2700/fase300/restart2/maxcycles5 sin ampliar. Cleanup/integridad PASS, 419 archivos históricos intactos. ATTEMPT3 permanece HISTORICAL FAIL / BLOCKED_REQUIRES_HUMAN y su ledger no se tocó. F23 PASS; READY_FOR_F25 NO; F25/F27/F28 no iniciadas. docs/F24-ATTEMPT-4-STOP-REPORT.md; evidence/phase-24-attempt-4-20261014/.
