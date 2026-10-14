@@ -32,7 +32,7 @@
     "6": "PASS",
     "7A": "PASS",
     "7B": "PASS",
-    "8": "FAIL"
+    "8": "IN_PROGRESS"
   },
   "subphases_7a": {
     "7A.1": "PASS",
@@ -72,7 +72,7 @@
   "ready_for_8": false,
   "e2e_scope": "PENDING refers to F24/F25 final validation; e2e_7b is the approved short 7B integration",
   "phases_8": {
-    "23": "FAIL",
+    "23": "PASS",
     "24": "NOT_RUN",
     "25": "NOT_RUN",
     "26": "NOT_RUN",
@@ -80,8 +80,8 @@
     "28": "NOT_RUN"
   },
   "validation_8": {
-    "status": "STOPPED_MANDATORY_TEST_FAILED",
-    "test": "F23_INDEPENDENT_REVIEWER",
+    "status": "F23_PASS_F24_PENDING",
+    "test": "F23_REVIEWER_NATIVE_STDIN",
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
     "current_security_revalidation": "PATHGUARD_FIX_SMOKE_PASS",
@@ -106,11 +106,15 @@
     "human_reconciliation": "PASS",
     "human_reconciliation_evidence": "evidence/f23-human-reconciliation/",
     "source": "HUMAN_VISUAL_RECONCILIATION",
-    "reason": "AGENT_RESTART_BUDGET_EXHAUSTED:reviewer",
+    "reason": "",
     "f23_tests_build": "PASS",
     "f23_disk_recovery": "PASS",
-    "f23_reviewer": "FAIL",
-    "f23_resume_report": "docs/F23-RESUME-STOP-REPORT-20261014.md"
+    "f23_reviewer": "PASS",
+    "f23_resume_report": "docs/F23-RESUME-STOP-REPORT-20261014.md",
+    "f23_completion_gate": "PASS",
+    "f23_transport": "PASS",
+    "f23_transport_evidence": "evidence/hermes-prompt-transport-20261014/",
+    "f23_transport_report": "docs/HERMES-REVIEWER-PROMPT-FIX.md"
   },
   "ready_for_real_pilot": false
 }

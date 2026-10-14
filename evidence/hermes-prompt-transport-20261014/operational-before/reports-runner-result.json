@@ -1,0 +1,210 @@
+{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261013-202418",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-full-feac8aea\\project",
+    "objective":  "Fix sandbox bug, decimal feature and documentation using verified research and consultant advice",
+    "duration_seconds":  363.1947611,
+    "status":  "FAILED",
+    "technical_status":  "FAIL",
+    "reason":  "AGENT_RESTART_BUDGET_EXHAUSTED:reviewer",
+    "tasks_completed":  [
+
+                        ],
+    "pending_tasks":  [
+                          "Fix sandbox bug, decimal feature and documentation using verified research and consultant advice"
+                      ],
+    "changed_files":  [
+                          "calculator.py",
+                          "README.md"
+                      ],
+    "commits":  [
+
+                ],
+    "tests":  [
+                  {
+                      "output":  "F23_UNIT_DOC_PASS\r\n",
+                      "status":  "PASS",
+                      "marker_present":  true,
+                      "id":  "unit",
+                      "exit_code":  0
+                  }
+              ],
+    "builds":  [
+                   {
+                       "output":  "F23_BUILD_PASS\r\n",
+                       "status":  "PASS",
+                       "marker_present":  true,
+                       "id":  "build",
+                       "exit_code":  0
+                   }
+               ],
+    "linters":  [
+
+                ],
+    "errors":  [
+                   {
+                       "reason":  "AGENT_FAILED:reviewer",
+                       "count":  1,
+                       "role":  "reviewer"
+                   },
+                   "AGENT_RESTART_BUDGET_EXHAUSTED:reviewer"
+               ],
+    "retries":  {
+                    "llama":  0,
+                    "supervisor":  0,
+                    "reviewer":  1,
+                    "worker":  0
+                },
+    "recoveries":  [
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  14,
+                           "event_id":  "evt-b098ce1a4960",
+                           "timestamp":  "2026-10-14T00:55:30.7314140-03:00",
+                           "run_id":  "run-20261013-202418",
+                           "actor":  "watchdog",
+                           "type":  "PARENT_CRASH_RECOVERED",
+                           "payload":  {
+                                           "parent_pid":  30436,
+                                           "reason":  "PARENT_PROCESS_LOST"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  18,
+                           "event_id":  "evt-bf407090b7dd",
+                           "timestamp":  "2026-10-14T00:55:33.9080635-03:00",
+                           "run_id":  "run-20261013-202418",
+                           "actor":  "runner",
+                           "type":  "RUN_RECOVERED_FROM_DISK",
+                           "payload":  {
+                                           "status":  "RECOVERED"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  33,
+                           "event_id":  "evt-d32437baf5e9",
+                           "timestamp":  "2026-10-14T00:59:59.3700539-03:00",
+                           "run_id":  "run-20261013-202418",
+                           "actor":  "runner",
+                           "type":  "WATCHDOG_AGENT_RESTART",
+                           "payload":  {
+                                           "reason":  "AGENT_FAILED:reviewer",
+                                           "count":  1,
+                                           "role":  "reviewer"
+                                       }
+                       }
+                   ],
+    "web_queries":  [
+
+                    ],
+    "chatgpt_queries_used":  1,
+    "blocks":  [
+
+               ],
+    "completion_gate":  {
+                            "status":  "NOT_EVALUATED",
+                            "reason":  "AGENT_RESTART_BUDGET_EXHAUSTED:reviewer"
+                        },
+    "cleanup":  {
+                    "job_closed":  true,
+                    "owned_survivors":  [
+
+                                        ],
+                    "run_mutex_released":  true,
+                    "run_lock_removed":  true,
+                    "inference_mutex":  "FREE",
+                    "external_model_preserved":  false,
+                    "errors":  [
+
+                               ]
+                },
+    "processes":  [
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  40700,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275468445012450
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  39100,
+                          "name":  "llama",
+                          "executable":  "C:\\AI\\llama.cpp\\llama-server.exe",
+                          "start_ticks":  639275468450421019
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  7104,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275468541095204
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  6076,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275469270988300
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  32320,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275469341778713
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  36840,
+                          "name":  "llama",
+                          "executable":  "C:\\AI\\llama.cpp\\llama-server.exe",
+                          "start_ticks":  639275469347503907
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  7612,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275469390283250
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  37576,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275470001154201
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  32808,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639275471949460408
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  35020,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639275471950128859
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  11848,
+                          "name":  "reviewer",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275471951078850
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  40128,
+                          "name":  "reviewer",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275472002279414
+                      }
+                  ],
+    "generated_at":  "2026-10-14T01:00:07.2265030-03:00"
+}

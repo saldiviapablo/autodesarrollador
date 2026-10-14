@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final | Reconciliación PASS; F23 Reviewer FAIL; F24–F26 NOT_RUN | **FAIL / MANDATORY_TEST_FAILED** |
+| **Macrofase 8** | Validación Final | F23 PASS; F24–F26 pendientes | **IN_PROGRESS** |
 
 Cada fase debe producir:
 
@@ -1390,3 +1390,7 @@ DELIVERY_NOT_OCCURRED confirmado por inspección humana. Mismo ID f23-ee29852956
 ## Estado actual F23 — 2026-10-14
 
 Reconciliación humana PASS, consulta COMPLETED mismo ID, retry ALREADY_SENT / 0 envíos nuevos. F23 reanudada: tests/build y recovery real PASS; Reviewer FAIL por argumentos CLI mal transportados, único reinicio agotado. F23 FAIL / MANDATORY_TEST_FAILED; F24–F28 y regression final NOT_RUN. Cleanup/integridad PASS; Chrome preexistente del usuario conservado abierto. READY FOR REAL PILOT NO. docs/F23-RESUME-STOP-REPORT-20261014.md.
+
+## Cierre del transporte Reviewer y F23 — 2026-10-14
+
+Transporte nativo stdin UTF-8 PASS; Reviewer real ACCEPTED; Completion Gate y F23 PASS. Histórico FAIL preservado. Macrofase 8 IN_PROGRESS; F24–F26 pendientes; F27/F28 no iniciadas. READY FOR REAL PILOT NO. docs/HERMES-REVIEWER-PROMPT-FIX.md; evidence/hermes-prompt-transport-20261014/.

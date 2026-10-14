@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # scripts/invoke-hermes.ps1 — Wrapper de Invocación para Hermes Agent CLI
 # Proyecto: Desarrollador Autónomo
 # Versión: 2.0 (Fase 6 — Hermes Agent)
@@ -131,8 +131,9 @@ if ($Mode -eq "oneshot") {
 } elseif ($Mode -eq "chat" -or $Mode -eq "chat-stream-json") {
     $argList.Add("chat")
     if (-not [string]::IsNullOrEmpty($Prompt)) {
-        $argList.Add("-q")
-        $argList.Add($Prompt)
+        # Native v0.21.6 stdin input: message content never enters argv.
+        $argList.Add("--query-file")
+        $argList.Add("-")
     }
     $argList.Add("--oneshot")
     $argList.Add("-Q")
@@ -356,7 +357,10 @@ try {
     New-Item -ItemType Directory -Path $jobDir -Force|Out-Null
     $hermesReadyFile=Join-Path $jobDir ([guid]::NewGuid().ToString('N')+'.ready')
     $hermesPrelude=@'
-import os, time, pathlib
+import os, sys, time, pathlib
+sys.stdin.reconfigure(encoding='utf-8', errors='strict', newline='')
+sys.stdout.reconfigure(encoding='utf-8', errors='strict')
+sys.stderr.reconfigure(encoding='utf-8', errors='strict')
 _job_ready = pathlib.Path(os.environ['DA_HERMES_JOB_READY_FILE'])
 _job_deadline = time.monotonic() + 5
 while not _job_ready.exists() and time.monotonic() < _job_deadline:
@@ -372,12 +376,19 @@ if not _job_ready.exists() or _job_ready.read_text().strip() != str(os.getpid())
     $proc = [System.Diagnostics.Process]::Start($psi)
     $hermesJob.Assign($proc.Handle)
     [IO.File]::WriteAllText($hermesReadyFile,$proc.Id.ToString())
-    $proc.StandardInput.Close()
-
     $stdoutTask = $proc.StandardOutput.ReadToEndAsync()
     $stderrTask = $proc.StandardError.ReadToEndAsync()
 
-    $waitMs = $TimeoutSeconds * 1000
+    if ($Mode -in @('chat','chat-stream-json') -and -not [string]::IsNullOrEmpty($Prompt)) {
+        # Write bytes explicitly: no BOM, newline conversion, or shell expansion.
+        $promptBytes = (New-Object Text.UTF8Encoding($false, $true)).GetBytes($Prompt)
+        $inputTask = $proc.StandardInput.BaseStream.WriteAsync($promptBytes, 0, $promptBytes.Length)
+        $inputRemaining = [Math]::Max(0, $TimeoutSeconds * 1000 - [int]((Get-Date) - $startTime).TotalMilliseconds)
+        if (-not $inputTask.Wait($inputRemaining)) { $timedOut = $true; throw 'HERMES_STDIN_WRITE_TIMEOUT' }
+    }
+    $proc.StandardInput.Close()
+
+    $waitMs = [Math]::Max(0, $TimeoutSeconds * 1000 - [int]((Get-Date) - $startTime).TotalMilliseconds)
     $exited = $proc.WaitForExit($waitMs)
 
     if (-not $exited) {

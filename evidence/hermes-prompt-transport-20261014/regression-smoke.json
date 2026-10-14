@@ -1,0 +1,60 @@
+{
+    "local_inferences":  0,
+    "worker":  {
+                   "Success":  true,
+                   "ExitCode":  0,
+                   "TimedOut":  false,
+                   "Duration":  0.2,
+                   "Stdout":  "0.25.1\n",
+                   "Stderr":  "",
+                   "Json":  null,
+                   "BaseUrl":  "http://127.0.0.1:8080/v1",
+                   "Model":  "qwen36",
+                   "ApprovalMode":  "plan",
+                   "WorkingDir":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo"
+               },
+    "hook":  {
+                 "allowed":  true,
+                 "decision":  "ALLOW",
+                 "status":  "PASS",
+                 "hook_path":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\hermes-pre-tool-hook.py",
+                 "security_config_path":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\security.yaml",
+                 "approved_sha256":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+                 "runtime_sha256":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+                 "auto_accept_config":  false,
+                 "mtime_synced":  true
+             },
+    "status":  "PASS",
+    "new_dependencies":  [
+
+                         ],
+    "lock_contender":  {
+                           "acquired":  false,
+                           "status":  "LOCK_TIMEOUT"
+                       },
+    "plugin":  {
+                   "allowed":  true,
+                   "status":  "PASS",
+                   "decision":  "ALLOW",
+                   "plugin_name":  "desarrollador-autonomo-health",
+                   "entrypoint_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py",
+                   "manifest_path":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\plugin.yaml",
+                   "approved_sha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                   "runtime_sha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                   "approved_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                   "runtime_manifest_sha256":  "f4838d484d99006183474da8aa496fc1e148174838f43b98574d4b7e1a100a3c",
+                   "reason":  "Plugin SHA-256 cryptographic integrity verified."
+               },
+    "checks":  {
+                   "reviewer_isolation":  true,
+                   "cleanup":  true,
+                   "secret_sanitization":  true,
+                   "plugin_sha256":  true,
+                   "hook_sha256":  true,
+                   "UTF8":  true,
+                   "inference_lock_cross_process":  true,
+                   "qwen_worker_invocation":  true,
+                   "supervisor_transport":  true,
+                   "inference_lock_released":  true
+               }
+}

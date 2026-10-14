@@ -98,7 +98,7 @@ Parámetros validados:
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
 - **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **PASS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5 — Bot Mode + Subagentes`: **PASS**; `7A.6 — Git Worktrees`: **PASS**; `7A.7 — Cron + No-Agent Jobs`: **PASS**; `7A.8 — Native Dashboard`: **PASS**; `7A.9 — Gateway`: **PASS**; `7A.10 — Controlled Auto-update`: **PASS**; `ChatGPT Idempotency`: **PASS**; `regression gate`: **PASS**). Preflight correctivo aprobado en commit `f133bab`.
 - **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PASS**
-- **Macrofase 8 (Validación Final - Fases 23 a 28):** **FAIL / MANDATORY_TEST_FAILED (F23 Reviewer; reconciliación PASS)**
+- **Macrofase 8 (Validación Final - Fases 23 a 28):** **IN_PROGRESS (F23 PASS; F24–F26 pendientes)**
 
 ---
 
@@ -143,3 +143,7 @@ DELIVERY_NOT_OCCURRED confirmado por inspección humana. Mismo ID f23-ee29852956
 ## Estado actual F23 — 2026-10-14
 
 Reconciliación humana PASS, consulta COMPLETED mismo ID, retry ALREADY_SENT / 0 envíos nuevos. F23 reanudada: tests/build y recovery real PASS; Reviewer FAIL por argumentos CLI mal transportados, único reinicio agotado. F23 FAIL / MANDATORY_TEST_FAILED; F24–F28 y regression final NOT_RUN. Cleanup/integridad PASS; Chrome preexistente del usuario conservado abierto. READY FOR REAL PILOT NO. docs/F23-RESUME-STOP-REPORT-20261014.md.
+
+## Cierre del transporte Reviewer y F23 — 2026-10-14
+
+Transporte nativo stdin UTF-8 PASS; Reviewer real ACCEPTED; Completion Gate y F23 PASS. Histórico FAIL preservado. Macrofase 8 IN_PROGRESS; F24–F26 pendientes; F27/F28 no iniciadas. READY FOR REAL PILOT NO. docs/HERMES-REVIEWER-PROMPT-FIX.md; evidence/hermes-prompt-transport-20261014/.

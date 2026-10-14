@@ -1,0 +1,86 @@
+{
+    "completion_gate":  {
+                            "status":  "COMPLETED",
+                            "checks":  {
+                                           "state_schema_valid":  true,
+                                           "native_live_backend":  true,
+                                           "roles_success":  true,
+                                           "independent_reviewer_accepted":  true,
+                                           "run_id_consistent":  true,
+                                           "tests_all_required":  true,
+                                           "builds_all_required":  true,
+                                           "linters_all_required":  true,
+                                           "tests_exist":  true,
+                                           "no_build_approved_or_passed":  true,
+                                           "criteria_all_mapped_and_passed":  true,
+                                           "pending_empty":  true,
+                                           "failures_not_pending":  true,
+                                           "state_tests_pass":  true,
+                                           "immutable_test_calculator.py":  true,
+                                           "immutable_build.py":  true,
+                                           "immutable_WEB.json":  true,
+                                           "immutable_CHATGPT.json":  true,
+                                           "artifact_calculator.py":  true,
+                                           "artifact_README.md":  true,
+                                           "diff_only_approved_files":  true,
+                                           "relevant_diff_exists":  true,
+                                           "state_git_head_consistent":  true
+                                       },
+                            "failed":  [
+
+                                       ],
+                            "changed_files":  [
+                                                  "README.md",
+                                                  "calculator.py"
+                                              ],
+                            "run_id":  "run-20261013-202418",
+                            "source":  "DETERMINISTIC_COMPLETION_GATE"
+                        },
+    "chatgpt_sends":  0,
+    "historical_clock_preserved":  true,
+    "automatic_restart_budget_preserved":  true,
+    "reviewer":  {
+                     "status":  "SUCCESS",
+                     "data":  {
+                                  "Success":  true,
+                                  "Status":  "OK",
+                                  "Decision":  "ALLOW",
+                                  "HookIntegrity":  "PASS",
+                                  "ApprovedHookSha256":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+                                  "RuntimeHookSha256":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+                                  "HookPath":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\hermes-pre-tool-hook.py",
+                                  "PluginIntegrity":  "PASS",
+                                  "ApprovedPluginSha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                                  "RuntimePluginSha256":  "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+                                  "PluginPath":  "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py",
+                                  "HermesAcceptHooks":  false,
+                                  "ExitCode":  0,
+                                  "TimedOut":  false,
+                                  "Duration":  78,
+                                  "Stdout":  "{\"type\": \"system\", \"subtype\": \"init\", \"model\": \"qwen36\", \"session_id\": \"20261014_013642_1cc76c\", \"timestamp\": 1791952603203}\r\n{\"type\": \"text\", \"text\": \"{\\\"\", \"timestamp\": 1791952674863}\r\n{\"type\": \"text\", \"text\": \"decision\", \"timestamp\": 1791952674889}\r\n{\"type\": \"text\", \"text\": \"\\\":\", \"timestamp\": 1791952674915}\r\n{\"type\": \"text\", \"text\": \" \\\"\", \"timestamp\": 1791952674941}\r\n{\"type\": \"text\", \"text\": \"ACCEPT\", \"timestamp\": 1791952674967}\r\n{\"type\": \"text\", \"text\": \"ED\", \"timestamp\": 1791952674995}\r\n{\"type\": \"text\", \"text\": \"\\\"}\", \"timestamp\": 1791952675022}\r\n{\"type\": \"result\", \"session_id\": \"20261014_013642_1cc76c\", \"exit_code\": 0, \"text\": \"{\\\"decision\\\": \\\"ACCEPTED\\\"}\", \"tokens\": {\"input\": 1643, \"output\": 1665, \"total\": 3308, \"cache_read\": 0, \"cache_write\": 0}, \"duration_ms\": 71943, \"timestamp\": 1791952675146}\r\n",
+                                  "Stderr":  "\r\nsession_id: 20261014_013642_1cc76c\r\n",
+                                  "SessionId":  "",
+                                  "BaseUrl":  "http://127.0.0.1:8080/v1",
+                                  "Model":  "qwen36",
+                                  "Profile":  "desarrollador-autonomo-reviewer",
+                                  "WorkingDir":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-full-feac8aea\\project"
+                              },
+                     "text":  "{\"decision\": \"ACCEPTED\"}"
+                 },
+    "cleanup":  {
+                    "job_closed":  true,
+                    "inference_mutex":  "FREE",
+                    "errors":  [
+
+                               ],
+                    "run_mutex_released":  true,
+                    "run_lock_removed":  true,
+                    "owned_survivors":  [
+
+                                        ]
+                },
+    "reason":  "",
+    "reviewer_isolation":  true,
+    "status":  "PASS",
+    "worker_invocations":  0
+}
