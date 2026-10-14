@@ -9,8 +9,11 @@ const fs = require('fs');
 const path = require('path');
 const { spawn, spawnSync } = require('child_process');
 const { ConsultationLedger, acquireBrowserLease, hash, normalize, reconcileObservation } = require('./chatgpt-ledger');
+const { Budget, Trace, budgets, deliver } = require('./chatgpt-delivery');
 let activeLedger;
+let activeBudget, activeTrace, activeSocket, deadlineTimer;
 async function safeExit(code) {
+  clearTimeout(deadlineTimer);
   // Give Node WebSocket close handles one turn on Windows before process teardown.
   await new Promise(resolve => setTimeout(resolve, 75));
   process.exit(code);
@@ -19,7 +22,8 @@ process.once('exit', () => {
   if (!activeLedger) return;
   try {
     const record = activeLedger.read(consultationId);
-    if (record && !['COMPLETED', 'COMPLETED_RECONCILED'].includes(record.delivery_state)) activeLedger.update(consultationId, { delivery_state: 'UNKNOWN_DELIVERY' });
+    if (record && !record.message_confirmed && !['COMPLETED', 'COMPLETED_RECONCILED'].includes(record.delivery_state)) activeLedger.update(consultationId, { delivery_state: 'UNKNOWN_DELIVERY' });
+    activeTrace?.emit('CLEANUP',{pid:process.pid});
   } catch {}
 });
 
@@ -64,6 +68,7 @@ const mockResponse = getArg('--mock-response', '');
 const isRawPrompt = hasFlag('--raw-prompt');
 const timeoutSec = parseInt(getArg('--timeout', '60'), 10);
 const humanEvidencePath = getArg('--human-evidence', '');
+const newConversation = hasFlag('--new-conversation');
 function preparedPrompt() {
   if (isRawPrompt || !(context || (purpose && purpose !== 'Revisión técnica' && purpose !== 'test'))) return question;
   return `CONSULTA TÉCNICA (ROL CONSULTOR ARQUITECTÓNICO):
@@ -92,6 +97,7 @@ async function readConversation(ws) {
       };
       const users = role('user'), assistants = role('assistant');
       return { user: users.length, assistant: assistants.length,
+        composer_empty: (()=>{const p=document.querySelector('.ProseMirror')||document.querySelector('#prompt-textarea')||document.querySelector('div[contenteditable="true"]');return !!p&&!p.innerText?.trim();})(),
         lastUserText: users.length ? users[users.length - 1].innerText.trim().replace(/^(You said:|Tú dijiste:)\\s*/i, '') : '',
         lastAssistantText: assistants.length ? assistants[assistants.length - 1].innerText.trim().replace(/^(ChatGPT said:|ChatGPT dijo:)\\s*/i, '') : '',
         isStreaming: !!document.querySelector('button[data-testid*="stop"],button[aria-label*="Stop"],button[aria-label*="Detener"],.result-streaming'),
@@ -111,7 +117,8 @@ async function readPrepared(ws) {
       const r = button.getBoundingClientRect();
       const aria=button.getAttribute('aria-label')||'', testid=button.getAttribute('data-testid');
       const expectedSend=/Send|Enviar/i.test(aria)||['send-button','composer-submit-button'].includes(testid)||(button.type==='submit'&&prose&&button.form?.contains(prose));
-      return { x:r.x+r.width/2,y:r.y+r.height/2,width:r.width,height:r.height,disabled:button.disabled,aria,testid,expectedSend,visible:r.width>0&&r.height>0&&getComputedStyle(button).visibility!=='hidden' };
+      const x=r.x+r.width/2,y=r.y+r.height/2,hit=document.elementFromPoint(x,y);
+      return { x,y,width:r.width,height:r.height,disabled:button.disabled,aria,testid,expectedSend,hit:!!hit&&button.contains(hit),visible:r.width>0&&r.height>0&&getComputedStyle(button).visibility!=='hidden' };
     });
     return {composer,buttons,sendAvailable:buttons.filter(b=>b.visible&&!b.disabled&&b.expectedSend).length===1,url:location.href};
   })()`, returnByValue:true });
@@ -188,8 +195,9 @@ async function launchDedicatedChrome() {
 function connectCdp(wsUrl) {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(wsUrl);
-    ws.onopen = () => resolve(ws);
-    ws.onerror = (err) => reject(err);
+    const timer=setTimeout(()=>{try{ws.close();}catch{}reject(Error('CDP_CONNECT_TIMEOUT'));},activeBudget?activeBudget.remaining(5000):5000);
+    ws.onopen = () => {clearTimeout(timer);resolve(ws);};
+    ws.onerror = (err) => {clearTimeout(timer);reject(err);};
   });
 }
 
@@ -199,7 +207,7 @@ function sendCdpRaw(ws, method, params = {}) {
     const timeout = setTimeout(() => {
       ws.removeEventListener('message', handler);
       reject(new Error(`Timeout esperando respuesta CDP para ${method}`));
-    }, 20000);
+    }, activeBudget ? activeBudget.remaining(method==='Input.dispatchMouseEvent'?2000:5000) : 20000);
 
     const handler = (evt) => {
       try {
@@ -251,8 +259,12 @@ async function sendSinglePhysicalClick(ws, button, dispatch = sendCdp) {
   }
   // One press/release pair only. A transport error is ambiguous: never fall back
   // to another click, submit, or Enter. The caller persists intent beforehand.
-  await dispatch(ws, 'Input.dispatchMouseEvent', {type:'mousePressed',x:button.x,y:button.y,button:'left',clickCount:1});
-  await dispatch(ws, 'Input.dispatchMouseEvent', {type:'mouseReleased',x:button.x,y:button.y,button:'left',clickCount:1});
+  activeTrace?.emit('MOUSE_PRESSED_START');
+  await dispatch(ws, 'Input.dispatchMouseEvent', {type:'mousePressed',x:button.x,y:button.y,button:'left',buttons:1,pointerType:'mouse',clickCount:1});
+  activeTrace?.emit('MOUSE_PRESSED_END');
+  activeTrace?.emit('MOUSE_RELEASED_START');
+  await dispatch(ws, 'Input.dispatchMouseEvent', {type:'mouseReleased',x:button.x,y:button.y,button:'left',buttons:0,pointerType:'mouse',clickCount:1});
+  activeTrace?.emit('MOUSE_RELEASED_END');
 }
 
 // 5. Enforzar 1 sola pestaña y Domain Lock
@@ -290,6 +302,7 @@ async function enforceSingleTabAndDomainLock() {
 }
 
 async function main() {
+  if(action==='budget'){console.log(JSON.stringify(budgets(timeoutSec)));return;}
   // Verificación inicial de Domain Lock para targetUrl
   if (!validateDomain(targetUrl)) {
     const out = {
@@ -326,7 +339,7 @@ async function main() {
     console.log(JSON.stringify(ledger.result(consultationId), null, 2));
     await safeExit(0);
   }
-  if (action === 'reconcile' && ledger.result(consultationId).status === 'ALREADY_SENT') {
+  if (action === 'reconcile' && ledger.result(consultationId).response_received) {
     console.log(JSON.stringify({ ...ledger.result(consultationId), reconciled: true }, null, 2)); await safeExit(0);
   }
   acquireBrowserLease();
@@ -335,6 +348,17 @@ async function main() {
       console.log(JSON.stringify(ledger.result(consultationId), null, 2)); await safeExit(0);
     }
     activeLedger = ledger;
+    activeBudget = new Budget(timeoutSec);
+    activeTrace = new Trace(ledger.file(consultationId).replace(/\.json$/,'.trace.jsonl'),consultationId);
+    activeTrace.emit('BRIDGE_START',{pid:process.pid});
+    deadlineTimer=setTimeout(async()=>{
+      activeTrace.emit('TIMEOUT',{phase:'internal'});
+      const confirmed=!!ledger.read(consultationId)?.message_confirmed;
+      if(!confirmed)ledger.update(consultationId,{delivery_state:'UNKNOWN_DELIVERY'});
+      try{activeSocket?.close();}catch{}
+      console.log(JSON.stringify({status:confirmed?'SENT_CONFIRMED':'UNKNOWN_DELIVERY',response_state:'PENDING',no_resend:true,consultation_id:consultationId}));
+      await safeExit(1);
+    },activeBudget.spec.internal_ms);
   }
   const running = await isChromeRunning();
   if (!running) {
@@ -394,6 +418,10 @@ async function main() {
     await safeExit(1);
   }
 
+  activeSocket=ws;
+  if(newConversation && action==='consult' && !confirmedRetry){
+    await sendCdp(ws,'Page.navigate',{url:'https://chatgpt.com/'});
+  }
   try {
     // CDP may expose the intended tab before its initial about:blank document
     // has committed. Read only URL/readiness metadata; perform no DOM action
@@ -406,7 +434,7 @@ async function main() {
         returnByValue: true,
       });
       const current = metadata.result?.value;
-      if (current && validateDomain(current.url) && current.ready !== 'loading') break;
+      if (current && validateDomain(current.url) && current.ready !== 'loading' && (!newConversation || new URL(current.url).pathname==='/')) break;
       if (current && current.url !== 'about:blank' && !validateDomain(current.url)) {
         throw new Error('DOMAIN_BLOCKED');
       }
@@ -561,11 +589,15 @@ async function main() {
         await safeExit(3);
       }
 
+      activeBudget.enter('prepare');
+      const initialComposer=await readPrepared(ws);
+      if(!confirmedRetry && normalize(initialComposer.composer||''))throw Error('PREEXISTING_COMPOSER_NO_SEND');
       // Preparar prompt final
       const fullPrompt = preparedPrompt();
 
       // 1. Contar turnos antes de enviar
       const countsBefore = await readConversation(ws);
+      if(countsBefore.isStreaming)throw Error('STREAMING_BEFORE_SEND');
       if(confirmedRetry){
         const record=ledger.read(consultationId);
         if(countsBefore.user!==record.user_turns_before||countsBefore.assistant!==record.assistant_turns_before||countsBefore.isStreaming) throw new Error('RETRY_OBSERVATION_CHANGED_NO_SEND');
@@ -631,8 +663,8 @@ async function main() {
         console.log(JSON.stringify({
           status: "CHATGPT_ENCODING_MISMATCH",
           error: "El texto inyectado en el DOM no coincide carácter por carácter con el texto origen.",
-          source_text: normSource,
-          dom_text: normDom,
+          prompt_sha256: hash(normSource),
+          dom_sha256: hash(normDom),
           source_text_equals_dom_text: false,
           consultation_id: consultationId,
           timestamp: new Date().toISOString()
@@ -641,86 +673,33 @@ async function main() {
         await safeExit(1);
       }
 
-      // 4. Si el texto coincide exactamente: Pulsar Enviar
-      const attemptCount=ledger.read(consultationId).send_attempts+1;
-      if(confirmedRetry && hash(normalize(fullPrompt))!==ledger.read(consultationId).prompt_sha256) throw new Error('RETRY_PROMPT_MISMATCH');
-      const prepared=await readPrepared(ws);
-      if(hash(normalize(prepared.composer||''))!==ledger.read(consultationId).prompt_sha256) throw new Error('COMPOSER_CHANGED_NO_SEND');
-      const candidates=prepared.buttons?.filter(b=>b.visible&&!b.disabled&&b.expectedSend)||[];
+      // Stabilize the prepared, hit-testable composer before one physical click.
+      await sendCdp(ws,'Page.bringToFront');
+      let prepared;
+      for(let stable=0;stable<2;stable++) {
+        prepared=await readPrepared(ws);
+        if(hash(normalize(prepared.composer||''))!==ledger.read(consultationId).prompt_sha256)throw Error('COMPOSER_CHANGED_NO_SEND');
+        if(prepared.url!==countsBefore.url)throw Error('CONVERSATION_CHANGED_BEFORE_SEND');
+        if(stable===0)await new Promise(r=>setTimeout(r,300));
+      }
+      const candidates=prepared.buttons?.filter(b=>b.visible&&!b.disabled&&b.expectedSend&&b.hit)||[];
       const physicalButton=candidates.length===1?candidates[0]:null;
-      if(!physicalButton) throw new Error('SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS');
-      ledger.update(consultationId, { delivery_state: 'DELIVERY_INTENT', send_attempts: attemptCount });
-      await sendSinglePhysicalClick(ws, physicalButton);
-
-      // 5. Confirmar que el mensaje fue enviado (CHATGPT_MESSAGE_SENT = true)
-      let messageSent = false;
-      const sendStart = Date.now();
-      while (Date.now() - sendStart < 12000) {
-        await new Promise(r => setTimeout(r, 600));
-        const turnVal = await readConversation(ws);
-        if (turnVal.user === turnsBefore + 1 && hash(normalize(turnVal.lastUserText || '')) === ledger.read(consultationId).prompt_sha256) {
-          messageSent = true;
-          ledger.update(consultationId, { delivery_state: 'SENT', message_confirmed: true, user_turns_after: turnVal.user, conversation_url: turnVal.url });
-          break;
-        }
+      if(!physicalButton)throw Error('SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS');
+      const attemptCount=ledger.read(consultationId).send_attempts+1;
+      const outcome=await deliver({ledger,id:consultationId,baseline:countsBefore,
+        click:()=>sendSinglePhysicalClick(ws,physicalButton),
+        probe:()=>readConversation(ws),
+        budget:activeBudget,trace:activeTrace,newConversation});
+      if(outcome.status!=='SUCCESS') {
+        console.log(JSON.stringify({...outcome,consultation_id:consultationId,message_sent:!!ledger.read(consultationId).message_confirmed,response_received:false},null,2));
+        ws.close();await safeExit(1);
       }
-
-      // 6. Aguardar respuesta del asistente (CHATGPT_RESPONSE_RECEIVED = true)
-      let finalResponse = "";
-      let lastText = "";
-      let stableCount = 0;
-      const genStart = Date.now();
-
-      while (Date.now() - genStart < timeoutSec * 1000) {
-        await new Promise(r => setTimeout(r, 1200));
-
-        const observation = await readConversation(ws);
-        const resVal = { isStreaming: observation.isStreaming, text: observation.assistant === countsBefore.assistant + 1 ? observation.lastAssistantText : '' };
-        if (resVal && resVal.text) {
-          if (!resVal.isStreaming) {
-            if (resVal.text === lastText) {
-              stableCount++;
-              if (stableCount >= 2) { // Estable por ~2.4s y sin indicador de streaming
-                finalResponse = resVal.text;
-                break;
-              }
-            } else {
-              lastText = resVal.text;
-              stableCount = 1;
-            }
-          } else {
-            lastText = resVal.text;
-            stableCount = 0;
-          }
-        }
-      }
-
-      const countsAfter = await readConversation(ws);
-
-      if (!finalResponse) {
-        console.log(JSON.stringify({
-          status: "UNKNOWN_DELIVERY",
-          error: `Timeout esperando respuesta completa tras ${timeoutSec}s`,
-          message_sent: messageSent,
-          consultation_id: consultationId,
-          no_resend: true,
-          user_turns_before: countsBefore.user, user_turns_after: countsAfter.user,
-          assistant_turns_before: countsBefore.assistant, assistant_turns_after: countsAfter.assistant,
-          timestamp: new Date().toISOString()
-        }, null, 2));
-        ws.close(); await safeExit(1);
-      }
-
-      const turnGate = countsAfter.user === countsBefore.user + 1 && countsAfter.assistant === countsBefore.assistant + 1 && messageSent && hash(normalize(countsAfter.lastUserText || '')) === ledger.read(consultationId).prompt_sha256;
-      if (!turnGate) {
-        console.log(JSON.stringify({ status: 'UNKNOWN_DELIVERY', reason: 'TURN_COUNT_MISMATCH', consultation_id: consultationId, no_resend: true }));
-        ws.close(); await safeExit(1);
-      }
-      ledger.update(consultationId, { delivery_state: 'COMPLETED', message_confirmed: true,
-        user_turns_after: countsAfter.user, assistant_turns_after: countsAfter.assistant, conversation_url: countsAfter.url, response_sha256: hash(finalResponse) });
-      const composerAfter=await readPrepared(ws);
-      const composerCleared=!normalize(composerAfter.composer||'');
-      if(!composerCleared) throw new Error('COMPOSER_NOT_CLEARED');
+      const countsAfter=outcome.observation;
+      const finalResponse=outcome.response;
+      const messageSent=true;
+      activeBudget.enter('finalize');
+      const composerCleared=countsAfter.composer_empty===true;
+      if(!composerCleared)throw Error('COMPOSER_NOT_CLEARED');
       ws.close();
 
       const out = {
@@ -730,9 +709,10 @@ async function main() {
         source: "chatgpt_web_real",
         message_sent: messageSent,
         response_received: true,
-        source_text: normSource,
-        dom_text: normDom,
+        prompt_sha256: hash(normSource),
+        dom_sha256: hash(normDom),
         source_text_equals_dom_text: textMatches,
+        utf8_valid: Buffer.from(normSource,'utf8').toString('utf8')===normSource,
         url: pageState.url,
         user_turns_before: countsBefore.user, user_turns_after: countsAfter.user,
         assistant_turns_before: countsBefore.assistant, assistant_turns_after: countsAfter.assistant,
@@ -747,8 +727,9 @@ async function main() {
     if (ws) {
       try { ws.close(); } catch {}
     }
+    activeTrace?.emit('FAILURE',{reason:err.message.split(':')[0]});
     console.log(JSON.stringify({
-      status: err.message.includes('DOMAIN_BLOCKED') ? "DOMAIN_BLOCKED" : "ERROR",
+      status: activeLedger?.read(consultationId)?.message_confirmed ? 'SENT_CONFIRMED' : err.message.includes('DOMAIN_BLOCKED') ? "DOMAIN_BLOCKED" : "ERROR",
       error: `Fallo durante interacción CDP: ${err.message}`,
       consultation_id: consultationId,
       timestamp: new Date().toISOString()

@@ -74,6 +74,8 @@ class ConsultationLedger {
   update(id, fields) {
     const record = this.read(id);
     if (!record) throw new Error('CONSULTATION_NOT_RESERVED');
+    if (record.message_confirmed && (fields.message_confirmed === false ||
+        ['UNKNOWN_DELIVERY','DELIVERY_INTENT','NOT_DELIVERED_CONFIRMED','RESERVED'].includes(fields.delivery_state))) throw new Error('SENT_IS_IRREVERSIBLE_NO_RESEND');
     const approvedRetry = fields.delivery_state === 'DELIVERY_INTENT' && record.delivery_state === 'NOT_DELIVERED_CONFIRMED' && record.human_retry_remaining === 1;
     if (approvedRetry && fields.send_attempts !== record.send_attempts + 1) throw new Error('RETRY_COUNTER_REQUIRED');
     if (fields.delivery_state === 'DELIVERY_INTENT' && record.send_attempts >= 1 && !approvedRetry) throw new Error('ALREADY_ATTEMPTED_NO_RESEND');
@@ -81,6 +83,8 @@ class ConsultationLedger {
     if (Object.keys(fields).some(key => key.startsWith('human_'))) throw new Error('HUMAN_RECONCILIATION_METHOD_REQUIRED');
     if (approvedRetry) fields = { ...fields, human_retry_remaining: 0, human_retry_consumed: true };
     const next = { ...record, ...fields };
+    if (next.delivery_state === 'SENT_CONFIRMED' && !(next.message_confirmed && next.send_attempts >= 1 &&
+        Number.isInteger(next.user_turns_before) && next.user_turns_after === next.user_turns_before + 1)) throw new Error('SENT_PROOF_REQUIRED');
     if (['COMPLETED', 'COMPLETED_RECONCILED'].includes(next.delivery_state) &&
         !((next.send_attempts === 1 || (next.send_attempts === 2 && next.human_retry_consumed)) && next.message_confirmed && Number.isInteger(next.user_turns_before) &&
           next.user_turns_after === next.user_turns_before + 1 && Number.isInteger(next.assistant_turns_before) &&
@@ -125,9 +129,10 @@ class ConsultationLedger {
   result(id) {
     const record = this.read(id);
     if (!record) return { status: 'NOT_SEEN', consultation_id: id };
-    const known = ['COMPLETED', 'COMPLETED_RECONCILED'].includes(record.delivery_state);
+    const responseKnown = ['COMPLETED', 'COMPLETED_RECONCILED'].includes(record.delivery_state);
+    const known = responseKnown || (!!record.message_confirmed && ['SENT','SENT_CONFIRMED','UNKNOWN_DELIVERY'].includes(record.delivery_state));
     const retrySafe = record.delivery_state === 'NOT_DELIVERED_CONFIRMED' && record.human_retry_remaining === 1;
-    return { status: known ? 'ALREADY_SENT' : retrySafe ? 'RETRY_SAFE' : 'UNKNOWN_DELIVERY', consultation_id: id, no_resend: !retrySafe, deduplicated: true, previous_delivery_state: record.delivery_state, message_sent: !!record.message_confirmed, send_attempts: record.send_attempts, response_received: known, user_turns_before: record.user_turns_before, user_turns_after: record.user_turns_after, assistant_turns_before: record.assistant_turns_before, assistant_turns_after: record.assistant_turns_after };
+    return { status: known ? 'ALREADY_SENT' : retrySafe ? 'RETRY_SAFE' : 'UNKNOWN_DELIVERY', consultation_id: id, no_resend: !retrySafe, deduplicated: true, previous_delivery_state: record.delivery_state, message_sent: !!record.message_confirmed, send_attempts: record.send_attempts, response_received: responseKnown, response_state: responseKnown ? 'CAPTURED' : known ? 'PENDING' : 'UNKNOWN', user_turns_before: record.user_turns_before, user_turns_after: record.user_turns_after, assistant_turns_before: record.assistant_turns_before, assistant_turns_after: record.assistant_turns_after };
   }
 }
 function acquireBrowserLease(directory = path.join(ROOT, 'runtime', 'chatgpt-consultations')) {

@@ -9,8 +9,8 @@ const { sendSinglePhysicalClick } = require('../tools/chatgpt-bridge');
   const calls = [];
   await sendSinglePhysicalClick(null, button, async (_, method, params) => calls.push({method,params}));
   assert.deepEqual(calls, [
-    {method:'Input.dispatchMouseEvent',params:{type:'mousePressed',x:120,y:240,button:'left',clickCount:1}},
-    {method:'Input.dispatchMouseEvent',params:{type:'mouseReleased',x:120,y:240,button:'left',clickCount:1}},
+    {method:'Input.dispatchMouseEvent',params:{type:'mousePressed',x:120,y:240,button:'left',buttons:1,pointerType:'mouse',clickCount:1}},
+    {method:'Input.dispatchMouseEvent',params:{type:'mouseReleased',x:120,y:240,button:'left',buttons:0,pointerType:'mouse',clickCount:1}},
   ]);
   checks.one_physical_press_release_pair = 'PASS';
   for (const invalid of [null, {...button,visible:false}, {...button,disabled:true},
@@ -32,8 +32,9 @@ const { sendSinglePhysicalClick } = require('../tools/chatgpt-bridge');
   assert(!source.includes('sendBtn.click()'));
   assert(!source.includes('form.requestSubmit()'));
   assert(!source.includes("new KeyboardEvent('keydown'"));
-  const intent = source.indexOf("ledger.update(consultationId, { delivery_state: 'DELIVERY_INTENT'");
-  const click = source.indexOf('await sendSinglePhysicalClick(ws, physicalButton);');
+  const deliverySource=fs.readFileSync(require.resolve('../tools/chatgpt-delivery'),'utf8');
+  const intent=deliverySource.indexOf("ledger.update(id,{delivery_state:'DELIVERY_INTENT'");
+  const click = deliverySource.indexOf('await click();');
   assert(intent > 0 && click > intent);
   checks.intent_persisted_before_only_send_path = 'PASS';
   console.log(JSON.stringify({status:'PASS',checks,browser_access:false,physical_sends:0},null,2));

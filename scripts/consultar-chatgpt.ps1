@@ -41,7 +41,8 @@ param(
     [string]$OutputPath = "",
 
     [Parameter(Mandatory = $false)]
-    [switch]$RawPrompt
+    [switch]$RawPrompt,
+    [switch]$NewConversation
 )
 
 $ErrorActionPreference = "Stop"
@@ -194,6 +195,7 @@ if (-not [string]::IsNullOrWhiteSpace($MockResponse)) {
     $nodeArgs.Add("--mock-response")
     $nodeArgs.Add($MockResponse)
 }
+if($NewConversation){$nodeArgs.Add('--new-conversation')}
 if ($RawPrompt) {
     $nodeArgs.Add("--raw-prompt")
 }
@@ -212,18 +214,36 @@ $pInfo.StandardErrorEncoding = [System.Text.Encoding]::UTF8
 
 # The logical attempt was reserved atomically under the per-STATE budget mutex before launch.
 
+$parentTraceFile=''
+if($Action -eq 'consult' -and [string]::IsNullOrWhiteSpace($MockResponse)){
+    $idHash=([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($ConsultationId)))).Replace('-','').ToLowerInvariant()
+    $parentTraceFile=Join-Path $infraRoot ('runtime/chatgpt-consultations/'+$idHash+'.parent.trace.jsonl')
+    if((Test-Path -LiteralPath $parentTraceFile) -and ((Get-Item -LiteralPath $parentTraceFile).Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'TRACE_PATH_DENIED'}
+}
+function Write-ParentTrace([string]$Event){
+    if(-not $parentTraceFile){return}
+    $line=@{event=$Event;consultation_id=$ConsultationId;at=[datetimeoffset]::UtcNow.ToString('o');mono_ms=([Diagnostics.Stopwatch]::GetTimestamp()*1000.0/[Diagnostics.Stopwatch]::Frequency);pid=$PID}|ConvertTo-Json -Compress
+    $stream=[IO.File]::Open($parentTraceFile,[IO.FileMode]::Append,[IO.FileAccess]::Write,[IO.FileShare]::Read)
+    try{$bytes=[Text.Encoding]::UTF8.GetBytes($line+"`n");$stream.Write($bytes,0,$bytes.Length);$stream.Flush($true)}finally{$stream.Dispose()}
+}
+Write-ParentTrace 'PARENT_START'
 $proc = [System.Diagnostics.Process]::Start($pInfo)
 $stdoutTask = $proc.StandardOutput.ReadToEndAsync()
 $stderrTask = $proc.StandardError.ReadToEndAsync()
 
-$procExited = $proc.WaitForExit($TimeoutSeconds * 1000 + 8000)
+$budgetRaw=& node.exe $bridgeJs --action budget --timeout $TimeoutSeconds
+$transportBudget=($budgetRaw -join "`n")|ConvertFrom-Json
+if($transportBudget.parent_ms -le ($transportBudget.internal_ms+$transportBudget.cleanup_margin_ms)){throw 'INVALID_TRANSPORT_DEADLINES'}
+. (Join-Path $scriptDir 'wait-chatgpt-child.ps1')
+$procExited = Wait-ChatGptChild $proc ([int]$transportBudget.parent_ms) {param($event) Write-ParentTrace $event}
+Write-ParentTrace 'CHILD_WAIT_FINISHED'
 if (-not $procExited) {
-    try { $proc.Kill() } catch {}
+    try { $proc.Kill();$null=$proc.WaitForExit(3000) } catch {}
     if($Action -eq 'consult' -and [string]::IsNullOrWhiteSpace($MockResponse)){
         $lookupRaw=& node.exe $bridgeJs --action consultation-status --consultation-id $ConsultationId --url $TargetUrl
         $lookup=($lookupRaw -join "`n")|ConvertFrom-Json
-        $lookup.status='UNKNOWN_DELIVERY';$lookup.no_resend=$true
-        return [PSCustomObject]@{Status='UNKNOWN_DELIVERY';Error='Bridge parent deadline expired; reconciliation required, no resend';ConsultationId=$ConsultationId;ResultObj=$lookup;Response='';RawJson=($lookup|ConvertTo-Json -Depth 8)}
+        if(-not $lookup.message_sent){$lookup.status='UNKNOWN_DELIVERY'};$lookup.no_resend=$true
+        return [PSCustomObject]@{Status=$lookup.status;Error='Bridge parent deadline expired; no resend';ConsultationId=$ConsultationId;ResultObj=$lookup;Response='';RawJson=($lookup|ConvertTo-Json -Depth 8)}
     }
     return [PSCustomObject]@{
         Status         = "TIMEOUT"
@@ -253,7 +273,7 @@ try {
 }
 
 # 5. ACTUALIZAR CONTADOR DE PRESUPUESTO SI LA CONSULTA FUE EXITOSA
-if (($resultObj.status -eq "SUCCESS" -or ($resultObj.status -eq 'UNKNOWN_DELIVERY' -and $resultObj.message_sent -and -not $resultObj.deduplicated)) -and $Action -eq "consult" -and $stateObj -and $autopilotDir) {
+if (($resultObj.status -in @("SUCCESS","SENT_CONFIRMED") -or ($resultObj.status -eq 'UNKNOWN_DELIVERY' -and $resultObj.message_sent -and -not $resultObj.deduplicated)) -and $Action -eq "consult" -and $stateObj -and $autopilotDir) {
     $eventMutex=New-Object Threading.Mutex($false,('Local\DesarrolladorAutonomo_ChatGPTBudget_'+$keyHash))
     $eventHeld=$false
     try{

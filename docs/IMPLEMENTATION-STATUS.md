@@ -152,3 +152,7 @@ Worker correction BLOCKED_REQUIRES_HUMAN / GLOBAL_TIMEOUT: plazo global aprobado
 ## Estado vigente — F24 ATTEMPT 3 — 2026-10-14
 
 ATTEMPT 2 (run-20261014-020920) cerrado como FAIL / GLOBAL_TIMEOUT; sus 216 archivos, sandbox, STATE, reloj y presupuestos permanecen intactos. ATTEMPT 3 nuevo run-20261014-143502: launcher/Prepare/preflight/aprobación única, Supervisor, Worker SUCCESS tras 2 reinicios normales, 13 tests/build, checkpoint y crash/Watchdog PASS. Consulta nueva f24-a3-run-20261014-143502-bfca6e98 UNKNOWN_DELIVERY / NO RESEND; F24 FAIL / BLOCKED_REQUIRES_HUMAN. Recovery E2E posterior al crash, Reviewer final y Completion Gate NOT_RUN. Fetch web oficial PASS; lectura de WEB.json por Worker no demostrada. Duración nativa 920.52s dentro de 2700s, sin ampliación. Cleanup/integridad PASS. F23 PASS conservada. READY_FOR_F25 NO; F25–F28 no iniciadas. Informe: docs/F24-ATTEMPT-3-STOP-REPORT.md; evidence/phase-24-attempt-3-20261014/.
+
+## Fronteras antes de ATTEMPT 4 — 2026-10-14
+
+ATTEMPT 3 queda HISTORICAL FAIL / BLOCKED_REQUIRES_HUMAN, ledger intacto y no reutilizable. Hardening A ChatGPT PASS determinista; B/C/regresión conjunta pendientes. Ningún envío real durante estas pruebas. docs/F24-FRONTIER-HARDENING.md; evidence/f24-frontiers-20261014/. F24 permanece FAIL; F25 no iniciada.
