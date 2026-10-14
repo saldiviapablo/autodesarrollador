@@ -107,6 +107,11 @@ print("F24_UNIT_DOC_PASS")
     plan_path=case/'plan.json';plan_path.write_text(json.dumps(plan,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     prepared=ps('& '+q(ROOT/'runner/run.ps1')+' -Action Prepare -ProjectRoot '+q(project)+' -Objective '+q('Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox')+' -AcceptanceCriteria '+q(criterion)+' -PlanPath '+q(plan_path)+' | ConvertFrom-Json')
     save('prepare.json',prepared);checks['prepare']=prepared['status']=='PASS';assert checks['prepare']
+    # Prepare creates the canonical control document after the failing baseline.
+    # Track it separately before approval; it is not a worker-produced change.
+    subprocess.run(['git','-C',str(project),'add','--','QWEN.md'],check=True)
+    subprocess.run(['git','-C',str(project),'commit','-q','-m','F24 generated project control baseline'],check=True)
+    save('generated-control-baseline.json',{'sha256':hashlib.sha256((project/'QWEN.md').read_bytes()).hexdigest(),'file':'QWEN.md','source':'Prepare initializer; before approval'})
     info=json.loads(subprocess.check_output(['C:/Python314/python.exe',str(ROOT/'runner/contract.py'),'inspect','--project',str(project)],encoding='utf-8'))
     approval=subprocess.run(['C:/Python314/python.exe',str(ROOT/'runner/contract.py'),'approve','--project',str(project),'--digest',info['digest']],capture_output=True,encoding='utf-8',check=True)
     save('approval.json',json.loads(approval.stdout));checks['single_approval']=True

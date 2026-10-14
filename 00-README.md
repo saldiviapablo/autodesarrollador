@@ -724,3 +724,7 @@ F23 PASS y fix Reviewer PASS (d7ee477). F24 FAIL / MANDATORY_TEST_FAILED: adapta
 ## Continuación F24 — fix del adaptador — 2026-10-14
 
 Adaptador F24 PASS (A–H, ejecución única, UTF-8, vacío, exit code, stdout/stderr y deny de metacaracteres). F23 PASS preservada. F24 intento 2 pendiente de corrida real; Macrofase 8 IN_PROGRESS. F25/4H/F26 NOT_RUN; F27/F28 no iniciadas. docs/F24-LAUNCHER-ADAPTER-FIX.md.
+
+## Estado vigente — F24 intento 2 — 2026-10-14
+
+Adaptador F24 A–H PASS (fea2a71). F23 PASS preservada. F24 real intento 2 FAIL / BLOCKED_REQUIRES_HUMAN: launcher/Runner/Supervisor/Worker, tests/build, checkpoint, crash y Watchdog ejecutados; ChatGPT UNKNOWN_DELIVERY, un intento, sin reenvío. Reviewer final/Completion Gate no alcanzados. F25/4H/F26 y regression final NOT_RUN. Cleanup e integridad PASS. READY FOR REAL PILOT NO. docs/F24-ATTEMPT-2-BLOCKED-REPORT.md.

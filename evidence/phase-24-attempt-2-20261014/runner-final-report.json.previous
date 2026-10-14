@@ -1,0 +1,164 @@
+{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261014-020920",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f24-live-8ec4f51b\\project",
+    "objective":  "Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox",
+    "duration_seconds":  621.17487339999934,
+    "status":  "BLOCKED_REQUIRES_HUMAN",
+    "technical_status":  "NOT_COMPLETED",
+    "reason":  "BLOCKED_REQUIRES_HUMAN: F24 UNKNOWN_DELIVERY; reconcile, never resend blindly",
+    "tasks_completed":  [
+
+                        ],
+    "pending_tasks":  [
+                          "Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox"
+                      ],
+    "changed_files":  [
+                          "invoice.py",
+                          "README.md"
+                      ],
+    "commits":  [
+                    "18a07fd89d6fd0fe107c1e081e7923bb0a2fcc53 F24 reconcile unchanged initializer control baseline"
+                ],
+    "tests":  [
+                  {
+                      "output":  "F24_UNIT_DOC_PASS\r\n",
+                      "status":  "PASS",
+                      "marker_present":  true,
+                      "id":  "unit",
+                      "exit_code":  0
+                  }
+              ],
+    "builds":  [
+                   {
+                       "output":  "F24_BUILD_PASS\r\n",
+                       "status":  "PASS",
+                       "marker_present":  true,
+                       "id":  "build",
+                       "exit_code":  0
+                   }
+               ],
+    "linters":  [
+
+                ],
+    "errors":  [
+                   {
+                       "reason":  "AGENT_FAILED:worker",
+                       "count":  1,
+                       "role":  "worker"
+                   },
+                   "BLOCKED_REQUIRES_HUMAN: F24 UNKNOWN_DELIVERY; reconcile, never resend blindly"
+               ],
+    "retries":  {
+                    "llama":  0,
+                    "supervisor":  0,
+                    "reviewer":  0,
+                    "worker":  1
+                },
+    "recoveries":  [
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  11,
+                           "event_id":  "evt-30a97d13f1ba",
+                           "timestamp":  "2026-10-14T02:15:31.5234228-03:00",
+                           "run_id":  "run-20261014-020920",
+                           "actor":  "runner",
+                           "type":  "WATCHDOG_AGENT_RESTART",
+                           "payload":  {
+                                           "reason":  "AGENT_FAILED:worker",
+                                           "count":  1,
+                                           "role":  "worker"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  20,
+                           "event_id":  "evt-60ec69226c76",
+                           "timestamp":  "2026-10-14T02:18:26.0935139-03:00",
+                           "run_id":  "run-20261014-020920",
+                           "actor":  "watchdog",
+                           "type":  "PARENT_CRASH_RECOVERED",
+                           "payload":  {
+                                           "parent_pid":  28676,
+                                           "reason":  "PARENT_PROCESS_LOST"
+                                       }
+                       }
+                   ],
+    "web_queries":  [
+
+                    ],
+    "chatgpt_queries_used":  1,
+    "blocks":  [
+                   "BLOCKED_REQUIRES_HUMAN: F24 UNKNOWN_DELIVERY; reconcile, never resend blindly"
+               ],
+    "completion_gate":  {
+                            "status":  "NOT_EVALUATED",
+                            "reason":  "BLOCKED_REQUIRES_HUMAN: F24 UNKNOWN_DELIVERY; reconcile, never resend blindly"
+                        },
+    "cleanup":  {
+                    "run_lock_removed":  true,
+                    "run_mutex_released":  true,
+                    "inference_mutex":  "FREE",
+                    "errors":  [
+
+                               ],
+                    "owned_survivors":  [
+
+                                        ],
+                    "unexpected_listeners":  [
+
+                                             ]
+                },
+    "processes":  [
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  37576,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275513633860491
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  17500,
+                          "name":  "llama",
+                          "executable":  "C:\\AI\\llama.cpp\\llama-server.exe",
+                          "start_ticks":  639275513639289671
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  20904,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275513724166495
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  35264,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275514249029154
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  17576,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275517324902213
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  27960,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639275519023883563
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  37820,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639275519024533348
+                      }
+                  ],
+    "generated_at":  "2026-10-14T02:23:15.0697240-03:00"
+}

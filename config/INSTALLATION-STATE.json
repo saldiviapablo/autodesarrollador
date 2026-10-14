@@ -32,7 +32,7 @@
     "6": "PASS",
     "7A": "PASS",
     "7B": "PASS",
-    "8": "IN_PROGRESS"
+    "8": "FAIL"
   },
   "subphases_7a": {
     "7A.1": "PASS",
@@ -73,15 +73,15 @@
   "e2e_scope": "PENDING refers to F24/F25 final validation; e2e_7b is the approved short 7B integration",
   "phases_8": {
     "23": "PASS",
-    "24": "IN_PROGRESS",
+    "24": "FAIL",
     "25": "NOT_RUN",
     "26": "NOT_RUN",
     "27": "NOT_RUN",
     "28": "NOT_RUN"
   },
   "validation_8": {
-    "status": "F24_ADAPTER_PASS_REAL_RUN_PENDING",
-    "test": "F24_LAUNCHER_ADAPTER_A_H",
+    "status": "STOPPED_BLOCKED_REQUIRES_HUMAN",
+    "test": "F24_REAL_CHATGPT_DELIVERY",
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
     "current_security_revalidation": "PATHGUARD_FIX_SMOKE_PASS",
@@ -106,7 +106,7 @@
     "human_reconciliation": "PASS",
     "human_reconciliation_evidence": "evidence/f23-human-reconciliation/",
     "source": "HUMAN_VISUAL_RECONCILIATION",
-    "reason": "",
+    "reason": "BLOCKED_REQUIRES_HUMAN: F24 UNKNOWN_DELIVERY; reconcile, never resend blindly",
     "f23_tests_build": "PASS",
     "f23_disk_recovery": "PASS",
     "f23_reviewer": "PASS",
@@ -115,15 +115,23 @@
     "f23_transport": "PASS",
     "f23_transport_evidence": "evidence/hermes-prompt-transport-20261014/",
     "f23_transport_report": "docs/HERMES-REVIEWER-PROMPT-FIX.md",
-    "f24_native_runner_started": false,
-    "f24_chatgpt_sends": 0,
-    "f24_report": "docs/F24-ADAPTER-STOP-REPORT-20261014.md",
-    "f24_evidence": "evidence/phase-24-20261014/",
+    "f24_native_runner_started": true,
+    "f24_report": "docs/F24-ATTEMPT-2-BLOCKED-REPORT.md",
+    "f24_evidence": "evidence/phase-24-attempt-2-20261014/",
     "f24_cleanup": "PASS",
     "f24_adapter_diagnosis": "PASS",
     "f24_adapter_fix": "PASS",
     "f24_adapter_fix_report": "docs/F24-LAUNCHER-ADAPTER-FIX.md",
-    "f24_adapter_fix_evidence": "evidence/f24-launcher-adapter-fix-20261014/"
+    "f24_adapter_fix_evidence": "evidence/f24-launcher-adapter-fix-20261014/",
+    "f24_chatgpt_send_attempts": 1,
+    "f24_delivery": "UNKNOWN_DELIVERY",
+    "f24_consultation_id": "f24-7257c739e1fd449aae1f1f93856aef7f",
+    "f24_no_resend": true,
+    "f24_tests_build": "PASS",
+    "f24_watchdog": "PASS",
+    "f24_worker_restarts": 1,
+    "f24_completion_gate": "NOT_REACHED",
+    "f24_duration_seconds": 621.1748733999993
   },
   "ready_for_real_pilot": false
 }

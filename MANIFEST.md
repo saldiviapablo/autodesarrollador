@@ -98,7 +98,7 @@ Parámetros validados:
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
 - **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **PASS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5 — Bot Mode + Subagentes`: **PASS**; `7A.6 — Git Worktrees`: **PASS**; `7A.7 — Cron + No-Agent Jobs`: **PASS**; `7A.8 — Native Dashboard`: **PASS**; `7A.9 — Gateway`: **PASS**; `7A.10 — Controlled Auto-update`: **PASS**; `ChatGPT Idempotency`: **PASS**; `regression gate`: **PASS**). Preflight correctivo aprobado en commit `f133bab`.
 - **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PASS**
-- **Macrofase 8 (Validación Final - Fases 23 a 28):** **IN_PROGRESS (F23 PASS; adaptador F24 PASS; intento 2 pendiente)**
+- **Macrofase 8 (Validación Final - Fases 23 a 28):** **FAIL / BLOCKED_REQUIRES_HUMAN (F23 PASS; F24 real ChatGPT UNKNOWN_DELIVERY)**
 
 ---
 
@@ -155,3 +155,7 @@ F23 PASS y fix Reviewer PASS (d7ee477). F24 FAIL / MANDATORY_TEST_FAILED: adapta
 ## Continuación F24 — fix del adaptador — 2026-10-14
 
 Adaptador F24 PASS (A–H, ejecución única, UTF-8, vacío, exit code, stdout/stderr y deny de metacaracteres). F23 PASS preservada. F24 intento 2 pendiente de corrida real; Macrofase 8 IN_PROGRESS. F25/4H/F26 NOT_RUN; F27/F28 no iniciadas. docs/F24-LAUNCHER-ADAPTER-FIX.md.
+
+## Estado vigente — F24 intento 2 — 2026-10-14
+
+Adaptador F24 A–H PASS (fea2a71). F23 PASS preservada. F24 real intento 2 FAIL / BLOCKED_REQUIRES_HUMAN: launcher/Runner/Supervisor/Worker, tests/build, checkpoint, crash y Watchdog ejecutados; ChatGPT UNKNOWN_DELIVERY, un intento, sin reenvío. Reviewer final/Completion Gate no alcanzados. F25/4H/F26 y regression final NOT_RUN. Cleanup e integridad PASS. READY FOR REAL PILOT NO. docs/F24-ATTEMPT-2-BLOCKED-REPORT.md.

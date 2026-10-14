@@ -27,6 +27,7 @@ try{
     if($cleanup.inference_mutex -ne 'FREE' -or $cleanup.unexpected_listeners.Count){throw 'CLEANUP_FAILED'}
     if($Failure){
         $terminal='FAILED';if($Failure -match 'BLOCKED_REQUIRES_HUMAN'){$terminal='BLOCKED_REQUIRES_HUMAN'}
+        if($terminal -eq 'BLOCKED_REQUIRES_HUMAN'){$script:RunState.next_action='Human reconciliation required; do not resend or start another phase'}
         Save-RunnerState $terminal $Failure
         Runner-Event 'LIVE_TEST_STOPPED' @{reason=$Failure;cleanup=$cleanup}
         $null=& (Join-Path $root 'scripts/create-autopilot-checkpoint.ps1') -ProjectPath $ProjectRoot -CheckpointId ('chk-live-stop-'+[datetime]::Now.ToString('yyyyMMddHHmmssfff')) -Reason $Failure
