@@ -21,6 +21,7 @@ def project_path(project, *, allow_missing=False, workspace=None):
 def validate_plan(p,plan,criteria):
     jsonschema.validate(plan,json.loads((ROOT/'schemas/runner-plan.schema.json').read_text(encoding='utf-8-sig')))
     if plan.get('backend','live')=='probe' and not p.is_relative_to(ROOT/'sandbox'):raise ValueError('PROBE_ONLY_IN_SANDBOX')
+    if plan.get('sandbox_crash_boundary') and not p.is_relative_to(ROOT/'sandbox'):raise ValueError('CRASH_BOUNDARY_ONLY_IN_SANDBOX')
     for name in plan['allowed_files']+[a['path'] for a in plan['artifacts']]+[a['path'] for a in plan.get('immutable_files',[])]:
         relative=pathlib.Path(name)
         if relative.is_absolute() or relative.drive or '..' in relative.parts or name.startswith(('.autopilot','runner/','config/security')):raise ValueError('PLAN_PATH_DENIED')
@@ -40,6 +41,7 @@ def inspect(project):
     validate_plan(p,plan,contract['acceptance_criteria'])
     frozen=[ROOT/'config/system.yaml',ROOT/'config/security.yaml',ROOT/'config/VERSIONS.lock',ROOT/'scripts/inference-lock.ps1',ROOT/'scripts/hermes-pre-tool-hook.py',ROOT/'schemas/runner-plan.schema.json']
     frozen+=[ROOT/'scripts/canonical_path.py',ROOT/'scripts/security-guard.ps1',ROOT/'scripts/hermes-mcp-plugin-guard.ps1']
+    frozen+=[ROOT/'tools/chatgpt-bridge.js',ROOT/'tools/chatgpt-ledger.js',ROOT/'tools/chatgpt-delivery.js',ROOT/'scripts/consultar-chatgpt.ps1',ROOT/'scripts/wait-chatgpt-child.ps1']
     frozen+=sorted(f for f in (ROOT/'runner').iterdir() if f.suffix in ('.ps1','.py'))
     hashes={str(contract_path):sha(contract_path),str(plan_path):sha(plan_path),**{str(f):sha(f) for f in frozen}}
     digest=hashlib.sha256(json.dumps(hashes,sort_keys=True).encode()).hexdigest()

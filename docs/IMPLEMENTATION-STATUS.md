@@ -156,3 +156,7 @@ ATTEMPT 2 (run-20261014-020920) cerrado como FAIL / GLOBAL_TIMEOUT; sus 216 arch
 ## Fronteras antes de ATTEMPT 4 — 2026-10-14
 
 ATTEMPT 3 queda HISTORICAL FAIL / BLOCKED_REQUIRES_HUMAN, ledger intacto y no reutilizable. Hardening A ChatGPT PASS determinista; B/C/regresión conjunta pendientes. Ningún envío real durante estas pruebas. docs/F24-FRONTIER-HARDENING.md; evidence/f24-frontiers-20261014/. F24 permanece FAIL; F25 no iniciada.
+
+## Gate de fronteras A/B/C antes de ATTEMPT 4 — 2026-10-14
+
+CHATGPT_BRIDGE_FIX PASS; WEB_HANDOFF PASS determinista; RECOVERY_CONTINUATION PASS con crash/START-Recover reales y roles probe explícitos. Regresión conjunta PASS; 419 archivos históricos intactos, incluido ledger de ATTEMPT3. Preparado harness ATTEMPT4 nuevo, sin aumentar 2700/restart2/maxcycles5. F24 aún no recertificada; F25/F27/F28 no iniciadas. docs/F24-FRONTIER-HARDENING.md; evidence/f24-frontiers-20261014/REGRESSION-GATE.json.

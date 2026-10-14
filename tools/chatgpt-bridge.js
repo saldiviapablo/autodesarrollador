@@ -430,11 +430,11 @@ async function main() {
     const readinessStarted = Date.now();
     while (true) {
       const metadata = await sendCdpRaw(ws, 'Runtime.evaluate', {
-        expression: '({ url: window.location.href, ready: document.readyState })',
+        expression: `({ url:window.location.href, ready:document.readyState, prompt_ready:!!(document.querySelector('.ProseMirror')||document.querySelector('#prompt-textarea')||document.querySelector('div[contenteditable="true"]')) })`,
         returnByValue: true,
       });
       const current = metadata.result?.value;
-      if (current && validateDomain(current.url) && current.ready !== 'loading' && (!newConversation || new URL(current.url).pathname==='/')) break;
+      if (current && validateDomain(current.url) && current.ready !== 'loading' && (action!=='consult'||current.prompt_ready) && (!newConversation || new URL(current.url).pathname==='/')) break;
       if (current && current.url !== 'about:blank' && !validateDomain(current.url)) {
         throw new Error('DOMAIN_BLOCKED');
       }
@@ -680,7 +680,12 @@ async function main() {
         prepared=await readPrepared(ws);
         if(hash(normalize(prepared.composer||''))!==ledger.read(consultationId).prompt_sha256)throw Error('COMPOSER_CHANGED_NO_SEND');
         if(prepared.url!==countsBefore.url)throw Error('CONVERSATION_CHANGED_BEFORE_SEND');
-        if(stable===0)await new Promise(r=>setTimeout(r,300));
+        if(stable===0){
+          const readyButtons=prepared.buttons?.filter(b=>b.visible&&!b.disabled&&b.expectedSend&&b.hit)||[];
+          if(readyButtons.length!==1)throw Error('SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS');
+          await sendCdp(ws,'Input.dispatchMouseEvent',{type:'mouseMoved',x:readyButtons[0].x,y:readyButtons[0].y,button:'none',buttons:0,pointerType:'mouse'});
+          await new Promise(r=>setTimeout(r,300));
+        }
       }
       const candidates=prepared.buttons?.filter(b=>b.visible&&!b.disabled&&b.expectedSend&&b.hit)||[];
       const physicalButton=candidates.length===1?candidates[0]:null;
@@ -713,7 +718,8 @@ async function main() {
         dom_sha256: hash(normDom),
         source_text_equals_dom_text: textMatches,
         utf8_valid: Buffer.from(normSource,'utf8').toString('utf8')===normSource,
-        url: pageState.url,
+        url: countsAfter.url,
+        conversation_url: countsAfter.url,
         user_turns_before: countsBefore.user, user_turns_after: countsAfter.user,
         assistant_turns_before: countsBefore.assistant, assistant_turns_after: countsAfter.assistant,
         no_resend: false, send_attempts: attemptCount,physical_send_count:1,composer_cleared:composerCleared,human_reconciled_retry:confirmedRetry,
@@ -730,6 +736,8 @@ async function main() {
     activeTrace?.emit('FAILURE',{reason:err.message.split(':')[0]});
     console.log(JSON.stringify({
       status: activeLedger?.read(consultationId)?.message_confirmed ? 'SENT_CONFIRMED' : err.message.includes('DOMAIN_BLOCKED') ? "DOMAIN_BLOCKED" : "ERROR",
+      no_resend: true,
+      message_sent: !!activeLedger?.read(consultationId)?.message_confirmed,
       error: `Fallo durante interacción CDP: ${err.message}`,
       consultation_id: consultationId,
       timestamp: new Date().toISOString()

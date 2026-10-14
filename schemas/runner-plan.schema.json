@@ -158,6 +158,42 @@
           "type": "boolean"
         }
       }
+    },
+    "consultation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "question",
+        "response_timeout_seconds",
+        "after_recovery",
+        "new_conversation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]{1,120}$"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8000
+        },
+        "response_timeout_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 90
+        },
+        "after_recovery": {
+          "type": "boolean"
+        },
+        "new_conversation": {
+          "type": "boolean"
+        }
+      }
+    },
+    "sandbox_crash_boundary": {
+      "type": "boolean"
     }
   },
   "definitions": {

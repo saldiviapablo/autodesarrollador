@@ -1,4 +1,4 @@
-$script:RunnerInfra=Split-Path -Parent $PSScriptRoot
+﻿$script:RunnerInfra=Split-Path -Parent $PSScriptRoot
 Import-Module Microsoft.PowerShell.Utility -Global -ErrorAction Stop
 $null=Get-Command Get-FileHash -ErrorAction Stop
 . (Join-Path $script:RunnerInfra 'scripts/state-manager.ps1')
@@ -33,7 +33,25 @@ function Assert-RunnerIntegrity {
 function Save-RunnerState([string]$Status,[string]$Task){
     $script:RunState.status=$Status;$script:RunState.current_phase='RUNNER';$script:RunState.current_task=$Task
     $script:RunState.updated_at=[datetimeoffset]::Now.ToString('o')
-    $null=Write-AtomicState -StateObj $script:RunState -AutopilotDir $script:Auto -ValidateTransition $false
+    # Coordinate with the existing per-STATE ChatGPT budget mutex. Never overwrite
+    # a reservation made by the managed consultant with Runner's cached STATE.
+    $statePath=Join-Path $script:Auto 'STATE.json'
+    $keyBytes=[Text.Encoding]::UTF8.GetBytes([IO.Path]::GetFullPath($statePath).ToLowerInvariant())
+    $keyHash=([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($keyBytes))).Replace('-','')
+    $stateBudgetMutex=New-Object Threading.Mutex($false,('Local\DesarrolladorAutonomo_ChatGPTBudget_'+$keyHash));$budgetHeld=$false
+    try{
+        try{$budgetHeld=$stateBudgetMutex.WaitOne(10000)}catch [Threading.AbandonedMutexException]{$budgetHeld=$true}
+        if(-not $budgetHeld){throw 'CHATGPT_BUDGET_LOCK_TIMEOUT'}
+        if(Test-Path -LiteralPath $statePath){
+            $disk=Get-Content -LiteralPath $statePath -Raw -Encoding UTF8|ConvertFrom-Json
+            if($disk.run_id -ne $script:RunId){throw 'BUDGET_STATE_RUN_ID_MISMATCH'}
+            if($disk.chatgpt){
+                $script:RunState.chatgpt.queries_used=[Math]::Max($script:RunState.chatgpt.queries_used,$disk.chatgpt.queries_used)
+                $script:RunState.chatgpt.max_queries=[Math]::Min($script:RunState.chatgpt.max_queries,$disk.chatgpt.max_queries)
+            }
+        }
+        $null=Write-AtomicState -StateObj $script:RunState -AutopilotDir $script:Auto -ValidateTransition $false
+    }finally{if($budgetHeld){$stateBudgetMutex.ReleaseMutex()};$stateBudgetMutex.Dispose()}
     Write-RunnerJson (Join-Path $script:Auto 'HEARTBEAT.json') @{run_id=$script:RunId;pid=$PID;timestamp=[datetimeoffset]::Now.ToString('o');status=$Status;current_task=$Task}
 }
 function Runner-Event([string]$Type,$Payload){$null=Add-AutopilotEvent -AutopilotDir $script:Auto -RunId $script:RunId -Actor 'runner' -Type $Type -Payload $Payload}

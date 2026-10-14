@@ -18,5 +18,9 @@ B — WEB_HANDOFF = PASS determinista. El plan puede declarar research (URL HTTP
 Test sandbox: servidor HTTP propio → payload recibido por consumidor determinista en proceso separado → marcador/SHA utilizados; input echo y cambio de fuente DENY; cleanup del servidor PASS. No se atribuye esta prueba a Qwen real: ATTEMPT4 deberá demostrarlo con Qwen.
 
 Se detectó que verify-runner-syntax.ps1 tiene destino histórico fijo; se restauró sólo su salida regenerada mediante Git y no se vuelve a usar ese destino para estas pruebas. Los smokes nuevos guardan evidencias en la carpeta de fronteras.
-C — RECOVERY_CONTINUATION = PENDING.
-Regresión conjunta y F24 ATTEMPT 4 todavía no ejecutados. NO PUSH; F25/F27/F28 no iniciadas. Sin dependencias nuevas ni actualizaciones.
+C — RECOVERY_CONTINUATION = PASS en sandbox: crash propio real, Watchdog, limpieza, corrupción controlada de STATE/current+previous, restauración desde checkpoint íntegro y START-Recover real. Worker/tests continuaron; reloj original intacto, cleanup PASS. Backend probe explícito: su terminal FAILED es intencional y no acredita E2E live.
+
+El harness nuevo exige START-Recover ANTES de ChatGPT. Un boundary de crash aprobado sólo para sandbox espera con Tick y reloj global activo, evitando la carrera con Reviewer. El consultor es ahora un proceso administrado por Runner, después de checks tras recovery y antes de Reviewer; conserva heartbeat/Job Object y no genera otra inferencia. El estado comparte el mutex de presupuesto existente para preservar reservas frente al STATE cacheado de Runner. Smoke concurrente de reserva PASS. El retry lógico se verifica en el paso administrado sin envío adicional. Completion requiere consumo web y consulta/respuesta/idempotencia reales.
+
+ATTEMPT4 exige todos esos gates y 2700s/restart2/maxcycles5. No se modifican relojes ni ledgers anteriores.
+Regresión conjunta PASS: estados/idempotencia/human/domain/UTF-8, syntax, Runner/Watchdog/checkpoint/recovery, presupuesto concurrente, Inference Lock real entre procesos y cleanup. Modelo y hashes de seguridad preservados. ATTEMPT4 autorizado por gate, aún no iniciado al certificar estas fronteras. NO PUSH; F25/F27/F28 no iniciadas. Sin dependencias nuevas ni actualizaciones.

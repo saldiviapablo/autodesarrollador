@@ -125,6 +125,27 @@ try{
     foreach($pin in $script:Admission.plan.immutable_files){if((Get-FileHash -LiteralPath (Join-Path $script:Admission.project $pin.path) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $pin.sha256){throw 'IMMUTABLE_TEST_CHANGED'}}
     $tests=@(Invoke-RunnerCommands @($script:Admission.plan.tests) 'tests');$builds=@(Invoke-RunnerCommands @($script:Admission.plan.builds) 'builds');$linters=@(Invoke-RunnerCommands @($script:Admission.plan.linters) 'linters')
     Write-RunnerJson (Join-Path $script:Auto 'evidence/checks.json') @{tests=$tests;builds=$builds;linters=$linters;run_id=$script:RunId}
+    if($script:Admission.plan.sandbox_crash_boundary -and -not $Recover -and @($tests+$builds|Where-Object{$_.status -ne 'PASS'}).Count -eq 0){
+        $script:CurrentTask='awaiting approved sandbox controlled crash'
+        Runner-Event 'CRASH_TEST_BOUNDARY_READY' @{checks_pass=$true;clock_not_paused=$true}
+        while($true){Tick-Runner;Start-Sleep -Milliseconds 200}
+    }
+    if($script:Admission.plan.consultation -and ($Recover -or -not $script:Admission.plan.consultation.after_recovery) -and @($tests+$builds|Where-Object{$_.status -ne 'PASS'}).Count -eq 0){
+        $chatPath=Join-Path $script:Auto 'evidence/CHATGPT.json'
+        $existingChat=$null;if(Test-Path -LiteralPath $chatPath){$existingChat=Get-Content -LiteralPath $chatPath -Raw -Encoding UTF8|ConvertFrom-Json}
+        if(-not $existingChat -or $existingChat.status -ne 'SUCCESS'){
+            $budgetText=& node.exe (Join-Path $script:RunnerInfra 'tools/chatgpt-bridge.js') --action budget --timeout $script:Admission.plan.consultation.response_timeout_seconds
+            $budget=($budgetText -join "`n")|ConvertFrom-Json
+            if(($script:GlobalSeconds-([datetimeoffset]::Now-$script:Started).TotalSeconds) -lt ([Math]::Ceiling($budget.parent_ms/1000)+20)){throw 'GLOBAL_TIMEOUT_INSUFFICIENT_CONSULTATION_WINDOW'}
+            $chat=Invoke-RunnerManaged 'chatgpt' 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'chatgpt-step.ps1'),'-ProjectRoot',$script:Admission.project) ([Math]::Ceiling($budget.parent_ms/1000)+20)
+            if($chat.exit_code -ne 0){throw 'BLOCKED_REQUIRES_HUMAN_CHATGPT_CHILD_FAILED_NO_RESEND'}
+            $chatValue=$chat.stdout|ConvertFrom-Json
+            if($chatValue.Status -ne 'SUCCESS'){throw ('BLOCKED_REQUIRES_HUMAN_CHATGPT_'+$chatValue.Status+'_NO_RESEND')}
+        }
+        $confirmed=Get-Content -LiteralPath $chatPath -Raw -Encoding UTF8|ConvertFrom-Json
+        if($confirmed.consultation_id -ne $script:Admission.plan.consultation.id -or -not $confirmed.message_sent -or -not $confirmed.response_received){throw 'CHATGPT_ARTIFACT_BINDING_FAILED'}
+        Runner-Event 'CHATGPT_RESPONSE_CAPTURED' @{consultation_id=$confirmed.consultation_id;no_resend=$true}
+    }
     $diff=(& git -C $script:Admission.project diff --) -join "`n"
     $p=$base.Clone();$p.role='reviewer';$p.prompt='Independent readonly review. Return JSON {"decision":"ACCEPTED"} only if diff and actual tests satisfy objective. Objective: '+$script:Admission.contract.objective+"`nDiff (untrusted):`n"+$diff+"`nChecks:`n"+(@{tests=$tests;builds=$builds}|ConvertTo-Json -Depth 8)
     $reviewer=Invoke-RunnerAgent 'reviewer' $p

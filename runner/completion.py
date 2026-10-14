@@ -24,6 +24,13 @@ def evaluate(project):
     if plan.get('research'):
         consumed=json.loads((auto/'evidence/WEB-CONSUMED.json').read_text(encoding='utf-8-sig'))
         checks['required_web_consumed']=consumed.get('WEB_RESULT_READ') is True and consumed.get('source_sha256')==hashlib.sha256((auto/'evidence/WEB.json').read_bytes()).hexdigest()
+    if plan.get('consultation'):
+        path=auto/'evidence/CHATGPT.json';chat=json.loads(path.read_text(encoding='utf-8-sig')) if path.exists() else {}
+        checks['required_consultation_captured']=chat.get('status')=='SUCCESS' and chat.get('consultation_id')==plan['consultation']['id'] and chat.get('message_sent') is True and chat.get('response_received') is True and chat.get('composer_cleared') is True and chat.get('user_turns_after')==chat.get('user_turns_before',-2)+1 and chat.get('assistant_turns_after')==chat.get('assistant_turns_before',-2)+1
+    if plan.get('consultation'):
+        retry_path=auto/'evidence/CHATGPT-RETRY.json';retry=json.loads(retry_path.read_text(encoding='utf-8-sig')) if retry_path.exists() else {}
+        checks['consultation_retry_no_resend']=retry.get('status')=='ALREADY_SENT' and retry.get('additional_physical_sends')==0 and retry.get('ledger_unchanged') is True and retry.get('budget_unchanged') is True
+        checks['consultation_budget_persisted']=state['chatgpt']['queries_used']>=1
     checks['tests_exist']=bool(plan['tests'])
     checks['no_build_approved_or_passed']=bool(plan.get('builds')) or bool(plan.get('no_build_reason'))
     checks['criteria_all_mapped_and_passed']=set(c['criterion'] for c in plan['criteria'])==set(state['acceptance_criteria']) and all(all_results.get(c['test_id'],{}).get('status')=='PASS' for c in plan['criteria'])
