@@ -244,6 +244,17 @@ async function sendCdp(ws, method, params = {}) {
   return result;
 }
 
+async function sendSinglePhysicalClick(ws, button, dispatch = sendCdp) {
+  if (!button || !button.visible || button.disabled || !button.expectedSend ||
+      !Number.isFinite(button.x) || !Number.isFinite(button.y)) {
+    throw new Error('SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS');
+  }
+  // One press/release pair only. A transport error is ambiguous: never fall back
+  // to another click, submit, or Enter. The caller persists intent beforehand.
+  await dispatch(ws, 'Input.dispatchMouseEvent', {type:'mousePressed',x:button.x,y:button.y,button:'left',clickCount:1});
+  await dispatch(ws, 'Input.dispatchMouseEvent', {type:'mouseReleased',x:button.x,y:button.y,button:'left',clickCount:1});
+}
+
 // 5. Enforzar 1 sola pestaña y Domain Lock
 async function enforceSingleTabAndDomainLock() {
   const tabsRes = await fetch(`${CDP_BASE}/json`);
@@ -637,45 +648,9 @@ async function main() {
       if(hash(normalize(prepared.composer||''))!==ledger.read(consultationId).prompt_sha256) throw new Error('COMPOSER_CHANGED_NO_SEND');
       const candidates=prepared.buttons?.filter(b=>b.visible&&!b.disabled&&b.expectedSend)||[];
       const physicalButton=candidates.length===1?candidates[0]:null;
-      if(confirmedRetry && !physicalButton) throw new Error('SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS');
+      if(!physicalButton) throw new Error('SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS');
       ledger.update(consultationId, { delivery_state: 'DELIVERY_INTENT', send_attempts: attemptCount });
-      const sendClickRes = confirmedRetry ? await (async()=>{
-        // Trusted physical input to the existing visible button, exactly one click.
-        await sendCdp(ws,'Input.dispatchMouseEvent',{type:'mousePressed',x:physicalButton.x,y:physicalButton.y,button:'left',clickCount:1});
-        await sendCdp(ws,'Input.dispatchMouseEvent',{type:'mouseReleased',x:physicalButton.x,y:physicalButton.y,button:'left',clickCount:1});
-        return {result:{value:{success:true,method:'single_physical_click'}}};
-      })() : await sendCdp(ws, 'Runtime.evaluate', {
-        expression: `(() => {
-          const prose = document.querySelector('.ProseMirror') || document.querySelector('#prompt-textarea') || document.querySelector('div[contenteditable="true"]');
-          const paragraphs = prose ? Array.from(prose.querySelectorAll('p')) : [];
-          const current = paragraphs.length ? paragraphs.map(p => p.innerText).join('\\n').trim() : (prose?.innerText || '').trim().replace(/\\r\\n/g,'\\n').replace(/\\n\\n+/g,'\\n');
-          if (current !== ${JSON.stringify(normSource)}) return { success: false, reason: 'COMPOSER_CHANGED_NO_SEND' };
-          const form = prose ? prose.closest('form') : null;
-          const sendBtn = form ? (
-            form.querySelector('button[type="submit"]') ||
-            form.querySelector('button[aria-label="Enviar"]') ||
-            form.querySelector('button[data-testid="send-button"]') ||
-            form.querySelector('button[aria-label*="Send"]')
-          ) : (
-            document.querySelector('button[data-testid="send-button"]') ||
-            document.querySelector('button[aria-label="Enviar"]') ||
-            document.querySelector('button[aria-label*="Send"]')
-          );
-
-          if (sendBtn && !sendBtn.disabled) {
-            sendBtn.click();
-            return { success: true, method: 'button_click' };
-          } else if (form) {
-            form.requestSubmit();
-            return { success: true, method: 'form_submit' };
-          } else if (prose) {
-            prose.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
-            return { success: true, method: 'enter_key' };
-          }
-          return { success: false, reason: 'Send trigger failed' };
-        })()`,
-        returnByValue: true
-      });
+      await sendSinglePhysicalClick(ws, physicalButton);
 
       // 5. Confirmar que el mensaje fue enviado (CHATGPT_MESSAGE_SENT = true)
       let messageSent = false;
@@ -782,7 +757,7 @@ async function main() {
   }
 }
 
-module.exports = { validateDomain, guardPageExpression };
+module.exports = { validateDomain, guardPageExpression, sendSinglePhysicalClick };
 
 if (require.main === module) main().catch(async err => {
   console.log(JSON.stringify({

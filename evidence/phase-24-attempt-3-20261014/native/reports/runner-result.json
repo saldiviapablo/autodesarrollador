@@ -1,0 +1,190 @@
+{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261014-143502",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f24-attempt3-f79dd822\\project",
+    "objective":  "Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox",
+    "duration_seconds":  920.51989531517029,
+    "status":  "BLOCKED_REQUIRES_HUMAN",
+    "technical_status":  "NOT_COMPLETED",
+    "reason":  "BLOCKED_REQUIRES_HUMAN: attempt 3 UNKNOWN_DELIVERY after bridge interruption; NO RESEND; BLOCKED_REQUIRES_HUMAN: attempt 3 UNKNOWN_DELIVERY; NO RESEND",
+    "tasks_completed":  [
+
+                        ],
+    "pending_tasks":  [
+                          "Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox"
+                      ],
+    "changed_files":  [
+                          "invoice.py",
+                          "README.md"
+                      ],
+    "commits":  [
+
+                ],
+    "tests":  [
+                  {
+                      "output":  "F24_UNIT_DOC_PASS\r\n",
+                      "status":  "PASS",
+                      "marker_present":  true,
+                      "id":  "unit",
+                      "exit_code":  0
+                  }
+              ],
+    "builds":  [
+                   {
+                       "output":  "F24_BUILD_PASS\r\n",
+                       "status":  "PASS",
+                       "marker_present":  true,
+                       "id":  "build",
+                       "exit_code":  0
+                   }
+               ],
+    "linters":  [
+
+                ],
+    "errors":  [
+                   {
+                       "reason":  "AGENT_FAILED:worker",
+                       "count":  1,
+                       "role":  "worker"
+                   },
+                   {
+                       "reason":  "AGENT_FAILED:worker",
+                       "count":  2,
+                       "role":  "worker"
+                   },
+                   "BLOCKED_REQUIRES_HUMAN: attempt 3 UNKNOWN_DELIVERY after bridge interruption; NO RESEND; BLOCKED_REQUIRES_HUMAN: attempt 3 UNKNOWN_DELIVERY; NO RESEND"
+               ],
+    "retries":  {
+                    "llama":  0,
+                    "supervisor":  0,
+                    "reviewer":  0,
+                    "worker":  2
+                },
+    "recoveries":  [
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  11,
+                           "event_id":  "evt-29cf6148dd78",
+                           "timestamp":  "2026-10-14T14:41:23.8034743-03:00",
+                           "run_id":  "run-20261014-143502",
+                           "actor":  "runner",
+                           "type":  "WATCHDOG_AGENT_RESTART",
+                           "payload":  {
+                                           "reason":  "AGENT_FAILED:worker",
+                                           "count":  1,
+                                           "role":  "worker"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  15,
+                           "event_id":  "evt-e2bb99f92dbb",
+                           "timestamp":  "2026-10-14T14:46:28.8542024-03:00",
+                           "run_id":  "run-20261014-143502",
+                           "actor":  "runner",
+                           "type":  "WATCHDOG_AGENT_RESTART",
+                           "payload":  {
+                                           "reason":  "AGENT_FAILED:worker",
+                                           "count":  2,
+                                           "role":  "worker"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  24,
+                           "event_id":  "evt-b77d58e9ce41",
+                           "timestamp":  "2026-10-14T14:49:15.5161887-03:00",
+                           "run_id":  "run-20261014-143502",
+                           "actor":  "watchdog",
+                           "type":  "PARENT_CRASH_RECOVERED",
+                           "payload":  {
+                                           "parent_pid":  33404,
+                                           "reason":  "PARENT_PROCESS_LOST"
+                                       }
+                       }
+                   ],
+    "web_queries":  [
+
+                    ],
+    "chatgpt_queries_used":  1,
+    "blocks":  [
+                   "BLOCKED_REQUIRES_HUMAN: attempt 3 UNKNOWN_DELIVERY after bridge interruption; NO RESEND; BLOCKED_REQUIRES_HUMAN: attempt 3 UNKNOWN_DELIVERY; NO RESEND"
+               ],
+    "completion_gate":  {
+                            "status":  "NOT_EVALUATED",
+                            "reason":  "BLOCKED_REQUIRES_HUMAN: attempt 3 UNKNOWN_DELIVERY after bridge interruption; NO RESEND; BLOCKED_REQUIRES_HUMAN: attempt 3 UNKNOWN_DELIVERY; NO RESEND"
+                        },
+    "cleanup":  {
+                    "run_lock_removed":  true,
+                    "run_mutex_released":  true,
+                    "inference_mutex":  "FREE",
+                    "errors":  [
+
+                               ],
+                    "owned_survivors":  [
+
+                                        ],
+                    "unexpected_listeners":  [
+
+                                             ]
+                },
+    "processes":  [
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  14928,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275961079538241
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  35392,
+                          "name":  "llama",
+                          "executable":  "C:\\AI\\llama.cpp\\llama-server.exe",
+                          "start_ticks":  639275961092329704
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  33476,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275961181400043
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  30904,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275961767456735
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  25400,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275964847305198
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  11100,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639275967896890802
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  34744,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639275969513993117
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  16268,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639275969515112501
+                      }
+                  ],
+    "generated_at":  "2026-10-14T14:50:30.7652820-03:00"
+}

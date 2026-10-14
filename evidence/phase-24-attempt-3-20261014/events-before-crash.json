@@ -1,0 +1,339 @@
+[
+  {
+    "schema_version": "1.0",
+    "seq": 1,
+    "event_id": "evt-7b00f453074e",
+    "timestamp": "2026-10-14T14:35:03.3926623-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "init-script",
+    "type": "RUN_INITIALIZED",
+    "payload": {
+      "objective": "Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox",
+      "run_contract": "RUN-CONTRACT.yaml",
+      "status": "INITIALIZED",
+      "project_id": "project"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 2,
+    "event_id": "evt-929ed9627fea",
+    "timestamp": "2026-10-14T14:35:07.6147831-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "LOCK_METADATA_RECONCILED",
+    "payload": {
+      "kernel_mutex_acquired": true,
+      "previous": {
+        "note": "METADATA de observabilidad de run autónomo. NO es lock atómico de SO. La exclusión mutua atómica reside en el Runner.",
+        "run_id": "run-20261014-143502",
+        "owner_pid": 35476,
+        "started_at": "2026-10-14T14:35:03.4046662-03:00",
+        "project_root": "C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/f24-attempt3-f79dd822/project"
+      }
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 3,
+    "event_id": "evt-e7b6b7fcdb59",
+    "timestamp": "2026-10-14T14:35:07.9129816-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "RUN_STARTED",
+    "payload": {
+      "approval_digest": "8d79fd972da61b49ba936eacfc7d7c82f183a8471ff6ab683a46676267fb8fb6",
+      "backend": "live",
+      "git_head": "d0c75317a12bffbd6a44ccc53cb11308110583b9"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 4,
+    "event_id": "evt-fda63b39bef1",
+    "timestamp": "2026-10-14T14:35:07.9865186-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 14928,
+      "name": "watchdog",
+      "executable": "powershell.exe",
+      "start_ticks": 639275961079538241
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 5,
+    "event_id": "evt-e53349127e49",
+    "timestamp": "2026-10-14T14:35:09.2519847-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 35392,
+      "name": "llama",
+      "executable": "C:\\AI\\llama.cpp\\llama-server.exe",
+      "start_ticks": 639275961092329704
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 6,
+    "event_id": "evt-86168a207c22",
+    "timestamp": "2026-10-14T14:35:17.9046168-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "MODEL_HEALTH_READY",
+    "payload": {
+      "pid": 35392
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 7,
+    "event_id": "evt-1832a510958f",
+    "timestamp": "2026-10-14T14:35:18.1601273-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 33476,
+      "name": "supervisor",
+      "executable": "powershell.exe",
+      "start_ticks": 639275961181400043
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 8,
+    "event_id": "evt-3fbbaa20c15a",
+    "timestamp": "2026-10-14T14:36:16.7289410-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "supervisor"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 9,
+    "event_id": "evt-42f58bd3a344",
+    "timestamp": "2026-10-14T14:36:16.7679412-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 30904,
+      "name": "worker",
+      "executable": "powershell.exe",
+      "start_ticks": 639275961767456735
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 10,
+    "event_id": "evt-7df46bea4621",
+    "timestamp": "2026-10-14T14:41:23.7904715-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 1,
+      "name": "worker"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 11,
+    "event_id": "evt-29cf6148dd78",
+    "timestamp": "2026-10-14T14:41:23.8034743-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "WATCHDOG_AGENT_RESTART",
+    "payload": {
+      "reason": "AGENT_FAILED:worker",
+      "count": 1,
+      "role": "worker"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 12,
+    "event_id": "evt-6f953a4627b1",
+    "timestamp": "2026-10-14T14:41:24.3433295-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "recovery-protocol",
+    "type": "RECOVERY_RECONCILED",
+    "payload": {
+      "details": [
+        "Git detectó archivo modificado no registrado en STATE: README.md",
+        "Git detectó archivo modificado no registrado en STATE: invoice.py"
+      ],
+      "reconciled_git_files": [
+        "README.md",
+        "invoice.py"
+      ],
+      "tests_status": "NONE",
+      "recovered_from_backup": false,
+      "next_action": "Continuar ejecución de tarea pendiente: Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox",
+      "divergence_detected": true
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 13,
+    "event_id": "evt-453dc577d6d6",
+    "timestamp": "2026-10-14T14:41:24.7448618-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 25400,
+      "name": "worker",
+      "executable": "powershell.exe",
+      "start_ticks": 639275964847305198
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 14,
+    "event_id": "evt-e133293dfc3c",
+    "timestamp": "2026-10-14T14:46:28.8452027-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 1,
+      "name": "worker"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 15,
+    "event_id": "evt-e2bb99f92dbb",
+    "timestamp": "2026-10-14T14:46:28.8542024-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "WATCHDOG_AGENT_RESTART",
+    "payload": {
+      "reason": "AGENT_FAILED:worker",
+      "count": 2,
+      "role": "worker"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 16,
+    "event_id": "evt-af40e6866628",
+    "timestamp": "2026-10-14T14:46:29.3296734-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "recovery-protocol",
+    "type": "RECOVERY_RECONCILED",
+    "payload": {
+      "details": [],
+      "reconciled_git_files": [
+        "README.md",
+        "invoice.py"
+      ],
+      "tests_status": "NONE",
+      "recovered_from_backup": false,
+      "next_action": "Continuar ejecución de tarea pendiente: Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox",
+      "divergence_detected": false
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 17,
+    "event_id": "evt-f76f9fd90a3a",
+    "timestamp": "2026-10-14T14:46:29.7036219-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 11100,
+      "name": "worker",
+      "executable": "powershell.exe",
+      "start_ticks": 639275967896890802
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 18,
+    "event_id": "evt-6f36930e8fe0",
+    "timestamp": "2026-10-14T14:49:11.3705361-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "worker"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 19,
+    "event_id": "evt-4e3d1fd2f9a2",
+    "timestamp": "2026-10-14T14:49:11.4210482-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 34744,
+      "name": "check-unit",
+      "executable": "C:/Python314/python.exe",
+      "start_ticks": 639275969513993117
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 20,
+    "event_id": "evt-8335f76c2589",
+    "timestamp": "2026-10-14T14:49:11.5042076-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "check-unit"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 21,
+    "event_id": "evt-d7a072186d76",
+    "timestamp": "2026-10-14T14:49:11.5297180-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 16268,
+      "name": "check-build",
+      "executable": "C:/Python314/python.exe",
+      "start_ticks": 639275969515112501
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 22,
+    "event_id": "evt-c693c9753768",
+    "timestamp": "2026-10-14T14:49:11.5627176-03:00",
+    "run_id": "run-20261014-143502",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "check-build"
+    }
+  }
+]

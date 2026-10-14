@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "scope": "Pre-START first-send physical transport fix; no target invoice implementation edits",
+  "bridge_backup_sha256": "d6faf46e9a80ef50a15498582c4f601894489fc8b97995acd922c190e6f3c0fc",
+  "current_sha256": {
+    "tools/chatgpt-bridge.js": "eb8ae0fa029518e5e791c7f0054efdb49e25d67b350a11539a6af0c1e9134b29",
+    "tools/chatgpt-ledger.js": "327b1f1b72e8745ee607bf150d25db62c879330c786f934fbb0624bc4b23498b",
+    "scripts/consultar-chatgpt.ps1": "294d080b857cc1d107c442b7f8f53214c5bbf36995318a7e6d1ac7fd60490d7d",
+    "config/security.yaml": "68e0941a63ec53c67429a296d7db4722a29267a8aee5432086e4639ac8f0ec7f",
+    "runner/run.ps1": "b1bf553e0f19ba3fe527bec3ad146b9df8f74b0ced8c7feddd67e960b5bcfd66",
+    "runner/core.ps1": "ac616b779b5159289f9109134b54e7f1b20cb250caf58dd7ff9e8611713ec355",
+    "scripts/inference-lock.ps1": "3990343f762a26c6e7ed090e64b3c3b0c2b719cd4e611f0c490cebc633928717",
+    "tests/f24_attempt3_fixture.py": "5347a44d8c0d3a0d943293c3ced9836ba483b51514d791666433f22add36a00a"
+  },
+  "new_send_path": "One Input.dispatchMouseEvent press/release pair; unique visible enabled expected send target; no fallback",
+  "unchanged_guards": [
+    "exact HTTPS chatgpt.com domain",
+    "source/DOM UTF-8 match",
+    "composer SHA-256",
+    "baseline and conversation URL persisted before intent",
+    "exclusive ledger and browser lease",
+    "intent persisted before physical input",
+    "UNKNOWN_DELIVERY never blindly resent",
+    "human retry and automatic reconciliation untouched"
+  ],
+  "tests": {
+    "physical_transport": 4,
+    "domain_lock": 13,
+    "idempotency": 8,
+    "human_reconciliation": 41
+  },
+  "human_test_integrity_note": "integrity-before.json captures current post-fix bridge immediately before deterministic tests; unchanged assertion refers to the test interval, not historical send transport",
+  "new_dependencies": []
+}

@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final | F23 PASS; F24 real bloqueada en ChatGPT | **FAIL / BLOCKED_REQUIRES_HUMAN** |
+| **Macrofase 8** | Validación Final | F23 PASS; F24 ATTEMPT 3 UNKNOWN_DELIVERY | **FAIL / BLOCKED_REQUIRES_HUMAN** |
 
 Cada fase debe producir:
 
@@ -1406,3 +1406,7 @@ Adaptador F24 PASS (A–H, ejecución única, UTF-8, vacío, exit code, stdout/s
 ## Estado vigente — F24 intento 2 — 2026-10-14
 
 Adaptador F24 A–H PASS (fea2a71). F23 PASS preservada. F24 real intento 2 FAIL / BLOCKED_REQUIRES_HUMAN: launcher/Runner/Supervisor/Worker, tests/build, checkpoint, crash y Watchdog ejecutados; ChatGPT UNKNOWN_DELIVERY, un intento, sin reenvío. Reviewer final/Completion Gate no alcanzados. F25/4H/F26 y regression final NOT_RUN. Cleanup e integridad PASS. READY FOR REAL PILOT NO. docs/F24-ATTEMPT-2-BLOCKED-REPORT.md.
+
+## Estado vigente — F24 ATTEMPT 3 — 2026-10-14
+
+ATTEMPT 2 (run-20261014-020920) cerrado como FAIL / GLOBAL_TIMEOUT; sus 216 archivos, sandbox, STATE, reloj y presupuestos permanecen intactos. ATTEMPT 3 nuevo run-20261014-143502: launcher/Prepare/preflight/aprobación única, Supervisor, Worker SUCCESS tras 2 reinicios normales, 13 tests/build, checkpoint y crash/Watchdog PASS. Consulta nueva f24-a3-run-20261014-143502-bfca6e98 UNKNOWN_DELIVERY / NO RESEND; F24 FAIL / BLOCKED_REQUIRES_HUMAN. Recovery E2E posterior al crash, Reviewer final y Completion Gate NOT_RUN. Fetch web oficial PASS; lectura de WEB.json por Worker no demostrada. Duración nativa 920.52s dentro de 2700s, sin ampliación. Cleanup/integridad PASS. F23 PASS conservada. READY_FOR_F25 NO; F25–F28 no iniciadas. Informe: docs/F24-ATTEMPT-3-STOP-REPORT.md; evidence/phase-24-attempt-3-20261014/.

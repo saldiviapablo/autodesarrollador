@@ -1,7 +1,7 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-13T19:52:29.816470-03:00
+**Última actualización:** 2026-10-14T14:56:58.537704-03:00
 **Estado documental:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A
 **Baseline de arquitectura:** Hermes Agent (v0.21.6) + Qwen Code CLI (@qwen-code/qwen-code@0.25.1) + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
@@ -63,7 +63,7 @@
 | **Fase 21** | Reportes | **PASS** | evidence/phase-21/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 22** | Cleanup garantizado | **PASS** | evidence/phase-22/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 23** | Sandbox integral | **PASS** | Reviewer real ACCEPTED, Completion Gate PASS; histórico preservado. evidence/hermes-prompt-transport-20261014/. |
-| **Fase 24** | End-to-End corto | **FAIL / BLOCKED_REQUIRES_HUMAN** | Intento 2 real: tests/build y Watchdog PASS; ChatGPT UNKNOWN_DELIVERY. evidence/phase-24-attempt-2-20261014/. |
+| **Fase 24** | End-to-End corto | **FAIL / BLOCKED_REQUIRES_HUMAN** | ATTEMPT 3: Worker SUCCESS, 13 tests/build y Watchdog PASS; ChatGPT UNKNOWN_DELIVERY, sin reenvío. Reviewer/gate final NOT_RUN. evidence/phase-24-attempt-3-20261014/. |
 | **Fase 25** | Prueba 2 horas | **NOT_RUN** | Validación de estabilidad autónoma continua de 2 horas. |
 | **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
 | **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
@@ -148,3 +148,7 @@ F24 FAIL / MANDATORY_TEST_FAILED: el Worker rechaza pesos cero permitidos y acep
 ## Corrección Worker F24 bloqueada por plazo congelado — 2026-10-14
 
 Worker correction BLOCKED_REQUIRES_HUMAN / GLOBAL_TIMEOUT: plazo global aprobado 2700s vencido desde 02:54:22 -03:00. Restarts Worker 1/2 todavía con margen; reloj y todos los presupuestos/contadores intactos. STOP conforme a la instrucción de no modificar presupuestos congelados. Cero invocaciones Worker/modelo/ChatGPT y cero ediciones manuales del código; Reviewer/Completion Gate/F25 NOT_RUN. F24 permanece FAIL, tests/build históricos y evidencias conservados. Cleanup/integridad PASS; STATE terminal coherente. docs/F24-WORKER-CORRECTION-BUDGET-STOP.md; evidence/f24-worker-correction-budget-blocked-20261014/.
+
+## Estado vigente — F24 ATTEMPT 3 — 2026-10-14
+
+ATTEMPT 2 (run-20261014-020920) cerrado como FAIL / GLOBAL_TIMEOUT; sus 216 archivos, sandbox, STATE, reloj y presupuestos permanecen intactos. ATTEMPT 3 nuevo run-20261014-143502: launcher/Prepare/preflight/aprobación única, Supervisor, Worker SUCCESS tras 2 reinicios normales, 13 tests/build, checkpoint y crash/Watchdog PASS. Consulta nueva f24-a3-run-20261014-143502-bfca6e98 UNKNOWN_DELIVERY / NO RESEND; F24 FAIL / BLOCKED_REQUIRES_HUMAN. Recovery E2E posterior al crash, Reviewer final y Completion Gate NOT_RUN. Fetch web oficial PASS; lectura de WEB.json por Worker no demostrada. Duración nativa 920.52s dentro de 2700s, sin ampliación. Cleanup/integridad PASS. F23 PASS conservada. READY_FOR_F25 NO; F25–F28 no iniciadas. Informe: docs/F24-ATTEMPT-3-STOP-REPORT.md; evidence/phase-24-attempt-3-20261014/.
