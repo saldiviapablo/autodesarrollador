@@ -445,7 +445,7 @@ Nada debe marcarse `PASS` sin evidencia.
 
 ## `07-ROADMAP.md`
 
-Define el orden de implementación por macrofases (Macrofases 1–6, 7A y 7B certificadas históricamente; validación de Macrofase 8 bloqueada en F23 intento 3 por entrega ChatGPT ambigua; fixes de Prepare y Path Guard PASS).
+Define el orden de implementación por macrofases (Macrofases 1–6, 7A y 7B certificadas históricamente; validación de Macrofase 8 detenida en F23 por fallo CLI del Reviewer; reconciliación ChatGPT y fixes de seguridad PASS).
 
 ---
 
@@ -528,7 +528,7 @@ Macrofase 7A: Hermes Native Capabilities (7A.1 a 7A.10) — PASS
   ChatGPT Idempotency — PASS
   Regression gate — PASS
 Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — PASS
-Macrofase 8:  Validación Final (Fases 23 a 28) — IN_PROGRESS (reconciliación humana PASS; F23 reanudada)
+Macrofase 8:  Validación Final (Fases 23 a 28) — FAIL / MANDATORY_TEST_FAILED (F23 Reviewer; reconciliación PASS)
 ```
 
 ---
@@ -708,3 +708,7 @@ Path Guard fix PASS (6e0a507), A–J READ/WRITE y Prepare/MCP/plugin/Runner smok
 ## Reconciliación humana F23 — 2026-10-14
 
 DELIVERY_NOT_OCCURRED confirmado por inspección humana. Mismo ID f23-ee298529568f4f8b94f4dd16f90a0be4, un único nuevo envío físico autorizado, user +1 / assistant +1, respuesta capturada y composer vacío. Retry lógico ALREADY_SENT / 0 envíos adicionales. Budget permanece 1. Reconciliación PASS; F23 se reanuda en el mismo sandbox. F24–F28 no iniciadas. docs/F23-HUMAN-RECONCILIATION.md; evidence/f23-human-reconciliation/.
+
+## Estado actual F23 — 2026-10-14
+
+Reconciliación humana PASS, consulta COMPLETED mismo ID, retry ALREADY_SENT / 0 envíos nuevos. F23 reanudada: tests/build y recovery real PASS; Reviewer FAIL por argumentos CLI mal transportados, único reinicio agotado. F23 FAIL / MANDATORY_TEST_FAILED; F24–F28 y regression final NOT_RUN. Cleanup/integridad PASS; Chrome preexistente del usuario conservado abierto. READY FOR REAL PILOT NO. docs/F23-RESUME-STOP-REPORT-20261014.md.

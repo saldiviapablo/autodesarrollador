@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-14T00:54:01.683686-03:00",
+  "updated_at": "2026-10-14T01:08:07.563351-03:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -32,7 +32,7 @@
     "6": "PASS",
     "7A": "PASS",
     "7B": "PASS",
-    "8": "IN_PROGRESS"
+    "8": "FAIL"
   },
   "subphases_7a": {
     "7A.1": "PASS",
@@ -72,7 +72,7 @@
   "ready_for_8": false,
   "e2e_scope": "PENDING refers to F24/F25 final validation; e2e_7b is the approved short 7B integration",
   "phases_8": {
-    "23": "IN_PROGRESS",
+    "23": "FAIL",
     "24": "NOT_RUN",
     "25": "NOT_RUN",
     "26": "NOT_RUN",
@@ -80,8 +80,8 @@
     "28": "NOT_RUN"
   },
   "validation_8": {
-    "status": "F23_RESUMING_AFTER_HUMAN_RECONCILIATION",
-    "test": "F23_REAL_CHATGPT_CONSULTATION",
+    "status": "STOPPED_MANDATORY_TEST_FAILED",
+    "test": "F23_INDEPENDENT_REVIEWER",
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
     "current_security_revalidation": "PATHGUARD_FIX_SMOKE_PASS",
@@ -105,7 +105,12 @@
     "attempt_3_report": "docs/MACROPHASE-8-BLOCKED-REPORT-ATTEMPT-3.md",
     "human_reconciliation": "PASS",
     "human_reconciliation_evidence": "evidence/f23-human-reconciliation/",
-    "source": "HUMAN_VISUAL_RECONCILIATION"
+    "source": "HUMAN_VISUAL_RECONCILIATION",
+    "reason": "AGENT_RESTART_BUDGET_EXHAUSTED:reviewer",
+    "f23_tests_build": "PASS",
+    "f23_disk_recovery": "PASS",
+    "f23_reviewer": "FAIL",
+    "f23_resume_report": "docs/F23-RESUME-STOP-REPORT-20261014.md"
   },
   "ready_for_real_pilot": false
 }

@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final | Reconciliación humana PASS; F23 reanudada; F24–F26 NOT_RUN | **IN_PROGRESS** |
+| **Macrofase 8** | Validación Final | Reconciliación PASS; F23 Reviewer FAIL; F24–F26 NOT_RUN | **FAIL / MANDATORY_TEST_FAILED** |
 
 Cada fase debe producir:
 
@@ -1386,3 +1386,7 @@ Path Guard fix PASS (6e0a507), A–J READ/WRITE y Prepare/MCP/plugin/Runner smok
 ## Reconciliación humana F23 — 2026-10-14
 
 DELIVERY_NOT_OCCURRED confirmado por inspección humana. Mismo ID f23-ee298529568f4f8b94f4dd16f90a0be4, un único nuevo envío físico autorizado, user +1 / assistant +1, respuesta capturada y composer vacío. Retry lógico ALREADY_SENT / 0 envíos adicionales. Budget permanece 1. Reconciliación PASS; F23 se reanuda en el mismo sandbox. F24–F28 no iniciadas. docs/F23-HUMAN-RECONCILIATION.md; evidence/f23-human-reconciliation/.
+
+## Estado actual F23 — 2026-10-14
+
+Reconciliación humana PASS, consulta COMPLETED mismo ID, retry ALREADY_SENT / 0 envíos nuevos. F23 reanudada: tests/build y recovery real PASS; Reviewer FAIL por argumentos CLI mal transportados, único reinicio agotado. F23 FAIL / MANDATORY_TEST_FAILED; F24–F28 y regression final NOT_RUN. Cleanup/integridad PASS; Chrome preexistente del usuario conservado abierto. READY FOR REAL PILOT NO. docs/F23-RESUME-STOP-REPORT-20261014.md.

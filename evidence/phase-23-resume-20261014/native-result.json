@@ -1,0 +1,781 @@
+{
+  "report": {
+    "schema_version": "1.0",
+    "run_id": "run-20261013-202418",
+    "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f23-full-feac8aea\\project",
+    "objective": "Fix sandbox bug, decimal feature and documentation using verified research and consultant advice",
+    "duration_seconds": 363.1947611,
+    "status": "FAILED",
+    "technical_status": "FAIL",
+    "reason": "AGENT_RESTART_BUDGET_EXHAUSTED:reviewer",
+    "tasks_completed": [],
+    "pending_tasks": [
+      "Fix sandbox bug, decimal feature and documentation using verified research and consultant advice"
+    ],
+    "changed_files": [
+      "calculator.py",
+      "README.md"
+    ],
+    "commits": [],
+    "tests": [
+      {
+        "output": "F23_UNIT_DOC_PASS\r\n",
+        "status": "PASS",
+        "marker_present": true,
+        "id": "unit",
+        "exit_code": 0
+      }
+    ],
+    "builds": [
+      {
+        "output": "F23_BUILD_PASS\r\n",
+        "status": "PASS",
+        "marker_present": true,
+        "id": "build",
+        "exit_code": 0
+      }
+    ],
+    "linters": [],
+    "errors": [
+      {
+        "reason": "AGENT_FAILED:reviewer",
+        "count": 1,
+        "role": "reviewer"
+      },
+      "AGENT_RESTART_BUDGET_EXHAUSTED:reviewer"
+    ],
+    "retries": {
+      "llama": 0,
+      "supervisor": 0,
+      "reviewer": 1,
+      "worker": 0
+    },
+    "recoveries": [
+      {
+        "schema_version": "1.0",
+        "seq": 14,
+        "event_id": "evt-b098ce1a4960",
+        "timestamp": "2026-10-14T00:55:30.7314140-03:00",
+        "run_id": "run-20261013-202418",
+        "actor": "watchdog",
+        "type": "PARENT_CRASH_RECOVERED",
+        "payload": {
+          "parent_pid": 30436,
+          "reason": "PARENT_PROCESS_LOST"
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "seq": 18,
+        "event_id": "evt-bf407090b7dd",
+        "timestamp": "2026-10-14T00:55:33.9080635-03:00",
+        "run_id": "run-20261013-202418",
+        "actor": "runner",
+        "type": "RUN_RECOVERED_FROM_DISK",
+        "payload": {
+          "status": "RECOVERED"
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "seq": 33,
+        "event_id": "evt-d32437baf5e9",
+        "timestamp": "2026-10-14T00:59:59.3700539-03:00",
+        "run_id": "run-20261013-202418",
+        "actor": "runner",
+        "type": "WATCHDOG_AGENT_RESTART",
+        "payload": {
+          "reason": "AGENT_FAILED:reviewer",
+          "count": 1,
+          "role": "reviewer"
+        }
+      }
+    ],
+    "web_queries": [],
+    "chatgpt_queries_used": 1,
+    "blocks": [],
+    "completion_gate": {
+      "status": "NOT_EVALUATED",
+      "reason": "AGENT_RESTART_BUDGET_EXHAUSTED:reviewer"
+    },
+    "cleanup": {
+      "job_closed": true,
+      "owned_survivors": [],
+      "run_mutex_released": true,
+      "run_lock_removed": true,
+      "inference_mutex": "FREE",
+      "external_model_preserved": false,
+      "errors": []
+    },
+    "processes": [
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 40700,
+        "name": "watchdog",
+        "executable": "powershell.exe",
+        "start_ticks": 639275468445012450
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 39100,
+        "name": "llama",
+        "executable": "C:\\AI\\llama.cpp\\llama-server.exe",
+        "start_ticks": 639275468450421019
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 7104,
+        "name": "supervisor",
+        "executable": "powershell.exe",
+        "start_ticks": 639275468541095204
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 6076,
+        "name": "worker",
+        "executable": "powershell.exe",
+        "start_ticks": 639275469270988300
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 32320,
+        "name": "watchdog",
+        "executable": "powershell.exe",
+        "start_ticks": 639275469341778713
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 36840,
+        "name": "llama",
+        "executable": "C:\\AI\\llama.cpp\\llama-server.exe",
+        "start_ticks": 639275469347503907
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 7612,
+        "name": "supervisor",
+        "executable": "powershell.exe",
+        "start_ticks": 639275469390283250
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 37576,
+        "name": "worker",
+        "executable": "powershell.exe",
+        "start_ticks": 639275470001154201
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 32808,
+        "name": "check-unit",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639275471949460408
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 35020,
+        "name": "check-build",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639275471950128859
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 11848,
+        "name": "reviewer",
+        "executable": "powershell.exe",
+        "start_ticks": 639275471951078850
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 40128,
+        "name": "reviewer",
+        "executable": "powershell.exe",
+        "start_ticks": 639275472002279414
+      }
+    ],
+    "generated_at": "2026-10-14T01:00:07.2265030-03:00"
+  },
+  "gate": null,
+  "events": [
+    {
+      "schema_version": "1.0",
+      "seq": 1,
+      "event_id": "evt-5d3f97c09885",
+      "timestamp": "2026-10-13T20:24:19.1464265-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "init-script",
+      "type": "RUN_INITIALIZED",
+      "payload": {
+        "objective": "Fix sandbox bug, decimal feature and documentation using verified research and consultant advice",
+        "run_contract": "RUN-CONTRACT.yaml",
+        "status": "INITIALIZED",
+        "project_id": "project"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 2,
+      "event_id": "evt-ce7c37929b68",
+      "timestamp": "2026-10-13T20:28:35.2886179-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "F23-harness",
+      "type": "BLOCKED_REQUIRES_HUMAN",
+      "payload": {
+        "send_attempts": 1,
+        "reconciled": false,
+        "no_resend": true,
+        "consultation_id": "f23-ee298529568f4f8b94f4dd16f90a0be4"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 3,
+      "event_id": "evt-6494a6a3deba",
+      "timestamp": "2026-10-13T20:28:35.6787118-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "checkpoint-manager",
+      "type": "CHECKPOINT_CREATED",
+      "payload": {
+        "manifest_files": 4,
+        "git_head": "6e0a507",
+        "checkpoint_id": "chk-20261013-202835-323",
+        "reason": "F23 UNKNOWN_DELIVERY unresolved, stop without resend",
+        "git_dirty": true
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 4,
+      "event_id": "evt-b236a6d51e7b",
+      "timestamp": "2026-10-13T20:30:28.9827070-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "F23-harness",
+      "type": "BLOCKED_REQUIRES_HUMAN",
+      "payload": {
+        "send_attempts": 1,
+        "reconciled": false,
+        "no_resend": true,
+        "consultation_id": "f23-ee298529568f4f8b94f4dd16f90a0be4"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 5,
+      "event_id": "evt-260d2cdd56d1",
+      "timestamp": "2026-10-13T20:30:29.1659570-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "checkpoint-manager",
+      "type": "CHECKPOINT_CREATED",
+      "payload": {
+        "manifest_files": 4,
+        "git_head": "b842c2d",
+        "checkpoint_id": "chk-20261013-203029-005",
+        "reason": "F23 UNKNOWN_DELIVERY unresolved, stop without resend",
+        "git_dirty": false
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 6,
+      "event_id": "evt-c4dd4853a4bc",
+      "timestamp": "2026-10-14T00:45:50.2189238-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "chatgpt-client",
+      "type": "CHATGPT_CONSULTED",
+      "payload": {
+        "purpose": "Revisi\u00f3n t\u00e9cnica y segunda opini\u00f3n arquitect\u00f3nica",
+        "queries_used": 1,
+        "consultation_id": "f23-ee298529568f4f8b94f4dd16f90a0be4",
+        "max_queries": 5
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 7,
+      "event_id": "evt-ee04238453e2",
+      "timestamp": "2026-10-14T00:54:04.4608679-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "RUN_STARTED",
+      "payload": {
+        "approval_digest": "69b6bb4f0e3a425eac497c50c5b539e7da1bf3ab6e60520fbda35059cb56e277",
+        "backend": "live",
+        "git_head": "8196c094c4bccb32ef1a081e799f46b81e375959"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 8,
+      "event_id": "evt-fb35ddf629a1",
+      "timestamp": "2026-10-14T00:54:04.5308669-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 40700,
+        "name": "watchdog",
+        "executable": "powershell.exe",
+        "start_ticks": 639275468445012450
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 9,
+      "event_id": "evt-1aab9ac824b8",
+      "timestamp": "2026-10-14T00:54:05.0624013-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 39100,
+        "name": "llama",
+        "executable": "C:\\AI\\llama.cpp\\llama-server.exe",
+        "start_ticks": 639275468450421019
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 10,
+      "event_id": "evt-e5ad239e02d0",
+      "timestamp": "2026-10-14T00:54:13.8585342-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "MODEL_HEALTH_READY",
+      "payload": {
+        "pid": 39100
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 11,
+      "event_id": "evt-68991fe96466",
+      "timestamp": "2026-10-14T00:54:14.1280482-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 7104,
+        "name": "supervisor",
+        "executable": "powershell.exe",
+        "start_ticks": 639275468541095204
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 12,
+      "event_id": "evt-c59aaa776f7c",
+      "timestamp": "2026-10-14T00:55:27.0830191-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_EXITED",
+      "payload": {
+        "exit_code": 0,
+        "name": "supervisor"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 13,
+      "event_id": "evt-2e754163e88e",
+      "timestamp": "2026-10-14T00:55:27.1230189-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 6076,
+        "name": "worker",
+        "executable": "powershell.exe",
+        "start_ticks": 639275469270988300
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 14,
+      "event_id": "evt-b098ce1a4960",
+      "timestamp": "2026-10-14T00:55:30.7314140-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "watchdog",
+      "type": "PARENT_CRASH_RECOVERED",
+      "payload": {
+        "parent_pid": 30436,
+        "reason": "PARENT_PROCESS_LOST"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 15,
+      "event_id": "evt-6ecfe5b1e137",
+      "timestamp": "2026-10-14T00:55:30.9689900-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "checkpoint-manager",
+      "type": "CHECKPOINT_CREATED",
+      "payload": {
+        "manifest_files": 4,
+        "git_head": "8196c09",
+        "checkpoint_id": "chk-watchdog-20261014005530733",
+        "reason": "PARENT_PROCESS_LOST",
+        "git_dirty": false
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 16,
+      "event_id": "evt-2c33ae235b6c",
+      "timestamp": "2026-10-14T00:55:33.0814237-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "recovery-protocol",
+      "type": "RECOVERY_RECONCILED",
+      "payload": {
+        "details": [],
+        "reconciled_git_files": [],
+        "tests_status": "NONE",
+        "recovered_from_backup": false,
+        "next_action": "Continuar ejecuci\u00f3n de tarea pendiente: Fix sandbox bug, decimal feature and documentation using verified research and consultant advice",
+        "divergence_detected": false
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 17,
+      "event_id": "evt-b8fbbc0eaf2f",
+      "timestamp": "2026-10-14T00:55:33.7315427-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "recovery-protocol",
+      "type": "RECOVERY_RECONCILED",
+      "payload": {
+        "details": [
+          "Ejecuci\u00f3n previa interrumpida detectada: status era RUNNING pero El proceso PID 40700 ya no existe en el sistema."
+        ],
+        "reconciled_git_files": [],
+        "tests_status": "NONE",
+        "recovered_from_backup": false,
+        "next_action": "Continuar ejecuci\u00f3n de tarea pendiente: Fix sandbox bug, decimal feature and documentation using verified research and consultant advice",
+        "divergence_detected": false
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 18,
+      "event_id": "evt-bf407090b7dd",
+      "timestamp": "2026-10-14T00:55:33.9080635-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "RUN_RECOVERED_FROM_DISK",
+      "payload": {
+        "status": "RECOVERED"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 19,
+      "event_id": "evt-9ff1710ee449",
+      "timestamp": "2026-10-14T00:55:34.1477237-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "RUN_STARTED",
+      "payload": {
+        "approval_digest": "69b6bb4f0e3a425eac497c50c5b539e7da1bf3ab6e60520fbda35059cb56e277",
+        "backend": "live",
+        "git_head": "8196c094c4bccb32ef1a081e799f46b81e375959"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 20,
+      "event_id": "evt-01da58b1b04e",
+      "timestamp": "2026-10-14T00:55:34.2292497-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 32320,
+        "name": "watchdog",
+        "executable": "powershell.exe",
+        "start_ticks": 639275469341778713
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 21,
+      "event_id": "evt-4c6a5c5b2efe",
+      "timestamp": "2026-10-14T00:55:34.7683187-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 36840,
+        "name": "llama",
+        "executable": "C:\\AI\\llama.cpp\\llama-server.exe",
+        "start_ticks": 639275469347503907
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 22,
+      "event_id": "evt-b138cb759f67",
+      "timestamp": "2026-10-14T00:55:38.7926489-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "MODEL_HEALTH_READY",
+      "payload": {
+        "pid": 36840
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 23,
+      "event_id": "evt-f7406aef4ff5",
+      "timestamp": "2026-10-14T00:55:39.0471705-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 7612,
+        "name": "supervisor",
+        "executable": "powershell.exe",
+        "start_ticks": 639275469390283250
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 24,
+      "event_id": "evt-6f7b94c6e991",
+      "timestamp": "2026-10-14T00:56:40.0921312-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_EXITED",
+      "payload": {
+        "exit_code": 0,
+        "name": "supervisor"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 25,
+      "event_id": "evt-cfc8f3576e5a",
+      "timestamp": "2026-10-14T00:56:40.1391321-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 37576,
+        "name": "worker",
+        "executable": "powershell.exe",
+        "start_ticks": 639275470001154201
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 26,
+      "event_id": "evt-7fa0b9d8842e",
+      "timestamp": "2026-10-14T00:59:54.9134889-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_EXITED",
+      "payload": {
+        "exit_code": 0,
+        "name": "worker"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 27,
+      "event_id": "evt-8c6e009af0d4",
+      "timestamp": "2026-10-14T00:59:54.9634882-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 32808,
+        "name": "check-unit",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639275471949460408
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 28,
+      "event_id": "evt-be33fa455754",
+      "timestamp": "2026-10-14T00:59:55.0034977-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_EXITED",
+      "payload": {
+        "exit_code": 0,
+        "name": "check-unit"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 29,
+      "event_id": "evt-4bfcd71f45e3",
+      "timestamp": "2026-10-14T00:59:55.0310008-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 35020,
+        "name": "check-build",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639275471950128859
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 30,
+      "event_id": "evt-ed2d4368c86c",
+      "timestamp": "2026-10-14T00:59:55.0670000-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_EXITED",
+      "payload": {
+        "exit_code": 0,
+        "name": "check-build"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 31,
+      "event_id": "evt-62ed593e4a08",
+      "timestamp": "2026-10-14T00:59:55.1300002-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 11848,
+        "name": "reviewer",
+        "executable": "powershell.exe",
+        "start_ticks": 639275471951078850
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 32,
+      "event_id": "evt-5e8e3b7bd655",
+      "timestamp": "2026-10-14T00:59:59.3560536-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_EXITED",
+      "payload": {
+        "exit_code": 1,
+        "name": "reviewer"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 33,
+      "event_id": "evt-d32437baf5e9",
+      "timestamp": "2026-10-14T00:59:59.3700539-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "WATCHDOG_AGENT_RESTART",
+      "payload": {
+        "reason": "AGENT_FAILED:reviewer",
+        "count": 1,
+        "role": "reviewer"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 34,
+      "event_id": "evt-87fefad3e9c8",
+      "timestamp": "2026-10-14T00:59:59.8607068-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "recovery-protocol",
+      "type": "RECOVERY_RECONCILED",
+      "payload": {
+        "details": [
+          "Git detect\u00f3 archivo modificado no registrado en STATE: README.md",
+          "Git detect\u00f3 archivo modificado no registrado en STATE: calculator.py"
+        ],
+        "reconciled_git_files": [
+          "README.md",
+          "calculator.py"
+        ],
+        "tests_status": "NONE",
+        "recovered_from_backup": false,
+        "next_action": "Continuar ejecuci\u00f3n de tarea pendiente: Fix sandbox bug, decimal feature and documentation using verified research and consultant advice",
+        "divergence_detected": true
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 35,
+      "event_id": "evt-d7805c32c114",
+      "timestamp": "2026-10-14T01:00:00.2452242-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_STARTED",
+      "payload": {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 40128,
+        "name": "reviewer",
+        "executable": "powershell.exe",
+        "start_ticks": 639275472002279414
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 36,
+      "event_id": "evt-7076a7e9fc45",
+      "timestamp": "2026-10-14T01:00:04.0085586-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "PROCESS_EXITED",
+      "payload": {
+        "exit_code": 1,
+        "name": "reviewer"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 37,
+      "event_id": "evt-26a6b1e1743e",
+      "timestamp": "2026-10-14T01:00:06.7424840-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "checkpoint-manager",
+      "type": "CHECKPOINT_CREATED",
+      "payload": {
+        "manifest_files": 5,
+        "git_head": "8196c09",
+        "checkpoint_id": "chk-runner-20261014010006410",
+        "reason": "Runner terminal FAILED",
+        "git_dirty": true
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "seq": 38,
+      "event_id": "evt-479f1d203d74",
+      "timestamp": "2026-10-14T01:00:07.0879942-03:00",
+      "run_id": "run-20261013-202418",
+      "actor": "runner",
+      "type": "RUN_FINISHED",
+      "payload": {
+        "cleanup": {
+          "job_closed": true,
+          "owned_survivors": [],
+          "run_mutex_released": true,
+          "run_lock_removed": true,
+          "inference_mutex": "FREE",
+          "external_model_preserved": false,
+          "errors": []
+        },
+        "status": "FAILED",
+        "reason": "AGENT_RESTART_BUDGET_EXHAUSTED:reviewer",
+        "technical": "FAIL"
+      }
+    }
+  ]
+}
