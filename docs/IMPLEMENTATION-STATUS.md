@@ -140,3 +140,7 @@ BASELINE_PROVEN YES: 1/1 persistido antes de DELIVERY_INTENT. Fix de la ruta hum
 ## Envío único F24 autorizado — 2026-10-14
 
 Precheck PASS y un único envío físico del mismo ID y composer. Usuario 1→2, asistente 1→2, composer vacío, respuesta capturada, conversación intacta. Ledger SENT confirmado → COMPLETED; retry lógico ALREADY_SENT / cero envíos adicionales; human_retry_remaining=0. Presupuesto 1/5 y STATE sin cambios, sólo evento nativo CHATGPT_CONSULTED. Histórico preservado, integridad/cleanup PASS. READY_TO_RESUME_F24 YES para una continuación posterior autorizada; F24 E2E aún no certificado. Reviewer, Completion Gate y F25 no ejecutados. Detenido por instrucción humana; F27/F28 no iniciadas. docs/F24-SINGLE-SEND-REPORT.md; evidence/f24-human-send-once-20261014/.
+
+## Cierre F24 detenido en preflight de aceptación — 2026-10-14
+
+F24 FAIL / MANDATORY_TEST_FAILED: el Worker rechaza pesos cero permitidos y acepta importe negativo prohibido por el plan aprobado. Dos probes read-only FAIL, archivos fuente intactos; suites históricas PASS conservadas. Reviewer y Completion Gate NOT_RUN por la instrucción de STOP ante nueva inconsistencia. ChatGPT permanece COMPLETED, cero acciones nuevas. STATE terminal BLOCKED_REQUIRES_HUMAN con motivo actualizado; cleanup e integridad PASS. Métricas originales preservadas y snapshot actual separado; no segmento nativo nuevo. READY_FOR_F25 NO; F25–F28 no iniciadas. docs/F24-CLOSURE-PREFLIGHT-STOP.md; evidence/f24-closure-preflight-blocked-20261014/.

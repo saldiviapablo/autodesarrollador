@@ -1,0 +1,44 @@
+{
+  "status": "FAIL",
+  "scope": "Two new readonly acceptance probes; original test/build suites not repeated",
+  "checks": [
+    {
+      "id": "F24-ZERO-WEIGHT-NONNEGATIVE",
+      "input": {
+        "value": "1.00",
+        "weights": [
+          0,
+          1
+        ]
+      },
+      "expected": [
+        "0.00",
+        "1.00"
+      ],
+      "actual": null,
+      "error": "ValueError: each weight must be positive, got 0",
+      "status": "FAIL"
+    },
+    {
+      "id": "F24-NEGATIVE-AMOUNT-DENY",
+      "input": {
+        "value": "-1.00",
+        "weights": [
+          1
+        ]
+      },
+      "expected": "ValueError",
+      "actual": [
+        "-1.00"
+      ],
+      "error": null,
+      "status": "FAIL"
+    }
+  ],
+  "source_files_unchanged": true,
+  "local_inferences": 0,
+  "reviewer_started": false,
+  "completion_gate_executed": false,
+  "chatgpt_actions": 0,
+  "diagnostic_exit_code": 0
+}
