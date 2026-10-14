@@ -47,25 +47,43 @@ class ConsultationLedger {
   update(id, fields) {
     const record = this.read(id);
     if (!record) throw new Error('CONSULTATION_NOT_RESERVED');
-    if (fields.delivery_state === 'DELIVERY_INTENT' && record.send_attempts >= 1) throw new Error('ALREADY_ATTEMPTED_NO_RESEND');
-    if (fields.send_attempts > 1) throw new Error('SECOND_SEND_DENIED');
+    const approvedRetry = fields.delivery_state === 'DELIVERY_INTENT' && record.delivery_state === 'NOT_DELIVERED_CONFIRMED' && record.human_retry_remaining === 1;
+    if (approvedRetry && fields.send_attempts !== record.send_attempts + 1) throw new Error('RETRY_COUNTER_REQUIRED');
+    if (fields.delivery_state === 'DELIVERY_INTENT' && record.send_attempts >= 1 && !approvedRetry) throw new Error('ALREADY_ATTEMPTED_NO_RESEND');
+    if (fields.send_attempts > 1 && !(approvedRetry && fields.send_attempts === record.send_attempts + 1 && fields.send_attempts === 2)) throw new Error('SECOND_SEND_DENIED');
+    if (Object.keys(fields).some(key => key.startsWith('human_'))) throw new Error('HUMAN_RECONCILIATION_METHOD_REQUIRED');
+    if (approvedRetry) fields = { ...fields, human_retry_remaining: 0, human_retry_consumed: true };
     const next = { ...record, ...fields };
     if (['COMPLETED', 'COMPLETED_RECONCILED'].includes(next.delivery_state) &&
-        !(next.send_attempts === 1 && next.message_confirmed && Number.isInteger(next.user_turns_before) &&
+        !((next.send_attempts === 1 || (next.send_attempts === 2 && next.human_retry_consumed)) && next.message_confirmed && Number.isInteger(next.user_turns_before) &&
           next.user_turns_after === next.user_turns_before + 1 && Number.isInteger(next.assistant_turns_before) &&
           next.assistant_turns_after === next.assistant_turns_before + 1)) throw new Error('TURN_GATED_COMPLETION_DENIED');
+    next.history = [...(record.history || []), { at: new Date().toISOString(), from: record.delivery_state, to: next.delivery_state, send_attempts: next.send_attempts }];
+    this.#write(id, next);
+  }
+  #write(id, record) {
     const filename = this.file(id);
     const temporary = filename + '.' + process.pid + '.' + crypto.randomUUID() + '.tmp';
     const fd = fs.openSync(temporary, 'wx', 0o600);
-    try { fs.writeFileSync(fd, JSON.stringify({ ...record, ...fields, updated_at: new Date().toISOString() }, null, 2)); fs.fsyncSync(fd); }
+    try { fs.writeFileSync(fd, JSON.stringify({ ...record, updated_at: new Date().toISOString() }, null, 2)); fs.fsyncSync(fd); }
     finally { fs.closeSync(fd); }
     fs.renameSync(temporary, filename);
+  }
+  confirmNotDelivered(id, receipt, observation, receiptHash) {
+    const record = this.read(id);
+    if (!record || record.message_confirmed || record.human_retry_consumed || record.human_retry_remaining || !['UNKNOWN_DELIVERY','DELIVERY_INTENT'].includes(record.delivery_state)) throw new Error('HUMAN_RECONCILIATION_STATE_DENIED');
+    if (receipt.source !== 'HUMAN_VISUAL_RECONCILIATION' || receipt.resolution !== 'DELIVERY_NOT_OCCURRED' || receipt.consultation_id !== id || receipt.prompt_sha256 !== record.prompt_sha256 || receipt.authorized_additional_physical_attempts !== 1) throw new Error('HUMAN_RECEIPT_INVALID');
+    if (record.send_attempts !== 1 || observation.user !== record.user_turns_before || observation.assistant !== record.assistant_turns_before || observation.user !== 0 || observation.assistant !== 0 || observation.isStreaming || hash(normalize(observation.composer)) !== record.prompt_sha256 || !observation.sendAvailable) throw new Error('NOT_DELIVERED_OBSERVATION_MISMATCH');
+    this.#write(id, { ...record, delivery_state: 'NOT_DELIVERED_CONFIRMED', human_retry_remaining: 1,
+      human_receipt_sha256: receiptHash, human_source: receipt.source,
+      history: [...(record.history || []), { at:new Date().toISOString(), from:record.delivery_state, logical_previous:'UNKNOWN_DELIVERY', to:'NOT_DELIVERED_CONFIRMED', source:receipt.source, receipt_sha256:receiptHash, send_attempts:record.send_attempts }] });
   }
   result(id) {
     const record = this.read(id);
     if (!record) return { status: 'NOT_SEEN', consultation_id: id };
     const known = ['COMPLETED', 'COMPLETED_RECONCILED'].includes(record.delivery_state);
-    return { status: known ? 'ALREADY_SENT' : 'UNKNOWN_DELIVERY', consultation_id: id, no_resend: true, deduplicated: true, previous_delivery_state: record.delivery_state, message_sent: !!record.message_confirmed, send_attempts: record.send_attempts, response_received: known, user_turns_before: record.user_turns_before, user_turns_after: record.user_turns_after, assistant_turns_before: record.assistant_turns_before, assistant_turns_after: record.assistant_turns_after };
+    const retrySafe = record.delivery_state === 'NOT_DELIVERED_CONFIRMED' && record.human_retry_remaining === 1;
+    return { status: known ? 'ALREADY_SENT' : retrySafe ? 'RETRY_SAFE' : 'UNKNOWN_DELIVERY', consultation_id: id, no_resend: !retrySafe, deduplicated: true, previous_delivery_state: record.delivery_state, message_sent: !!record.message_confirmed, send_attempts: record.send_attempts, response_received: known, user_turns_before: record.user_turns_before, user_turns_after: record.user_turns_after, assistant_turns_before: record.assistant_turns_before, assistant_turns_after: record.assistant_turns_after };
   }
 }
 function acquireBrowserLease(directory = path.join(ROOT, 'runtime', 'chatgpt-consultations')) {

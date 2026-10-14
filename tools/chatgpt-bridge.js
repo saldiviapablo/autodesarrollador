@@ -7,7 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const { ConsultationLedger, acquireBrowserLease, hash, normalize, reconcileObservation } = require('./chatgpt-ledger');
 let activeLedger;
 async function safeExit(code) {
@@ -63,6 +63,7 @@ const consultationId = getArg('--consultation-id', `consult-${Date.now()}`);
 const mockResponse = getArg('--mock-response', '');
 const isRawPrompt = hasFlag('--raw-prompt');
 const timeoutSec = parseInt(getArg('--timeout', '60'), 10);
+const humanEvidencePath = getArg('--human-evidence', '');
 function preparedPrompt() {
   if (isRawPrompt || !(context || (purpose && purpose !== 'Revisión técnica' && purpose !== 'test'))) return question;
   return `CONSULTA TÉCNICA (ROL CONSULTOR ARQUITECTÓNICO):
@@ -100,6 +101,23 @@ async function readConversation(ws) {
   return result.result ? result.result.value : {};
 }
 
+async function readPrepared(ws) {
+  const result = await sendCdp(ws, 'Runtime.evaluate', { expression: `(() => {
+    const prose = document.querySelector('.ProseMirror') || document.querySelector('#prompt-textarea') || document.querySelector('div[contenteditable="true"]');
+    const paragraphs = prose ? Array.from(prose.querySelectorAll('p')) : [];
+    const composer = paragraphs.length ? paragraphs.map(p => p.innerText).join('\\n').trim() : (prose?.innerText || '').trim().replace(/\\r\\n/g,'\\n').replace(/\\n\\n+/g,'\\n');
+    const selectors = 'button[data-testid="send-button"],button[data-testid="composer-submit-button"],button[aria-label="Enviar"],button[aria-label*="Send"],button[type="submit"]';
+    const buttons = Array.from(document.querySelectorAll(selectors)).map(button => {
+      const r = button.getBoundingClientRect();
+      const aria=button.getAttribute('aria-label')||'', testid=button.getAttribute('data-testid');
+      const expectedSend=/Send|Enviar/i.test(aria)||['send-button','composer-submit-button'].includes(testid)||(button.type==='submit'&&prose&&button.form?.contains(prose));
+      return { x:r.x+r.width/2,y:r.y+r.height/2,width:r.width,height:r.height,disabled:button.disabled,aria,testid,expectedSend,visible:r.width>0&&r.height>0&&getComputedStyle(button).visibility!=='hidden' };
+    });
+    return {composer,buttons,sendAvailable:buttons.filter(b=>b.visible&&!b.disabled&&b.expectedSend).length===1,url:location.href};
+  })()`, returnByValue:true });
+  return result.result?.value || {};
+}
+
 // 1. Verificación Estricta de Domain Lock
 function validateDomain(urlStr) {
   try {
@@ -120,6 +138,15 @@ async function isChromeRunning() {
   } catch {
     return false;
   }
+}
+
+function verifyDedicatedProfile() {
+  const expected=path.resolve(__dirname,'..','data','browser','HERMES-CHATGPT');
+  if(path.resolve(profileDir).toLowerCase()!==expected.toLowerCase()) throw new Error('PROFILE_MISMATCH');
+  const script=`$ErrorActionPreference='Stop';$expected='${expected.replace(/'/g,"''")}';$listener=Get-NetTCPConnection -LocalPort 9222 -State Listen|Select-Object -First 1;$owner=Get-CimInstance Win32_Process -Filter ('ProcessId='+$listener.OwningProcess);if($owner.Name -ne 'chrome.exe'){throw 'PROFILE_MISMATCH'};$match=[regex]::Match($owner.CommandLine,'(?:"--user-data-dir=(?<a>[^"]+)"|--user-data-dir="(?<b>[^"]+)"|--user-data-dir=(?<c>\\S+))');$actual=(@('a','b','c')|ForEach-Object {$match.Groups[$_].Value}|Where-Object {$_})|Select-Object -First 1;if(-not $actual -or [IO.Path]::GetFullPath($actual) -ne $expected){throw 'PROFILE_MISMATCH'};@{profile_match=$true;pid=$owner.ProcessId;profile=$expected}|ConvertTo-Json -Compress`;
+  const result=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',Buffer.from(script,'utf16le').toString('base64')],{encoding:'utf8',timeout:10000,windowsHide:true});
+  if(result.status!==0 || !JSON.parse(result.stdout).profile_match) throw new Error('PROFILE_MISMATCH');
+  return JSON.parse(result.stdout);
 }
 
 // 3. Iniciar Chrome con Perfil Dedicado si no está activo
@@ -283,7 +310,8 @@ async function main() {
     console.log(JSON.stringify(ledger.result(consultationId), null, 2));
     await safeExit(0);
   }
-  if (action === 'consult' && ledger.read(consultationId)) {
+  const confirmedRetry = action === 'consult' && ledger.result(consultationId).status === 'RETRY_SAFE';
+  if (action === 'consult' && ledger.read(consultationId) && !confirmedRetry) {
     console.log(JSON.stringify(ledger.result(consultationId), null, 2));
     await safeExit(0);
   }
@@ -292,7 +320,7 @@ async function main() {
   }
   acquireBrowserLease();
   if (action === 'consult') {
-    if (!ledger.reserve(consultationId, preparedPrompt())) {
+    if (!confirmedRetry && !ledger.reserve(consultationId, preparedPrompt())) {
       console.log(JSON.stringify(ledger.result(consultationId), null, 2)); await safeExit(0);
     }
     activeLedger = ledger;
@@ -310,6 +338,7 @@ async function main() {
       await safeExit(1);
     }
   }
+  if(['consult','reconcile-human','inspect-prepared'].includes(action)) verifyDedicatedProfile();
 
   // Enforzar single tab y domain lock
   const tabCheck = await enforceSingleTabAndDomainLock();
@@ -485,6 +514,17 @@ async function main() {
       await safeExit(match ? 0 : 1);
     }
 
+    if (action === 'inspect-prepared' || action === 'reconcile-human') {
+      const record=ledger.read(consultationId);
+      if(!record) throw new Error('CONSULTATION_NOT_RESERVED');
+      const observation={...(await readConversation(ws)),...(await readPrepared(ws))};
+      if(action==='reconcile-human') {
+        const receiptText=fs.readFileSync(humanEvidencePath,'utf8');
+        ledger.confirmNotDelivered(consultationId,JSON.parse(receiptText),observation,hash(receiptText));
+      }
+      console.log(JSON.stringify({ ...ledger.result(consultationId), observation:{user:observation.user,assistant:observation.assistant,isStreaming:observation.isStreaming,composer_sha256:hash(normalize(observation.composer||'')),expected_sha256:record.prompt_sha256,sendAvailable:observation.sendAvailable,buttons:observation.buttons,url:observation.url},physical_send_count:0 },null,2));
+      ws.close();await safeExit(0);
+    }
     if (action === 'reconcile') {
       const record = ledger.read(consultationId);
       if (!record) { console.log(JSON.stringify({ status: 'NOT_SEEN', consultation_id: consultationId, no_resend: true })); await safeExit(0); }
@@ -515,11 +555,15 @@ async function main() {
 
       // 1. Contar turnos antes de enviar
       const countsBefore = await readConversation(ws);
+      if(confirmedRetry){
+        const record=ledger.read(consultationId);
+        if(countsBefore.user!==record.user_turns_before||countsBefore.assistant!==record.assistant_turns_before||countsBefore.isStreaming) throw new Error('RETRY_OBSERVATION_CHANGED_NO_SEND');
+      }
       const turnsBefore = countsBefore.user;
       ledger.update(consultationId, { user_turns_before: countsBefore.user, assistant_turns_before: countsBefore.assistant, conversation_url: countsBefore.url });
 
       // 2. Inyectar texto en composer
-      const injectRes = await sendCdp(ws, 'Runtime.evaluate', {
+      const injectRes = confirmedRetry ? { result:{value:{success:true,domText:(await readPrepared(ws)).composer}} } : await sendCdp(ws, 'Runtime.evaluate', {
         expression: `(() => {
           const prose = document.querySelector('.ProseMirror') ||
                         document.querySelector('#prompt-textarea') ||
@@ -587,8 +631,20 @@ async function main() {
       }
 
       // 4. Si el texto coincide exactamente: Pulsar Enviar
-      ledger.update(consultationId, { delivery_state: 'DELIVERY_INTENT', send_attempts: 1 });
-      const sendClickRes = await sendCdp(ws, 'Runtime.evaluate', {
+      const attemptCount=ledger.read(consultationId).send_attempts+1;
+      if(confirmedRetry && hash(normalize(fullPrompt))!==ledger.read(consultationId).prompt_sha256) throw new Error('RETRY_PROMPT_MISMATCH');
+      const prepared=await readPrepared(ws);
+      if(hash(normalize(prepared.composer||''))!==ledger.read(consultationId).prompt_sha256) throw new Error('COMPOSER_CHANGED_NO_SEND');
+      const candidates=prepared.buttons?.filter(b=>b.visible&&!b.disabled&&b.expectedSend)||[];
+      const physicalButton=candidates.length===1?candidates[0]:null;
+      if(confirmedRetry && !physicalButton) throw new Error('SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS');
+      ledger.update(consultationId, { delivery_state: 'DELIVERY_INTENT', send_attempts: attemptCount });
+      const sendClickRes = confirmedRetry ? await (async()=>{
+        // Trusted physical input to the existing visible button, exactly one click.
+        await sendCdp(ws,'Input.dispatchMouseEvent',{type:'mousePressed',x:physicalButton.x,y:physicalButton.y,button:'left',clickCount:1});
+        await sendCdp(ws,'Input.dispatchMouseEvent',{type:'mouseReleased',x:physicalButton.x,y:physicalButton.y,button:'left',clickCount:1});
+        return {result:{value:{success:true,method:'single_physical_click'}}};
+      })() : await sendCdp(ws, 'Runtime.evaluate', {
         expression: `(() => {
           const prose = document.querySelector('.ProseMirror') || document.querySelector('#prompt-textarea') || document.querySelector('div[contenteditable="true"]');
           const paragraphs = prose ? Array.from(prose.querySelectorAll('p')) : [];
@@ -687,6 +743,9 @@ async function main() {
       }
       ledger.update(consultationId, { delivery_state: 'COMPLETED', message_confirmed: true,
         user_turns_after: countsAfter.user, assistant_turns_after: countsAfter.assistant, conversation_url: countsAfter.url, response_sha256: hash(finalResponse) });
+      const composerAfter=await readPrepared(ws);
+      const composerCleared=!normalize(composerAfter.composer||'');
+      if(!composerCleared) throw new Error('COMPOSER_NOT_CLEARED');
       ws.close();
 
       const out = {
@@ -702,7 +761,7 @@ async function main() {
         url: pageState.url,
         user_turns_before: countsBefore.user, user_turns_after: countsAfter.user,
         assistant_turns_before: countsBefore.assistant, assistant_turns_after: countsAfter.assistant,
-        no_resend: false, send_attempts: 1,
+        no_resend: false, send_attempts: attemptCount,physical_send_count:1,composer_cleared:composerCleared,human_reconciled_retry:confirmedRetry,
         timestamp: new Date().toISOString()
       };
 

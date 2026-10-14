@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-13T20:34:36.141189-03:00",
+  "updated_at": "2026-10-14T00:54:01.683686-03:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -32,7 +32,7 @@
     "6": "PASS",
     "7A": "PASS",
     "7B": "PASS",
-    "8": "FAIL"
+    "8": "IN_PROGRESS"
   },
   "subphases_7a": {
     "7A.1": "PASS",
@@ -72,7 +72,7 @@
   "ready_for_8": false,
   "e2e_scope": "PENDING refers to F24/F25 final validation; e2e_7b is the approved short 7B integration",
   "phases_8": {
-    "23": "FAIL",
+    "23": "IN_PROGRESS",
     "24": "NOT_RUN",
     "25": "NOT_RUN",
     "26": "NOT_RUN",
@@ -80,7 +80,7 @@
     "28": "NOT_RUN"
   },
   "validation_8": {
-    "status": "BLOCKED_REQUIRES_HUMAN",
+    "status": "F23_RESUMING_AFTER_HUMAN_RECONCILIATION",
     "test": "F23_REAL_CHATGPT_CONSULTATION",
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
@@ -99,10 +99,13 @@
     "pathguard_attempt3_evidence": "evidence/phase-23-attempt-3/",
     "pathguard_fix_commit": "6e0a5077505378be5bd7d1187f871f1e1640a321",
     "consultation_id": "f23-ee298529568f4f8b94f4dd16f90a0be4",
-    "delivery": "UNKNOWN_DELIVERY",
+    "delivery": "COMPLETED",
     "no_resend": true,
-    "reconciled": false,
-    "attempt_3_report": "docs/MACROPHASE-8-BLOCKED-REPORT-ATTEMPT-3.md"
+    "reconciled": true,
+    "attempt_3_report": "docs/MACROPHASE-8-BLOCKED-REPORT-ATTEMPT-3.md",
+    "human_reconciliation": "PASS",
+    "human_reconciliation_evidence": "evidence/f23-human-reconciliation/",
+    "source": "HUMAN_VISUAL_RECONCILIATION"
   },
   "ready_for_real_pilot": false
 }

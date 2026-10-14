@@ -26,6 +26,8 @@ param(
     [Parameter(Mandatory = $false)]
     [string]$Action = "consult",
 
+    [string]$HumanEvidencePath = "",
+
     [Parameter(Mandatory = $false)]
     [string]$TargetUrl = "https://chatgpt.com",
 
@@ -73,13 +75,16 @@ if (-not $isAllowedDomain) {
 }
 
 # 2. ENFORCEMENT DE PRESUPUESTO GLOBAL DE CONSULTAS (Section 22)
+$humanConfirmedRetry=$false
 if($Action -eq 'consult' -and [string]::IsNullOrWhiteSpace($MockResponse)){
     $lookupRaw=& node.exe $bridgeJs --action consultation-status --consultation-id $ConsultationId --url $TargetUrl
     $lookup=($lookupRaw -join "`n")|ConvertFrom-Json
     if($lookup.status -in @('ALREADY_SENT','UNKNOWN_DELIVERY')){
         return [PSCustomObject]@{Status=$lookup.status;ConsultationId=$ConsultationId;ResultObj=$lookup;RawJson=($lookupRaw -join "`n");Response='';Error=''}
     }
-    if($lookup.status -ne 'NOT_SEEN'){throw 'CONSULTATION_LEDGER_LOOKUP_FAILED_CLOSED'}
+    $humanConfirmedRetry=($lookup.status -eq 'RETRY_SAFE')
+    if($lookup.status -notin @('NOT_SEEN','RETRY_SAFE')){throw 'CONSULTATION_LEDGER_LOOKUP_FAILED_CLOSED'}
+    if($humanConfirmedRetry -and [string]::IsNullOrWhiteSpace($StatePath)){throw 'CONFIRMED_RETRY_REQUIRES_ORIGINAL_BUDGET_STATE'}
 }
 $stateObj = $null
 $autopilotDir = ""
@@ -109,7 +114,8 @@ if (-not [string]::IsNullOrWhiteSpace($StatePath) -and (Test-Path -LiteralPath $
         $stateObj.chatgpt.max_queries=[Math]::Min($stateObj.chatgpt.max_queries,$MaxQueries)
 
         # Comprobar límite presupuestario antes de abrir nada
-        if ($Action -eq "consult" -and $stateObj.chatgpt.queries_used -ge $stateObj.chatgpt.max_queries) {
+        if($humanConfirmedRetry -and ($stateObj.chatgpt.queries_used -lt 1 -or $stateObj.chatgpt.queries_used -gt $stateObj.chatgpt.max_queries)){throw 'CONFIRMED_RETRY_BUDGET_INVALID'}
+        if ($Action -eq "consult" -and -not $humanConfirmedRetry -and $stateObj.chatgpt.queries_used -ge $stateObj.chatgpt.max_queries) {
             $budgetExceededObj = [ordered]@{
                 status          = "CHATGPT_BUDGET_EXCEEDED"
                 error           = "Presupuesto de consultas a ChatGPT agotado para este run ($($stateObj.chatgpt.queries_used)/$($stateObj.chatgpt.max_queries))."
@@ -135,7 +141,7 @@ if (-not [string]::IsNullOrWhiteSpace($StatePath) -and (Test-Path -LiteralPath $
 
             return [PSCustomObject]$budgetExceededObj
         }
-        if($Action -eq 'consult'){
+        if($Action -eq 'consult' -and -not $humanConfirmedRetry){
             $stateObj.chatgpt.queries_used += 1
             $null=Write-AtomicState -StateObj $stateObj -AutopilotDir $autopilotDir -ValidateTransition $false
         }
@@ -172,6 +178,7 @@ $nodeArgs.Add("--purpose")
 $nodeArgs.Add($Purpose)
 $nodeArgs.Add("--timeout")
 $nodeArgs.Add("$TimeoutSeconds")
+if($HumanEvidencePath){$nodeArgs.Add('--human-evidence');$nodeArgs.Add($HumanEvidencePath)}
 
 if (-not [string]::IsNullOrWhiteSpace($sanitizedQuestion)) {
     $qBytes = [System.Text.Encoding]::UTF8.GetBytes($sanitizedQuestion)

@@ -98,7 +98,7 @@ Parámetros validados:
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
 - **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **PASS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5 — Bot Mode + Subagentes`: **PASS**; `7A.6 — Git Worktrees`: **PASS**; `7A.7 — Cron + No-Agent Jobs`: **PASS**; `7A.8 — Native Dashboard`: **PASS**; `7A.9 — Gateway`: **PASS**; `7A.10 — Controlled Auto-update`: **PASS**; `ChatGPT Idempotency`: **PASS**; `regression gate`: **PASS**). Preflight correctivo aprobado en commit `f133bab`.
 - **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PASS**
-- **Macrofase 8 (Validación Final - Fases 23 a 28):** **FAIL / BLOCKED_REQUIRES_HUMAN (F23 intento 3; Path Guard fix PASS)**
+- **Macrofase 8 (Validación Final - Fases 23 a 28):** **IN_PROGRESS (reconciliación humana PASS; F23 reanudada)**
 
 ---
 
@@ -135,3 +135,7 @@ Path Guard fix PASS: destino físico central, A–J READ/WRITE PASS, Prepare/MCP
 ## Estado actual Macrofase 8 — bloqueo del intento 3
 
 Path Guard fix PASS (6e0a507), A–J READ/WRITE y Prepare/MCP/plugin/Runner smokes PASS. F23 integral FAIL / BLOCKED_REQUIRES_HUMAN: consulta real ChatGPT UNKNOWN_DELIVERY persiste tras reconciliación, sin reenvío. Web real obtenida; agentes y recovery de runtime NOT_RUN. F24–F28 y regression final NOT_RUN. Cleanup/locks/integridad PASS. READY FOR REAL PILOT NO. Informe: docs/MACROPHASE-8-BLOCKED-REPORT-ATTEMPT-3.md.
+
+## Reconciliación humana F23 — 2026-10-14
+
+DELIVERY_NOT_OCCURRED confirmado por inspección humana. Mismo ID f23-ee298529568f4f8b94f4dd16f90a0be4, un único nuevo envío físico autorizado, user +1 / assistant +1, respuesta capturada y composer vacío. Retry lógico ALREADY_SENT / 0 envíos adicionales. Budget permanece 1. Reconciliación PASS; F23 se reanuda en el mismo sandbox. F24–F28 no iniciadas. docs/F23-HUMAN-RECONCILIATION.md; evidence/f23-human-reconciliation/.

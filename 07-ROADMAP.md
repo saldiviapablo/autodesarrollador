@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final | Path Guard fix PASS; F23 entrega ChatGPT ambigua; F24–F26 NOT_RUN | **FAIL / BLOCKED_REQUIRES_HUMAN** |
+| **Macrofase 8** | Validación Final | Reconciliación humana PASS; F23 reanudada; F24–F26 NOT_RUN | **IN_PROGRESS** |
 
 Cada fase debe producir:
 
@@ -1382,3 +1382,7 @@ Path Guard fix PASS: destino físico central, A–J READ/WRITE PASS, Prepare/MCP
 ## Estado actual Macrofase 8 — bloqueo del intento 3
 
 Path Guard fix PASS (6e0a507), A–J READ/WRITE y Prepare/MCP/plugin/Runner smokes PASS. F23 integral FAIL / BLOCKED_REQUIRES_HUMAN: consulta real ChatGPT UNKNOWN_DELIVERY persiste tras reconciliación, sin reenvío. Web real obtenida; agentes y recovery de runtime NOT_RUN. F24–F28 y regression final NOT_RUN. Cleanup/locks/integridad PASS. READY FOR REAL PILOT NO. Informe: docs/MACROPHASE-8-BLOCKED-REPORT-ATTEMPT-3.md.
+
+## Reconciliación humana F23 — 2026-10-14
+
+DELIVERY_NOT_OCCURRED confirmado por inspección humana. Mismo ID f23-ee298529568f4f8b94f4dd16f90a0be4, un único nuevo envío físico autorizado, user +1 / assistant +1, respuesta capturada y composer vacío. Retry lógico ALREADY_SENT / 0 envíos adicionales. Budget permanece 1. Reconciliación PASS; F23 se reanuda en el mismo sandbox. F24–F28 no iniciadas. docs/F23-HUMAN-RECONCILIATION.md; evidence/f23-human-reconciliation/.
