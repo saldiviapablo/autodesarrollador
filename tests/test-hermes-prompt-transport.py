@@ -12,8 +12,8 @@ import subprocess
 import uuid
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-E = ROOT / 'evidence/hermes-prompt-transport-20261014'
-E.mkdir(exist_ok=True)
+E = pathlib.Path(os.environ.get('F24_PREFLIGHT_E',str(ROOT/'evidence/hermes-prompt-transport-20261014')))/'reviewer-transport'
+E.mkdir(parents=True,exist_ok=True)
 case = ROOT / 'runtime' / ('transport-' + uuid.uuid4().hex)
 case.mkdir()
 source = ROOT / 'scripts/invoke-hermes.ps1'

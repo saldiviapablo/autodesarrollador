@@ -18,7 +18,8 @@ param(
     [int]$TimeoutSeconds = 360,
 
     [Parameter(Mandatory = $false)]
-    [string[]]$ExtraWorkerArgs = @()
+    [string[]]$ExtraWorkerArgs = @(),
+    [string]$ResearchProject = ''
 )
 
 $ErrorActionPreference = "Stop"
@@ -147,7 +148,8 @@ $workerResult = & $invokeQwenScript `
     -OutputFormat "json" `
     -MaxWallTime $MaxWallTime `
     -TimeoutSeconds $TimeoutSeconds `
-    -ExtraArgs $ExtraWorkerArgs
+    -ExtraArgs $ExtraWorkerArgs `
+    -ResearchProject $ResearchProject
 
 # 7. Ejecutar y auditar pruebas unitarias de forma determinista
 $executedTests = [System.Collections.Generic.List[PSCustomObject]]::new()

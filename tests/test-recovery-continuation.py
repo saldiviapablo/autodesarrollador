@@ -1,3 +1,4 @@
+import os
 """Real owned crash, guardian, checkpoint restoration and native START-Recover.
 
 Probe roles are deterministic, explicitly not live inference or E2E completion.
@@ -5,7 +6,7 @@ Probe roles are deterministic, explicitly not live inference or E2E completion.
 import hashlib,importlib.util,json,pathlib,subprocess,time
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('fixture',ROOT/'tests/runner-fixtures.py');f=importlib.util.module_from_spec(spec);spec.loader.exec_module(f)
-E=ROOT/'evidence/f24-frontiers-20261014/recovery';E.mkdir(exist_ok=True)
+E=pathlib.Path(os.environ.get('F24_PREFLIGHT_E',str(ROOT/'evidence/f24-frontiers-20261014')))/'recovery';E.mkdir(parents=True,exist_ok=True)
 def read(path):
     for _ in range(20):
         try:return json.loads(path.read_text(encoding='utf-8-sig'))

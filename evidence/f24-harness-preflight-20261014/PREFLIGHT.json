@@ -1,0 +1,131 @@
+{
+  "status": "PASS",
+  "WEB_GATE_FIX": "PASS",
+  "F24_HARNESS_PREFLIGHT": "PASS",
+  "TOTAL_GATES_FROZEN": 28,
+  "gates_sha256": "690949c59fbf278f1863a35f4b27b07f3ab3b99960420c939a628625fc526953",
+  "tests": {
+    "web": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 2.150326099996164
+    },
+    "frozen-evaluator": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.14591479999944568
+    },
+    "budget-cache": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 2.441921400000865
+    },
+    "delivery": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.3090952999991714
+    },
+    "domain": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 1.5158116000020527
+    },
+    "idempotency": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.18776270000671502
+    },
+    "human": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.6692202999984147
+    },
+    "single-click": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.045335399998293724
+    },
+    "child-cleanup": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.971311200002674
+    },
+    "launcher": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.4258789000014076
+    },
+    "reviewer-transport": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 16.261417299996538
+    },
+    "completion": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 3.3241176000010455
+    },
+    "recovery": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 26.933773899996595
+    },
+    "cleanup": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 105.40052750000177
+    },
+    "syntax-lock": {
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 4.284432799999195
+    },
+    "native-qwen-input": {
+      "status": "PASS",
+      "evidence": "native-qwen-model-input.json",
+      "inferences": 0,
+      "actual_messages": 0
+    }
+  },
+  "historical_files_preserved": 629,
+  "actual_messages_sent": 0,
+  "local_inferences": 0,
+  "attempt5_started": false,
+  "sealed": true,
+  "source_hashes": {
+    "runner/completion.py": "106f67192981db1b9c90f6b0f2ee81a7e6c05225e65e58c5f5a27454bdc5f7cb",
+    "runner/contract.py": "ab675a70ff32b7cc8cec332a2509d943ae550664ead3c97ff388cb3726a0ec61",
+    "runner/prepare.py": "f08433d27192358027c2ef24686cb35f5ecd9c3037ed843e7ffbdfb83fe7ae45",
+    "runner/research-handoff.py": "63fa3ebb9d9adee3227eccbcf48f6ed622e63213a39ab30c9b6da72ac4f5189d",
+    "runner/agent-step.ps1": "155301ec53f1185f5c0104b762c88d7d05d2992c5180428522044e48e49acb89",
+    "runner/chatgpt-step.ps1": "197b9c1f2b9fa0de40a2bb837297279f42b314288f74e19173bbdc1a7bb464f2",
+    "runner/cleanup.ps1": "85cedfbbc7b1d56ea09b278a1e6d31aafe26aff7dbfdc3075eb8d459f7bfac7d",
+    "runner/completion-gate.ps1": "b93cb42184b62d1d767b9410d37fcff2740b50f46312f85736bc1cb60af69d95",
+    "runner/core.ps1": "0aef9dfc6560704334a03a4d7f1470ca533994c3c93933ff0f47548f85462607",
+    "runner/launch.ps1": "2401c33036bc93412d344e630296672eb098d3b8ba82555d9c5b074d60d0d291",
+    "runner/prepare-apply.ps1": "86721843a4818e9ffc71422f497a48e33f4092a5ec5af3a4fab9f94059104eca",
+    "runner/report.ps1": "5613bce99642891988b6a5f23b034a9e1ec9a3b7aeb9c9b23a4869685ab249b7",
+    "runner/research-step.ps1": "ea11af756b1e5c0144e3427ad95999d08779ad88ec3e49db782a4b8871e2fe16",
+    "runner/run.ps1": "ee4b542deacfb321119aa6fa03d19b7ce47d08dfbe7d4274cce2c42d4a8de5c1",
+    "runner/stop.ps1": "c7407bb00d88d5ebb63822bd215542e0cd2df2a653705a042c154f2b3fbdee6d",
+    "runner/watchdog-monitor.ps1": "b45ccb3151e7caa021f6dbcb0f4a95e37411e56ea4ab3ddd8f701c85d4bcf0f1",
+    "scripts/invoke-qwen-code.ps1": "acdab343d994adc18dd9b369ad86f448d918ccd123c6886c92fbc56c659f6e29",
+    "scripts/invoke-delegation.ps1": "ccef6734f232b5bd7cf3430807898ce7b6fadc6b183ceb9aa189321c180d7151",
+    "scripts/invoke-hermes.ps1": "a5ac89ea1a37d216ce838a762ff6cc140d5a365fbefe959c3248b88dc929139b",
+    "scripts/invoke-hermes-role.ps1": "90eda2341f0c439101c8b3d259e78c7155616e79145a3d4ecb4bfb27e83a93ff",
+    "scripts/consultar-chatgpt.ps1": "baf260682ffa6550c79e734882364c0b1c567a37ae6ab5575133e4eab818bebb",
+    "scripts/wait-chatgpt-child.ps1": "8cc921f0cbd8f70ad829568fe86d6752345aaa1f8a1cfe06612fb6e4086ae976",
+    "tools/chatgpt-bridge.js": "e74c8fa77c0421f2dc762e7f7e3f36f863988d029207b3d12811b153ba3d15b3",
+    "tools/chatgpt-ledger.js": "84f664d1699cf711e50cb31b4b5cd068db25d8c398d48d55fa9852d18d43258d",
+    "tools/chatgpt-delivery.js": "6a69554b2100b04936133b91a17e09c10de6609c3fefd60af88b9c0fb105f4e2",
+    "docs/F24-GATES.json": "690949c59fbf278f1863a35f4b27b07f3ab3b99960420c939a628625fc526953",
+    "tests/test-phase24-attempt5-live.py": "5dc113ab648da3288eb8fdb27fe2992bd78db6c0ebf3c0c3980dc86f5604ce79",
+    "tests/f24_gates.py": "75e4a0a0902227308ee6c016ed00010cbf006d7f9a4359b2cef91e4580306476",
+    "tests/f24_attempt3_fixture.py": "5347a44d8c0d3a0d943293c3ced9836ba483b51514d791666433f22add36a00a",
+    "tests/windows_launcher_adapter.py": "ed94cdafe38fbd8d2a9e5c2988d076080b57a82014ce6f6cc28994484af679f3",
+    "tests/finalize-live-test.ps1": "c5c3545be9e2b4549a2f420d0b036ed1eeeccb5f3ecf3e918d5f1751c71f335f",
+    "config/system.yaml": "9434854d904f51ff9aeb786b0c73d276c54c5d511fbba373e67ab9858a8bca78",
+    "config/security.yaml": "68e0941a63ec53c67429a296d7db4722a29267a8aee5432086e4639ac8f0ec7f",
+    "config/VERSIONS.lock": "81ca3683e16cc09625ea0000a46fee8d0a2caffdf5b33019a208dfed73b4dab4"
+  }
+}

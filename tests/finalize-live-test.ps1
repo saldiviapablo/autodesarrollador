@@ -26,6 +26,7 @@ try{
     $cleanup.unexpected_listeners=@(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue|Where-Object{$_.LocalPort -in @(8080,9119)}|Select-Object LocalPort,OwningProcess)
     if($cleanup.inference_mutex -ne 'FREE' -or $cleanup.unexpected_listeners.Count){throw 'CLEANUP_FAILED'}
     if($Failure){
+        $script:RunState.next_action='STOP: mandatory live gate failed; preserve evidence and await a new authorized run'
         $terminal='FAILED';if($Failure -match 'BLOCKED_REQUIRES_HUMAN'){$terminal='BLOCKED_REQUIRES_HUMAN'}
         if($terminal -eq 'BLOCKED_REQUIRES_HUMAN'){$script:RunState.next_action='Human reconciliation required; do not resend or start another phase'}
         Save-RunnerState $terminal $Failure

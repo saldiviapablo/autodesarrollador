@@ -44,7 +44,8 @@ param(
     [switch]$SkipLock,
 
     [Parameter(Mandatory = $false)]
-    [string[]]$ExtraArgs = @()
+    [string[]]$ExtraArgs = @(),
+    [string]$ResearchProject = ''
 )
 
 $ErrorActionPreference = "Stop"
@@ -92,6 +93,20 @@ if (-not (Test-Path $cliEntry)) {
 }
 
 # 3. Construir argumentos CLI
+$researchDispatchId=''
+if($ResearchProject){
+    if([IO.Path]::GetFullPath($ResearchProject) -ne [IO.Path]::GetFullPath($WorkingDir)){throw 'RESEARCH_WORKSPACE_MISMATCH'}
+    if($SessionId -or $ContinueSession -or $ResumeSession){throw 'RESEARCH_FRESH_SESSION_REQUIRED'}
+    . (Join-Path $infraRoot 'scripts/state-manager.ps1')
+    if((Sanitize-StringContent $Prompt) -cne $Prompt){throw 'SECRET_IN_RESEARCH_WORKER_INPUT'}
+    $SessionId=[guid]::NewGuid().ToString();$researchDispatchId=[guid]::NewGuid().ToString()
+    $dispatchDir=Join-Path $ResearchProject ('.autopilot/evidence/worker-dispatch/'+$researchDispatchId)
+    $initProof=& $pythonExe (Join-Path $infraRoot 'runner/research-handoff.py') init --project $ResearchProject --dispatch $researchDispatchId
+    if($LASTEXITCODE -ne 0){throw 'RESEARCH_DISPATCH_PATH_DENIED'}
+    [IO.File]::WriteAllText((Join-Path $dispatchDir 'input.txt'),$Prompt,(New-Object Text.UTF8Encoding($false)))
+    $proof=& $pythonExe (Join-Path $infraRoot 'runner/research-handoff.py') prepare --project $ResearchProject --dispatch $researchDispatchId --session $SessionId
+    if($LASTEXITCODE -ne 0){throw ('RESEARCH_DISPATCH_DENIED: '+($proof -join ' '))}
+}
 $argList = [System.Collections.Generic.List[string]]::new()
 $argList.Add($cliEntry)
 $argList.Add("-m")
@@ -166,6 +181,8 @@ $psi.RedirectStandardError = $true
 $psi.RedirectStandardInput = $true
 $psi.UseShellExecute = $false
 $psi.CreateNoWindow = $true
+$psi.StandardOutputEncoding=[Text.Encoding]::UTF8
+$psi.StandardErrorEncoding=[Text.Encoding]::UTF8
 
 $psi.EnvironmentVariables["OPENAI_BASE_URL"] = $baseUrl
 $psi.EnvironmentVariables["OPENAI_API_KEY"] = "local-not-required"
@@ -204,6 +221,10 @@ $rawErr = ""
 try {
     $proc = [System.Diagnostics.Process]::Start($psi)
     $proc.StandardInput.Close()
+    if($researchDispatchId){
+        $proof=& $pythonExe (Join-Path $infraRoot 'runner/research-handoff.py') started --project $ResearchProject --dispatch $researchDispatchId --session $SessionId --pid $proc.Id --birth $proc.StartTime.ToUniversalTime().Ticks
+        if($LASTEXITCODE -ne 0){$proc.Kill();$null=$proc.WaitForExit(3000);throw ('RESEARCH_DISPATCH_CHANGED: '+($proof -join ' '))}
+    }
 
     $stdoutTask = $proc.StandardOutput.ReadToEndAsync()
     $stderrTask = $proc.StandardError.ReadToEndAsync()
@@ -260,6 +281,8 @@ $resultObj = [PSCustomObject]@{
     Model         = $modelName
     ApprovalMode  = $ApprovalMode
     WorkingDir    = $targetWorkDir
+    ResearchDispatchId = $researchDispatchId
+    WorkerSessionId = $SessionId
 }
 
 return $resultObj

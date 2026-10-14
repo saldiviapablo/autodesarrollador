@@ -1,7 +1,8 @@
+import os
 """Actual owned process teardown, external preservation, crash and disk recovery."""
 import ctypes,datetime,importlib.util,json,pathlib,subprocess,time
 ROOT=pathlib.Path(__file__).resolve().parents[1];s=importlib.util.spec_from_file_location('f',ROOT/'tests/runner-fixtures.py');f=importlib.util.module_from_spec(s);s.loader.exec_module(f)
-e=ROOT/'evidence/phase-22';e.mkdir(exist_ok=True);cases={}
+e=pathlib.Path(os.environ.get('F24_PREFLIGHT_E',str(ROOT/'evidence/phase-22')))/'cleanup';e.mkdir(parents=True,exist_ok=True);cases={}
 kernel=ctypes.WinDLL('kernel32',use_last_error=True);kernel.OpenProcess.argtypes=[ctypes.c_ulong,ctypes.c_int,ctypes.c_ulong];kernel.OpenProcess.restype=ctypes.c_void_p;kernel.CloseHandle.argtypes=[ctypes.c_void_p];kernel.GetProcessTimes.argtypes=[ctypes.c_void_p]+[ctypes.POINTER(ctypes.c_ulonglong)]*4
 def read(p):
     for _ in range(30):
@@ -16,6 +17,10 @@ def alive(record):
 def verify(p,name,terminal):
     report=read(p/'.autopilot/reports/runner-result.json');assert report['status']==terminal,report
     assert not (p/'.autopilot/LOCK.json').exists()
+    # Guardian deliberately exits AFTER its report is persisted. Observe physical
+    # termination with a bound, rather than mistaking that short window for an orphan.
+    deadline=time.monotonic()+10
+    while any(alive(v) for v in report['processes']) and time.monotonic()<deadline:time.sleep(.1)
     assert not any(alive(v) for v in report['processes']),report
     state=read(p/'.autopilot/STATE.json');hb=read(p/'.autopilot/HEARTBEAT.json');assert state['status']==hb['status']==terminal
     assert report['cleanup']['owned_survivors']==[] and report['cleanup']['inference_mutex']=='FREE',report

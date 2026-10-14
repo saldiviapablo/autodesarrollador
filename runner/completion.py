@@ -22,8 +22,10 @@ def evaluate(project):
         required=plan.get(group,[])
         checks[group+'_all_required']=all(all_results.get(c['id'],{}).get('status')=='PASS' and all_results[c['id']].get('exit_code')==0 and all_results[c['id']].get('marker_present') for c in required)
     if plan.get('research'):
-        consumed=json.loads((auto/'evidence/WEB-CONSUMED.json').read_text(encoding='utf-8-sig'))
-        checks['required_web_consumed']=consumed.get('WEB_RESULT_READ') is True and consumed.get('source_sha256')==hashlib.sha256((auto/'evidence/WEB.json').read_bytes()).hexdigest()
+        import importlib.util
+        spec=importlib.util.spec_from_file_location('research_binding',ROOT/'runner/research-handoff.py');handoff=importlib.util.module_from_spec(spec);spec.loader.exec_module(handoff)
+        try:checks['required_web_context_delivered']=handoff.validate(p,'.autopilot/logs/worker.stdout.txt')['WEB_CONTEXT_DELIVERED'] is True
+        except (ValueError,KeyError,OSError,TypeError):checks['required_web_context_delivered']=False
     if plan.get('consultation'):
         path=auto/'evidence/CHATGPT.json';chat=json.loads(path.read_text(encoding='utf-8-sig')) if path.exists() else {}
         checks['required_consultation_captured']=chat.get('status')=='SUCCESS' and chat.get('consultation_id')==plan['consultation']['id'] and chat.get('message_sent') is True and chat.get('response_received') is True and chat.get('composer_cleared') is True and chat.get('user_turns_after')==chat.get('user_turns_before',-2)+1 and chat.get('assistant_turns_after')==chat.get('assistant_turns_before',-2)+1

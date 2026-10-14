@@ -1,3 +1,4 @@
+import os
 import copy,importlib.util,json,pathlib,subprocess
 ROOT=pathlib.Path(__file__).resolve().parents[1];spec=importlib.util.spec_from_file_location('fixtures',ROOT/'tests/runner-fixtures.py');f=importlib.util.module_from_spec(spec);spec.loader.exec_module(f)
 spec=importlib.util.spec_from_file_location('completion',ROOT/'runner/completion.py');gate=importlib.util.module_from_spec(spec);spec.loader.exec_module(gate)
@@ -26,4 +27,4 @@ checks['run_id']='other-run';check_path.write_text(json.dumps(checks));expect('s
 pin=p/'test_calculator.py';original=pin.read_bytes();pin.write_text('print("fake")');expect('immutable_test_changed');pin.write_bytes(original)
 state['failure']['repeated_count']=1;state_path.write_text(json.dumps(state));expect('unresolved_failure');state['failure']['repeated_count']=0;state_path.write_text(json.dumps(state))
 assert gate.evaluate(p)['status']=='COMPLETED'
-e=ROOT/'evidence/phase-20';e.mkdir(exist_ok=True);result={'status':'PASS','tests':{f'T-COMP-{i:03}':'PASS' for i in range(1,10)},'false_positive_cases':cases,'positive_case':'PASS','unit_fixture_only':True,'project':str(p)};(e/'tests.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result))
+e=pathlib.Path(os.environ.get('F24_PREFLIGHT_E',str(ROOT/'evidence/phase-20')))/'completion';e.mkdir(parents=True,exist_ok=True);result={'status':'PASS','tests':{f'T-COMP-{i:03}':'PASS' for i in range(1,10)},'false_positive_cases':cases,'positive_case':'PASS','unit_fixture_only':True,'project':str(p)};(e/'tests.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result))

@@ -1,5 +1,5 @@
 $ErrorActionPreference='Stop';$env:PSModulePath=Join-Path $PSHOME 'Modules'
-$root=Split-Path -Parent $PSScriptRoot;$e=Join-Path $root 'evidence/f24-frontiers-20261014/regression'
+$root=Split-Path -Parent $PSScriptRoot;$e=Join-Path $root 'evidence/f24-frontiers-20261014/regression';if($env:F24_PREFLIGHT_E){$e=Join-Path $env:F24_PREFLIGHT_E 'regression'}
 $null=New-Item -ItemType Directory -Path $e -Force
 $parsed=@{}
 $files=@(Get-ChildItem -LiteralPath (Join-Path $root 'runner') -Filter '*.ps1')

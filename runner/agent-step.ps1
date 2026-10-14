@@ -10,7 +10,8 @@ try{
         $r=& (Join-Path $root 'scripts/invoke-qwen-code.ps1') -Prompt $packet.prompt -WorkingDir $packet.project -ApprovalMode yolo -MaxWallTime ($packet.timeout.ToString()+'s') -MaxToolCalls 5 -MaxSessionTurns 3 -TimeoutSeconds ($packet.timeout+5)
         $result=@{status=$(if($r.Success){'SUCCESS'}else{'ERROR'});data=@{WorkerOutput=$r}}
     }elseif($packet.role -eq 'worker'){
-        $r=& (Join-Path $root 'scripts/invoke-delegation.ps1') -RequestJson ($packet.request|ConvertTo-Json -Depth 12) -MaxWallTime ($packet.timeout.ToString()+'s') -TimeoutSeconds ($packet.timeout+5)
+        $researchProject='';if($packet.research_inline){$researchProject=$packet.project}
+        $r=& (Join-Path $root 'scripts/invoke-delegation.ps1') -RequestJson ($packet.request|ConvertTo-Json -Depth 12) -MaxWallTime ($packet.timeout.ToString()+'s') -TimeoutSeconds ($packet.timeout+5) -ResearchProject $researchProject
         $result=@{status=$r.Status;data=$r}
     }else{
         $r=& (Join-Path $root 'scripts/invoke-hermes-role.ps1') -Role $packet.role -Prompt $packet.prompt -WorkingDir $packet.project -TimeoutSeconds $packet.timeout

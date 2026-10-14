@@ -1,0 +1,231 @@
+{
+  "version": 1,
+  "total_gates": 28,
+  "scope": "Frozen before START. E paths relative to new evidence; native paths are exact .autopilot copies. No cognitive claims. Functional criteria unchanged.",
+  "gates": [
+    {
+      "id": 1,
+      "name": "launcher",
+      "pass_condition": "Native batch dispatched once to owned Runner",
+      "evidence": "fixture.json, execution-live.txt, native/EVENTS RUN_STARTED",
+      "producer": "launcher adapter/harness",
+      "verification": "checks.real_launcher_started and actual RUN_STARTED"
+    },
+    {
+      "id": 2,
+      "name": "prepare",
+      "pass_condition": "Native Prepare PASS for fresh project",
+      "evidence": "prepare.json",
+      "producer": "Runner Prepare",
+      "verification": "prepare.status == PASS"
+    },
+    {
+      "id": 3,
+      "name": "preflight",
+      "pass_condition": "Native admission PASS before approval/START",
+      "evidence": "preflight.json",
+      "producer": "Runner admission",
+      "verification": "preflight.status == PASS"
+    },
+    {
+      "id": 4,
+      "name": "approval",
+      "pass_condition": "One approval receipt matches frozen inputs",
+      "evidence": "approval.json, runtime approval receipt",
+      "producer": "Runner admission",
+      "verification": "single_approval and digest and every pinned hash unchanged"
+    },
+    {
+      "id": 5,
+      "name": "runner",
+      "pass_condition": "Native live run starts and terminates COMPLETED",
+      "evidence": "native/EVENTS.jsonl, native/reports/runner-result.json",
+      "producer": "Runner",
+      "verification": "RUN_STARTED backend live and runner_completed"
+    },
+    {
+      "id": 6,
+      "name": "llama",
+      "pass_condition": "Owned model health ready; frozen configuration",
+      "evidence": "native/EVENTS.jsonl MODEL_HEALTH_READY, PROCESSES",
+      "producer": "Runner",
+      "verification": "MODEL_HEALTH_READY and pinned system config"
+    },
+    {
+      "id": 7,
+      "name": "supervisor",
+      "pass_condition": "Native independent role succeeds",
+      "evidence": "native/evidence/roles.json",
+      "producer": "Hermes Supervisor",
+      "verification": "roles.supervisor.status SUCCESS"
+    },
+    {
+      "id": 8,
+      "name": "worker",
+      "pass_condition": "Native Qwen role succeeds within restart budget",
+      "evidence": "native/evidence/roles.json, RESTARTS.json",
+      "producer": "Qwen wrapper/Runner",
+      "verification": "roles.worker.status SUCCESS and restarts <= 2"
+    },
+    {
+      "id": 9,
+      "name": "initial_fail",
+      "pass_condition": "Worker diagnosis leaves source unchanged and real immutable suite fails",
+      "evidence": "native/evidence/initial-failure.json, worker-diagnosis.json, EVENTS",
+      "producer": "Runner checks/Worker",
+      "verification": "WORKER_DIAGNOSIS_CONFIRMED source_unchanged and FAIL"
+    },
+    {
+      "id": 10,
+      "name": "web_fetch",
+      "pass_condition": "HTTP200 source/content saved with URL and SHA",
+      "evidence": "native/evidence/WEB.json, WEB-FETCHED.json",
+      "producer": "web wrapper/Runner",
+      "verification": "WEB-FETCHED PASS and raw source hash current"
+    },
+    {
+      "id": 11,
+      "name": "web_context",
+      "pass_condition": "Inline exact research range bound to actual dispatched input and executed session",
+      "evidence": "native/evidence/WEB-CONTEXT-DELIVERED.json, worker-dispatch/*, worker.stdout",
+      "producer": "Qwen wrapper",
+      "verification": "research-handoff.validate rechecks input/source/session; no model echo"
+    },
+    {
+      "id": 12,
+      "name": "worker_correction",
+      "pass_condition": "Qwen produces relevant allowed source changes",
+      "evidence": "worker-diff.patch, native/evidence/roles.json",
+      "producer": "Qwen/Git",
+      "verification": "native Worker SUCCESS and changed allowed source; no manual fix"
+    },
+    {
+      "id": 13,
+      "name": "tests",
+      "pass_condition": "All 13 preexisting immutable acceptance tests pass",
+      "evidence": "native/evidence/checks.json, native/logs/check-unit.*",
+      "producer": "Runner subprocess",
+      "verification": "all approved test IDs exit0/PASS/marker and immutable SHA"
+    },
+    {
+      "id": 14,
+      "name": "build",
+      "pass_condition": "All approved build checks pass",
+      "evidence": "native/evidence/checks.json, native/logs/check-build.*",
+      "producer": "Runner subprocess",
+      "verification": "all approved builds exit0/PASS/marker"
+    },
+    {
+      "id": 15,
+      "name": "checkpoint",
+      "pass_condition": "Immutable checkpoint exists before parent crash",
+      "evidence": "injection.json, native/checkpoints, events-before-crash.json",
+      "producer": "checkpoint manager/harness",
+      "verification": "controlled injection references checkpoint and manifest exists"
+    },
+    {
+      "id": 16,
+      "name": "crash",
+      "pass_condition": "Exactly one owned parent crash after checks PASS",
+      "evidence": "injection.json, checks-before-crash.json",
+      "producer": "harness PID/birth identity",
+      "verification": "injection exists; checks passed before kill; PID birth owned"
+    },
+    {
+      "id": 17,
+      "name": "watchdog",
+      "pass_condition": "Detect lost parent and finish cleanup",
+      "evidence": "watchdog.json, native/EVENTS.jsonl",
+      "producer": "Watchdog",
+      "verification": "reason PARENT_PROCESS_LOST, no old parent alive before recovery"
+    },
+    {
+      "id": 18,
+      "name": "start_recover",
+      "pass_condition": "Actual second Start -Recover before consultation",
+      "evidence": "execution-live.txt, native/EVENTS RUN_RECOVERED_FROM_DISK",
+      "producer": "harness/Runner",
+      "verification": "disk_recovery true and new native RUN_STARTED after watchdog"
+    },
+    {
+      "id": 19,
+      "name": "continuation",
+      "pass_condition": "Recovered STATE/checkpoint and new Worker/tests continue, original clock unchanged",
+      "evidence": "native/EVENTS, STATE/checkpoint, native-clock-initial.json",
+      "producer": "Recovery protocol/Runner",
+      "verification": "recovery event then new worker/checks PASS; original clock SHA unchanged"
+    },
+    {
+      "id": 20,
+      "name": "chatgpt_send",
+      "pass_condition": "Fresh consultation, one physical send, same bound conversation and UTF8",
+      "evidence": "native/evidence/CHATGPT.json, new ledger, trace",
+      "producer": "managed bridge",
+      "verification": "send_attempts1, source/DOM SHA match, UTF8, user+1; retry adds0"
+    },
+    {
+      "id": 21,
+      "name": "sent_confirmed",
+      "pass_condition": "SENT_CONFIRMED persisted before waiting for response",
+      "evidence": "new ledger history and monotonic trace",
+      "producer": "bridge fsync ledger/trace",
+      "verification": "history SENT_CONFIRMED then COMPLETED; SENT precedes RESPONSE_WAIT_START"
+    },
+    {
+      "id": 22,
+      "name": "response",
+      "pass_condition": "Response captured, assistant+1, composer empty; logical retry no resend",
+      "evidence": "native/evidence/CHATGPT.json, CHATGPT-RETRY.json",
+      "producer": "bridge/managed consultant",
+      "verification": "COMPLETED, response+composer+turn deltas and ALREADY_SENT/additional0"
+    },
+    {
+      "id": 23,
+      "name": "reviewer",
+      "pass_condition": "Independent read-only Reviewer ACCEPTED",
+      "evidence": "native/evidence/roles.json, readonly-reviewer-before/after.json",
+      "producer": "Hermes Reviewer/harness",
+      "verification": "independent_reviewer_accepted and reviewer_readonly"
+    },
+    {
+      "id": 24,
+      "name": "completion",
+      "pass_condition": "All objective/criteria/tests/build/artifacts/diff/pending/STATE gates true",
+      "evidence": "native/evidence/completion-gate.json",
+      "producer": "deterministic Completion Gate",
+      "verification": "COMPLETED and every required check true"
+    },
+    {
+      "id": 25,
+      "name": "report",
+      "pass_condition": "Native terminal report COMPLETED and no hidden failure",
+      "evidence": "native/reports/FINAL.md, runner-result.json",
+      "producer": "Runner report",
+      "verification": "report COMPLETED, technical SUCCESS, no reason"
+    },
+    {
+      "id": 26,
+      "name": "cleanup",
+      "pass_condition": "No owned survivors, Run/Inference mutex free, no 8080/9119 listeners",
+      "evidence": "cleanup-final.json, cleanup-identities.json",
+      "producer": "Runner/finalizer",
+      "verification": "final_cleanup and native_cleanup and no survivors/lock/listeners"
+    },
+    {
+      "id": 27,
+      "name": "resources",
+      "pass_condition": "Continuous RAM/RSS/pagefile/process/GPU samples, no sustained critical condition or OOM",
+      "evidence": "resources-live.json",
+      "producer": "harness monitor",
+      "verification": ">=3 samples and GPU samples, no resource failure, normal duration <=2700"
+    },
+    {
+      "id": 28,
+      "name": "integrity",
+      "pass_condition": "Frozen policies/model configuration/tests/history/clock preserved",
+      "evidence": "approval.json, history manifest, integrity audit",
+      "producer": "Runner/harness",
+      "verification": "every approved hash matches; immutable tests/clock/history unchanged"
+    }
+  ]
+}

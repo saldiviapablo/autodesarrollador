@@ -46,6 +46,9 @@ function Save-RunnerState([string]$Status,[string]$Task){
             $disk=Get-Content -LiteralPath $statePath -Raw -Encoding UTF8|ConvertFrom-Json
             if($disk.run_id -ne $script:RunId){throw 'BUDGET_STATE_RUN_ID_MISMATCH'}
             if($disk.chatgpt){
+                if(-not $script:RunState.chatgpt){
+                    $script:RunState|Add-Member -MemberType NoteProperty -Name chatgpt -Force -Value ([pscustomobject]@{queries_used=[int]$disk.chatgpt.queries_used;max_queries=[int]$disk.chatgpt.max_queries})
+                }
                 $script:RunState.chatgpt.queries_used=[Math]::Max($script:RunState.chatgpt.queries_used,$disk.chatgpt.queries_used)
                 $script:RunState.chatgpt.max_queries=[Math]::Min($script:RunState.chatgpt.max_queries,$disk.chatgpt.max_queries)
             }

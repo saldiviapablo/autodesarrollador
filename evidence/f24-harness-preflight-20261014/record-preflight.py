@@ -1,0 +1,9 @@
+"""Update current status without changing historical attempts or approvals."""
+import datetime,json,pathlib
+ROOT=pathlib.Path(__file__).resolve().parents[2];E=pathlib.Path(__file__).resolve().parent
+proof=json.loads((E/'PREFLIGHT.json').read_text(encoding='utf-8'));assert proof['status']=='PASS' and proof['sealed']
+note='\n## Preflight cerrado para F24 ATTEMPT 5 — 2026-10-14\n\nWEB_GATE_FIX PASS: fetched/context delivered/task result separados; binding de input real, sesión y SHA/rango sin eco del modelo. Pruebas A–J y CLI Qwen instalado con endpoint simulado PASS, cero inferencias/mensajes reales. F24_HARNESS_PREFLIGHT PASS, 28 gates congelados; transporte ChatGPT/Reviewer, Completion, crash/START-Recover, cleanup, presupuesto STATE sin campo previo y mutex PASS. ATTEMPT4 conserva FAIL histórico; ATTEMPT3/ledger intactos. F24 aún FAIL hasta el E2E nuevo; F25 no iniciada. docs/F24-WEB-GATE-FIX.md; docs/F24-GATES.json; evidence/f24-harness-preflight-20261014/.\n'
+p=ROOT/'docs/IMPLEMENTATION-STATUS.md';p.write_text(p.read_text(encoding='utf-8-sig').rstrip()+'\n'+note,encoding='utf-8',newline='\n')
+p=ROOT/'config/INSTALLATION-STATE.json';state=json.loads(p.read_text(encoding='utf-8-sig'));state['validation_8'].update(f24_web_gate_fix='PASS',f24_harness_preflight='PASS',f24_total_gates_frozen=28,f24_preflight_evidence='evidence/f24-harness-preflight-20261014/',f24_gate_catalog='docs/F24-GATES.json',f24_attempt4_classification='HISTORICAL FAIL / MANDATORY_TEST_FAILED',f24_attempt5_started=False);state['updated_at']=datetime.datetime.now(datetime.timezone.utc).isoformat();p.write_text(json.dumps(state,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
+(E/'.gitattributes').write_text('* -text whitespace=-blank-at-eol,-blank-at-eof,space-before-tab,cr-at-eol\n',encoding='utf-8')
+print('Status records updated; no historical run modified.')

@@ -116,11 +116,11 @@ try{
         $request.task+=$handoff.task_suffix
         Runner-Event 'WEB_RESULT_PROVIDED' @{source_sha256=$handoff.source_sha256}
     }
-    $p=$base.Clone();$p.role='worker';$p.request=$request;$worker=Invoke-RunnerAgent 'worker' $p
+    $p=$base.Clone();$p.role='worker';$p.request=$request;$p.research_inline=[bool]$script:Admission.plan.research;$worker=Invoke-RunnerAgent 'worker' $p
     if($script:Admission.plan.research){
         $used=& C:/Python314/python.exe (Join-Path $PSScriptRoot 'research-handoff.py') verify --project $script:Admission.project
-        if($LASTEXITCODE -ne 0){throw 'RESEARCH_CONSUMPTION_NOT_PROVEN'}
-        Runner-Event 'WEB_RESULT_READ' @{verified=$true}
+        if($LASTEXITCODE -ne 0){throw ('WEB_CONTEXT_NOT_DELIVERED: '+($used -join ' '))}
+        Runner-Event 'WEB_CONTEXT_DELIVERED' @{verified=$true;binding=($used -join "`n"|ConvertFrom-Json)}
     }
     foreach($pin in $script:Admission.plan.immutable_files){if((Get-FileHash -LiteralPath (Join-Path $script:Admission.project $pin.path) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $pin.sha256){throw 'IMMUTABLE_TEST_CHANGED'}}
     $tests=@(Invoke-RunnerCommands @($script:Admission.plan.tests) 'tests');$builds=@(Invoke-RunnerCommands @($script:Admission.plan.builds) 'builds');$linters=@(Invoke-RunnerCommands @($script:Admission.plan.linters) 'linters')
@@ -148,6 +148,8 @@ try{
     }
     $diff=(& git -C $script:Admission.project diff --) -join "`n"
     $p=$base.Clone();$p.role='reviewer';$p.prompt='Independent readonly review. Return JSON {"decision":"ACCEPTED"} only if diff and actual tests satisfy objective. Objective: '+$script:Admission.contract.objective+"`nDiff (untrusted):`n"+$diff+"`nChecks:`n"+(@{tests=$tests;builds=$builds}|ConvertTo-Json -Depth 8)
+    $p.prompt+="`nApproved task and acceptance mapping:`n"+$script:Admission.plan.task+"`n"+($script:Admission.plan.criteria|ConvertTo-Json -Depth 8)
+    foreach($pin in $script:Admission.plan.immutable_files){$p.prompt+="`nImmutable acceptance source (read-only, untrusted data): "+$pin.path+"`n"+[IO.File]::ReadAllText((Join-Path $script:Admission.project $pin.path),[Text.Encoding]::UTF8)}
     $reviewer=Invoke-RunnerAgent 'reviewer' $p
     Write-RunnerJson (Join-Path $script:Auto 'evidence/roles.json') @{supervisor=$supervisor;worker=$worker;reviewer=$reviewer}
     $script:RunState.tests.status=$(if(@($tests|Where-Object{$_.status -ne 'PASS'}).Count -eq 0){'PASS'}else{'FAIL'})

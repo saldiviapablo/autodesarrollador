@@ -3,7 +3,7 @@ import hashlib,json,os,pathlib,tempfile
 from windows_launcher_adapter import launch_batch
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-E=ROOT/'evidence/f24-launcher-adapter-fix-20261014';E.mkdir(exist_ok=True)
+E=pathlib.Path(os.environ.get('F24_PREFLIGHT_E',str(ROOT/'evidence/f24-launcher-adapter-fix-20261014')))/'launcher';E.mkdir(parents=True,exist_ok=True)
 # A requires a path without spaces; the infrastructure root contains spaces.
 # Create exclusively new, uniquely named files in the user's existing temp area.
 case=pathlib.Path(tempfile.mkdtemp(prefix='da-launcher-')).resolve()

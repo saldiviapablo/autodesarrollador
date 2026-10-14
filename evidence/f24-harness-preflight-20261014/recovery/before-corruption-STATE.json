@@ -1,0 +1,86 @@
+﻿{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261014-205358",
+    "project_id":  "7b-frontier-recovery-e6cbf59f",
+    "objective":  "Implement correct addition with verified tests",
+    "status":  "FAILED",
+    "created_at":  "2026-10-14T20:53:59.2291380-03:00",
+    "updated_at":  "2026-10-14T20:54:07.1263826-03:00",
+    "cycle":  0,
+    "max_cycles":  20,
+    "current_phase":  "WATCHDOG_FAILOVER",
+    "current_task":  "PARENT_PROCESS_LOST",
+    "completed_tasks":  [
+
+                        ],
+    "pending_tasks":  [
+                          "Implement correct addition with verified tests"
+                      ],
+    "acceptance_criteria":  [
+                                "addition verified"
+                            ],
+    "current_delegation_id":  null,
+    "hermes_session_id":  null,
+    "qwen_session_id":  null,
+    "git":  {
+                "branch":  "agent/macro8-20261013",
+                "head":  "edb4a3e",
+                "dirty":  true,
+                "changed_files":  [
+                                      "evidence/chatgpt-idempotency/deterministic.json",
+                                      "runner/agent-step.ps1",
+                                      "runner/completion.py",
+                                      "runner/contract.py",
+                                      "runner/core.ps1",
+                                      "runner/research-handoff.py",
+                                      "runner/run.ps1",
+                                      "scripts/invoke-delegation.ps1",
+                                      "scripts/invoke-qwen-code.ps1",
+                                      "tests/finalize-live-test.ps1",
+                                      "tests/smoke-f24-frontiers.ps1",
+                                      "tests/test-hermes-prompt-transport.py",
+                                      "tests/test-phase20.py",
+                                      "tests/test-phase22.py",
+                                      "tests/test-recovery-continuation.py",
+                                      "tests/test-research-handoff.py",
+                                      "tests/test-windows-launcher-adapter.py",
+                                      "docs/F24-GATES.json",
+                                      "docs/F24-WEB-GATE-FIX.md",
+                                      "evidence/f24-harness-preflight-20261014/",
+                                      "tests/f24_gates.py",
+                                      "tests/preflight-f24-harness.py",
+                                      "tests/test-f24-frozen-evaluator.py",
+                                      "tests/test-phase24-attempt5-live.py",
+                                      "tests/test-runner-budget-merge.ps1"
+                                  ]
+            },
+    "tests":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null,
+                  "last_run_at":  null
+              },
+    "build":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null
+              },
+    "progress":  {
+                     "score":  0,
+                     "last_progress_at":  null,
+                     "no_progress_cycles":  0
+                 },
+    "failure":  {
+                    "last_signature":  null,
+                    "repeated_count":  0
+                },
+    "checkpoint":  {
+                       "last_id":  "chk-watchdog-20261014205406922",
+                       "last_created_at":  "2026-10-14T20:54:07.1253837-03:00"
+                   },
+    "next_action":  "Recover from persisted state; no blind restart",
+    "chatgpt":  {
+                    "queries_used":  1,
+                    "max_queries":  5
+                }
+}
