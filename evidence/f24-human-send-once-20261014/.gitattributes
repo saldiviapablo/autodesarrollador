@@ -1,0 +1,5 @@
+# Preserve byte-level SHA-256 bindings across Windows checkouts.
+*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Preserve captured DOM whitespace, which is hashed verbatim.
+response.txt -text whitespace=-blank-at-eol,-blank-at-eof,space-before-tab,cr-at-eol

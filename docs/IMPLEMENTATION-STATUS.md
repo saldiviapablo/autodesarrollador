@@ -136,3 +136,7 @@ Adaptador F24 A–H PASS (fea2a71). F23 PASS preservada. F24 real intento 2 FAIL
 ## Reconciliación humana F24 sin envío — 2026-10-14
 
 BASELINE_PROVEN YES: 1/1 persistido antes de DELIVERY_INTENT. Fix de la ruta humana PASS para conversaciones existentes; reconciliación automática intacta. Mismo ID f24-7257c739e1fd449aae1f1f93856aef7f: NOT_DELIVERED_CONFIRMED / RETRY_SAFE, una habilitación pendiente, send_attempts permanece 1, cero envíos físicos adicionales. Composer original sin reescribir; turnos 1/1, presupuesto 1/5 y STATE sin cambios. Histórico UNKNOWN_DELIVERY/DELIVERY_INTENT conservado. F23 PASS y evidencias históricas intactas. F24 E2E no certificado y detenido por instrucción humana; F25–F28 no iniciadas. docs/F24-HUMAN-BASELINE-RECONCILIATION.md; evidence/f24-human-baseline-reconciliation-20261014/.
+
+## Envío único F24 autorizado — 2026-10-14
+
+Precheck PASS y un único envío físico del mismo ID y composer. Usuario 1→2, asistente 1→2, composer vacío, respuesta capturada, conversación intacta. Ledger SENT confirmado → COMPLETED; retry lógico ALREADY_SENT / cero envíos adicionales; human_retry_remaining=0. Presupuesto 1/5 y STATE sin cambios, sólo evento nativo CHATGPT_CONSULTED. Histórico preservado, integridad/cleanup PASS. READY_TO_RESUME_F24 YES para una continuación posterior autorizada; F24 E2E aún no certificado. Reviewer, Completion Gate y F25 no ejecutados. Detenido por instrucción humana; F27/F28 no iniciadas. docs/F24-SINGLE-SEND-REPORT.md; evidence/f24-human-send-once-20261014/.

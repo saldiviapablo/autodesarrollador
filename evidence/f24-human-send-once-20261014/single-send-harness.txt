@@ -1,0 +1,63 @@
+$ErrorActionPreference='Stop'
+$env:PSModulePath='C:\Windows\System32\WindowsPowerShell\v1.0\Modules'
+$env:PYTHONUTF8='1'; $env:PYTHONDONTWRITEBYTECODE='1'
+$root=(Get-Location).Path
+$inputObj=Get-Content -LiteralPath (Join-Path $root 'runtime/f24-human-send-input.json') -Raw -Encoding UTF8|ConvertFrom-Json
+$ev=$inputObj.evidence_directory
+$id='f24-7257c739e1fd449aae1f1f93856aef7f'
+$ledgerPath=Join-Path $root 'runtime/chatgpt-consultations/0e88c5b81e02a3eb0892e9cbdd130d236e3b30ee5b4e37db1f23e962324d9e39.json'
+$utf8=New-Object Text.UTF8Encoding($false,$true)
+function Save-Json([string]$name,$value){[IO.File]::WriteAllText((Join-Path $ev $name),($value|ConvertTo-Json -Depth 30),$utf8)}
+function Hash-Text([string]$text){$sha=[Security.Cryptography.SHA256]::Create();try{([BitConverter]::ToString($sha.ComputeHash($utf8.GetBytes($text)))).Replace('-','').ToLowerInvariant()}finally{$sha.Dispose()}}
+function Normalize-Prompt([string]$text){$text.Trim().Replace("`r`n","`n") -replace "`n`n+","`n"}
+. (Join-Path $root 'scripts/security-guard.ps1')
+. (Join-Path $root 'scripts/state-manager.ps1')
+try {
+    if($inputObj.consultation_id -cne $id -or $inputObj.timeout_seconds -ne 60){throw 'INPUT_PRECHECK_DENIED'}
+    $before=Get-Content -LiteralPath $ledgerPath -Raw -Encoding UTF8|ConvertFrom-Json
+    if((Get-FileHash -LiteralPath $ledgerPath -Algorithm SHA256).Hash -cne (Get-FileHash -LiteralPath (Join-Path $ev 'ledger-before.json') -Algorithm SHA256).Hash){throw 'LEDGER_CHANGED_NO_SEND'}
+    if($before.consultation_id -cne $id -or $before.delivery_state -cne 'NOT_DELIVERED_CONFIRMED' -or $before.human_retry_remaining -ne 1 -or $before.human_retry_consumed -or $before.send_attempts -ne 1 -or $before.message_confirmed){throw 'LEDGER_RETRY_PRECHECK_DENIED'}
+    if($before.user_turns_before -ne 1 -or $before.assistant_turns_before -ne 1 -or $before.human_conversation_id -cne '6acefadc-36b8-83e8-9172-7e3e9421dc21' -or $before.conversation_url -cne $inputObj.expected_url){throw 'BASELINE_CONVERSATION_PRECHECK_DENIED'}
+    $expected=$utf8.GetString([IO.File]::ReadAllBytes((Join-Path $root 'evidence/f24-human-baseline-reconciliation-20261014/expected-prompt.txt')))
+    if((Hash-Text (Normalize-Prompt $expected)) -cne $before.prompt_sha256 -or $before.prompt_sha256 -cne $inputObj.prompt_sha256){throw 'EXPECTED_PROMPT_PRECHECK_DENIED'}
+    $secret=Protect-SecretExfiltration -Content $expected -ContextName 'F24 authorized existing composer, no reinsertion'
+    if($secret.Blocked -or $secret.SanitizedText -cne $expected){throw 'SECRET_SANITIZER_DENIED'}
+    $stateBefore=Get-Content -LiteralPath $inputObj.state_path -Raw -Encoding UTF8|ConvertFrom-Json
+    if((Test-FileSchemaValidation -filePath $inputObj.state_path -schemaPath (Join-Path $root 'schemas/autopilot-state.schema.json')) -cne 'VALID'){throw 'BUDGET_STATE_SCHEMA_DENIED'}
+    if($stateBefore.chatgpt.queries_used -ne 1 -or $stateBefore.chatgpt.max_queries -ne 5){throw 'BUDGET_PRECHECK_DENIED'}
+    # Fresh read-only check, followed by exactly one call to the governed bridge.
+    $preparedRaw=& node.exe (Join-Path $root 'tools/chatgpt-bridge.js') --action inspect-prepared --consultation-id $id --url $inputObj.expected_url --timeout 30
+    if($LASTEXITCODE -ne 0){throw 'LIVE_PRECHECK_FAILED_NO_SEND'}
+    $prepared=($preparedRaw -join "`n")|ConvertFrom-Json
+    Save-Json 'inspect-immediately-before-send.json' $prepared
+    $obs=$prepared.observation
+    if($prepared.consultation_id -cne $id -or $prepared.status -cne 'RETRY_SAFE' -or $obs.url -cne $inputObj.expected_url -or $obs.user -ne 1 -or $obs.assistant -ne 1 -or $obs.isStreaming -ne $false -or $obs.sendAvailable -ne $true -or $obs.composer_sha256 -cne $before.prompt_sha256 -or $obs.expected_sha256 -cne $before.prompt_sha256){throw 'LIVE_OBSERVATION_PRECHECK_DENIED'}
+    Save-Json 'precheck.json' @{status='PASS';consultation_id=$id;conversation_id=$before.human_conversation_id;url=$obs.url;baseline_user=1;baseline_assistant=1;current_user=$obs.user;current_assistant=$obs.assistant;composer_sha256=$obs.composer_sha256;streaming=$obs.isStreaming;send_available=$obs.sendAvailable;human_retry_remaining=1;budget=$stateBefore.chatgpt;sanitizer='PASS';utf8='PASS';ledger_consistent=$true;timestamp=(Get-Date).ToString('o');timeout_seconds=60}
+    # Create-exclusive marker makes a second execution fail before consulting.
+    $marker=[IO.File]::Open((Join-Path $root 'runtime/f24-single-send-consumed.marker'),[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+    try{$bytes=$utf8.GetBytes($id+' '+(Get-Date).ToString('o'));$marker.Write($bytes,0,$bytes.Length);$marker.Flush($true)}finally{$marker.Dispose()}
+    $result=& (Join-Path $root 'scripts/consultar-chatgpt.ps1') -Action consult -Question $inputObj.question -ConsultationId $id -StatePath $inputObj.state_path -TargetUrl $inputObj.expected_url -TimeoutSeconds 60 -OutputPath $inputObj.response_output
+    Save-Json 'send-result.json' $result
+    $after=Get-Content -LiteralPath $ledgerPath -Raw -Encoding UTF8|ConvertFrom-Json
+    [IO.File]::WriteAllText((Join-Path $ev 'ledger-after-send.json'),[IO.File]::ReadAllText($ledgerPath,$utf8),$utf8)
+    if($result.Status -cne 'SUCCESS'){throw ('UNKNOWN_DELIVERY_NO_RESEND: '+$result.Status)}
+    $r=$result.ResultObj
+    if($r.physical_send_count -ne 1 -or -not $r.human_reconciled_retry -or $r.user_turns_before -ne 1 -or $r.user_turns_after -ne 2 -or $r.assistant_turns_before -ne 1 -or $r.assistant_turns_after -ne 2 -or -not $r.composer_cleared -or -not $r.message_sent -or -not $r.response_received -or -not $r.source_text_equals_dom_text){throw 'POST_SEND_CONFIRMATION_FAILED_NO_RESEND'}
+    if($after.delivery_state -cne 'COMPLETED' -or $after.human_retry_remaining -ne 0 -or -not $after.human_retry_consumed -or $after.send_attempts -ne 2 -or $after.conversation_url -cne $inputObj.expected_url -or -not $after.message_confirmed){throw 'FINAL_LEDGER_CONFIRMATION_FAILED_NO_RESEND'}
+    if([string]::IsNullOrWhiteSpace($result.Response) -or (Hash-Text $result.Response) -cne $after.response_sha256){throw 'RESPONSE_CAPTURE_FAILED_NO_RESEND'}
+    [IO.File]::WriteAllText((Join-Path $ev 'response.txt'),$result.Response,$utf8)
+    $ledgerHashBeforeRetry=(Get-FileHash -LiteralPath $ledgerPath -Algorithm SHA256).Hash
+    $stateHashBeforeRetry=(Get-FileHash -LiteralPath $inputObj.state_path -Algorithm SHA256).Hash
+    # Completed lookup exits before browser/budget; never rerun this script.
+    $retry=& (Join-Path $root 'scripts/consultar-chatgpt.ps1') -Action consult -Question $inputObj.question -ConsultationId $id -StatePath $inputObj.state_path -TargetUrl $inputObj.expected_url -TimeoutSeconds 60
+    Save-Json 'logical-retry.json' @{result=$retry;physical_send_count=0;verification='ALREADY_SENT early return before browser/budget and unchanged ledger/STATE'}
+    if($retry.Status -cne 'ALREADY_SENT' -or -not $retry.ResultObj.no_resend -or $ledgerHashBeforeRetry -cne (Get-FileHash -LiteralPath $ledgerPath -Algorithm SHA256).Hash -or $stateHashBeforeRetry -cne (Get-FileHash -LiteralPath $inputObj.state_path -Algorithm SHA256).Hash){throw 'LOGICAL_RETRY_GATE_FAILED'}
+    $stateAfter=Get-Content -LiteralPath $inputObj.state_path -Raw -Encoding UTF8|ConvertFrom-Json
+    if($stateAfter.chatgpt.queries_used -ne 1 -or $stateAfter.chatgpt.max_queries -ne 5){throw 'BUDGET_CHANGED'}
+    $summary=@{PRECHECK='PASS';PHYSICAL_SEND=1;USER_TURNS='1->2';ASSISTANT_TURNS='1->2';COMPOSER_EMPTY='YES';RESPONSE_CAPTURED='YES';LEDGER_FINAL='COMPLETED';LOGICAL_RETRY='ALREADY_SENT';ADDITIONAL_SENDS=0;HUMAN_RETRY_REMAINING=0;READY_TO_RESUME_F24='YES';consultation_id=$id;conversation_id=$after.human_conversation_id;budget=$stateAfter.chatgpt;reviewer_not_run=$true;completion_gate_not_run=$true;F25_not_run=$true}
+    Save-Json 'SUMMARY.json' $summary
+    $summary|ConvertTo-Json -Depth 5
+} catch {
+    Save-Json 'STOP.json' @{status='BLOCKED';error=$_.Exception.Message;no_resend=$true;no_f24_resume=$true;consultation_id=$id;timestamp=(Get-Date).ToString('o')}
+    throw
+}

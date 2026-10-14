@@ -1,0 +1,103 @@
+1. Causa probable
+
+Distribuir 0.05 entre tres pesos iguales genera cuotas ideales de 1.6666… centavos. Como los centavos son indivisibles, se necesita Largest Remainder (método de restos mayores) para conservar exactamente el total.
+
+Resultado esperado: [0.02, 0.02, 0.01].
+
+2. Ejemplo Python
+Python
+Ejecutar
+from decimal import Decimal, ROUND_HALF_UP
+
+
+total = Decimal("0.05")
+pesos = [1, 1, 1]
+
+
+# ROUND_HALF_UP: redondear el total monetario
+centavos = int(
+    (total * 100).quantize(
+        Decimal("1"), rounding=ROUND_HALF_UP
+    )
+)
+
+
+# División entera: floor de cuotas positivas
+base = [(centavos * p) // sum(pesos) for p in pesos]
+restos = [(centavos * p) % sum(pesos) for p in pesos]
+
+
+# Desempate estable por índice ascendente
+orden = sorted(range(len(pesos)),
+               key=lambda i: (-restos[i], i))
+
+
+for i in orden[:centavos - sum(base)]:
+    base[i] += 1
+
+
+print(base)  # [2, 2, 1] centavos
+
+Diferencia fundamental:
+
+ROUND_HALF_UP: convierte el total monetario a centavos.
+
+floor (//): obtiene las cuotas base sin exceder el total.
+
+Largest Remainder: asigna los centavos sobrantes según el mayor resto y, ante empate, el menor índice.
+
+3. Dos estrategias alternativas
+
+Estrategia
+
+	
+
+Ventaja
+
+	
+
+Riesgo
+
+
+
+
+Largest Remainder con Decimal
+
+	
+
+Admite pesos decimales exactos
+
+	
+
+Mayor complejidad
+
+
+
+
+Distribución mediante enteros
+
+	
+
+Exactitud y determinismo
+
+	
+
+Requiere pesos enteros o normalizados
+
+4. Riesgos técnicos asociados
+
+Usar float: introduce errores de precisión.
+
+Redondear cada cuota con ROUND_HALF_UP: puede producir 0.06 en lugar de 0.05.
+
+No definir desempates: genera resultados no reproducibles.
+
+Aplicar floor al total monetario: modifica la regla de redondeo requerida.
+
+Importes negativos: requieren una política explícita de asignación y signos.
+
+Recomendación arquitectónica: utilizar Decimal para el total monetario, convertirlo a centavos mediante ROUND_HALF_UP y distribuir los centavos como enteros mediante Largest Remainder, con desempate por índice.
+
+Invariante obligatorio: sum(cuotas) == total_centavos.
+
+Validación UTF-8: áéíóú ñ.
