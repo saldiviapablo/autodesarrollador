@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-14T16:52:38.575565+00:00",
+  "updated_at": "2026-10-14T17:11:28.715375+00:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -81,7 +81,7 @@
   },
   "validation_8": {
     "status": "STOPPED_BLOCKED_REQUIRES_HUMAN",
-    "test": "F24_CLOSURE_ACCEPTANCE_PREFLIGHT",
+    "test": "F24_WORKER_CORRECTION_BUDGET_PREFLIGHT",
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
     "current_security_revalidation": "PATHGUARD_FIX_SMOKE_PASS",
@@ -106,7 +106,7 @@
     "human_reconciliation": "PASS",
     "human_reconciliation_evidence": "evidence/f23-human-reconciliation/",
     "source": "HUMAN_VISUAL_RECONCILIATION",
-    "reason": "MANDATORY_TEST_FAILED: F24 readonly preflight found allocation acceptance mismatch; native Reviewer and Completion Gate not started",
+    "reason": "BLOCKED_REQUIRES_HUMAN: F24 Worker correction requires expired frozen global clock; no Worker started",
     "f23_tests_build": "PASS",
     "f23_disk_recovery": "PASS",
     "f23_reviewer": "PASS",
@@ -151,7 +151,14 @@
     "f24_acceptance_probes": "FAIL (zero weight, negative amount)",
     "f24_reviewer": "NOT_RUN / PREFLIGHT_BLOCKED",
     "f24_closure_stop_evidence": "evidence/f24-closure-preflight-blocked-20261014/",
-    "f24_closure_stop_report": "docs/F24-CLOSURE-PREFLIGHT-STOP.md"
+    "f24_closure_stop_report": "docs/F24-CLOSURE-PREFLIGHT-STOP.md",
+    "f24_worker_correction": "BLOCKED / GLOBAL_TIMEOUT",
+    "f24_time_budget_remaining_seconds": 0,
+    "f24_worker_restarts_used": 1,
+    "f24_restart_limit": 2,
+    "f24_budgets_changed": false,
+    "f24_budget_stop_evidence": "evidence/f24-worker-correction-budget-blocked-20261014/",
+    "f24_budget_stop_report": "docs/F24-WORKER-CORRECTION-BUDGET-STOP.md"
   },
   "ready_for_real_pilot": false
 }

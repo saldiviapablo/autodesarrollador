@@ -144,3 +144,7 @@ Precheck PASS y un único envío físico del mismo ID y composer. Usuario 1→2,
 ## Cierre F24 detenido en preflight de aceptación — 2026-10-14
 
 F24 FAIL / MANDATORY_TEST_FAILED: el Worker rechaza pesos cero permitidos y acepta importe negativo prohibido por el plan aprobado. Dos probes read-only FAIL, archivos fuente intactos; suites históricas PASS conservadas. Reviewer y Completion Gate NOT_RUN por la instrucción de STOP ante nueva inconsistencia. ChatGPT permanece COMPLETED, cero acciones nuevas. STATE terminal BLOCKED_REQUIRES_HUMAN con motivo actualizado; cleanup e integridad PASS. Métricas originales preservadas y snapshot actual separado; no segmento nativo nuevo. READY_FOR_F25 NO; F25–F28 no iniciadas. docs/F24-CLOSURE-PREFLIGHT-STOP.md; evidence/f24-closure-preflight-blocked-20261014/.
+
+## Corrección Worker F24 bloqueada por plazo congelado — 2026-10-14
+
+Worker correction BLOCKED_REQUIRES_HUMAN / GLOBAL_TIMEOUT: plazo global aprobado 2700s vencido desde 02:54:22 -03:00. Restarts Worker 1/2 todavía con margen; reloj y todos los presupuestos/contadores intactos. STOP conforme a la instrucción de no modificar presupuestos congelados. Cero invocaciones Worker/modelo/ChatGPT y cero ediciones manuales del código; Reviewer/Completion Gate/F25 NOT_RUN. F24 permanece FAIL, tests/build históricos y evidencias conservados. Cleanup/integridad PASS; STATE terminal coherente. docs/F24-WORKER-CORRECTION-BUDGET-STOP.md; evidence/f24-worker-correction-budget-blocked-20261014/.

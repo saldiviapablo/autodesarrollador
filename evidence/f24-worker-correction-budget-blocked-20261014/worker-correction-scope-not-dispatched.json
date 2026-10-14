@@ -1,0 +1,65 @@
+{
+  "dispatch_status": "NOT_DISPATCHED / GLOBAL_TIMEOUT",
+  "worker": "Qwen Code CLI",
+  "allowed_files": [
+    "invoice.py",
+    "README.md"
+  ],
+  "unchanged_plan_and_contract": true,
+  "correction_scope": [
+    "reject amount < 0",
+    "accept weight = 0",
+    "reject weight < 0",
+    "reject sum(weights) <= 0",
+    "update README to approved nonnegative contract",
+    "preserve existing monetary rounding/largest remainder behavior"
+  ],
+  "required_cases": [
+    {
+      "value": "1.00",
+      "weights": [
+        0,
+        1
+      ],
+      "expected": [
+        "0.00",
+        "1.00"
+      ]
+    },
+    {
+      "value": "-1.00",
+      "weights": [
+        1
+      ],
+      "expected": "ValueError"
+    },
+    {
+      "value": "1.00",
+      "weights": [
+        -1,
+        2
+      ],
+      "expected": "ValueError"
+    },
+    {
+      "value": "1.00",
+      "weights": [
+        0,
+        0
+      ],
+      "expected": "ValueError"
+    },
+    {
+      "value": "1.00",
+      "weights": [
+        1
+      ],
+      "expected": [
+        "1.00"
+      ]
+    }
+  ],
+  "acceptance_evidence": "evidence/f24-closure-preflight-blocked-20261014/acceptance-probes.json",
+  "full_tests_and_build_required": true,
+  "immutable_tests_preserved": true
+}
