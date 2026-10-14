@@ -720,3 +720,7 @@ Transporte nativo stdin UTF-8 PASS; Reviewer real ACCEPTED; Completion Gate y F2
 ## Parada vigente F24 — 2026-10-14
 
 F23 PASS y fix Reviewer PASS (d7ee477). F24 FAIL / MANDATORY_TEST_FAILED: adaptador del launcher no alcanzó el Runner; no regresión del producto demostrada. Diagnóstico del adaptador PASS sin repetir F24 real. F25/4H/F26 y regression final NOT_RUN por gate fallido. Cleanup PASS; F27/F28 no iniciadas. READY FOR REAL PILOT NO. docs/F24-ADAPTER-STOP-REPORT-20261014.md; evidence/phase-24-20261014/.
+
+## Continuación F24 — fix del adaptador — 2026-10-14
+
+Adaptador F24 PASS (A–H, ejecución única, UTF-8, vacío, exit code, stdout/stderr y deny de metacaracteres). F23 PASS preservada. F24 intento 2 pendiente de corrida real; Macrofase 8 IN_PROGRESS. F25/4H/F26 NOT_RUN; F27/F28 no iniciadas. docs/F24-LAUNCHER-ADAPTER-FIX.md.

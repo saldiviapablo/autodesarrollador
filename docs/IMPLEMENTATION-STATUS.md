@@ -19,7 +19,7 @@
 | **Macrofase 6** | **Web, ChatGPT, Seguridad y Anti-Loop** (Fases 13 a 16) | **PASS** | Web Research seguro (Fase 13), Chrome dedicado CDP con consulta real a ChatGPT y validación UTF-8/BOM (Fase 14), Guardrails deterministas de rutas, comandos y secretos (Fase 15) y Motor Anti-loop con escalera de escalamiento (Fase 16). Evidencias en `evidence/web/`, `evidence/chatgpt/`, `evidence/security/` y `evidence/anti-loop/`. |
 | **Macrofase 7A** | **Capacidades Nativas de Hermes** (Subfases 7A.1 a 7A.10) | **PASS** | **Subfase 7A.1 = PASS** (Memoria Persistente + Skills SOP + Hook SHA-256; 6/6 pruebas en `evidence/phase-7a1/`). **Subfase 7A.2 = PASS** (Servidores MCP gobernados `da_local_sandbox` + Plugin seguro `desarrollador-autonomo-health` con integridad criptográfica SHA-256 y Security Guard; 7/7 pruebas en `evidence/phase-7a2/`). **Subfase 7A.3 = PASS** (extracción nativa gobernada, 5/5 pruebas y smoke en `evidence/phase-7a3/`). **Subfase 7A.4 = PASS** (native browser local/headless, gobernanza, timeout/cleanup, integración real y smoke en `evidence/phase-7a4/`). **Subfase 7A.5 = PASS** (tres roles reales, subagente nativo, serialización y políticas heredadas; `evidence/phase-7a5/`). **Subfase 7A.6 = PASS** (`evidence/phase-7a6/`). **Subfase 7A.7 = PASS** (`evidence/phase-7a7/`). **Subfase 7A.8 = PASS** (`evidence/phase-7a8/`). **Subfase 7A.9 = PASS** (`evidence/phase-7a9/`). **Subfase 7A.10 = PASS** (`evidence/phase-7a10/`). ChatGPT Idempotency **PASS**; regression gate final **PASS** (`evidence/regression-7a-final/`). |
 | **Macrofase 7B** | **Runner Autónomo Nocturno** (Fases 17 a 22) | **PASS** | Orquestador determinista de procesos, integración obligatoria `Cron → Runner → Watchdog → RUN-CONTRACT` (`T-RUN-009`), Watchdog de fallos, Launchers limpios `INICIAR`/`DETENER`, Completion Gate objetivo, reportes estandarizados y Cleanup garantizado. |
-| **Macrofase 8** | **Validación Final** (Fases 23 a 28) | **FAIL / MANDATORY_TEST_FAILED** | Suite integral en sandbox, pruebas autónomas prolongadas (E2E corto, 2 horas y nocturna de 6-8 horas), auditoría integral y piloto en proyecto real no crítico. |
+| **Macrofase 8** | **Validación Final** (Fases 23 a 28) | **IN_PROGRESS** | Suite integral en sandbox, pruebas autónomas prolongadas (E2E corto, 2 horas y nocturna de 6-8 horas), auditoría integral y piloto en proyecto real no crítico. |
 
 ---
 
@@ -63,7 +63,7 @@
 | **Fase 21** | Reportes | **PASS** | evidence/phase-21/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 22** | Cleanup garantizado | **PASS** | evidence/phase-22/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 23** | Sandbox integral | **PASS** | Reviewer real ACCEPTED, Completion Gate PASS; histórico preservado. evidence/hermes-prompt-transport-20261014/. |
-| **Fase 24** | End-to-End corto | **FAIL** | Adaptador del launcher no alcanzó el Runner. Diagnóstico PASS; E2E no repetida. evidence/phase-24-20261014/. |
+| **Fase 24** | End-to-End corto | **IN_PROGRESS** | Adaptador A–H PASS; nueva corrida real pendiente. Histórico FAIL intacto. |
 | **Fase 25** | Prueba 2 horas | **NOT_RUN** | Validación de estabilidad autónoma continua de 2 horas. |
 | **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
 | **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
@@ -124,3 +124,7 @@ Transporte nativo stdin UTF-8 PASS; Reviewer real ACCEPTED; Completion Gate y F2
 ## Parada vigente F24 — 2026-10-14
 
 F23 PASS y fix Reviewer PASS (d7ee477). F24 FAIL / MANDATORY_TEST_FAILED: adaptador del launcher no alcanzó el Runner; no regresión del producto demostrada. Diagnóstico del adaptador PASS sin repetir F24 real. F25/4H/F26 y regression final NOT_RUN por gate fallido. Cleanup PASS; F27/F28 no iniciadas. READY FOR REAL PILOT NO. docs/F24-ADAPTER-STOP-REPORT-20261014.md; evidence/phase-24-20261014/.
+
+## Continuación F24 — fix del adaptador — 2026-10-14
+
+Adaptador F24 PASS (A–H, ejecución única, UTF-8, vacío, exit code, stdout/stderr y deny de metacaracteres). F23 PASS preservada. F24 intento 2 pendiente de corrida real; Macrofase 8 IN_PROGRESS. F25/4H/F26 NOT_RUN; F27/F28 no iniciadas. docs/F24-LAUNCHER-ADAPTER-FIX.md.

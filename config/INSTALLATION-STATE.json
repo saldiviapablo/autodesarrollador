@@ -32,7 +32,7 @@
     "6": "PASS",
     "7A": "PASS",
     "7B": "PASS",
-    "8": "FAIL"
+    "8": "IN_PROGRESS"
   },
   "subphases_7a": {
     "7A.1": "PASS",
@@ -73,15 +73,15 @@
   "e2e_scope": "PENDING refers to F24/F25 final validation; e2e_7b is the approved short 7B integration",
   "phases_8": {
     "23": "PASS",
-    "24": "FAIL",
+    "24": "IN_PROGRESS",
     "25": "NOT_RUN",
     "26": "NOT_RUN",
     "27": "NOT_RUN",
     "28": "NOT_RUN"
   },
   "validation_8": {
-    "status": "STOPPED_MANDATORY_TEST_FAILED",
-    "test": "F24_LAUNCHER_TEST_ADAPTER",
+    "status": "F24_ADAPTER_PASS_REAL_RUN_PENDING",
+    "test": "F24_LAUNCHER_ADAPTER_A_H",
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
     "current_security_revalidation": "PATHGUARD_FIX_SMOKE_PASS",
@@ -106,7 +106,7 @@
     "human_reconciliation": "PASS",
     "human_reconciliation_evidence": "evidence/f23-human-reconciliation/",
     "source": "HUMAN_VISUAL_RECONCILIATION",
-    "reason": "F24 adapter failed before actual Runner startup; corrected boundary diagnosis PASS; actual E2E NOT_RETRIED",
+    "reason": "",
     "f23_tests_build": "PASS",
     "f23_disk_recovery": "PASS",
     "f23_reviewer": "PASS",
@@ -120,7 +120,10 @@
     "f24_report": "docs/F24-ADAPTER-STOP-REPORT-20261014.md",
     "f24_evidence": "evidence/phase-24-20261014/",
     "f24_cleanup": "PASS",
-    "f24_adapter_diagnosis": "PASS"
+    "f24_adapter_diagnosis": "PASS",
+    "f24_adapter_fix": "PASS",
+    "f24_adapter_fix_report": "docs/F24-LAUNCHER-ADAPTER-FIX.md",
+    "f24_adapter_fix_evidence": "evidence/f24-launcher-adapter-fix-20261014/"
   },
   "ready_for_real_pilot": false
 }
