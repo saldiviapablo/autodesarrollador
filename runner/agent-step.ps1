@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$PacketPath)
+﻿param([Parameter(Mandatory=$true)][string]$PacketPath)
 $ErrorActionPreference='Stop';$root=Split-Path -Parent $PSScriptRoot
 $packet=Get-Content -LiteralPath $PacketPath -Raw -Encoding UTF8|ConvertFrom-Json
 try{
@@ -6,6 +6,9 @@ try{
         if(-not $packet.project.StartsWith((Join-Path $root 'sandbox'),[StringComparison]::OrdinalIgnoreCase)){throw 'PROBE_SCOPE_DENIED'}
         Start-Sleep -Seconds $packet.probe_delay_seconds
         $result=@{status='SUCCESS';text='{"task":"probe","decision":"ACCEPTED"}';probe=$true}
+    }elseif($packet.role -eq 'worker' -and $packet.mode -eq 'diagnosis'){
+        $r=& (Join-Path $root 'scripts/invoke-qwen-code.ps1') -Prompt $packet.prompt -WorkingDir $packet.project -ApprovalMode yolo -MaxWallTime ($packet.timeout.ToString()+'s') -MaxToolCalls 5 -MaxSessionTurns 3 -TimeoutSeconds ($packet.timeout+5)
+        $result=@{status=$(if($r.Success){'SUCCESS'}else{'ERROR'});data=@{WorkerOutput=$r}}
     }elseif($packet.role -eq 'worker'){
         $r=& (Join-Path $root 'scripts/invoke-delegation.ps1') -RequestJson ($packet.request|ConvertTo-Json -Depth 12) -MaxWallTime ($packet.timeout.ToString()+'s') -TimeoutSeconds ($packet.timeout+5)
         $result=@{status=$r.Status;data=$r}

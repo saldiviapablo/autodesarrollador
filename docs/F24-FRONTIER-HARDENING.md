@@ -13,6 +13,10 @@ El envío usa un botón único, visible, habilitado y comprobado por hit-test, c
 
 Pruebas: ocho casos de delivery/UTF-8/identidad/plazos/traza; 13 domain; 41 human reconciliation; ocho idempotency; cuatro input único; timeout real de hijo y cleanup. Código de reconcileObservation automático intacto. Evidencia: evidence/f24-frontiers-20261014/chatgpt/.
 
-B — WEB_HANDOFF = PENDING.
+B — WEB_HANDOFF = PASS determinista. El plan puede declarar research (URL HTTPS explícita y diagnose_before_fetch). Runner ejecuta diagnóstico Worker sin modificar fuentes, comprueba FAIL inicial, hace fetch gobernado con proceso propio y entrega un envelope inline acotado/sanitizado con ruta absoluta, SHA y nonce. No depende de glob. Sólo salida producida por el modelo que use nonce y SHA certifica WEB_RESULT_READ; echo de input/tool no basta. Completion Gate requiere evidencia ligada al SHA actual. El dato web no otorga permisos. Nuevos runs aprueban los nuevos hashes; las aprobaciones antiguas quedan como registros históricos, sin alterarlas.
+
+Test sandbox: servidor HTTP propio → payload recibido por consumidor determinista en proceso separado → marcador/SHA utilizados; input echo y cambio de fuente DENY; cleanup del servidor PASS. No se atribuye esta prueba a Qwen real: ATTEMPT4 deberá demostrarlo con Qwen.
+
+Se detectó que verify-runner-syntax.ps1 tiene destino histórico fijo; se restauró sólo su salida regenerada mediante Git y no se vuelve a usar ese destino para estas pruebas. Los smokes nuevos guardan evidencias en la carpeta de fronteras.
 C — RECOVERY_CONTINUATION = PENDING.
 Regresión conjunta y F24 ATTEMPT 4 todavía no ejecutados. NO PUSH; F25/F27/F28 no iniciadas. Sin dependencias nuevas ni actualizaciones.

@@ -92,7 +92,36 @@ try{
     $supervisor=Invoke-RunnerAgent 'supervisor' $p
     $request=@{schema_version='1.0';delegation_id=('del-'+$script:RunId);objective=$script:Admission.contract.objective;workspace=$script:Admission.project;task=$script:Admission.plan.task;acceptance_criteria=@($script:Admission.contract.acceptance_criteria);allowed_actions=@($script:Admission.contract.allowed_actions);forbidden_actions=@($script:Admission.contract.forbidden_actions);tests=@($script:Admission.contract.test_commands);status='READY'}
     $request.task+="`nSupervisor plan (advisory, approved scope remains binding): "+$supervisor.text+"`nPrevious checks to correct: "+$feedback
+    if($script:Admission.plan.research){
+        $webPath=Join-Path $script:Auto 'evidence/WEB.json'
+        if(-not(Test-Path -LiteralPath $webPath)){
+            if($script:Admission.plan.research.diagnose_before_fetch){
+                $before=@{};foreach($name in $script:Admission.plan.allowed_files){$before[$name]=(Get-FileHash -LiteralPath (Join-Path $script:Admission.project $name) -Algorithm SHA256).Hash}
+                $d=$base.Clone();$d.role='worker';$d.mode='diagnosis';$d.prompt='Diagnosis only. Run exactly this approved command once: '+($script:Admission.plan.tests[0].argv -join ' ')+'. Report the failing acceptance criteria briefly (maximum 120 words). DO NOT edit any files or solve the task. Runner will provide official research afterward.'
+                $diagnosis=Invoke-RunnerAgent 'worker' $d
+                foreach($name in $before.Keys){if((Get-FileHash -LiteralPath (Join-Path $script:Admission.project $name) -Algorithm SHA256).Hash -ne $before[$name]){throw 'DIAGNOSTIC_WORKER_MODIFIED_SOURCE'}}
+                Write-RunnerJson (Join-Path $script:Auto 'evidence/worker-diagnosis.json') $diagnosis
+                $initial=@(Invoke-RunnerCommands @($script:Admission.plan.tests) 'initial-failure')
+                Write-RunnerJson (Join-Path $script:Auto 'evidence/initial-failure.json') @{tests=$initial}
+                if(@($initial|Where-Object{$_.status -eq 'FAIL'}).Count -eq 0){throw 'EXPECTED_INITIAL_TEST_FAILURE_MISSING'}
+                Runner-Event 'WORKER_DIAGNOSIS_CONFIRMED' @{initial_failure=$true;source_unchanged=$true}
+            }
+            $web=Invoke-RunnerManaged 'web-research' 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'research-step.ps1'),'-ProjectRoot',$script:Admission.project,'-Url',$script:Admission.plan.research.url) 35
+            if($web.exit_code -ne 0){throw 'REQUIRED_WEB_FETCH_FAILED'}
+            Runner-Event 'WEB_FETCHED' @{source='official_web_wrapper'}
+        }
+        $handoffRaw=& C:/Python314/python.exe (Join-Path $PSScriptRoot 'research-handoff.py') provide --project $script:Admission.project
+        if($LASTEXITCODE -ne 0){throw 'RESEARCH_HANDOFF_FAILED'}
+        $handoff=($handoffRaw -join "`n")|ConvertFrom-Json
+        $request.task+=$handoff.task_suffix
+        Runner-Event 'WEB_RESULT_PROVIDED' @{source_sha256=$handoff.source_sha256}
+    }
     $p=$base.Clone();$p.role='worker';$p.request=$request;$worker=Invoke-RunnerAgent 'worker' $p
+    if($script:Admission.plan.research){
+        $used=& C:/Python314/python.exe (Join-Path $PSScriptRoot 'research-handoff.py') verify --project $script:Admission.project
+        if($LASTEXITCODE -ne 0){throw 'RESEARCH_CONSUMPTION_NOT_PROVEN'}
+        Runner-Event 'WEB_RESULT_READ' @{verified=$true}
+    }
     foreach($pin in $script:Admission.plan.immutable_files){if((Get-FileHash -LiteralPath (Join-Path $script:Admission.project $pin.path) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $pin.sha256){throw 'IMMUTABLE_TEST_CHANGED'}}
     $tests=@(Invoke-RunnerCommands @($script:Admission.plan.tests) 'tests');$builds=@(Invoke-RunnerCommands @($script:Admission.plan.builds) 'builds');$linters=@(Invoke-RunnerCommands @($script:Admission.plan.linters) 'linters')
     Write-RunnerJson (Join-Path $script:Auto 'evidence/checks.json') @{tests=$tests;builds=$builds;linters=$linters;run_id=$script:RunId}

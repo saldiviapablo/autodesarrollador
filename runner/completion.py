@@ -21,6 +21,9 @@ def evaluate(project):
     for group in ('tests','builds','linters'):
         required=plan.get(group,[])
         checks[group+'_all_required']=all(all_results.get(c['id'],{}).get('status')=='PASS' and all_results[c['id']].get('exit_code')==0 and all_results[c['id']].get('marker_present') for c in required)
+    if plan.get('research'):
+        consumed=json.loads((auto/'evidence/WEB-CONSUMED.json').read_text(encoding='utf-8-sig'))
+        checks['required_web_consumed']=consumed.get('WEB_RESULT_READ') is True and consumed.get('source_sha256')==hashlib.sha256((auto/'evidence/WEB.json').read_bytes()).hexdigest()
     checks['tests_exist']=bool(plan['tests'])
     checks['no_build_approved_or_passed']=bool(plan.get('builds')) or bool(plan.get('no_build_reason'))
     checks['criteria_all_mapped_and_passed']=set(c['criterion'] for c in plan['criteria'])==set(state['acceptance_criteria']) and all(all_results.get(c['test_id'],{}).get('status')=='PASS' for c in plan['criteria'])
