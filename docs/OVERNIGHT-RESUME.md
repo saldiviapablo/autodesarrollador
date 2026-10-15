@@ -9,10 +9,10 @@
   "active_phase": "4H_PREPARATION",
   "last_cause": "New endurance adapter launcher argument contract",
   "last_fix": "Exact certified F24 launcher/recovery invocation;21 deterministic and A-H real fake-batch tests PASS",
-  "last_commit": "8cb558f49ef8eec77794e2e9833145c573503ebe",
-  "next_action": "Start fresh real14400s4H after local closure commit; never repeat F24/F25",
-  "run_pointer": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-001-csv-ledger",
-  "updated_at": "2026-10-15T14:00:54.701948+00:00",
+  "last_commit": "81785b8532bb2066f11334468e908b07abde9a53",
+  "next_action": "Start tests/endurance_controller.py --stage 4H once after clean local resume commit; observe endurance-active.json, never duplicate F25/F24",
+  "run_pointer": null,
+  "updated_at": "2026-10-15T14:01:49.504030+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -21,7 +21,8 @@
     "PRE_INTENT_POINTER_TIMEOUT_TERMINAL_INSTEAD_OF_FALLBACK",
     "ASSISTANT_CODE_EDITOR_MISCLASSIFIED_AS_COMPOSER",
     "POINTER_TRACE_SERIALIZER_DROPPED_ROLLBACK_FIELDS",
-    "ENDURANCE_LAUNCHER_ARGUMENT_CONTRACT"
+    "ENDURANCE_LAUNCHER_ARGUMENT_CONTRACT",
+    "CURRENT_PHASE_INDEXES_STALE_AFTER_F24_CLOSURE"
   ],
   "fixes": [
     "REVIEWER_CONTRACT_CERTIFIED",
@@ -30,21 +31,23 @@
     "PRE_INTENT_POINTER_FALLBACK_CERTIFIED",
     "SHARED_POSITIVE_COMPOSER_IDENTITY_CERTIFIED",
     "POINTER_TRACE_REAL_WRITER_CERTIFIED",
-    "ENDURANCE_LAUNCHER_CONTRACT_AND_PRESTART_CLEANUP_CERTIFIED"
+    "ENDURANCE_LAUNCHER_CONTRACT_AND_PRESTART_CLEANUP_CERTIFIED",
+    "CANONICAL_CURRENT_INDEXES_RECONCILED_AT_F25_TERMINAL_BOUNDARY"
   ],
-  "run_id": "run-20261015-044359",
-  "consultation_id": "f24-a11-2d44843ee2c2460bbb643c927080e3f8",
-  "harness_session_id": 80544,
-  "auxiliary_tool_sessions": {
-    "first_segment_observer": 5219,
-    "browser_readonly_observer": 82015,
-    "thread_sleep_guard": 68334,
-    "native_failure_observer": 96441
-  },
-  "stage_id": "f25-20261015-050751-1239ed",
-  "evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-f25-20261015-050751-1239ed"
+  "run_id": null,
+  "harness_session_id": null,
+  "auxiliary_tool_sessions": {},
+  "active_run": null,
+  "active_task": null,
+  "current_native_project": null,
+  "last_completed_stage_id": "f25-20261015-050751-1239ed",
+  "last_completed_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-f25-20261015-050751-1239ed",
+  "historical_f24_consultation_id": "f24-a11-2d44843ee2c2460bbb643c927080e3f8"
 }
 ```
 
-Latest completed stage: F25 PASS: 7772.089s reales, 13 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-f25-20261015-050751-1239ed/.
-Native STATE remains authority. No push.
+F25 PASS independently certified:13 tasks,7772.088906300007s real, commit81785b8. No active native run. No repeat.4H remains required by06 section33; start a fresh independent14400s continuous stage.
+
+## Prepared next-phase helpers
+
+All helpers in logs/overnight remain preparation, not phase PASS. close-endurance-stage.py succeeded for F25. After4H promote/certify global-audit.py, relocate-audit-test.py, run-owned-audit-gate.ps1. Certify owned gate cleanup/parent loss before actual F26. Pilot files: pilot_workload.py, pilot-controller.py, night-pilot-workload.py, night-pilot-controller.py, test-pilot-controllers.py.13 unit cases passed, no real pilot. F27 requires actual final human review per Roadmap07 section30 before F28; never manufacture a receipt. F26/F27/F28 closure and final-report helpers remain to implement. Sources/config/history are frozen during each active endurance run.
