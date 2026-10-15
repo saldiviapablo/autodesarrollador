@@ -187,3 +187,7 @@ Working tree parcial retomado. Transaction/legacy recovery/UTF-8/heartbeat/contr
 ## Estado vigente — F24 ATTEMPT 7 — 2026-10-15
 
 F24 ATTEMPT7 **FAIL**; run `run-20261015-014509`, duración 1062.94s. Worker SUCCESS; web fetch/context PASS/PASS; 13 tests/build PASS/PASS; crash/Watchdog/START-Recover/continuación PASS/PASS/PASS. ChatGPT COMPLETED, método COMPOSER_ENTER_KEY, acciones físicas 1; Reviewer FAIL / NO_ACCEPTED_DECISION; Completion Gate FAILED. Cleanup e integridad PASS; historial intacto. READY_FOR_F25 NO; F25 y ATTEMPT8 no iniciados. docs/F24-ATTEMPT-7-REPORT.md; evidence/phase-24-attempt-7-20261015/.
+
+## Estado vigente — F24 ATTEMPT 8 — 2026-10-15
+
+F24 ATTEMPT8 **FAIL**; run `run-20261015-025148`, duración 842.39s. Worker SUCCESS; 13 tests/build PASS/PASS; web y continuación real PASS/PASS; ChatGPT PRE_SEND_ABORTED, cero envíos; Reviewer y Completion Gate NOT_RUN. Cleanup/integridad PASS. Los28 gates no aprobaron: ejecución detenida antes de completar sus inputs. Intentos anteriores conservan sus FAIL históricos. F25 pendiente; aislar/fijar/certificar selector composer antes de nuevo E2E. docs/F24-ATTEMPT-8-REPORT.md; evidence/phase-24-attempt-8-20261015/

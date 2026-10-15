@@ -1,7 +1,7 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-15T05:05:31.338715+00:00
+**Última actualización:** 2026-10-15T06:07:39.301159+00:00
 **Estado documental:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A
 **Baseline de arquitectura:** Hermes Agent (v0.21.6) + Qwen Code CLI (@qwen-code/qwen-code@0.25.1) + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
@@ -63,7 +63,7 @@
 | **Fase 21** | Reportes | **PASS** | evidence/phase-21/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 22** | Cleanup garantizado | **PASS** | evidence/phase-22/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 23** | Sandbox integral | **PASS** | Reviewer real ACCEPTED, Completion Gate PASS; histórico preservado. evidence/hermes-prompt-transport-20261014/. |
-| **Fase 24** | End-to-End corto | **FAIL** | ATTEMPT7 run-20261015-014509; docs/F24-ATTEMPT-7-REPORT.md; evidence/phase-24-attempt-7-20261015/ |
+| **Fase 24** | End-to-End corto | **FAIL** | ATTEMPT8 run-20261015-025148; docs/F24-ATTEMPT-8-REPORT.md; evidence/phase-24-attempt-8-20261015/ |
 | **Fase 25** | Prueba 2 horas | **NOT_RUN** | Validación de estabilidad autónoma continua de 2 horas. |
 | **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
 | **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
@@ -192,3 +192,7 @@ Extractor compartido de turnos por participación en layout PASS; casos A–J, l
 ## Estado vigente — F24 ATTEMPT 7 — 2026-10-15
 
 F24 ATTEMPT7 **FAIL**; run `run-20261015-014509`, duración 1062.94s. Worker SUCCESS; web fetch/context PASS/PASS; 13 tests/build PASS/PASS; crash/Watchdog/START-Recover/continuación PASS/PASS/PASS. ChatGPT COMPLETED, método COMPOSER_ENTER_KEY, acciones físicas 1; Reviewer FAIL / NO_ACCEPTED_DECISION; Completion Gate FAILED. Cleanup e integridad PASS; historial intacto. READY_FOR_F25 NO; F25 y ATTEMPT8 no iniciados. docs/F24-ATTEMPT-7-REPORT.md; evidence/phase-24-attempt-7-20261015/.
+
+## Estado vigente — F24 ATTEMPT 8 — 2026-10-15
+
+F24 ATTEMPT8 **FAIL**; run `run-20261015-025148`, duración 842.39s. Worker SUCCESS; 13 tests/build PASS/PASS; web y continuación real PASS/PASS; ChatGPT PRE_SEND_ABORTED, cero envíos; Reviewer y Completion Gate NOT_RUN. Cleanup/integridad PASS. Los28 gates no aprobaron: ejecución detenida antes de completar sus inputs. Intentos anteriores conservan sus FAIL históricos. F25 pendiente; aislar/fijar/certificar selector composer antes de nuevo E2E. docs/F24-ATTEMPT-8-REPORT.md; evidence/phase-24-attempt-8-20261015/
