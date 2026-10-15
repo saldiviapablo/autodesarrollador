@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\test-audit-budget-smoke.py", line 31, in <module>
+    P2,state2=fixture('audit-budget-policy-cap',999);cap=call(state2,'audit-cap-'+uuid.uuid4().hex,999);current=json.loads(state2.read_text(encoding='utf-8-sig'));assert cap['Status']=='SUCCESS' and current['chatgpt']=={'queries_used':1,'max_queries':5}
+                                                                                                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
