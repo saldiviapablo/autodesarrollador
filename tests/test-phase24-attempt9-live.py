@@ -209,7 +209,7 @@ try:
     save('attempt-2-preservation-preflight.json', preserved)
     assert preserved['status'] == 'PASS', 'SECURITY_REGRESSION: ATTEMPT_2_CHANGED_BEFORE_START'
     if (E / 'fixture.json').exists():
-        raise RuntimeError('BLOCKED_REQUIRES_HUMAN: ATTEMPT_8_ALREADY_PREPARED_DO_NOT_RESTART_HARNESS')
+        raise RuntimeError('BLOCKED_REQUIRES_HUMAN: ATTEMPT_9_ALREADY_PREPARED_DO_NOT_RESTART_HARNESS')
     project.mkdir(parents=True)
     save('fixture.json', {'attempt': 9, 'project': str(project), 'case': str(case),
                          'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
@@ -232,7 +232,7 @@ try:
     consultation='f24-a9-'+uuid.uuid4().hex
     plan['task']=plan['task'].replace('then read .autopilot/evidence/WEB.json for official research.','then use the official research delivered inline by Runner; do not glob for it.')
     plan['research']={'url':'https://docs.python.org/3/library/decimal.html','diagnose_before_fetch':True}
-    plan['consultation']={'id':consultation,'question':'Consulta F24 ATTEMPT 8: resume largest remainder, empates por índice, amount >= 0, weights >= 0 y suma positiva. Explica ROUND_HALF_UP. Responde breve e incluye áéíóú ñ.','response_timeout_seconds':60,'after_recovery':True,'new_conversation':True}
+    plan['consultation']={'id':consultation,'question':'Consulta F24 ATTEMPT 9: resume largest remainder, empates por índice, amount >= 0, weights >= 0 y suma positiva. Explica ROUND_HALF_UP. Responde breve e incluye áéíóú ñ.','response_timeout_seconds':60,'after_recovery':True,'new_conversation':True}
     plan['sandbox_crash_boundary']=True
     plan_path = case / 'plan.json'
     plan_path.write_text(json.dumps(plan, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
