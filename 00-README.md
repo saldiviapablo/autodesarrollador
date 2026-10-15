@@ -445,7 +445,7 @@ Nada debe marcarse `PASS` sin evidencia.
 
 ## `07-ROADMAP.md`
 
-Define el orden de implementación por macrofases (Macrofases 1–6, 7A y 7B certificadas históricamente; F23 PASS; validación de Macrofase 8 detenida en F24 ATTEMPT6: fresh-chat cuenta turnos ocultos; fixes de seguridad preservados).
+Define el orden de implementación por macrofases (Macrofases 1–6, 7A y 7B certificadas históricamente; F23 PASS; validación de Macrofase 8 detenida en F24 ATTEMPT7: Reviewer sin ACCEPTED; fixes de seguridad preservados).
 
 ---
 
@@ -528,7 +528,7 @@ Macrofase 7A: Hermes Native Capabilities (7A.1 a 7A.10) — PASS
   ChatGPT Idempotency — PASS
   Regression gate — PASS
 Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — PASS
-Macrofase 8:  Validación Final (Fases 23 a 28) — FAIL / BLOCKED_REQUIRES_HUMAN (F23 PASS; F24 ATTEMPT6 FAIL / fresh-chat cuenta turnos ocultos)
+Macrofase 8:  Validación Final (Fases 23 a 28) — FAIL / MANDATORY_TEST_FAILED (F23 PASS; F24 ATTEMPT7 FAIL / Reviewer sin ACCEPTED)
 ```
 
 ---
@@ -752,3 +752,7 @@ Fix de aislamiento UI implementado y deterministas PASS. Un click de navegación
 ## Estado vigente — F24 ATTEMPT 6 — 2026-10-15
 
 Working tree parcial retomado. Transaction/legacy recovery/UTF-8/heartbeat/controlled send/preflight PASS (ca74d12,5b4834d); Git limpio antes de START. Nuevo run-20261015-005747: Worker SUCCESS, web fetch/context delivered,13 tests/build, checkpoint/crash/Watchdog/START-Recover/continuación PASS. Fresh-chat FAIL: en root vacío el contador incluyó turnos antiguos no renderizados (1/1); 0 envíos y ledger F24 no reservado. Sin fix/retry/reconciliación tras START. Reviewer/Completion Gate NOT_RUN. F24 FAIL / BLOCKED_REQUIRES_HUMAN; 699.25s, límites2700/300/restart2/cycles5 intactos. Cleanup/integridad PASS;46 pins y4185 archivos históricos intactos. READY_FOR_F25 NO; no ATTEMPT7/F25/F27/F28/push. docs/F24-ATTEMPT-6-STOP-REPORT.md; evidence/phase-24-attempt-6-20261014/.
+
+## Estado vigente — F24 ATTEMPT 7 — 2026-10-15
+
+F24 ATTEMPT7 **FAIL**; run `run-20261015-014509`, duración 1062.94s. Worker SUCCESS; web fetch/context PASS/PASS; 13 tests/build PASS/PASS; crash/Watchdog/START-Recover/continuación PASS/PASS/PASS. ChatGPT COMPLETED, método COMPOSER_ENTER_KEY, acciones físicas 1; Reviewer FAIL / NO_ACCEPTED_DECISION; Completion Gate FAILED. Cleanup e integridad PASS; historial intacto. READY_FOR_F25 NO; F25 y ATTEMPT8 no iniciados. docs/F24-ATTEMPT-7-REPORT.md; evidence/phase-24-attempt-7-20261015/.
