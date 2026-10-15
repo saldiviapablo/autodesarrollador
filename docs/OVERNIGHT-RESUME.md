@@ -6,21 +6,23 @@
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
   "last_completed": "F24 ATTEMPT8 FAIL",
-  "active_phase": "F24_DIAGNOSIS",
-  "last_cause": "Reviewer instruction/data boundary; native transport and role verified correct",
-  "last_fix": "Readonly evidence envelope, SHA input binding and strict single decision parser; isolated native Reviewer ACCEPTED",
+  "active_phase": "F24_ATTEMPT9_PREPARATION",
+  "last_cause": "GLOBAL_PROSEMIRROR_MATCHED_HIDDEN_RETAINED_EDITOR",
+  "last_fix": "Active composer preparation/readback;11 deterministic cases,10 regression suites and real no-send Unicode PASS",
   "last_commit": "7e0be80ebc31a46e185e406b5f2c5208f5cfe343",
-  "next_action": "Preserve and isolate new failure before another clean attempt",
+  "next_action": "Fresh ATTEMPT9 with normal budgets after source commit/minimal admission",
   "run_pointer": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f24-attempt8-bd7004d5\\project\\.autopilot",
-  "updated_at": "2026-10-15T06:07:39.301159+00:00",
+  "updated_at": "2026-10-15T06:11:52.336726+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
-    "NONFINITE_NUMERIC_ACCEPTANCE_COVERAGE"
+    "NONFINITE_NUMERIC_ACCEPTANCE_COVERAGE",
+    "HIDDEN_RETAINED_COMPOSER_GLOBAL_SELECTOR"
   ],
   "fixes": [
     "REVIEWER_CONTRACT_CERTIFIED",
-    "NONFINITE_ORACLE_EXPANDED_BEFORE_NEW_START"
+    "NONFINITE_ORACLE_EXPANDED_BEFORE_NEW_START",
+    "ACTIVE_COMPOSER_CERTIFIED"
   ],
   "run_id": "run-20261015-025148",
   "consultation_id": "f24-a8-b948a7b3279b41ef89ccabd327cb79b6",
@@ -32,4 +34,4 @@
 }
 ```
 
-F25 real2h →4h →F26 →F27 dedicated local pilot →F28 real6–8h →final audit. No push. Native STATE remains authoritative for each run; orchestration metadata does not replace it. All historical attempts remain unchanged.
+F24 ATTEMPT8 historicalFAIL preserved in a574401. Next fresh ATTEMPT9, no resending A8. Then F25 real2h →4h →F26 →F27 →F28 real6–8h →final audit. Native STATE remains authoritative. No push.

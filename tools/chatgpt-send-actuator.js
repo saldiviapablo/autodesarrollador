@@ -5,9 +5,10 @@ const {conversationId}=require('./chatgpt-delivery');
 // insertion, DOM submit, or synthetic DOM keyboard/mouse event.
 function inspectComposer(expectedText) {
   const norm=s=>s.trim().replace(/\r\n/g,'\n').replace(/\n\n+/g,'\n');
-  const visible=el=>{const r=el.getBoundingClientRect(),s=getComputedStyle(el);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&s.display!=='none';};
+  const visible=el=>{if(el.isConnected===false)return false;for(let n=el;n;n=n.parentElement){const s=getComputedStyle(n);if(n.hidden||n.inert||n.getAttribute?.('aria-hidden')==='true'||s.visibility==='hidden'||s.visibility==='collapse'||s.display==='none')return false;}const r=el.getBoundingClientRect();return r.width>0&&r.height>0;};
   const text=el=>{const ps=Array.from(el.querySelectorAll('p'));return norm(ps.length?ps.map(p=>p.innerText).join('\n'):(el.value??el.innerText??''));};
-  const editors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea')).filter(el=>visible(el)&&!el.disabled&&!el.readOnly&&!el.parentElement?.closest('[contenteditable="true"]'));
+  const allEditors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea'));
+  const editors=allEditors.filter(el=>visible(el)&&!el.disabled&&!el.readOnly&&!el.parentElement?.closest('[contenteditable="true"]'));
   const matches=editors.filter(el=>expectedText===undefined||text(el)===norm(expectedText));
   const prose=matches.length===1?matches[0]:null;
   const streaming=!!document.querySelector('button[data-testid*="stop"],button[aria-label*="Stop"],button[aria-label*="Detener"],.result-streaming');
@@ -27,7 +28,7 @@ function inspectComposer(expectedText) {
     const r=button.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2,hit=document.elementFromPoint(x,y);
     return {x,y,width:r.width,height:r.height,disabled:!!button.disabled||button.getAttribute('aria-disabled')==='true',visible:visible(button),hit:!!hit&&button.contains(hit),expectedSend:true,scope:scopeKind};
   }):[];
-  return {url:location.href,composer_found:true,composer_matches:matches.length,composer:text(prose),editable:prose.isContentEditable||prose.tagName==='TEXTAREA',focused:document.activeElement===prose||prose.contains(document.activeElement),scope_found:!!scope,scope_kind:scopeKind,isStreaming:streaming,buttons,sendAvailable:buttons.filter(b=>b.visible&&!b.disabled&&b.hit).length===1};
+  return {url:location.href,composer_found:true,composer_matches:matches.length,composer_dom_index:allEditors.indexOf(prose),composer:text(prose),editable:prose.isContentEditable||prose.tagName==='TEXTAREA',focused:document.activeElement===prose||prose.contains(document.activeElement),scope_found:!!scope,scope_kind:scopeKind,isStreaming:streaming,buttons,sendAvailable:buttons.filter(b=>b.visible&&!b.disabled&&b.hit).length===1};
 }
 function selectActuator(record,observation) {
   const humanRetry=record?.delivery_state==='NOT_DELIVERED_CONFIRMED'&&record.human_retry_remaining===1&&record.send_attempts===1;

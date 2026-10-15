@@ -11,6 +11,7 @@ const { spawn, spawnSync } = require('child_process');
 const { ConsultationLedger, acquireBrowserLease, hash, normalize, reconcileObservation,hasIntent,interruptedState } = require('./chatgpt-ledger');
 const { Budget, Trace, budgets, deliver } = require('./chatgpt-delivery');
 const {inspectComposer,selectActuator,sendPhysicalEnter}=require('./chatgpt-send-actuator');
+const {prepareComposerText}=require('./chatgpt-composer-prepare');
 const {findNewChatControl,requestFreshChat}=require('./chatgpt-fresh-chat');
 const {recoverOwnedPreSendDraft,LEGACY_ID,requireEmptyComposer}=require('./chatgpt-pre-send');
 const {conversationBindings}=require('./chatgpt-conversation');
@@ -94,21 +95,7 @@ async function readConversation(ws) {
 }
 
 async function readPrepared(ws) {
-  const result = await sendCdp(ws, 'Runtime.evaluate', { expression: `(() => {
-    const prose = document.querySelector('.ProseMirror') || document.querySelector('#prompt-textarea') || document.querySelector('div[contenteditable="true"]');
-    const paragraphs = prose ? Array.from(prose.querySelectorAll('p')) : [];
-    const composer = paragraphs.length ? paragraphs.map(p => p.innerText).join('\\n').trim() : (prose?.innerText || '').trim().replace(/\\r\\n/g,'\\n').replace(/\\n\\n+/g,'\\n');
-    const selectors = 'button[data-testid="send-button"],button[data-testid="composer-submit-button"],button[aria-label="Enviar"],button[aria-label*="Send"],button[type="submit"]';
-    const buttons = Array.from(document.querySelectorAll(selectors)).map(button => {
-      const r = button.getBoundingClientRect();
-      const aria=button.getAttribute('aria-label')||'', testid=button.getAttribute('data-testid');
-      const expectedSend=/Send|Enviar/i.test(aria)||['send-button','composer-submit-button'].includes(testid)||(button.type==='submit'&&prose&&button.form?.contains(prose));
-      const x=r.x+r.width/2,y=r.y+r.height/2,hit=document.elementFromPoint(x,y);
-      return { x,y,width:r.width,height:r.height,disabled:button.disabled,aria,testid,expectedSend,hit:!!hit&&button.contains(hit),visible:r.width>0&&r.height>0&&getComputedStyle(button).visibility!=='hidden' };
-    });
-    return {composer,buttons,sendAvailable:buttons.filter(b=>b.visible&&!b.disabled&&b.expectedSend).length===1,url:location.href};
-  })()`, returnByValue:true });
-  return result.result?.value || {};
+  return readActuator(ws);
 }
 
 async function readActuator(ws,expectedText) {
@@ -548,28 +535,18 @@ async function main() {
 
       const roundtripRes = await sendCdp(ws, 'Runtime.evaluate', {
         expression: `(() => {
-          const editors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea')).filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&!e.parentElement?.closest('[contenteditable="true"]');});
-          if(editors.length!==1)throw Error('UNICODE_COMPOSER_NOT_UNIQUE');const prose=editors[0];
-          (${requireEmptyComposer.toString()})(prose);
-
-          prose.focus();
-          document.execCommand('selectAll', false, null);
-          document.execCommand('insertText', false, ${JSON.stringify(testText)});
+          const inspect=${inspectComposer.toString()};
+          const prepared=(${prepareComposerText.toString()})(${JSON.stringify(testText)},inspect);
+          const observation=inspect(${JSON.stringify(testText)});
+          if(!observation.composer_found||observation.composer_matches!==1)throw Error('UNICODE_CLEANUP_OWNER_CHANGED');
+          const prose=Array.from(document.querySelectorAll('[contenteditable="true"],textarea'))[observation.composer_dom_index];
+          if(document.activeElement!==prose&&!prose.contains(document.activeElement))throw Error('UNICODE_CLEANUP_FOCUS_CHANGED');
+          if(prose.tagName==='TEXTAREA')prose.setSelectionRange(0,prose.value.length);
+          else{const range=document.createRange();range.selectNodeContents(prose);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);}
+          if(!document.execCommand('delete', false, null))throw Error('UNICODE_CLEANUP_DELETE_FAILED');
           prose.dispatchEvent(new Event('input', { bubbles: true }));
-
-          const rawInnerText = (prose.innerText || '').trim();
-          const pElements = Array.from(prose.querySelectorAll('p'));
-          const domText = pElements.length > 0
-            ? pElements.map(p => p.innerText).join('\\n').trim()
-            : rawInnerText.replace(/\\r\\n/g, '\\n').replace(/\\n\\n+/g, '\\n').trim();
-
-          // Limpiar composer inmediatamente
-          document.execCommand('selectAll', false, null);
-          document.execCommand('delete', false, null);
-          prose.dispatchEvent(new Event('input', { bubbles: true }));
-
-          if((prose.value??prose.innerText??'').trim())throw Error('UNICODE_ROUNDTRIP_CLEANUP_FAILED');
-          return { success: true, domText, rawInnerText };
+          if(inspect().composer!=='')throw Error('UNICODE_ROUNDTRIP_CLEANUP_FAILED');
+          return prepared;
         })()`,
         returnByValue: true
       });
@@ -670,25 +647,7 @@ async function main() {
 
       // 2. Inyectar texto en composer
       const injectRes = confirmedRetry ? { result:{value:{success:true,domText:(await readPrepared(ws)).composer}} } : await sendCdp(ws, 'Runtime.evaluate', {
-        expression: `(() => {
-          const prose = document.querySelector('.ProseMirror') ||
-                        document.querySelector('#prompt-textarea') ||
-                        document.querySelector('div[contenteditable="true"]');
-          if (!prose) return { success: false, reason: 'Composer not found' };
-
-          prose.focus();
-          document.execCommand('selectAll', false, null);
-          document.execCommand('insertText', false, ${JSON.stringify(fullPrompt)});
-          prose.dispatchEvent(new Event('input', { bubbles: true }));
-
-          const rawInnerText = (prose.innerText || '').trim();
-          const pElements = Array.from(prose.querySelectorAll('p'));
-          const domText = pElements.length > 0
-            ? pElements.map(p => p.innerText).join('\\n').trim()
-            : rawInnerText.replace(/\\r\\n/g, '\\n').replace(/\\n\\n+/g, '\\n').trim();
-
-          return { success: true, domText, rawInnerText };
-        })()`,
+        expression: `(${prepareComposerText.toString()})(${JSON.stringify(fullPrompt)},${inspectComposer.toString()})`,
         returnByValue: true
       });
 
