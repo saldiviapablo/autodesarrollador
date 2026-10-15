@@ -1,7 +1,7 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-14T14:56:58.537704-03:00
+**Última actualización:** 2026-10-15T01:13:46.434680-03:00
 **Estado documental:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A
 **Baseline de arquitectura:** Hermes Agent (v0.21.6) + Qwen Code CLI (@qwen-code/qwen-code@0.25.1) + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
@@ -63,7 +63,7 @@
 | **Fase 21** | Reportes | **PASS** | evidence/phase-21/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 22** | Cleanup garantizado | **PASS** | evidence/phase-22/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 23** | Sandbox integral | **PASS** | Reviewer real ACCEPTED, Completion Gate PASS; histórico preservado. evidence/hermes-prompt-transport-20261014/. |
-| **Fase 24** | End-to-End corto | **FAIL / BLOCKED_REQUIRES_HUMAN** | ATTEMPT 5: web context/tests/build/recovery completo PASS; ChatGPT botón no disponible/unívoco, 0 envíos y ledger UNKNOWN_DELIVERY. Reviewer/gate NOT_RUN. Admisión ATTEMPT6 detenida: Nuevo chat conserva borrador; 0 envíos y sin nuevo run. Heartbeat fix NOT_VERIFIED; preflight NOT_RUN. evidence/f24-admission-repair-20261014/. |
+| **Fase 24** | End-to-End corto | **FAIL / BLOCKED_REQUIRES_HUMAN** | ATTEMPT6 run-20261015-005747: Worker/web context/13 tests/build/recovery completo PASS; fresh-chat contó turnos ocultos, 0 envíos, ledger no reservado. Reviewer/gate NOT_RUN. evidence/phase-24-attempt-6-20261014/. |
 | **Fase 25** | Prueba 2 horas | **NOT_RUN** | Validación de estabilidad autónoma continua de 2 horas. |
 | **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
 | **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
@@ -180,3 +180,7 @@ Actuador ChatGPT A–L y UI read-only PASS; prueba real controlada FAIL antes de
 ## Estado vigente — Nuevo chat conserva borrador; STOP — 2026-10-14
 
 Fix de aislamiento UI implementado y deterministas PASS. Un click de navegación Nuevo chat no produjo composer vacío: FRESH_CHAT_READY FAIL, hash histórico intacto. 0 envíos, 0 DELIVERY_INTENT, ledger de prueba no reservado; ATTEMPT5 sin cambios/reconciliación. STOP explícito; heartbeat fixture corregido pero NOT_VERIFIED, preflight completo NOT_RUN, ATTEMPT6 NOT_CREATED/NOT_RUN. Cleanup e integridad PASS (4146 archivos y 6 componentes protegidos). F24 conserva FAIL; READY_FOR_F25 NO; no ATTEMPT7/F25/F27/F28/push. docs/F24-FRESH-CHAT-STOP-REPORT.md; evidence/f24-admission-repair-20261014/.
+
+## Estado vigente — F24 ATTEMPT 6 — 2026-10-15
+
+Working tree parcial retomado. Transaction/legacy recovery/UTF-8/heartbeat/controlled send/preflight PASS (ca74d12,5b4834d); Git limpio antes de START. Nuevo run-20261015-005747: Worker SUCCESS, web fetch/context delivered,13 tests/build, checkpoint/crash/Watchdog/START-Recover/continuación PASS. Fresh-chat FAIL: en root vacío el contador incluyó turnos antiguos no renderizados (1/1); 0 envíos y ledger F24 no reservado. Sin fix/retry/reconciliación tras START. Reviewer/Completion Gate NOT_RUN. F24 FAIL / BLOCKED_REQUIRES_HUMAN; 699.25s, límites2700/300/restart2/cycles5 intactos. Cleanup/integridad PASS;46 pins y4185 archivos históricos intactos. READY_FOR_F25 NO; no ATTEMPT7/F25/F27/F28/push. docs/F24-ATTEMPT-6-STOP-REPORT.md; evidence/phase-24-attempt-6-20261014/.

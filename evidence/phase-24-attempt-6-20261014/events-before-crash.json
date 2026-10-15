@@ -1,0 +1,383 @@
+[
+  {
+    "schema_version": "1.0",
+    "seq": 1,
+    "event_id": "evt-1ad2b0eb00cf",
+    "timestamp": "2026-10-15T00:57:48.5268724-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "init-script",
+    "type": "RUN_INITIALIZED",
+    "payload": {
+      "objective": "Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox",
+      "run_contract": "RUN-CONTRACT.yaml",
+      "status": "INITIALIZED",
+      "project_id": "project"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 2,
+    "event_id": "evt-958d3aedd0ee",
+    "timestamp": "2026-10-15T00:57:52.0699780-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "LOCK_METADATA_RECONCILED",
+    "payload": {
+      "kernel_mutex_acquired": true,
+      "previous": {
+        "note": "METADATA de observabilidad de run autónomo. NO es lock atómico de SO. La exclusión mutua atómica reside en el Runner.",
+        "run_id": "run-20261015-005747",
+        "owner_pid": 14564,
+        "started_at": "2026-10-15T00:57:48.5389805-03:00",
+        "project_root": "C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/f24-attempt6-2bfe3e3f/project"
+      }
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 3,
+    "event_id": "evt-273821083cde",
+    "timestamp": "2026-10-15T00:57:52.3802993-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "RUN_STARTED",
+    "payload": {
+      "approval_digest": "eae2f3c9411a1ded6c693e8be61bbf23d26b411acd89c0e598cfd9b16deb1d90",
+      "backend": "live",
+      "git_head": "210150f7725ad877abe8a5d3d6d0024c8b6e6391"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 4,
+    "event_id": "evt-eaf69aa5825a",
+    "timestamp": "2026-10-15T00:57:52.4345776-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 31372,
+      "name": "watchdog",
+      "executable": "powershell.exe",
+      "start_ticks": 639276334724101010
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 5,
+    "event_id": "evt-211d5b1da75e",
+    "timestamp": "2026-10-15T00:57:53.4728545-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 19488,
+      "name": "llama",
+      "executable": "C:\\AI\\llama.cpp\\llama-server.exe",
+      "start_ticks": 639276334734559531
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 6,
+    "event_id": "evt-f29fe7181c92",
+    "timestamp": "2026-10-15T00:58:01.7535891-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "MODEL_HEALTH_READY",
+    "payload": {
+      "pid": 19488
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 7,
+    "event_id": "evt-03fed456dc22",
+    "timestamp": "2026-10-15T00:58:02.0380364-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 35388,
+      "name": "supervisor",
+      "executable": "powershell.exe",
+      "start_ticks": 639276334820147933
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 8,
+    "event_id": "evt-7a209938b916",
+    "timestamp": "2026-10-15T00:59:12.1580719-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "supervisor"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 9,
+    "event_id": "evt-cc4eb8a03703",
+    "timestamp": "2026-10-15T00:59:12.2133841-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 22996,
+      "name": "worker",
+      "executable": "powershell.exe",
+      "start_ticks": 639276335521879584
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 10,
+    "event_id": "evt-a8b3a9cc4243",
+    "timestamp": "2026-10-15T01:01:44.5502001-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "worker"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 11,
+    "event_id": "evt-ece37e615dd7",
+    "timestamp": "2026-10-15T01:01:44.7351180-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 25284,
+      "name": "check-unit",
+      "executable": "C:/Python314/python.exe",
+      "start_ticks": 639276337047183909
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 12,
+    "event_id": "evt-f360d6d0d454",
+    "timestamp": "2026-10-15T01:01:44.8562706-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 1,
+      "name": "check-unit"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 13,
+    "event_id": "evt-3e97148f7333",
+    "timestamp": "2026-10-15T01:01:44.8762961-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "WORKER_DIAGNOSIS_CONFIRMED",
+    "payload": {
+      "source_unchanged": true,
+      "initial_failure": true
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 14,
+    "event_id": "evt-10dcccf0007b",
+    "timestamp": "2026-10-15T01:01:44.9033355-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 31120,
+      "name": "web-research",
+      "executable": "powershell.exe",
+      "start_ticks": 639276337048795137
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 15,
+    "event_id": "evt-fb87e803c9b2",
+    "timestamp": "2026-10-15T01:01:46.4139174-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "web-research"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 16,
+    "event_id": "evt-6d8275a90f70",
+    "timestamp": "2026-10-15T01:01:46.4231565-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "WEB_FETCHED",
+    "payload": {
+      "source": "official_web_wrapper"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 17,
+    "event_id": "evt-179aff92d68a",
+    "timestamp": "2026-10-15T01:01:46.5253680-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "WEB_RESULT_PROVIDED",
+    "payload": {
+      "source_sha256": "8c067bb92cd78ac98fafea993b4f8219311f8a299574c766995ebfaec55c1033"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 18,
+    "event_id": "evt-224cf0eaed95",
+    "timestamp": "2026-10-15T01:01:46.6363101-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 2084,
+      "name": "worker",
+      "executable": "powershell.exe",
+      "start_ticks": 639276337065497822
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 19,
+    "event_id": "evt-321d783b8047",
+    "timestamp": "2026-10-15T01:05:55.8540200-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "worker"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 20,
+    "event_id": "evt-b5e108115b50",
+    "timestamp": "2026-10-15T01:05:56.0019321-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "WEB_CONTEXT_DELIVERED",
+    "payload": {
+      "binding": {
+        "status": "PASS",
+        "WEB_CONTEXT_DELIVERED": true,
+        "dispatch_id": "a87071e3-9f9a-49cb-90ac-3172e813d214",
+        "worker_session_id": "0f1a741c-befe-4c42-bf77-8b7b8ee6da15",
+        "run_id": "run-20261015-005747",
+        "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f24-attempt6-2bfe3e3f\\project",
+        "mode": "inline",
+        "worker_input_sha256": "86e1e8bf79a707408383ea036948d51df98481ccda8d0f0534bb278c3d06c843",
+        "input_bytes": 6628,
+        "research_sha256": "8c067bb92cd78ac98fafea993b4f8219311f8a299574c766995ebfaec55c1033",
+        "research_payload_sha256": "66f3db75e7070fad2b3da5814cd7d25e7693a2a9ecc1160c7522372b08b61fd7",
+        "research_range_bytes": [
+          2112,
+          6239
+        ],
+        "phase": "STARTED",
+        "prepared_at": "2026-10-15T04:01:47.415235+00:00",
+        "worker_pid": 22408,
+        "worker_start_ticks": 639276337075674537,
+        "dispatch_timestamp": "2026-10-15T04:01:47.687648+00:00",
+        "worker_output_sha256": "ed8072a8697e99cb6a49a928f446401905998941a24420fb1471bd26746321a0",
+        "verified_at": "2026-10-15T04:05:55.966863+00:00"
+      },
+      "verified": true
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 21,
+    "event_id": "evt-2fbb4490e9a5",
+    "timestamp": "2026-10-15T01:05:56.0230000-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 30948,
+      "name": "check-unit",
+      "executable": "C:/Python314/python.exe",
+      "start_ticks": 639276339560078059
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 22,
+    "event_id": "evt-ca225fd009d1",
+    "timestamp": "2026-10-15T01:05:56.1083733-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "check-unit"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 23,
+    "event_id": "evt-99b80ed64782",
+    "timestamp": "2026-10-15T01:05:56.1301071-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 10604,
+      "name": "check-build",
+      "executable": "C:/Python314/python.exe",
+      "start_ticks": 639276339561120260
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 24,
+    "event_id": "evt-ec3d04524c49",
+    "timestamp": "2026-10-15T01:05:56.1680818-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "check-build"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 25,
+    "event_id": "evt-8a373ba02a8b",
+    "timestamp": "2026-10-15T01:05:56.1785963-03:00",
+    "run_id": "run-20261015-005747",
+    "actor": "runner",
+    "type": "CRASH_TEST_BOUNDARY_READY",
+    "payload": {
+      "clock_not_paused": true,
+      "checks_pass": true
+    }
+  }
+]

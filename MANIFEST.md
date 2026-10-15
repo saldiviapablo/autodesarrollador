@@ -98,7 +98,7 @@ Parámetros validados:
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
 - **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **PASS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5 — Bot Mode + Subagentes`: **PASS**; `7A.6 — Git Worktrees`: **PASS**; `7A.7 — Cron + No-Agent Jobs`: **PASS**; `7A.8 — Native Dashboard`: **PASS**; `7A.9 — Gateway`: **PASS**; `7A.10 — Controlled Auto-update`: **PASS**; `ChatGPT Idempotency`: **PASS**; `regression gate`: **PASS**). Preflight correctivo aprobado en commit `f133bab`.
 - **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PASS**
-- **Macrofase 8 (Validación Final - Fases 23 a 28):** **FAIL / BLOCKED_REQUIRES_HUMAN (F23 PASS; F24 FAIL, ATTEMPT6 NOT_RUN / Nuevo chat conserva borrador)**
+- **Macrofase 8 (Validación Final - Fases 23 a 28):** **FAIL / BLOCKED_REQUIRES_HUMAN (F23 PASS; F24 ATTEMPT6 FAIL / fresh-chat cuenta turnos ocultos)**
 
 ---
 
@@ -179,3 +179,7 @@ Actuador ChatGPT A–L y UI read-only PASS; prueba real controlada FAIL antes de
 ## Estado vigente — Nuevo chat conserva borrador; STOP — 2026-10-14
 
 Fix de aislamiento UI implementado y deterministas PASS. Un click de navegación Nuevo chat no produjo composer vacío: FRESH_CHAT_READY FAIL, hash histórico intacto. 0 envíos, 0 DELIVERY_INTENT, ledger de prueba no reservado; ATTEMPT5 sin cambios/reconciliación. STOP explícito; heartbeat fixture corregido pero NOT_VERIFIED, preflight completo NOT_RUN, ATTEMPT6 NOT_CREATED/NOT_RUN. Cleanup e integridad PASS (4146 archivos y 6 componentes protegidos). F24 conserva FAIL; READY_FOR_F25 NO; no ATTEMPT7/F25/F27/F28/push. docs/F24-FRESH-CHAT-STOP-REPORT.md; evidence/f24-admission-repair-20261014/.
+
+## Estado vigente — F24 ATTEMPT 6 — 2026-10-15
+
+Working tree parcial retomado. Transaction/legacy recovery/UTF-8/heartbeat/controlled send/preflight PASS (ca74d12,5b4834d); Git limpio antes de START. Nuevo run-20261015-005747: Worker SUCCESS, web fetch/context delivered,13 tests/build, checkpoint/crash/Watchdog/START-Recover/continuación PASS. Fresh-chat FAIL: en root vacío el contador incluyó turnos antiguos no renderizados (1/1); 0 envíos y ledger F24 no reservado. Sin fix/retry/reconciliación tras START. Reviewer/Completion Gate NOT_RUN. F24 FAIL / BLOCKED_REQUIRES_HUMAN; 699.25s, límites2700/300/restart2/cycles5 intactos. Cleanup/integridad PASS;46 pins y4185 archivos históricos intactos. READY_FOR_F25 NO; no ATTEMPT7/F25/F27/F28/push. docs/F24-ATTEMPT-6-STOP-REPORT.md; evidence/phase-24-attempt-6-20261014/.
