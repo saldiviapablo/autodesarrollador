@@ -1,7 +1,7 @@
 """Exercise all 28 final evaluator inputs with labelled unit metadata, no E2E."""
 import hashlib,json,pathlib,uuid
 from f24_gates import evaluate,ROOT
-E=ROOT/'evidence/f24-harness-preflight-20261014';web=json.loads((E/'web/GATE.json').read_text(encoding='utf-8'));p=pathlib.Path(web['project']);a=p/'.autopilot';u=E/'gate-unit';u.mkdir(exist_ok=True)
+E=pathlib.Path(__import__('os').environ.get('F24_PREFLIGHT_E',ROOT/'evidence/f24-harness-preflight-20261014'));web=json.loads((E/'web/GATE.json').read_text(encoding='utf-8'));p=pathlib.Path(web['project']);a=p/'.autopilot';u=E/'gate-unit';u.mkdir(exist_ok=True)
 def put(path,value):path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(value),encoding='utf-8')
 out=json.loads((E/'web/actual-wrapper-output.json').read_text(encoding='utf-8'))
 put(a/'logs/worker.stdout.txt',{'data':{'WorkerOutput':out}})

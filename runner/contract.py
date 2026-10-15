@@ -43,7 +43,7 @@ def inspect(project):
     frozen+=[ROOT/'scripts/canonical_path.py',ROOT/'scripts/security-guard.ps1',ROOT/'scripts/hermes-mcp-plugin-guard.ps1']
     frozen+=[ROOT/'scripts/invoke-qwen-code.ps1',ROOT/'scripts/invoke-delegation.ps1',ROOT/'scripts/invoke-hermes-role.ps1',ROOT/'scripts/invoke-hermes.ps1']
     frozen+=[ROOT/'docs/F24-GATES.json',ROOT/'tests/f24_gates.py',ROOT/'tests/test-phase24-attempt5-live.py',ROOT/'tests/f24_attempt3_fixture.py',ROOT/'tests/windows_launcher_adapter.py',ROOT/'tests/finalize-live-test.ps1']
-    frozen+=[ROOT/'tools/chatgpt-bridge.js',ROOT/'tools/chatgpt-ledger.js',ROOT/'tools/chatgpt-delivery.js',ROOT/'scripts/consultar-chatgpt.ps1',ROOT/'scripts/wait-chatgpt-child.ps1']
+    frozen+=[ROOT/'tools/chatgpt-bridge.js',ROOT/'tools/chatgpt-ledger.js',ROOT/'tools/chatgpt-delivery.js',ROOT/'tools/chatgpt-send-actuator.js',ROOT/'scripts/consultar-chatgpt.ps1',ROOT/'scripts/wait-chatgpt-child.ps1',ROOT/'tests/test-phase24-attempt6-live.py']
     frozen+=sorted(f for f in (ROOT/'runner').iterdir() if f.suffix in ('.ps1','.py'))
     hashes={str(contract_path):sha(contract_path),str(plan_path):sha(plan_path),**{str(f):sha(f) for f in frozen}}
     digest=hashlib.sha256(json.dumps(hashes,sort_keys=True).encode()).hexdigest()

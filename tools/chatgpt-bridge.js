@@ -10,6 +10,7 @@ const path = require('path');
 const { spawn, spawnSync } = require('child_process');
 const { ConsultationLedger, acquireBrowserLease, hash, normalize, reconcileObservation } = require('./chatgpt-ledger');
 const { Budget, Trace, budgets, deliver } = require('./chatgpt-delivery');
+const {inspectComposer,selectActuator,sendPhysicalEnter}=require('./chatgpt-send-actuator');
 let activeLedger;
 let activeBudget, activeTrace, activeSocket, deadlineTimer;
 async function safeExit(code) {
@@ -125,6 +126,11 @@ async function readPrepared(ws) {
   return result.result?.value || {};
 }
 
+async function readActuator(ws,expectedText) {
+  const result=await sendCdp(ws,'Runtime.evaluate',{expression:`(${inspectComposer.toString()})(${expectedText===undefined?'undefined':JSON.stringify(expectedText)})`,returnByValue:true});
+  return result.result?.value||{};
+}
+
 // 1. Verificación Estricta de Domain Lock
 function validateDomain(urlStr) {
   try {
@@ -207,7 +213,7 @@ function sendCdpRaw(ws, method, params = {}) {
     const timeout = setTimeout(() => {
       ws.removeEventListener('message', handler);
       reject(new Error(`Timeout esperando respuesta CDP para ${method}`));
-    }, activeBudget ? activeBudget.remaining(method==='Input.dispatchMouseEvent'?2000:5000) : 20000);
+    }, activeBudget ? activeBudget.remaining(['Input.dispatchMouseEvent','Input.dispatchKeyEvent'].includes(method)?2000:5000) : 20000);
 
     const handler = (evt) => {
       try {
@@ -303,6 +309,23 @@ async function enforceSingleTabAndDomainLock() {
 
 async function main() {
   if(action==='budget'){console.log(JSON.stringify(budgets(timeoutSec)));return;}
+  if(action==='actuator-inspect') {
+    // Read-only path: never acquire a lease, reserve/reconcile a consultation,
+    // launch/navigate/focus a browser, close tabs, or write its ledger.
+    const profile=verifyDedicatedProfile();
+    const pages=(await(await fetch(`${CDP_BASE}/json`)).json()).filter(t=>t.type==='page');
+    if(pages.length!==1||!validateDomain(pages[0].url))throw Error('READONLY_PROFILE_DOMAIN_OR_TAB_COUNT_DENIED');
+    const ledger=new ConsultationLedger(),record=ledger.read(consultationId);
+    if(!record)throw Error('CONSULTATION_NOT_RESERVED');
+    const ws=await connectCdp(pages[0].webSocketDebuggerUrl);
+    try {
+      const observation=await readActuator(ws);
+      const composerHash=hash(normalize(observation.composer||''));
+      const selection=selectActuator({...record,delivery_state:'RESERVED',send_attempts:0,history:[]},observation);
+      console.log(JSON.stringify({status:'PASS',profile,COMPOSER_FOUND:observation.composer_found,COMPOSER_HASH_MATCH:composerHash===record.prompt_sha256,FORM_SCOPE_FOUND:observation.scope_found,LOCAL_SUBMIT_FOUND:observation.buttons.length===1,LOCAL_SUBMIT_COUNT:observation.buttons.length,ENTER_FALLBACK_AVAILABLE:observation.focused&&observation.editable&&!observation.isStreaming,selected_method:selection.method,composer_sha256:composerHash,url:observation.url,ledger_modified:false,physical_actions:0},null,2));
+    }finally{ws.close();}
+    await safeExit(0);return;
+  }
   // Verificación inicial de Domain Lock para targetUrl
   if (!validateDomain(targetUrl)) {
     const out = {
@@ -673,26 +696,24 @@ async function main() {
         await safeExit(1);
       }
 
-      // Stabilize the prepared, hit-testable composer before one physical click.
+      // Choose one actuator within the exact composer scope BEFORE intent.
       await sendCdp(ws,'Page.bringToFront');
       let prepared;
+      let selected;
       for(let stable=0;stable<2;stable++) {
-        prepared=await readPrepared(ws);
-        if(hash(normalize(prepared.composer||''))!==ledger.read(consultationId).prompt_sha256)throw Error('COMPOSER_CHANGED_NO_SEND');
-        if(prepared.url!==countsBefore.url)throw Error('CONVERSATION_CHANGED_BEFORE_SEND');
+        prepared=await readActuator(ws,fullPrompt);
+        const current=await readConversation(ws);
+        if(current.user!==countsBefore.user||current.assistant!==countsBefore.assistant)throw Error('BASELINE_CHANGED_NO_SEND');
+        selected=selectActuator(ledger.read(consultationId),prepared);
         if(stable===0){
-          const readyButtons=prepared.buttons?.filter(b=>b.visible&&!b.disabled&&b.expectedSend&&b.hit)||[];
-          if(readyButtons.length!==1)throw Error('SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS');
-          await sendCdp(ws,'Input.dispatchMouseEvent',{type:'mouseMoved',x:readyButtons[0].x,y:readyButtons[0].y,button:'none',buttons:0,pointerType:'mouse'});
+          if(selected.button)await sendCdp(ws,'Input.dispatchMouseEvent',{type:'mouseMoved',x:selected.button.x,y:selected.button.y,button:'none',buttons:0,pointerType:'mouse'});
           await new Promise(r=>setTimeout(r,300));
         }
       }
-      const candidates=prepared.buttons?.filter(b=>b.visible&&!b.disabled&&b.expectedSend&&b.hit)||[];
-      const physicalButton=candidates.length===1?candidates[0]:null;
-      if(!physicalButton)throw Error('SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS');
       const attemptCount=ledger.read(consultationId).send_attempts+1;
       const outcome=await deliver({ledger,id:consultationId,baseline:countsBefore,
-        click:()=>sendSinglePhysicalClick(ws,physicalButton),
+        click:()=>selected.method==='COMPOSER_SCOPED_SUBMIT'?sendSinglePhysicalClick(ws,selected.button):sendPhysicalEnter(ws,sendCdp,activeTrace),
+        sendMethod:selected.method,
         probe:()=>readConversation(ws),
         budget:activeBudget,trace:activeTrace,newConversation});
       if(outcome.status!=='SUCCESS') {
@@ -722,7 +743,7 @@ async function main() {
         conversation_url: countsAfter.url,
         user_turns_before: countsBefore.user, user_turns_after: countsAfter.user,
         assistant_turns_before: countsBefore.assistant, assistant_turns_after: countsAfter.assistant,
-        no_resend: false, send_attempts: attemptCount,physical_send_count:1,composer_cleared:composerCleared,human_reconciled_retry:confirmedRetry,
+        no_resend: false, send_attempts: attemptCount,physical_send_count:1,physical_actions:1,send_method:selected.method,composer_cleared:composerCleared,human_reconciled_retry:confirmedRetry,
         timestamp: new Date().toISOString()
       };
 

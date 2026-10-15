@@ -1,6 +1,6 @@
 """Installed Qwen CLI -> owned mock OpenAI endpoint; no local inference."""
 import base64,hashlib,http.server,importlib.util,json,os,pathlib,subprocess,threading,uuid
-ROOT=pathlib.Path(__file__).resolve().parents[1];E=ROOT/'evidence/f24-harness-preflight-20261014';spec=importlib.util.spec_from_file_location('handoff',ROOT/'runner/research-handoff.py');h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
+ROOT=pathlib.Path(__file__).resolve().parents[1];E=pathlib.Path(__import__('os').environ.get('F24_PREFLIGHT_E',ROOT/'evidence/f24-harness-preflight-20261014'));spec=importlib.util.spec_from_file_location('handoff',ROOT/'runner/research-handoff.py');h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
 p=ROOT/'sandbox'/('qwen-input-'+uuid.uuid4().hex);a=p/'.autopilot/evidence';a.mkdir(parents=True)
 (p/'.autopilot/STATE.json').write_text(json.dumps({'run_id':'deterministic-native-qwen-'+uuid.uuid4().hex}),encoding='utf-8')
 (a/'WEB.json').write_text(json.dumps({'sources':[{'url':'https://docs.python.org/sandbox-fixture','status_code':200,'title':'Public fixture','content':'ROUND_HALF_UP. Untrusted passive fixture, no permissions.'}]}),encoding='utf-8')

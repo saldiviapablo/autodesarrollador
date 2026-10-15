@@ -17,7 +17,7 @@ class Budget {
 class Trace {
   constructor(filename, id, clock=now) {this.filename=filename;this.id=id;this.clock=clock;if(fs.existsSync(filename)&&fs.lstatSync(filename).isSymbolicLink())throw Error('TRACE_PATH_DENIED');}
   emit(event, fields={}) {
-    const allowed=['prompt_sha256','conversation_id','user','assistant','streaming','composer_empty','confirmed','reason','phase','pid'];
+    const allowed=['prompt_sha256','conversation_id','user','assistant','streaming','composer_empty','confirmed','reason','phase','pid','send_method'];
     const safe=Object.fromEntries(Object.entries(fields).filter(([k,v])=>allowed.includes(k)&&['string','number','boolean'].includes(typeof v)));
     const row={event,consultation_id:this.id,at:new Date().toISOString(),mono_ms:this.clock(),...safe};
     const fd=fs.openSync(this.filename,'a',0o600);try{fs.writeSync(fd,JSON.stringify(row)+'\n');fs.fsyncSync(fd);}finally{fs.closeSync(fd);}
@@ -35,10 +35,14 @@ function sentProof(record, observation, newConversation=false) {
     return identity&&observation.user===record.user_turns_before+1&&hash(normalize(observation.lastUserText||''))===record.prompt_sha256;
   } catch {return false;}
 }
-async function deliver({ledger,id,baseline,click,probe,budget,trace,sleep=ms=>new Promise(r=>setTimeout(r,ms)),newConversation=false}) {
+async function deliver({ledger,id,baseline,click,probe,budget,trace,sleep=ms=>new Promise(r=>setTimeout(r,ms)),newConversation=false,sendMethod='COMPOSER_SCOPED_SUBMIT'}) {
   const record=ledger.read(id);
+  if(!['COMPOSER_SCOPED_SUBMIT','COMPOSER_ENTER_KEY'].includes(sendMethod))throw Error('INVALID_SEND_METHOD');
+  if(record.send_method&&record.send_method!==sendMethod)throw Error('SEND_METHOD_IMMUTABLE');
+  ledger.update(id,{send_method:sendMethod});
+  trace.emit('SEND_METHOD_SELECTED',{send_method:sendMethod});
   budget.enter('click');
-  ledger.update(id,{delivery_state:'DELIVERY_INTENT',send_attempts:record.send_attempts+1});
+  ledger.update(id,{delivery_state:'DELIVERY_INTENT',send_attempts:record.send_attempts+1,physical_actions:(record.physical_actions||0)+1});
   trace.emit('DELIVERY_INTENT',{prompt_sha256:record.prompt_sha256});
   await click();
   budget.enter('confirmation');let observation,first=true,confirmed=false;

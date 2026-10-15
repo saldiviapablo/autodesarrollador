@@ -74,6 +74,9 @@ class ConsultationLedger {
   update(id, fields) {
     const record = this.read(id);
     if (!record) throw new Error('CONSULTATION_NOT_RESERVED');
+    if(record.send_method && fields.send_method && fields.send_method!==record.send_method)throw new Error('SEND_METHOD_IMMUTABLE');
+    if(fields.physical_actions!==undefined && fields.physical_actions!==(record.physical_actions||0)+1)throw new Error('PHYSICAL_ACTION_COUNTER_DENIED');
+    if(fields.physical_actions!==undefined && fields.delivery_state!=='DELIVERY_INTENT')throw new Error('PHYSICAL_ACTION_REQUIRES_INTENT');
     if (record.message_confirmed && (fields.message_confirmed === false ||
         ['UNKNOWN_DELIVERY','DELIVERY_INTENT','NOT_DELIVERED_CONFIRMED','RESERVED'].includes(fields.delivery_state))) throw new Error('SENT_IS_IRREVERSIBLE_NO_RESEND');
     const approvedRetry = fields.delivery_state === 'DELIVERY_INTENT' && record.delivery_state === 'NOT_DELIVERED_CONFIRMED' && record.human_retry_remaining === 1;
