@@ -1,0 +1,32 @@
+{
+    "probe_delay_seconds":  null,
+    "backend":  "live",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-019-csv-ledger",
+    "research_inline":  false,
+    "role":  "worker",
+    "timeout":  300,
+    "request":  {
+                    "allowed_actions":  [
+                                            "edit_file",
+                                            "run_test",
+                                            "git_commit_local"
+                                        ],
+                    "schema_version":  "1.0",
+                    "workspace":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-019-csv-ledger",
+                    "delegation_id":  "del-run-20261015-134253",
+                    "forbidden_actions":  [
+                                              "git_push",
+                                              "delete_root",
+                                              "modify_runner_guardrails"
+                                          ],
+                    "objective":  "Normalize CSV ledger rows and aggregate exact decimal amounts",
+                    "tests":  [
+
+                              ],
+                    "task":  "Implement parse_ledger(text) accepting a CSV string with exact header date,category,amount. Return a list of dicts with ISO calendar-valid YYYY-MM-DD date (reject noncanonical formats), nonempty stripped category and amount string quantized to two decimal digits with Decimal(str(x)) ROUND_HALF_UP. Preserve row order and Unicode. Reject malformed headers/row widths/invalid dates/nonfinite or malformed amounts with ValueError. Blank input is invalid; header alone returns []. Implement totals(rows) over parse_ledger output, aggregating by category with Decimal, returning a dict inserted in lexicographic category order and values as two-decimal strings. Negative amounts are allowed. Implement CLI: python module.py reads CSV from stdin; print JSON {\"rows\":...,\"totals\":...} ensure_ascii=False; invalid input -\u003e exit2 and concise stderr without traceback. Document API, CLI, validation, exact Decimal rounding, Unicode and official reference. Modify module.py and README.md only. Never edit tests/build/.autopilot. Run python test_module.py and python build.py.\nSupervisor plan (advisory, approved scope remains binding): {\n  \"task\": \"1. Inspect the working directory to confirm module.py, test_module.py, build.py, and .autopilot exist. 2. Implement parse_ledger(text): validate input is not blank, verify the first line matches exactly \u0027date,category,amount\u0027 (raise ValueError otherwise), split remaining lines, enforce 3 fields per row, parse dates as strict ISO YYYY-MM-DD (reject noncanonical), require non-empty stripped categories, convert amounts via Decimal(str(x)) quantized to 2 decimal places using ROUND_HALF_UP (raise ValueError on nonfinite/malformed amounts), preserve row order and Unicode, return header-only input as []. 3. Implement totals(rows): aggregate amounts per category using Decimal arithmetic, return a dict ordered lexicographically by category with values formatted as two-decimal strings. 4. Implement CLI entry point: read CSV from stdin, invoke parse_ledger and totals, serialize to JSON with ensure_ascii=False, catch ValueError to print a concise error to stderr and exit(2), avoid tracebacks. 5. Update README.md documenting the API, CLI usage, validation rules, exact Decimal rounding behavior, and Unicode handling. 6. Run python test_module.py and python build.py to verify correctness, ensuring no changes to tests/, build/, or .autopilot directories.\"\n}\nPrevious checks to correct: ",
+                    "acceptance_criteria":  [
+                                                "Normalize CSV ledger rows and aggregate exact decimal amounts; immutable acceptance and documented CLI verified"
+                                            ],
+                    "status":  "READY"
+                }
+}

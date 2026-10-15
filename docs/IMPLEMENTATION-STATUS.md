@@ -217,3 +217,7 @@ F24 ATTEMPT11 mantiene PASS28/28. F25 parcial FAIL (6.264s): el adaptador nuevo 
 ## Estado vigente — F25 — 2026-10-15T14:00:54.701948+00:00
 
 F25 PASS: 7772.089s reales, 13 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-f25-20261015-050751-1239ed/. docs/F25-REPORT-f25-20261015-050751-1239ed.md
+
+## Estado vigente — 4H — 2026-10-15T18:10:41.141557+00:00
+
+4H PASS: 14781.279s reales, 26 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-4h-20261015-110202-059517/. docs/4H-REPORT-4h-20261015-110202-059517.md

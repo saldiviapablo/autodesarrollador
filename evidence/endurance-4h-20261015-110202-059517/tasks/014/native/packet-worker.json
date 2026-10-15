@@ -1,0 +1,32 @@
+{
+    "probe_delay_seconds":  null,
+    "backend":  "live",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-014-intervals",
+    "research_inline":  false,
+    "role":  "worker",
+    "timeout":  300,
+    "request":  {
+                    "allowed_actions":  [
+                                            "edit_file",
+                                            "run_test",
+                                            "git_commit_local"
+                                        ],
+                    "schema_version":  "1.0",
+                    "workspace":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-014-intervals",
+                    "delegation_id":  "del-run-20261015-130616",
+                    "forbidden_actions":  [
+                                              "git_push",
+                                              "delete_root",
+                                              "modify_runner_guardrails"
+                                          ],
+                    "objective":  "Merge integer time intervals and compute gaps and peak concurrency",
+                    "tests":  [
+
+                              ],
+                    "task":  "Implement merge_intervals(intervals) where intervals is a list of integer pairs 0\u003c=start\u003cend (bool is not an integer here). Reject all other values with ValueError. Return sorted merged tuples, merging overlaps and touching intervals; do not mutate input. Implement gaps(intervals,start,end): require integer non-bool 0\u003c=start\u003cend and every interval inside that window; return sorted uncovered tuples. Implement peak_load(intervals): maximum concurrent half-open intervals, touching endpoints do not overlap; empty -\u003e0. CLI python module.py reads JSON {\"intervals\":[...],\"start\":int,\"end\":int} stdin and outputs JSON with merged,gaps,peak keys. Invalid -\u003e exit2 concise stderr. Document half-open/touching semantics and examples. Python stdlib only. Modify module.py and README.md only. Never edit tests/build/.autopilot. Run python test_module.py and python build.py.\nSupervisor plan (advisory, approved scope remains binding): ```json\n{\n  \"task\": \"1. Create `module.py` with helper `_validate_interval` ensuring elements are `int` but not `bool`, and `0 \u003c= s \u003c e`. 2. Implement `merge_intervals(intervals)`: validate input, sort by start, merge overlapping/touching intervals, return list of tuples. 3. Implement `gaps(intervals, start, end)`: validate window, filter intervals to `[start, end]`, iterate sorted intervals to find uncovered tuples. 4. Implement `peak_load(intervals)`: create event list (+1 for start, -1 for end), sort by time then type (-1 before +1 for half-open semantics), sweep to find max concurrent. 5. Add CLI block: parse JSON from stdin, catch `ValueError`/`json.JSONDecodeError`, output JSON result or exit(2) with stderr message. 6. Update `README.md` documenting functions, half-open semantics `[s, e)`, and CLI usage example. 7. Verify with `python test_module.py` and `python build.py`.\"\n}\n```\nPrevious checks to correct: ",
+                    "acceptance_criteria":  [
+                                                "Merge integer time intervals and compute gaps and peak concurrency; immutable acceptance and documented CLI verified"
+                                            ],
+                    "status":  "READY"
+                }
+}

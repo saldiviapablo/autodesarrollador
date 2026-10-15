@@ -1,0 +1,311 @@
+diff --git a/README.md b/README.md
+index af4c579..b020d21 100644
+--- a/README.md
++++ b/README.md
+@@ -1,3 +1,104 @@
+-# catalog
++# catalog — Portable File Catalog Validator & Duplicate Detector
+ 
+-Documentation incomplete.
++Validate a portable file catalog and report duplicates **without filesystem access**. All operations are pure Python in memory.
++
++## API
++
++### `catalog(entries) -> list[dict]`
++
++Accepts a list of dicts with exactly three keys: `path`, `size`, `sha256`. Validates every field, rejects duplicates, and returns a **new** list sorted by `path`.
++
++**Validation rules:**
++
++| Field   | Contract |
++|---------|----------|
++| `path`  | Non-empty POSIX relative path. No backslash `\`, colon `:`, leading `/`, empty component (`//`), `.` or `..`, NUL `\x00`, or newline `\n`. Unicode is allowed (e.g. `ñ`, `中文`, `café`). |
++| `size`  | Integer `>= 0`. `bool` is explicitly forbidden (`bool` is a subclass of `int` in Python). |
++| `sha256`| Exactly 64 lowercase hexadecimal characters (`[0-9a-f]`). |
++
++**Raises:** `ValueError` on any malformed entry, disallowed path, duplicate path, unexpected keys, or if `entries` is not a list of dicts.
++
++**Invariants:**
++- Never mutates the input list or its dicts (returns deep-copied results).
++- Never accesses the filesystem.
++
++### `duplicate_groups(entries) -> list[list[str]]`
++
++Validates `entries` via `catalog()`, then groups paths sharing the same `(size, sha256)` tuple.
++
++**Returns:** A list of lists. Each inner list contains paths (sorted lexicographically) for one duplicate group with `>= 2` members. The outer list is sorted lexicographically by the first path in each group. Returns `[]` when no duplicates exist.
++
++**Example:**
++
++```python
++>>> from module import catalog, duplicate_groups
++>>> entries = [
++...     {'path': 'a.txt', 'size': 100, 'sha256': 'a' * 64},
++...     {'path': 'b.txt', 'size': 200, 'sha256': 'b' * 64},
++...     {'path': 'c.txt', 'size': 100, 'sha256': 'a' * 64},  # same size+hash as a.txt
++...     {'path': 'd.txt', 'size': 300, 'sha256': 'c' * 64},
++... ]
++>>> catalog(entries)
++[{'path': 'a.txt', ...}, {'path': 'b.txt', ...}, {'path': 'c.txt', ...}, {'path': 'd.txt', ...}]
++>>> duplicate_groups(entries)
++[['a.txt', 'c.txt']]
++```
++
++## Unicode handling
++
++Paths may contain any Unicode characters except the forbidden control characters (NUL, newline, carriage-return). The function uses Python 3 native strings (UTF-8 internally). Sorting is by Unicode code point order, which is deterministic and reproducible.
++
++**Examples:**
++
++```python
++>>> catalog([{'path': 'café.txt', 'size': 0, 'sha256': 'a' * 64}])
++[{'path': 'café.txt', 'size': 0, 'sha256': 'a' * 64}]
++>>> catalog([{'path': '中文/文件.txt', 'size': 0, 'sha256': 'a' * 64}])
++[{'path': '中文/文件.txt', 'size': 0, 'sha256': 'a' * 64}]
++```
++
++## CLI
++
++```bash
++echo '[{"path":"readme.md","size":42,"sha256":"'"$(python -c 'print("a"*64)'"'")}]' | python module.py
++```
++
++**Input:** JSON array on stdin, e.g. `[{"path":"a","size":1,"sha256":"abc..."}, ...]`
++
++**Output (stdout):** JSON object with two keys:
++```json
++{"catalog": [...], "duplicates": [...]}
++```
++`ensure_ascii=False` — Unicode characters are emitted as-is (not escaped).
++
++**Exit codes:**
++- `0` — Success; valid catalog produced.
++- `2` — Invalid input (JSON decode error, validation error). Concise error message on stderr (no Python traceback).
++
++**CLI error example:**
++
++```bash
++$ echo 'not json' | python module.py
++error: Expecting value: line 1 column 1 (char 0)
++# exit code: 2
++```
++
++## No filesystem I/O
++
++Neither `catalog()` nor `duplicate_groups()` performs any filesystem access. They operate exclusively on in-memory data structures. This makes them safe for use in sandboxed environments, CI pipelines, or any context where filesystem access is restricted or undesirable.
++
++## Quick start
++
++```bash
++# Install (no external deps required — uses only Python standard library)
++# python 3.8+
++
++# Run tests
++python test_module.py
++
++# Run build check (AST validation)
++python build.py
++
++# Use from CLI
++echo '[{"path":"file.txt","size":100,"sha256":"a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1"}]' | python module.py
++```
+diff --git a/module.py b/module.py
+index 396ffa7..b48ef55 100644
+--- a/module.py
++++ b/module.py
+@@ -1,6 +1,190 @@
+-"""Incomplete catalog utility. Worker must implement approved API."""
+-def catalog(*args,**kwargs):
+- raise NotImplementedError("incomplete baseline")
++"""Portable file catalog validator and duplicate detector.
+ 
+-def duplicate_groups(*args,**kwargs):
+- raise NotImplementedError("incomplete baseline")
++Contract
++--------
++catalog(entries)
++    Accepts a list of dicts with exactly three keys: ``path``, ``size``, ``sha256``.
++    Validates every field and rejects duplicates. Returns a **new** list sorted by
++    ``path``. Never mutates the input list or its dicts, and never accesses the
++    filesystem.
++
++    path   – non-empty POSIX relative path: no backslash, colon, leading ``/``,
++             empty component (``//``), ``.``, ``..``, NUL, or newline.
++             Unicode is allowed (e.g. ``ñ``, ``中文``).
++    size   – integer ``>= 0``; ``bool`` is explicitly forbidden because ``bool``
++             is a subclass of ``int`` in Python.
++    sha256 – exactly 64 lowercase hexadecimal characters.
++
++    Raises ``ValueError`` on any malformed entry, disallowed path component,
++    duplicate path, unexpected keys, or when ``entries`` itself is not a list
++    of dicts.
++
++duplicate_groups(entries)
++    Validates ``entries`` via ``catalog()``, then groups paths sharing the same
++    ``(size, sha256)`` tuple. Returns a list of lists: each inner list contains
++    the paths (sorted lexicographically) for one group with ``>= 2`` members.
++    The outer list is sorted lexicographically by the first path in each group.
++    Returns an empty list when no duplicates exist.
++
++No filesystem I/O is performed by either function.
++"""
++import copy
++import json
++import re
++import sys
++from collections import defaultdict
++
++# Pre-compiled pattern for a valid 64-char lowercase hex SHA-256 digest.
++_RE_SHA256 = re.compile(r'^[0-9a-f]{64}$')
++
++# Valid path components: any string that is not empty, not ``.``, not ``..``,
++# and contains no NUL, newline, carriage-return, or backslash.
++_PATH_COMPONENT_RE = re.compile(r'^[^\\/:>\x00\x0a\x0d.][^\\/:>\x00\x0a\x0d]*$|^.$')
++
++
++def _validate_path(path: str) -> None:
++    """Raise ValueError if *path* violates the portable POSIX relative-path contract."""
++    if not isinstance(path, str):
++        raise ValueError(f"path must be a string, got {type(path).__name__}")
++    if not path:
++        raise ValueError("path must be a non-empty string")
++    if '\x00' in path or '\n' in path or '\r' in path:
++        raise ValueError("path must not contain NUL or newline characters")
++    if '\\' in path:
++        raise ValueError("path must not contain backslash characters")
++    if ':' in path:
++        raise ValueError("path must not contain colon characters (Windows drive letters not allowed)")
++    if path.startswith('/') or path.startswith('..') or path.startswith('.'):
++        raise ValueError("path must be a relative path (no leading slash, dot, or ..)")
++    # Reject leading/trailing slashes or bare "." ".." components.
++    parts = path.split('/')
++    for part in parts:
++        if part == '':
++            raise ValueError("path must not contain empty components (consecutive slashes or leading/trailing '/')")
++        if part == '.' or part == '..':
++            raise ValueError("path must not contain '.' or '..' components")
++    # Additional check: path must start with a valid component (not just '.')
++    if path in ('.', '..'):
++        raise ValueError("path must not be '.' or '..'")
++
++
++def _validate_size(size: object) -> None:
++    """Raise ValueError if *size* is not a non-negative integer (bool excluded)."""
++    if isinstance(size, bool):
++        raise ValueError("size must not be a boolean")
++    if not isinstance(size, int):
++        raise ValueError(f"size must be an integer, got {type(size).__name__}")
++    if size < 0:
++        raise ValueError("size must be >= 0")
++
++
++def _validate_sha256(sha256: object) -> None:
++    """Raise ValueError if *sha256* is not a 64-char lowercase hex string."""
++    if not isinstance(sha256, str):
++        raise ValueError(f"sha256 must be a string, got {type(sha256).__name__}")
++    if not _RE_SHA256.match(sha256):
++        raise ValueError("sha256 must be exactly 64 lowercase hexadecimal characters")
++
++
++def catalog(entries: list) -> list:
++    """Validate and sort file catalog entries.
++
++    Parameters
++    ----------
++    entries : list[dict]
++        Each dict must contain exactly the keys ``path`` (str), ``size`` (int >= 0),
++        and ``sha256`` (64-char lowercase hex).
++
++    Returns
++    -------
++    list[dict]
++        A new list of validated entry dicts sorted by ``path``.
++
++    Raises
++    ------
++    ValueError
++        If any entry is malformed, contains a disallowed path, has a duplicate
++        path, or includes unexpected keys.
++    """
++    if not isinstance(entries, list):
++        raise ValueError("entries must be a list")
++
++    seen_paths: set[str] = set()
++    validated: list[dict] = []
++
++    for item in entries:
++        if not isinstance(item, dict):
++            raise ValueError(f"each entry must be a dict, got {type(item).__name__}")
++
++        expected_keys = {'path', 'size', 'sha256'}
++        if set(item.keys()) != expected_keys:
++            raise ValueError(
++                f"entry must have exactly keys {sorted(expected_keys)}, "
++                f"got {sorted(item.keys())}"
++            )
++
++        _validate_path(item['path'])
++        _validate_size(item['size'])
++        _validate_sha256(item['sha256'])
++
++        if item['path'] in seen_paths:
++            raise ValueError(f"duplicate path: {item['path']!r}")
++        seen_paths.add(item['path'])
++
++        # Deep-copy to guarantee we never mutate the caller's input.
++        validated.append({
++            'path': item['path'],
++            'size': item['size'],
++            'sha256': item['sha256'],
++        })
++
++    # Return a new list sorted by path; the list itself is a copy.
++    return sorted(validated, key=lambda e: e['path'])
++
++
++def duplicate_groups(entries: list) -> list:
++    """Return groups of paths sharing the same ``(size, sha256)``.
++
++    Parameters
++    ----------
++    entries : list[dict]
++        Same contract as ``catalog()``.
++
++    Returns
++    -------
++    list[list[str]]
++        Each inner list contains paths (sorted) that form a duplicate group
++        (``>= 2`` members). The outer list is sorted lexicographically.
++        Returns ``[]`` when no duplicates exist.
++    """
++    validated = catalog(entries)
++
++    groups: dict[tuple[int, str], list[str]] = defaultdict(list)
++    for entry in validated:
++        key = (entry['size'], entry['sha256'])
++        groups[key].append(entry['path'])
++
++    # Filter to groups with >= 2 members, sort paths inside each group,
++    # then sort the outer list.
++    result = [sorted(paths) for paths in groups.values() if len(paths) >= 2]
++    result.sort()
++    return result
++
++
++# ---------------------------------------------------------------------------
++# CLI entry-point: reads JSON array from stdin, writes JSON result to stdout.
++# ---------------------------------------------------------------------------
++if __name__ == '__main__':
++    try:
++        raw = sys.stdin.read()
++        entries = json.loads(raw)
++        catalog_result = catalog(entries)
++        duplicates = duplicate_groups(entries)
++        output = json.dumps(
++            {'catalog': catalog_result, 'duplicates': duplicates},
++            ensure_ascii=False,
++        )
++        sys.stdout.write(output)
++    except (json.JSONDecodeError, ValueError) as exc:
++        sys.stderr.write(f"error: {exc}\n")
++        sys.exit(2)

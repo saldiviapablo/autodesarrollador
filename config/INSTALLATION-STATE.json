@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-15T14:00:54.701948+00:00",
+  "updated_at": "2026-10-15T18:10:41.141557+00:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -70,7 +70,7 @@
   "regression_gate_7b": "PASS",
   "e2e_7b": "PASS",
   "ready_for_8": false,
-  "e2e_scope": "F24 ATTEMPT11 PASS28/28; F25 real duration PASS; historical FAILs retained",
+  "e2e_scope": "F24 ATTEMPT11 PASS28/28; 4H real duration PASS; historical FAILs retained",
   "phases_8": {
     "23": "PASS",
     "24": "PASS",
@@ -85,7 +85,7 @@
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
     "current_security_revalidation": "PATHGUARD_FIX_SMOKE_PASS",
-    "checkpoint_4h": "NOT_RUN / PREVIOUS_GATE_FAILED",
+    "checkpoint_4h": "PASS",
     "regression_gate_final": "NOT_RUN / PREVIOUS_GATE_FAILED",
     "ready_for_real_pilot": false,
     "prepare_zero_write_on_deny": "PASS",
@@ -657,7 +657,22 @@
       "llama_max_working_set_mib": 22724.03515625
     },
     "f25_cleanup": "PASS",
-    "f25_integrity": "PASS"
+    "f25_integrity": "PASS",
+    "4h": "PASS",
+    "4h_evidence": "evidence/endurance-4h-20261015-110202-059517",
+    "4h_report": "docs/4H-REPORT-4h-20261015-110202-059517.md",
+    "4h_duration_seconds": 14781.278687099999,
+    "4h_resources": {
+      "samples": 2823,
+      "max_sample_gap": 6.636365400001523,
+      "critical": false,
+      "RAM_min_available_mib": 412.2421875,
+      "pagefile_max_used_gib": 7.291282653808594,
+      "VRAM_max_mib": 4597,
+      "llama_max_working_set_mib": 23123.1796875
+    },
+    "4h_cleanup": "PASS",
+    "4h_integrity": "PASS"
   },
   "ready_for_real_pilot": false
 }

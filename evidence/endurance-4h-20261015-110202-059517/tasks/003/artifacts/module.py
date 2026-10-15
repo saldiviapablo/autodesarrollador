@@ -1,0 +1,165 @@
+"""Portable file catalog validator and duplicate grouper.
+
+Contract
+--------
+* ``catalog(entries)`` – *entries* is a list of dicts with exactly
+  ``{path: str, size: int, sha256: str}``.
+  Returns a **new** list of dicts sorted by ``path``.
+  Never mutates *entries* and never accesses the filesystem.
+  Raises ``ValueError`` on any malformed entry, disallowed path, or duplicate path.
+
+* ``duplicate_groups(entries)`` – consumes already-valid entries (same schema
+  as ``catalog``).  Returns a list of lists of path strings where each inner
+  list contains the paths sharing the same ``(size, sha256)`` tuple.  Only
+  groups of **2 or more** paths are returned; each group is sorted
+  lexicographically, and groups themselves are sorted lexicographically.
+
+* CLI (``python module.py``): reads a JSON array from stdin, prints
+  ``{"catalog": [...], "duplicates": [...]}`` to stdout with
+  ``ensure_ascii=False``.  On validation failure exits with code 2 and
+  prints a concise error to stderr (no traceback).
+
+Unicode
+-------
+Unicode is fully supported in ``path`` values (e.g. ``'ñ', '中文'``).  The
+portable POSIX constraint only forbids backslashes, colons, leading slashes,
+empty components, and ``.``/``..`` components.
+
+No filesystem I/O
+-----------------
+All validation is in-memory.  No ``os``, ``pathlib``, or other filesystem
+calls are made.
+"""
+
+import sys
+import json
+import copy
+import re
+from collections import defaultdict
+
+# Pre-compile the hex-64 regex for sha256 validation.
+_HEX64 = re.compile(r'^[0-9a-f]{64}$')
+
+
+def _validate_entry(entry):
+    """Validate a single entry dict.
+
+    Returns a **copy** of the entry if valid; raises ``ValueError`` otherwise.
+    """
+    if not isinstance(entry, dict):
+        raise ValueError(f"entry must be a dict, got {type(entry).__name__}")
+
+    expected_keys = {'path', 'size', 'sha256'}
+    if set(entry.keys()) != expected_keys:
+        raise ValueError(
+            f"entry must have exactly keys {sorted(expected_keys)}, "
+            f"got {sorted(entry.keys())}"
+        )
+
+    path = entry['path']
+    size = entry['size']
+    sha256 = entry['sha256']
+
+    # --- path validation ---
+    if not isinstance(path, str):
+        raise ValueError(f"path must be str, got {type(path).__name__}")
+    if not path:
+        raise ValueError("path must be nonempty")
+    if '\x00' in path or '\n' in path:
+        raise ValueError("path must not contain NUL or newline")
+    if '\\' in path:
+        raise ValueError("path must not contain backslash")
+    if ':' in path:
+        raise ValueError("path must not contain colon")
+    if path.startswith('/'):
+        raise ValueError("path must not start with /")
+    if path.startswith('.') or path == '.' or path == '..':
+        raise ValueError("path must not contain . or .. components")
+    components = path.split('/')
+    for comp in components:
+        if comp == '' or comp == '.' or comp == '..':
+            raise ValueError(f"invalid path component: {comp!r}")
+
+    # --- size validation (bool before int because bool is subclass of int) ---
+    if isinstance(size, bool):
+        raise ValueError("size must not be bool")
+    if not isinstance(size, int):
+        raise ValueError(f"size must be int, got {type(size).__name__}")
+    if size < 0:
+        raise ValueError("size must be >= 0")
+
+    # --- sha256 validation ---
+    if not isinstance(sha256, str):
+        raise ValueError(f"sha256 must be str, got {type(sha256).__name__}")
+    if not _HEX64.match(sha256):
+        raise ValueError(
+            "sha256 must be exactly 64 lowercase hex characters"
+        )
+
+    return copy.copy(entry)
+
+
+def catalog(entries):
+    """Validate *entries* and return a new list sorted by ``path``.
+
+    Raises ``ValueError`` on any malformed entry or duplicate path.
+    """
+    if not isinstance(entries, list):
+        raise ValueError("entries must be a list")
+
+    validated = []
+    seen_paths = set()
+
+    for entry in entries:
+        e = _validate_entry(entry)
+        path = e['path']
+        if path in seen_paths:
+            raise ValueError(f"duplicate path: {path!r}")
+        seen_paths.add(path)
+        validated.append(e)
+
+    validated.sort(key=lambda e: e['path'])
+    return validated
+
+
+def duplicate_groups(entries):
+    """Return groups of paths sharing the same ``(size, sha256)``.
+
+    Only groups of 2 or more are returned.  Groups are sorted
+    lexicographically; inner path lists are also sorted.
+    """
+    buckets = defaultdict(list)
+
+    for entry in entries:
+        path = entry['path']
+        size = entry['size']
+        sha256 = entry['sha256']
+        buckets[(size, sha256)].append(path)
+
+    groups = sorted(
+        sorted(paths)
+        for paths in buckets.values()
+        if len(paths) >= 2
+    )
+
+    return groups
+
+
+if __name__ == '__main__':
+    try:
+        raw = sys.stdin.read()
+        entries = json.loads(raw)
+    except (json.JSONDecodeError, ValueError) as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(2)
+
+    try:
+        validated = catalog(entries)
+        dups = duplicate_groups(validated)
+        print(json.dumps(
+            {"catalog": validated, "duplicates": dups},
+            ensure_ascii=False
+        ))
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(2)

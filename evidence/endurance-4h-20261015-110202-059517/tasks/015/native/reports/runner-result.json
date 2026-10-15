@@ -1,0 +1,180 @@
+{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261015-131219",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-015-catalog",
+    "objective":  "Validate a portable file catalog and report duplicates without filesystem access",
+    "duration_seconds":  594.8916093,
+    "status":  "COMPLETED",
+    "technical_status":  "SUCCESS",
+    "reason":  "",
+    "tasks_completed":  [
+                            "Validate a portable file catalog and report duplicates without filesystem access"
+                        ],
+    "pending_tasks":  [
+
+                      ],
+    "changed_files":  [
+                          "module.py",
+                          "README.md"
+                      ],
+    "commits":  [
+
+                ],
+    "tests":  [
+                  {
+                      "output":  "ENDURANCE_TEST_PASS\r\n",
+                      "status":  "PASS",
+                      "marker_present":  true,
+                      "id":  "unit",
+                      "exit_code":  0
+                  }
+              ],
+    "builds":  [
+                   {
+                       "output":  "ENDURANCE_BUILD_PASS\r\n",
+                       "status":  "PASS",
+                       "marker_present":  true,
+                       "id":  "build",
+                       "exit_code":  0
+                   }
+               ],
+    "linters":  [
+
+                ],
+    "errors":  [
+                   {
+                       "reason":  "AGENT_FAILED:worker",
+                       "count":  1,
+                       "role":  "worker"
+                   }
+               ],
+    "retries":  {
+                    "llama":  0,
+                    "supervisor":  0,
+                    "reviewer":  0,
+                    "worker":  1
+                },
+    "recoveries":  [
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  10,
+                           "event_id":  "evt-4665cc548cda",
+                           "timestamp":  "2026-10-15T13:18:02.3703330-03:00",
+                           "run_id":  "run-20261015-131219",
+                           "actor":  "runner",
+                           "type":  "WATCHDOG_AGENT_RESTART",
+                           "payload":  {
+                                           "reason":  "AGENT_FAILED:worker",
+                                           "count":  1,
+                                           "role":  "worker"
+                                       }
+                       }
+                   ],
+    "web_queries":  [
+
+                    ],
+    "chatgpt_queries_used":  null,
+    "blocks":  [
+
+               ],
+    "completion_gate":  {
+                            "status":  "COMPLETED",
+                            "checks":  {
+                                           "state_schema_valid":  true,
+                                           "native_live_backend":  true,
+                                           "roles_success":  true,
+                                           "independent_reviewer_accepted":  true,
+                                           "run_id_consistent":  true,
+                                           "tests_all_required":  true,
+                                           "builds_all_required":  true,
+                                           "linters_all_required":  true,
+                                           "tests_exist":  true,
+                                           "no_build_approved_or_passed":  true,
+                                           "criteria_all_mapped_and_passed":  true,
+                                           "pending_empty":  true,
+                                           "failures_not_pending":  true,
+                                           "state_tests_pass":  true,
+                                           "immutable_test_module.py":  true,
+                                           "immutable_build.py":  true,
+                                           "artifact_module.py":  true,
+                                           "artifact_README.md":  true,
+                                           "diff_only_approved_files":  true,
+                                           "relevant_diff_exists":  true,
+                                           "state_git_head_consistent":  true
+                                       },
+                            "failed":  [
+
+                                       ],
+                            "changed_files":  [
+                                                  "README.md",
+                                                  "module.py"
+                                              ],
+                            "run_id":  "run-20261015-131219",
+                            "source":  "DETERMINISTIC_COMPLETION_GATE"
+                        },
+    "cleanup":  {
+                    "job_closed":  true,
+                    "owned_survivors":  [
+
+                                        ],
+                    "run_mutex_released":  true,
+                    "run_lock_removed":  true,
+                    "inference_mutex":  "FREE",
+                    "external_model_preserved":  true,
+                    "errors":  [
+
+                               ]
+                },
+    "processes":  [
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  10404,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276775446024446
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  14652,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276775459419421
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  27792,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276775760491753
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  28664,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276778833365723
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  23060,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276780641221492
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  27716,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276780643242350
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  30976,
+                          "name":  "reviewer",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276780644205801
+                      }
+                  ],
+    "generated_at":  "2026-10-15T13:22:19.0475754-03:00"
+}

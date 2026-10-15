@@ -1,0 +1,191 @@
+{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261015-141230",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-022-csv-ledger",
+    "objective":  "Normalize CSV ledger rows and aggregate exact decimal amounts",
+    "duration_seconds":  715.387674,
+    "status":  "COMPLETED",
+    "technical_status":  "SUCCESS",
+    "reason":  "",
+    "tasks_completed":  [
+                            "Normalize CSV ledger rows and aggregate exact decimal amounts"
+                        ],
+    "pending_tasks":  [
+
+                      ],
+    "changed_files":  [
+                          "module.py",
+                          "README.md"
+                      ],
+    "commits":  [
+
+                ],
+    "tests":  [
+                  {
+                      "output":  "ENDURANCE_TEST_PASS\r\n",
+                      "status":  "PASS",
+                      "marker_present":  true,
+                      "id":  "unit",
+                      "exit_code":  0
+                  }
+              ],
+    "builds":  [
+                   {
+                       "output":  "ENDURANCE_BUILD_PASS\r\n",
+                       "status":  "PASS",
+                       "marker_present":  true,
+                       "id":  "build",
+                       "exit_code":  0
+                   }
+               ],
+    "linters":  [
+
+                ],
+    "errors":  [
+
+               ],
+    "retries":  {
+                    "llama":  0,
+                    "supervisor":  0,
+                    "reviewer":  0,
+                    "worker":  0
+                },
+    "recoveries":  [
+
+                   ],
+    "web_queries":  [
+
+                    ],
+    "chatgpt_queries_used":  null,
+    "blocks":  [
+
+               ],
+    "completion_gate":  {
+                            "status":  "COMPLETED",
+                            "checks":  {
+                                           "state_schema_valid":  true,
+                                           "native_live_backend":  true,
+                                           "roles_success":  true,
+                                           "independent_reviewer_accepted":  true,
+                                           "run_id_consistent":  true,
+                                           "tests_all_required":  true,
+                                           "builds_all_required":  true,
+                                           "linters_all_required":  true,
+                                           "tests_exist":  true,
+                                           "no_build_approved_or_passed":  true,
+                                           "criteria_all_mapped_and_passed":  true,
+                                           "pending_empty":  true,
+                                           "failures_not_pending":  true,
+                                           "state_tests_pass":  true,
+                                           "immutable_test_module.py":  true,
+                                           "immutable_build.py":  true,
+                                           "artifact_module.py":  true,
+                                           "artifact_README.md":  true,
+                                           "diff_only_approved_files":  true,
+                                           "relevant_diff_exists":  true,
+                                           "state_git_head_consistent":  true
+                                       },
+                            "failed":  [
+
+                                       ],
+                            "changed_files":  [
+                                                  "README.md",
+                                                  "module.py"
+                                              ],
+                            "run_id":  "run-20261015-141230",
+                            "source":  "DETERMINISTIC_COMPLETION_GATE"
+                        },
+    "cleanup":  {
+                    "job_closed":  true,
+                    "owned_survivors":  [
+
+                                        ],
+                    "run_mutex_released":  true,
+                    "run_lock_removed":  true,
+                    "inference_mutex":  "FREE",
+                    "external_model_preserved":  true,
+                    "errors":  [
+
+                               ]
+                },
+    "processes":  [
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  16984,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276811548677734
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  30636,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276811562080810
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  18860,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276812117009155
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  34372,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276815001962992
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  31664,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276815003922225
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  36884,
+                          "name":  "reviewer",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276815004901849
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  24840,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276815609075002
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  36980,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276816396050350
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  37668,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276818379208693
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  11196,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276818381119875
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  32256,
+                          "name":  "reviewer",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276818382118100
+                      }
+                  ],
+    "generated_at":  "2026-10-15T14:24:29.7954218-03:00"
+}

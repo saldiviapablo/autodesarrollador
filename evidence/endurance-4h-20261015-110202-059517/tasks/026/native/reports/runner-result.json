@@ -1,0 +1,215 @@
+{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261015-145540",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-026-intervals",
+    "objective":  "Merge integer time intervals and compute gaps and peak concurrency",
+    "duration_seconds":  790.2944901,
+    "status":  "COMPLETED",
+    "technical_status":  "SUCCESS",
+    "reason":  "",
+    "tasks_completed":  [
+                            "Merge integer time intervals and compute gaps and peak concurrency"
+                        ],
+    "pending_tasks":  [
+
+                      ],
+    "changed_files":  [
+                          "module.py",
+                          "README.md"
+                      ],
+    "commits":  [
+
+                ],
+    "tests":  [
+                  {
+                      "output":  "ENDURANCE_TEST_PASS\r\n",
+                      "status":  "PASS",
+                      "marker_present":  true,
+                      "id":  "unit",
+                      "exit_code":  0
+                  }
+              ],
+    "builds":  [
+                   {
+                       "output":  "ENDURANCE_BUILD_PASS\r\n",
+                       "status":  "PASS",
+                       "marker_present":  true,
+                       "id":  "build",
+                       "exit_code":  0
+                   }
+               ],
+    "linters":  [
+
+                ],
+    "errors":  [
+                   {
+                       "reason":  "AGENT_FAILED:worker",
+                       "count":  1,
+                       "role":  "worker"
+                   }
+               ],
+    "retries":  {
+                    "llama":  0,
+                    "supervisor":  0,
+                    "reviewer":  0,
+                    "worker":  1
+                },
+    "recoveries":  [
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  10,
+                           "event_id":  "evt-81a943cce154",
+                           "timestamp":  "2026-10-15T15:01:36.6847274-03:00",
+                           "run_id":  "run-20261015-145540",
+                           "actor":  "runner",
+                           "type":  "WATCHDOG_AGENT_RESTART",
+                           "payload":  {
+                                           "reason":  "AGENT_FAILED:worker",
+                                           "count":  1,
+                                           "role":  "worker"
+                                       }
+                       }
+                   ],
+    "web_queries":  [
+
+                    ],
+    "chatgpt_queries_used":  null,
+    "blocks":  [
+
+               ],
+    "completion_gate":  {
+                            "status":  "COMPLETED",
+                            "checks":  {
+                                           "state_schema_valid":  true,
+                                           "native_live_backend":  true,
+                                           "roles_success":  true,
+                                           "independent_reviewer_accepted":  true,
+                                           "run_id_consistent":  true,
+                                           "tests_all_required":  true,
+                                           "builds_all_required":  true,
+                                           "linters_all_required":  true,
+                                           "tests_exist":  true,
+                                           "no_build_approved_or_passed":  true,
+                                           "criteria_all_mapped_and_passed":  true,
+                                           "pending_empty":  true,
+                                           "failures_not_pending":  true,
+                                           "state_tests_pass":  true,
+                                           "immutable_test_module.py":  true,
+                                           "immutable_build.py":  true,
+                                           "artifact_module.py":  true,
+                                           "artifact_README.md":  true,
+                                           "diff_only_approved_files":  true,
+                                           "relevant_diff_exists":  true,
+                                           "state_git_head_consistent":  true
+                                       },
+                            "failed":  [
+
+                                       ],
+                            "changed_files":  [
+                                                  "README.md",
+                                                  "module.py"
+                                              ],
+                            "run_id":  "run-20261015-145540",
+                            "source":  "DETERMINISTIC_COMPLETION_GATE"
+                        },
+    "cleanup":  {
+                    "job_closed":  true,
+                    "owned_survivors":  [
+
+                                        ],
+                    "run_mutex_released":  true,
+                    "run_lock_removed":  true,
+                    "inference_mutex":  "FREE",
+                    "external_model_preserved":  true,
+                    "errors":  [
+
+                               ]
+                },
+    "processes":  [
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  7508,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276837451571250
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  21644,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276837461432019
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  20644,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276837903834752
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  24636,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276840976346392
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  10432,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276842630757310
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  22088,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276842632672847
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  24536,
+                          "name":  "reviewer",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276842633712117
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  29408,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276843442715911
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  35248,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276843664185459
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  21912,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276844934699947
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  21108,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276844936573968
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  3552,
+                          "name":  "reviewer",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276844937714303
+                      }
+                  ],
+    "generated_at":  "2026-10-15T15:08:54.9839868-03:00"
+}

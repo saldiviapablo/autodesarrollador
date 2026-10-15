@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "backend": "live",
+  "task": "Implement merge_intervals(intervals) where intervals is a list of integer pairs 0<=start<end (bool is not an integer here). Reject all other values with ValueError. Return sorted merged tuples, merging overlaps and touching intervals; do not mutate input. Implement gaps(intervals,start,end): require integer non-bool 0<=start<end and every interval inside that window; return sorted uncovered tuples. Implement peak_load(intervals): maximum concurrent half-open intervals, touching endpoints do not overlap; empty ->0. CLI python module.py reads JSON {\"intervals\":[...],\"start\":int,\"end\":int} stdin and outputs JSON with merged,gaps,peak keys. Invalid -> exit2 concise stderr. Document half-open/touching semantics and examples. Python stdlib only. Modify module.py and README.md only. Never edit tests/build/.autopilot. Run python test_module.py and python build.py.",
+  "allowed_files": [
+    "module.py",
+    "README.md"
+  ],
+  "tests": [
+    {
+      "id": "unit",
+      "argv": [
+        "python",
+        "test_module.py"
+      ],
+      "marker": "ENDURANCE_TEST_PASS",
+      "timeout_seconds": 30
+    }
+  ],
+  "builds": [
+    {
+      "id": "build",
+      "argv": [
+        "python",
+        "build.py"
+      ],
+      "marker": "ENDURANCE_BUILD_PASS",
+      "timeout_seconds": 30
+    }
+  ],
+  "criteria": [
+    {
+      "criterion": "Merge integer time intervals and compute gaps and peak concurrency; immutable acceptance and documented CLI verified",
+      "test_id": "unit"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "module.py"
+    },
+    {
+      "path": "README.md"
+    }
+  ],
+  "immutable_files": [
+    {
+      "path": "test_module.py",
+      "sha256": "bdb23c8f24f87a0f7b522bbf7abf6df55d043b9bc4e7fe7118c354376c10150e"
+    },
+    {
+      "path": "build.py",
+      "sha256": "6e81a6ff00c26c01a8ba454b02c862899a599bac98b98985f76c27b400306f7c"
+    }
+  ],
+  "phase_timeout_seconds": 300,
+  "global_timeout_seconds": 1800,
+  "restart_budget": 2,
+  "max_cycles": 5
+}

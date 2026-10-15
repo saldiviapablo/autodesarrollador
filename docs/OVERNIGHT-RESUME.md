@@ -5,14 +5,14 @@
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
-  "last_completed": "F25 PASS",
-  "active_phase": "4H_RUNNING",
+  "last_completed": "4H PASS",
+  "active_phase": "F26_AUDIT",
   "last_cause": "New endurance adapter launcher argument contract",
   "last_fix": "Budget mock component PASS after correcting invalid initial test fixture; product schema correctly denied999; no production control change",
-  "last_commit": "851e727176fdf8006206bb084eaebef07132e907",
-  "next_action": "Observe existing controller; NO duplicate. Native STATE authoritative; do not alter frozen sources/config/history. Terminal PASS: independent closure and commit, then next phase.",
+  "last_commit": "34ee06bd71fc4712123757a9b022ebbff2e05b24",
+  "next_action": "Run F26 audit/global regression in new evidence; then safe F27 pilot/final human review and F28 real6–8h",
   "run_pointer": null,
-  "updated_at": "2026-10-15T17:10:30.322027+00:00",
+  "updated_at": "2026-10-15T18:10:41.141557+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -43,11 +43,11 @@
   "run_id": null,
   "harness_session_id": null,
   "auxiliary_tool_sessions": {},
-  "active_run": "run-20261015-140240",
-  "active_task": "worker",
-  "current_native_project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-021-catalog",
-  "last_completed_stage_id": "f25-20261015-050751-1239ed",
-  "last_completed_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-f25-20261015-050751-1239ed",
+  "active_run": null,
+  "active_task": null,
+  "current_native_project": null,
+  "last_completed_stage_id": "4h-20261015-110202-059517",
+  "last_completed_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-4h-20261015-110202-059517",
   "historical_f24_consultation_id": "f24-a11-2d44843ee2c2460bbb643c927080e3f8",
   "stage_id": "4h-20261015-110202-059517",
   "controller_pid": 27120,
@@ -56,7 +56,7 @@
   "completed_tasks": 20,
   "evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-4h-20261015-110202-059517",
   "native_status": "RUNNING",
-  "tool_session_id": 19192,
+  "tool_session_id": null,
   "last_failure": {
     "signature": "AUDIT_UNIT_INITIAL_BUDGET_SCHEMA_ORACLE",
     "scope": "new isolated unit fixture; no F26 run or active4H failure",
@@ -67,11 +67,5 @@
 }
 ```
 
-F24 and F25 remain PASS.4H independent real14400s clock; never add F25 time. Observe existing PID/birth and native project, not stale chat. No push.
-
-## Prepared next-phase helpers
-
-All helpers in logs/overnight remain preparation, not phase PASS. close-endurance-stage.py succeeded for F25. After4H promote/certify global-audit.py, relocate-audit-test.py, run-owned-audit-gate.ps1. Certify owned gate cleanup/parent loss before actual F26. Pilot files: pilot_workload.py, pilot-controller.py, night-pilot-workload.py, night-pilot-controller.py, test-pilot-controllers.py.13 unit cases passed, no real pilot. F27 requires actual final human review per Roadmap07 section30 before F28; never manufacture a receipt. F26/F27/F28 closure and final-report helpers remain to implement. Sources/config/history are frozen during each active endurance run.
-
-
-Prepared source inventory: logs/overnight/PREPARED-SOURCES.json. After4H terminal only: promote/certify global-audit.py, relocate-audit-test.py, run-owned-audit-gate.ps1, test-audit-budget-smoke.py, test-audit-entry-guards.py; local commit/Git clean before F26. Owned wrapper certificate6e09dcb; budget mock certificatecafac05 (historical initial fixture FAIL retained, source schema correctly denied999). Entry/metadata scope controls9 unit cases PASS; no actualF26. Prepared pilot17 immutable tests / night23, controller controls13PASS, no actualpilot. Closing helpers underlogs snapshot themselves into actual evidence on execution; all future helpers remain preparation until executed. Do not change frozen sources while4H active.
+Latest completed stage: 4H PASS: 14781.279s reales, 26 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-4h-20261015-110202-059517/.
+Native STATE remains authority. No push.

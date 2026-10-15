@@ -1,0 +1,8 @@
+{
+    "probe_delay_seconds":  null,
+    "backend":  "live",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-003-catalog",
+    "role":  "supervisor",
+    "timeout":  300,
+    "prompt":  "Plan only. Return JSON {\"task\":\"...\"} for this approved objective and task. Do not use tools or edit. Objective: Validate a portable file catalog and report duplicates without filesystem access Task: Implement catalog(entries): entries is a list of dicts with exactly path,size,sha256. path must be a nonempty portable POSIX relative path, no backslash, colon, leading slash, empty component, . or .. component, NUL/newline. Unicode allowed. size must be integer \u003e=0, bool forbidden. sha256 must be exactly64 lowercase hex characters. Reject malformed entries and duplicate paths with ValueError. Return new list of dicts sorted by path; never mutate input or access filesystem. Implement duplicate_groups(entries) using validated catalog: return lists of paths having same (size,sha256), each group sorted, only groups of \u003e=2, groups sorted lexicographically. CLI reads JSON array stdin; outputs JSON {\"catalog\":...,\"duplicates\":...} ensure_ascii=False; invalid -\u003eexit2 concise stderr. Document contract, Unicode, examples, no filesystem I/O. Modify module.py and README.md only. Never edit tests/build/.autopilot. Run python test_module.py and python build.py.\nPrevious deterministic feedback: "
+}

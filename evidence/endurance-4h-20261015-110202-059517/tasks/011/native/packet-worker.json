@@ -1,0 +1,32 @@
+{
+    "probe_delay_seconds":  null,
+    "backend":  "live",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-011-intervals",
+    "research_inline":  false,
+    "role":  "worker",
+    "timeout":  300,
+    "request":  {
+                    "allowed_actions":  [
+                                            "edit_file",
+                                            "run_test",
+                                            "git_commit_local"
+                                        ],
+                    "schema_version":  "1.0",
+                    "workspace":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-011-intervals",
+                    "delegation_id":  "del-run-20261015-124023",
+                    "forbidden_actions":  [
+                                              "git_push",
+                                              "delete_root",
+                                              "modify_runner_guardrails"
+                                          ],
+                    "objective":  "Merge integer time intervals and compute gaps and peak concurrency",
+                    "tests":  [
+
+                              ],
+                    "task":  "Implement merge_intervals(intervals) where intervals is a list of integer pairs 0\u003c=start\u003cend (bool is not an integer here). Reject all other values with ValueError. Return sorted merged tuples, merging overlaps and touching intervals; do not mutate input. Implement gaps(intervals,start,end): require integer non-bool 0\u003c=start\u003cend and every interval inside that window; return sorted uncovered tuples. Implement peak_load(intervals): maximum concurrent half-open intervals, touching endpoints do not overlap; empty -\u003e0. CLI python module.py reads JSON {\"intervals\":[...],\"start\":int,\"end\":int} stdin and outputs JSON with merged,gaps,peak keys. Invalid -\u003e exit2 concise stderr. Document half-open/touching semantics and examples. Python stdlib only. Modify module.py and README.md only. Never edit tests/build/.autopilot. Run python test_module.py and python build.py.\nSupervisor plan (advisory, approved scope remains binding): {\n  \"task\": \"Implement interval arithmetic and CLI in `module.py` and document in `README.md`.\\n\\n1. **Modify `module.py`**:\\n   - **Validation**: Create helpers to validate integer inputs (rejecting `bool` instances) and ensure `0 \u003c= start \u003c end`.\\n   - **`merge_intervals(intervals)`**: \\n     - Accept list of `[start, end]` pairs.\\n     - Validate inputs.\\n     - Sort intervals. Merge overlapping and touching intervals (e.g., `[1, 2]` and `[2, 3]` merge to `[1, 3]`).\\n     - Return list of tuples. Do not mutate input.\\n   - **`gaps(intervals, start, end)`**:\\n     - Validate integer inputs.\\n     - Compute uncovered segments within `[start, end)` given the intervals.\\n     - Return sorted list of uncovered tuples.\\n   - **`peak_load(intervals)`**:\\n     - Calculate maximum concurrent active intervals.\\n     - Use half-open semantics `[start, end)`. Touching endpoints do not overlap (e.g., `[1, 2]` and `[2, 3]` overlap count is 1, not 2).\\n     - Return integer (0 for empty).\\n   - **CLI**: \\n     - Read JSON from stdin: `{\\\"intervals\\\": [...], \\\"start\\\": int, \\\"end\\\": int}`.\\n     - Output JSON: `{\\\"merged\\\": [...], \\\"gaps\\\": [...], \\\"peak\\\": int}`.\\n     - On validation error, print concise message to stderr and exit code 2.\\n\\n2. **Modify `README.md`**:\\n   - Document the module\u0027s purpose.\\n   - Explain half-open interval semantics `[start, end)`.\\n   - Provide examples for `merge_intervals` (touching merges) vs `peak_load` (touching does not overlap).\\n\\n3. **Verify**:\\n   - Execute `python test_module.py`.\\n   - Execute `python build.py`.\\n\\n4. **Constraints**:\\n   - Use only Python stdlib.\\n   - Do not modify `tests/`, `build/`, or `.autopilot`.\"\n}\nPrevious checks to correct: ",
+                    "acceptance_criteria":  [
+                                                "Merge integer time intervals and compute gaps and peak concurrency; immutable acceptance and documented CLI verified"
+                                            ],
+                    "status":  "READY"
+                }
+}

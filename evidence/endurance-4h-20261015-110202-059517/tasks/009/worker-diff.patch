@@ -1,0 +1,326 @@
+diff --git a/README.md b/README.md
+index af4c579..120f7ed 100644
+--- a/README.md
++++ b/README.md
+@@ -1,3 +1,140 @@
+ # catalog
+ 
+-Documentation incomplete.
++Validate a portable file catalog and report duplicates — **without filesystem access**.
++
++## Installation
++
++No external dependencies required.  Python 3.6+ is sufficient.
++
++## Usage
++
++```python
++from module import catalog, duplicate_groups
++
++entries = [
++    {"path": "docs/a.txt", "size": 1024, "sha256": "a" * 64},
++    {"path": "src/b.txt", "size": 1024, "sha256": "a" * 64},
++    {"path": "tmp/c.txt", "size": 512,  "sha256": "b" * 64},
++]
++
++validated = catalog(entries)
++# → [{"path": "docs/a.txt", ...}, {"path": "src/b.txt", ...}, ...]
++
++duplicates = duplicate_groups(validated)
++# → [["docs/a.txt", "src/b.txt"]]
++```
++
++## CLI
++
++```bash
++echo '[{"path":"z","size":1,"sha256":"a"*64}]' | python module.py
++# → {"catalog":[...],"duplicates":[]}
++```
++
++Reads a JSON array from **stdin**, writes ``{"catalog": ..., "duplicates": ...}`` to **stdout** with ``ensure_ascii=False``.  Exits **0** on success, **2** on validation error (concise message on stderr, no traceback).
++
++## Contract
++
++### `catalog(entries)`
++
++| Aspect    | Detail |
++|-----------|--------|
++| **Input**  | ``entries`` — a list of dicts, each with exactly the keys ``path``, ``size``, ``sha256``. |
++| **Output** | A **new** list of dicts sorted by ``path`` (ascending).  Input is never mutated. |
++| **Errors** | Raises ``ValueError`` on malformed entries or duplicate paths. |
++
++#### Path validation
++
++- Must be a non-empty string.
++- POSIX relative: **no** leading slash, **no** backslash, **no** colon.
++- **No** empty components (``a//b`` is invalid), **no** ``.`` or ``..`` components.
++- **No** NUL (``\x00``) or newline (``\n``) characters.
++- **Unicode is fully supported** (e.g. ``ñ``, ``中文``, ``📄``).
++
++#### Size validation
++
++- Must be an ``int`` ≥ 0.
++- ``bool`` is explicitly forbidden (``isinstance(True, int)`` is ``True`` in Python).
++- Floats such as ``1.5`` are rejected.
++
++#### SHA-256 validation
++
++- Must be exactly 64 lowercase hexadecimal characters.
++- Uppercase letters, wrong length, or non-hex characters are rejected.
++
++#### Duplicate-path detection
++
++- If two or more entries share the same ``path``, a ``ValueError`` is raised immediately.
++
++### `duplicate_groups(entries)`
++
++| Aspect    | Detail |
++|-----------|--------|
++| **Input**  | A *validated* catalog (output of ``catalog``). |
++| **Output** | A list of groups; each group is a sorted list of ``path`` strings that share the same ``(size, sha256)`` pair. |
++| **Filter** | Only groups with ``>= 2`` members are included. |
++| **Sorting** | Paths within each group are sorted lexicographically; groups are sorted by their first element. |
++
++## Examples
++
++### Duplicate detection
++
++```python
++entries = [
++    {"path": "a", "size": 100, "sha256": "aa" * 32},
++    {"path": "z", "size": 100, "sha256": "aa" * 32},
++    {"path": "b", "size": 200, "sha256": "bb" * 32},
++    {"path": "c", "size": 200, "sha256": "bb" * 32},
++    {"path": "unique", "size": 300, "sha256": "cc" * 32},
++]
++
++duplicate_groups(catalog(entries))
++# → [["a", "z"], ["b", "c"]]
++```
++
++### Unicode paths
++
++```python
++entries = [
++    {"path": "ñ/b.txt", "size": 42, "sha256": "ff" * 32},
++    {"path": "a.txt",   "size": 42, "sha256": "ff" * 32},
++]
++
++catalog(entries)
++# → [{"path": "a.txt", ...}, {"path": "ñ/b.txt", ...}]
++```
++
++### Rejected inputs
++
++``ValueError`` is raised for:
++
++| Invalid value                | Reason                        |
++|------------------------------|-------------------------------|
++| ``path = ""``                | Empty string                  |
++| ``path = "/x"``              | Leading slash                 |
++| ``path = "../x"``            | ``..`` component              |
++| ``path = "./a"``             | ``.`` component               |
++| ``path = "a//b"``            | Empty component               |
++| ``path = "C:x"``             | Colon (Windows drive letter)  |
++| ``path = "a\\b"``            | Backslash                     |
++| ``path = "a\nb"``            | Newline                       |
++| ``size = True``              | Bool forbidden                |
++| ``size = -1``                | Negative                      |
++| ``size = 1.5``               | Float                         |
++| ``sha256 = "A" * 64``        | Uppercase hex                 |
++| ``sha256 = "a" * 63``        | Wrong length                  |
++| duplicate ``path`` values    | Duplicate path                |
++| dict with extra keys         | Exact key set required        |
++
++## No filesystem I/O
++
++This module performs **zero** filesystem operations.  All validation and duplicate detection is performed entirely in memory.  It is suitable for auditing portable catalogs without touching disk.
++
++## Running tests and build
++
++```bash
++python test_module.py
++python build.py
++```
++
++Both must exit 0.
+diff --git a/module.py b/module.py
+index 396ffa7..0185b4b 100644
+--- a/module.py
++++ b/module.py
+@@ -1,6 +1,170 @@
+-"""Incomplete catalog utility. Worker must implement approved API."""
+-def catalog(*args,**kwargs):
+- raise NotImplementedError("incomplete baseline")
++"""Portable file catalog validator and duplicate-reporter.
+ 
+-def duplicate_groups(*args,**kwargs):
+- raise NotImplementedError("incomplete baseline")
++Contract
++--------
++catalog(entries)
++    Validate a list of entry dicts with exactly the keys ``path``, ``size``,
++    ``sha256``.  Raises ``ValueError`` on any malformed entry or duplicate
++    ``path``.  Returns a **new** list of validated dicts sorted by ``path``,
++    never mutating the input and never accessing the filesystem.
++
++duplicate_groups(entries)
++    Accept a *validated* catalog (output of ``catalog``).  Returns a list of
++    groups, where each group is a sorted list of ``path`` values that share
++    the same ``(size, sha256)`` pair.  Only groups with ``>= 2`` members are
++    returned.  Groups themselves are sorted lexicographically by their first
++    element.
++
++CLI
++---
++Reads a JSON array of entries from stdin, outputs ``{"catalog": ...,
++"duplicates": ...}`` to stdout (``ensure_ascii=False``), and exits 0.  On
++any validation error exits 2 with a concise message on stderr.
++
++Unicode
++-------
++Unicode is fully supported in ``path`` values (e.g. ``ñ``, ``中``, ``📄``)
++provided the path obeys the POSIX-relative constraints below.
++
++No filesystem I/O
++-----------------
++This module performs **zero** filesystem operations.  All validation is
++in-memory only.
++
++Examples
++--------
++>>> catalog([{"path": "z.txt", "size": 10, "sha256": "a"*64}])
++[{"path": "z.txt", "size": 10, "sha256": "a"*64}]
++
++>>> duplicate_groups([
++...     {"path": "a", "size": 1, "sha256": "b"*64},
++...     {"path": "z", "size": 1, "sha256": "b"*64},
++... ])
++[["a", "z"]]
++"""
++
++import copy
++import hashlib
++import json
++import sys
++
++
++def _validate_path(path):
++    """Raise ValueError if *path* violates the portable-POSIX rules."""
++    if not isinstance(path, str):
++        raise ValueError("path must be a string")
++    if '\x00' in path or '\n' in path:
++        raise ValueError("path must not contain NUL or newline")
++    if '\\' in path:
++        raise ValueError("path must not contain backslash")
++    if ':' in path:
++        raise ValueError("path must not contain colon")
++    if path.startswith('/'):
++        raise ValueError("path must not start with leading slash")
++    if not path:
++        raise ValueError("path must be a non-empty string")
++    if path in ('.', '..'):
++        raise ValueError("path must not be '.' or '..'")
++    parts = path.split('/')
++    for part in parts:
++        if part == '' or part in ('.', '..'):
++            raise ValueError(f"empty or dot/dotdot component in path")
++
++
++_HEX = set('0123456789abcdef')
++
++
++def _validate_sha256(value):
++    """Raise ValueError if *value* is not exactly 64 lowercase-hex chars."""
++    if not isinstance(value, str) or len(value) != 64:
++        raise ValueError("sha256 must be exactly 64 lowercase hex characters")
++    if not all(c in _HEX for c in value):
++        raise ValueError("sha256 must be exactly 64 lowercase hex characters")
++
++
++def _validate_size(value):
++    """Raise ValueError unless *value* is an int >= 0 (bool forbidden)."""
++    if isinstance(value, bool) or not isinstance(value, int):
++        raise ValueError("size must be an integer >= 0; bool is forbidden")
++    if value < 0:
++        raise ValueError("size must be an integer >= 0")
++
++
++def catalog(entries):
++    """Validate *entries* and return a new list of dicts sorted by path.
++
++    Raises ``ValueError`` on any malformed entry or duplicate path.
++    """
++    if not isinstance(entries, (list, tuple)):
++        raise ValueError("entries must be a list")
++
++    result = []
++    seen_paths = set()
++
++    for idx, item in enumerate(entries):
++        if not isinstance(item, dict):
++            raise ValueError(f"entry[{idx}] must be a dict")
++        if set(item.keys()) != {'path', 'size', 'sha256'}:
++            raise ValueError(
++                f"entry[{idx}] must have exactly keys path, size, sha256"
++            )
++        _validate_path(item['path'])
++        _validate_size(item['size'])
++        _validate_sha256(item['sha256'])
++        if item['path'] in seen_paths:
++            raise ValueError(f"duplicate path: {item['path']!r}")
++        seen_paths.add(item['path'])
++        result.append({
++            'path': item['path'],
++            'size': item['size'],
++            'sha256': item['sha256'],
++        })
++
++    result.sort(key=lambda d: d['path'])
++    return result
++
++
++def duplicate_groups(entries):
++    """Return groups of duplicate paths (same *size* and *sha256*).
++
++    Accepts a *validated* catalog (output of :func:`catalog`).  Returns a
++    list of sorted path-lists, each group having ``>= 2`` members, and the
++    groups themselves sorted lexicographically.
++    """
++    buckets = {}
++    for item in entries:
++        key = (item['size'], item['sha256'])
++        buckets.setdefault(key, []).append(item['path'])
++
++    groups = sorted(
++        sorted(paths)
++        for paths in buckets.values()
++        if len(paths) >= 2
++    )
++    return groups
++
++
++def _cli():
++    """CLI entry-point: read JSON from stdin, write result to stdout."""
++    try:
++        data = json.load(sys.stdin)
++    except (json.JSONDecodeError, ValueError) as exc:
++        print(f"invalid JSON: {exc}", file=sys.stderr)
++        sys.exit(2)
++
++    try:
++        cat = catalog(data)
++        dupes = duplicate_groups(cat)
++    except ValueError as exc:
++        print(str(exc), file=sys.stderr)
++        sys.exit(2)
++
++    print(json.dumps(
++        {'catalog': cat, 'duplicates': dupes},
++        ensure_ascii=False,
++        indent=2,
++    ))
++
++
++if __name__ == '__main__':
++    _cli()

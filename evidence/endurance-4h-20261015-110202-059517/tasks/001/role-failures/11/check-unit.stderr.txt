@@ -1,0 +1,202 @@
+﻿test_aggregate (__main__.Acceptance.test_aggregate) ... ERROR
+test_cli (__main__.Acceptance.test_cli) ... ERROR
+test_documentation (__main__.Acceptance.test_documentation) ... FAIL
+test_header_only (__main__.Acceptance.test_header_only) ... ERROR
+test_invalid (__main__.Acceptance.test_invalid) ... 
+  test_invalid (__main__.Acceptance.test_invalid) (s='') ... ERROR
+  test_invalid (__main__.Acceptance.test_invalid) (s='wrong,header\n') ... ERROR
+  test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2023-02-29,X,1\n') ... ERROR
+  test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-1-01,X,1\n') ... ERROR
+  test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,,1\n') ... ERROR
+  test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,X,NaN\n') ... ERROR
+  test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,X,Infinity\n') ... ERROR
+  test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,X,bad\n') ... ERROR
+  test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,X\n') ... ERROR
+  test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,X,1,extra\n') ... ERROR
+test_rows_unicode_and_rounding (__main__.Acceptance.test_rows_unicode_and_rounding) ... ERROR
+test_stage_specific_amount (__main__.Acceptance.test_stage_specific_amount) ... ERROR
+
+======================================================================
+ERROR: test_aggregate (__main__.Acceptance.test_aggregate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 11, in test_aggregate
+    self.assertEqual(totals(parse_ledger('date,category,amount\n2024-01-01,Z,0.10\n2024-01-01,A,0.20\n2024-01-02,Z,0.20\n')),{'A':'0.20','Z':'0.30'})
+                            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_cli (__main__.Acceptance.test_cli)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 19, in test_cli
+    p=subprocess.run([sys.executable,'module.py'],input='date,category,amount\n2024-01-01,Ñ,1.005\n',text=True,capture_output=True);self.assertEqual(p.returncode,0,p.stderr);self.assertEqual(json.loads(p.stdout)['totals'],{'Ñ':'1.01'})
+                                                                                                                                                                                               ~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python314\Lib\json\__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Python314\Lib\json\decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\json\decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: test_header_only (__main__.Acceptance.test_header_only)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 13, in test_header_only
+    def test_header_only(self):self.assertEqual(parse_ledger('date,category,amount\n'),[])
+                                                ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_invalid (__main__.Acceptance.test_invalid) (s='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 17, in test_invalid
+    with self.assertRaises(ValueError):parse_ledger(s)
+                                       ~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_invalid (__main__.Acceptance.test_invalid) (s='wrong,header\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 17, in test_invalid
+    with self.assertRaises(ValueError):parse_ledger(s)
+                                       ~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2023-02-29,X,1\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 17, in test_invalid
+    with self.assertRaises(ValueError):parse_ledger(s)
+                                       ~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-1-01,X,1\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 17, in test_invalid
+    with self.assertRaises(ValueError):parse_ledger(s)
+                                       ~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,,1\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 17, in test_invalid
+    with self.assertRaises(ValueError):parse_ledger(s)
+                                       ~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,X,NaN\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 17, in test_invalid
+    with self.assertRaises(ValueError):parse_ledger(s)
+                                       ~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,X,Infinity\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 17, in test_invalid
+    with self.assertRaises(ValueError):parse_ledger(s)
+                                       ~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,X,bad\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 17, in test_invalid
+    with self.assertRaises(ValueError):parse_ledger(s)
+                                       ~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,X\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 17, in test_invalid
+    with self.assertRaises(ValueError):parse_ledger(s)
+                                       ~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_invalid (__main__.Acceptance.test_invalid) (s='date,category,amount\n2024-01-01,X,1,extra\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 17, in test_invalid
+    with self.assertRaises(ValueError):parse_ledger(s)
+                                       ~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_rows_unicode_and_rounding (__main__.Acceptance.test_rows_unicode_and_rounding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 8, in test_rows_unicode_and_rounding
+    r=parse_ledger('date,category,amount\n2024-02-29, Café ,1.005\n2024-03-01,"Comida, casa",-2.675\n')
+      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+ERROR: test_stage_specific_amount (__main__.Acceptance.test_stage_specific_amount)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 5, in test_stage_specific_amount
+    self.assertEqual(totals(parse_ledger('date,category,amount\n2024-01-01,Task,7.125\n')),{'Task':'7.13'})
+                            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\module.py", line 3, in parse_ledger
+    raise NotImplementedError("incomplete baseline")
+NotImplementedError: incomplete baseline
+
+======================================================================
+FAIL: test_documentation (__main__.Acceptance.test_documentation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-4h-20261015-110202-059517\task-001-csv-ledger\test_module.py", line 24, in test_documentation
+    text=Path('README.md').read_text(encoding='utf-8');self.assertGreater(len(text),250);self.assertIn('module.py',text);self.assertIn('ValueError',text);self.assertIn('2',text)
+                                                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 40 not greater than 250
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.033s
+
+FAILED (failures=1, errors=15)

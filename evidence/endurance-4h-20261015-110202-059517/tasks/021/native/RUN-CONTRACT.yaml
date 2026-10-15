@@ -1,0 +1,25 @@
+schema_version: '1.0'
+run_id: run-20261015-140240
+project_id: task-021-catalog
+project_root: C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-4h-20261015-110202-059517/task-021-catalog
+objective: Validate a portable file catalog and report duplicates without filesystem
+  access
+acceptance_criteria:
+- Validate a portable file catalog and report duplicates without filesystem access;
+  immutable acceptance and documented CLI verified
+autonomy_mode: unattended
+authorized: true
+authorized_at: '2026-10-15T14:02:43.337871-03:00'
+created_at: '2026-10-15T14:02:40.7566811-03:00'
+time_budget_minutes: 30
+allowed_actions:
+- edit_file
+- run_test
+- git_commit_local
+forbidden_actions:
+- git_push
+- delete_root
+- modify_runner_guardrails
+test_commands: []
+build_commands: []
+security_policy_reference: config/security.yaml

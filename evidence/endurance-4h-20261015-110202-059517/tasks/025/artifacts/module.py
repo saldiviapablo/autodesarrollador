@@ -1,0 +1,154 @@
+"""CSV ledger normalizer — exact Decimal aggregation.
+
+API
+---
+parse_ledger(text: str) -> list[dict]
+    Parse CSV string with exact header ``date,category,amount``.
+    Returns list of dicts with keys ``date``, ``category``, ``amount``
+    (amount is a two-decimal *string*, quantised ROUND_HALF_UP).
+
+totals(rows: list[dict]) -> dict[str, str]
+    Aggregate ``amount`` by ``category``; keys lexicographic, values
+    two-decimal strings.
+
+CLI
+---
+    python module.py < input.csv
+    Prints ``{"rows": ..., "totals": ...}`` (ensure_ascii=False).
+    On invalid input exits 2 with a concise stderr message.
+
+Validation
+----------
+* Header must be exactly ``date,category,amount``.
+* Each row must have exactly 3 fields.
+* Date: ``YYYY-MM-DD``, canonical zero-padded, ISO-calendar valid.
+* Category: non-empty after strip.
+* Amount: finite Decimal, quantised to 2 decimals ROUND_HALF_UP.
+
+References
+----------
+* https://docs.python.org/3/library/decimal.html#decimal.ROUND_HALF_UP
+* https://docs.python.org/3/library/json.html
+"""
+from __future__ import annotations
+
+import csv
+import io
+import json
+import sys
+from datetime import date
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
+
+
+TWO_PLACES = Decimal("0.01")
+
+
+def _validate_date(raw: str) -> str:
+    """Return canonical ``YYYY-MM-DD`` or raise ValueError."""
+    if not isinstance(raw, str):
+        raise ValueError("date field is not a string")
+    value = raw.strip()
+    # Must match exact 4-1-2 pattern (digits, dash, digits, dash, digits)
+    parts = value.split("-")
+    if len(parts) != 3:
+        raise ValueError(f"invalid date format: {value!r}")
+    for p in parts:
+        if not p.isdigit():
+            raise ValueError(f"invalid date component: {value!r}")
+    # Reject non-canonical: leading zeros in month/day must be preserved,
+    # but reject missing leading zeros (e.g. "2024-1-01" fails because
+    # month part is "1" not "01").
+    if len(parts[0]) != 4 or len(parts[1]) != 2 or len(parts[2]) != 2:
+        raise ValueError(f"non-canonical date: {value!r}")
+    try:
+        d = date(int(parts[0]), int(parts[1]), int(parts[2]))
+    except ValueError:
+        raise ValueError(f"calendar-invalid date: {value!r}")
+    # Re-format to ensure canonical output
+    return d.isoformat()
+
+
+def _parse_amount(raw: str) -> str:
+    """Parse *raw* as a finite Decimal quantised to 2 decimals; return str."""
+    if not isinstance(raw, str):
+        raise ValueError("amount field is not a string")
+    value = raw.strip()
+    try:
+        d = Decimal(value)
+    except (InvalidOperation, ValueError):
+        raise ValueError(f"malformed amount: {value!r}")
+    if not d.is_finite():
+        raise ValueError(f"non-finite amount: {value!r}")
+    return str(d.quantize(TWO_PLACES, rounding=ROUND_HALF_UP))
+
+
+def parse_ledger(text: str) -> list[dict]:
+    """Parse CSV ledger text and return ordered list of row dicts."""
+    if not text or not text.strip():
+        raise ValueError("blank input is invalid")
+
+    reader = csv.reader(io.StringIO(text))
+    rows_iter = iter(reader)
+
+    # --- header ---
+    header = next(rows_iter)
+    if [h.strip() for h in header] != ["date", "category", "amount"]:
+        raise ValueError("header must be exactly 'date,category,amount'")
+
+    result: list[dict] = []
+    for row in rows_iter:
+        if len(row) != 3:
+            raise ValueError(f"row width must be 3, got {len(row)}")
+        date_raw, cat_raw, amt_raw = row
+        date_str = _validate_date(date_raw)
+        category = cat_raw.strip()
+        if not category:
+            raise ValueError("category must be non-empty")
+        amount_str = _parse_amount(amt_raw)
+        result.append({
+            "date": date_str,
+            "category": category,
+            "amount": amount_str,
+        })
+    return result
+
+
+def totals(rows: list[dict]) -> dict[str, str]:
+    """Aggregate *rows* (parse_ledger output) by category.
+
+    Returns a dict whose keys are lexicographically sorted and values are
+    two-decimal *string* representations of the aggregated amount.
+    """
+    agg: dict[str, Decimal] = {}
+    for row in rows:
+        cat = row["category"]
+        amt = Decimal(row["amount"])
+        agg[cat] = agg.get(cat, Decimal("0")) + amt
+    return {k: str(agg[k].quantize(TWO_PLACES, rounding=ROUND_HALF_UP))
+            for k in sorted(agg)}
+
+
+class _DecimalEncoder(json.JSONEncoder):
+    """Encode ``Decimal`` objects as numbers (not strings)."""
+    def default(self, o):
+        if isinstance(o, Decimal):
+            return float(o)
+        return super().default(o)
+
+
+def _cli_main() -> None:
+    """Read CSV from stdin, print JSON to stdout."""
+    try:
+        text = sys.stdin.read()
+        rows = parse_ledger(text)
+        totals_result = totals(rows)
+        output = {"rows": rows, "totals": totals_result}
+        print(json.dumps(output, cls=_DecimalEncoder, ensure_ascii=False))
+    except (ValueError, TypeError) as exc:
+        # Concise error — no traceback
+        print(f"error: {exc}", file=sys.stderr)
+        sys.exit(2)
+
+
+if __name__ == "__main__":
+    _cli_main()
