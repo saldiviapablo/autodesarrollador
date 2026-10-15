@@ -17,3 +17,7 @@ No hay inferencia local solicitada por la auditoría, actualización de software
 F10/F11 dependency: recovery-memory uses the same fresh continuity project initialized by this audit state suite. Reuse is denied for foreign, unregistered or outside-workspace roots. The first standalone fixture failure and its raw streams remain in evidence/phase-26-audit-20261015-151401; the unchanged suites and normal cleanup passed in evidence/audit-continuity-dependency-20261015-151557.
 
 Evidence secret scan uses the existing sanitizer without changes. Only strict JSON/JSONL canonical equality may classify a changed sanitizer output as formatting-only; new redactions, duplicate-key masking, nonstandard constants or non-JSON changes remain DENY. Raw evidence is never rewritten.9 comparison cases and actual archived redacted-event scans passed.
+
+The unchanged human-reconciliation suite needs integrity-before.json in its new output folder. Adapter verifies approved bridge fe8126d before capturing its raw SHA for nonmutation testing.12 entry/source/freshness controls,41 reconciliation cases PASS in evidence/audit-bridge-dependency-20261015-152614.
+
+The legacy security test emits a known synthetic canary artifact. Preserve raw local bytes and hash, exclude exactly that original from Git, and export a separately redacted copy only when the entire redacted file equals the approved6e0a507 historical redacted fixture. Unexpected content/hash changes/tracked raw evidence remain DENY.14 comparison/export tests PASS. No productive sanitizer or secret policy changed.

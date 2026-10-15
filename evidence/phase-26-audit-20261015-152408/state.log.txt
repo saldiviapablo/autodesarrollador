@@ -1,0 +1,36 @@
+﻿[2026-10-15 15:24:19.616] [INFO] ==============================================================================
+[2026-10-15 15:24:19.625] [INFO] INICIANDO VERIFICACION DE ESTADO PERSISTENTE .autopilot (FASE 10)
+[2026-10-15 15:24:19.633] [INFO] Sandbox:     C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\f26-continuity-6cdc7638
+[2026-10-15 15:24:19.641] [INFO] EvidenceDir: C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\evidence\phase-26-audit-20261015-152408\state
+[2026-10-15 15:24:19.648] [INFO] ==============================================================================
+[2026-10-15 15:24:19.756] [INFO] [1/9] Test 1: Inicialización de Proyecto .autopilot...
+[2026-10-15 15:24:20.314] [OK]   [PASS] Test 1: Estructura Completa .autopilot Creada (Contract=True, State=True, Events=True, QWEN.md=True)
+[2026-10-15 15:24:20.319] [INFO] [2/9] Test 2: Validación de RUN-CONTRACT.yaml contra Schema...
+[2026-10-15 15:24:20.516] [OK]   [PASS] Test 2: Schema de RUN-CONTRACT.yaml Válido (Result=VALID_CONTRACT)
+[2026-10-15 15:24:20.518] [INFO] [3/9] Test 3: Validación de STATE.json contra Schema...
+[2026-10-15 15:24:20.705] [OK]   [PASS] Test 3: Schema de STATE.json Válido (Result=VALID)
+[2026-10-15 15:24:20.707] [INFO] [4/9] Test 4: Escritura Atómica y Respaldo STATE.previous.json...
+[2026-10-15 15:24:20.974] [OK]   [PASS] Test 4: Escritura Atómica y Respaldo Previous (Previous=INITIALIZED, Current=AUTHORIZED)
+[2026-10-15 15:24:20.975] [INFO] [5/9] Test 5: Transiciones de Estado (Válidas e Inválidas)...
+[2026-10-15 15:24:21.191] [OK]   [PASS] Test 5: Máquina de Estados (Transición Válida OK, Inválida Rechazada) (ValidTransition=True, InvalidRejected=True)
+[2026-10-15 15:24:21.192] [INFO] [6/9] Test 6: Derivación Automática de STATE.md...
+[2026-10-15 15:24:21.201] [OK]   [PASS] Test 6: Vista Humana STATE.md Derivada Correctamente (ContainsStatus=True, ContainsObjective=True)
+[2026-10-15 15:24:21.207] [INFO] [7/9] Test 7: Registro Append-Only de EVENTS.jsonl...
+[2026-10-15 15:24:21.235] [OK]   [PASS] Test 7: EVENTS.jsonl Append-Only y Monotónico (Seq1=2, Seq2=3)
+[2026-10-15 15:24:21.237] [INFO] [8/9] Test 8: Sanitización de Secretos y Credenciales...
+[2026-10-15 15:24:21.255] [OK]   [PASS] Test 8: Sanitización de Secretos ([REDACTED] Aplicado) (Leaked=False, RedactedPresent=True)
+[2026-10-15 15:24:21.256] [INFO] [9/9] Test 9: Checkpoints e Inmutabilidad...
+[2026-10-15 15:24:21.557] [OK]   [PASS] Test 9: Checkpoints Completos e Inmutables (Created=True, ImmutabilityEnforced=True)
+[2026-10-15 15:24:21.571] [INFO] ==============================================================================
+[2026-10-15 15:24:21.572] [INFO] RESUMEN DE PRUEBAS DE FASE 10 (ESTADO PERSISTENTE):
+[2026-10-15 15:24:21.582] [INFO]   [PASS] Test 1: Estructura Completa .autopilot Creada - Contract=True, State=True, Events=True, QWEN.md=True
+[2026-10-15 15:24:21.588] [INFO]   [PASS] Test 2: Schema de RUN-CONTRACT.yaml Válido - Result=VALID_CONTRACT
+[2026-10-15 15:24:21.596] [INFO]   [PASS] Test 3: Schema de STATE.json Válido - Result=VALID
+[2026-10-15 15:24:21.605] [INFO]   [PASS] Test 4: Escritura Atómica y Respaldo Previous - Previous=INITIALIZED, Current=AUTHORIZED
+[2026-10-15 15:24:21.613] [INFO]   [PASS] Test 5: Máquina de Estados (Transición Válida OK, Inválida Rechazada) - ValidTransition=True, InvalidRejected=True
+[2026-10-15 15:24:21.621] [INFO]   [PASS] Test 6: Vista Humana STATE.md Derivada Correctamente - ContainsStatus=True, ContainsObjective=True
+[2026-10-15 15:24:21.629] [INFO]   [PASS] Test 7: EVENTS.jsonl Append-Only y Monotónico - Seq1=2, Seq2=3
+[2026-10-15 15:24:21.638] [INFO]   [PASS] Test 8: Sanitización de Secretos ([REDACTED] Aplicado) - Leaked=False, RedactedPresent=True
+[2026-10-15 15:24:21.646] [INFO]   [PASS] Test 9: Checkpoints Completos e Inmutables - Created=True, ImmutabilityEnforced=True
+[2026-10-15 15:24:21.653] [INFO] ==============================================================================
+[2026-10-15 15:24:21.661] [OK] RESULTADO FINAL DE FASE 10: [PASS]

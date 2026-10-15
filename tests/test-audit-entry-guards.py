@@ -6,6 +6,17 @@ BASE=Path(__file__).resolve().parent
 spec=importlib.util.spec_from_file_location('audit_entry_unit',BASE/'global-audit.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
 R=module.R
 class Guards(unittest.TestCase):
+ def test_bridge_fixture_is_source_bound_and_fresh(self):
+  case=R/'logs/overnight'/('audit-bridge-unit-'+uuid.uuid4().hex);case.mkdir()
+  module.prepare_bridge_integrity_fixture(case)
+  record=json.loads((case/'integrity-before.json').read_text(encoding='utf-8'))
+  self.assertEqual(record['protected']['tools/chatgpt-bridge.js'],module.sha(R/'tools/chatgpt-bridge.js'))
+  with self.assertRaisesRegex(AssertionError,'FRESH_BRIDGE_INTEGRITY_FIXTURE_REQUIRED'):module.prepare_bridge_integrity_fixture(case)
+ def test_unapproved_bridge_cannot_seed_fixture(self):
+  case=R/'logs/overnight'/('audit-bridge-unit-'+uuid.uuid4().hex);case.mkdir()
+  with patch.object(module.subprocess,'check_output',return_value=b'unapproved unit bytes'):
+   with self.assertRaisesRegex(AssertionError,'APPROVED_BRIDGE_CHANGED'):module.prepare_bridge_integrity_fixture(case)
+  self.assertFalse((case/'integrity-before.json').exists())
  def deny(self,expected,*,f25='PASS',four='PASS',endurance='PASS',prior=False,dirty=False,final=False):
   case=R/'logs/overnight'/('audit-entry-unit-'+uuid.uuid4().hex);case.mkdir()
   if prior:

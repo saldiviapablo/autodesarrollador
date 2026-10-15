@@ -27,6 +27,17 @@ def admit_sandbox_fixture(destination,declared,reuse=False):
  else:assert not destination.exists(),'FRESH_OWNED_SANDBOX_REQUIRED'
  return destination
 
+def prepare_bridge_integrity_fixture(destination):
+ # This is the unchanged historical test's pre-suite fixture, not a new
+ # security approval. Bind to the reviewed bridge commit, then prove it does
+ # not change while deterministic reconciliation/send-path tests execute.
+ destination=Path(destination)
+ assert destination.is_dir() and not (destination/'integrity-before.json').exists(),'FRESH_BRIDGE_INTEGRITY_FIXTURE_REQUIRED'
+ approved=subprocess.check_output(['git','show','fe8126d:tools/chatgpt-bridge.js'],cwd=R)
+ current=(R/'tools/chatgpt-bridge.js').read_bytes()
+ assert approved.replace(b'\r\n',b'\n')==current.replace(b'\r\n',b'\n'),'APPROVED_BRIDGE_CHANGED'
+ write(destination/'integrity-before.json',{'protected':{'tools/chatgpt-bridge.js':hashlib.sha256(current).hexdigest()},'source':'Reviewed fe8126d source verified before deterministic suites; current raw bytes captured for nonmutation check'})
+
 def main():
  parser=argparse.ArgumentParser();parser.add_argument('--final',action='store_true');args=parser.parse_args()
  install=READ(R/'config/INSTALLATION-STATE.json');v=install['validation_8'];assert v.get('f25')==v.get('4h')=='PASS','ACTUAL_2H_AND_4H_REQUIRED'
@@ -77,6 +88,7 @@ def main():
   write(E/'FIXTURE-CLEANUP.json',{'status':'PASS','new_fixture_locks_released':receipts,'preexisting_historical_sandboxes_modified':False})
  results={};env=dict(os.environ,PYTHONUTF8='1',PYTHONDONTWRITEBYTECODE='1',F24_PREFLIGHT_E=str(E/'deterministic'),F24_HARNESS='tests/test-phase24-attempt11-live.py',OVERNIGHT_REVIEWER_E=str(E/'reviewer'),CHATGPT_TEST_EVIDENCE_DIR=str(E/'chatgpt'),PSModulePath='C:/Windows/System32/WindowsPowerShell/v1.0/Modules')
  for n in ['deterministic','reviewer','chatgpt']:(E/n).mkdir()
+ prepare_bridge_integrity_fixture(E/'chatgpt')
  def run(name,argv,timeout=120,marker=None):
   audit_state.update(current_suite=name,updated_at=datetime.datetime.now(datetime.timezone.utc).isoformat());write(active_pointer,audit_state)
   start=time.monotonic();payload=base64.b64encode(json.dumps({'evidence':str(E),'name':name,'argv':list(map(str,argv)),'timeout':timeout,'controller_pid':os.getpid(),'controller_birth_ticks':birth},ensure_ascii=False).encode()).decode()

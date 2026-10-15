@@ -1,18 +1,18 @@
 # Overnight continuation
 
-`json
+```json
 {
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
   "last_completed": "4H PASS",
-  "active_phase": "F26_ADAPTER_CORRECTED_PENDING_FRESH_AUDIT",
+  "active_phase": "F26_AUDIT",
   "last_cause": "New endurance adapter launcher argument contract",
   "last_fix": "STRICT_FORMAT_ONLY_JSON_COMPARISON_WITH_UNCHANGED_SECRET_SANITIZER",
   "last_commit": "34ee06bd71fc4712123757a9b022ebbff2e05b24",
-  "next_action": "After selective fix/evidence commit and clean Git, start a fresh tests/global-audit.py once; old FAIL preserved; F25/4H unchanged.",
+  "next_action": "After corrective commit clean Git, execute fresh tests/global-audit.py; preserve both prior F26 adapter FAILs and the private original synthetic canary.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T18:21:11.724042+00:00",
+  "updated_at": "2026-10-15T18:29:56.361005+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -27,7 +27,9 @@
     "WRAPPED_CANARY_CRLF_EXPECTATION_ORACLE",
     "F24_RESEAL_ADAPTER_SOURCE_SCOPE",
     "F26_STATE_RECOVERY_FIXTURE_DEPENDENCY",
-    "AUDIT_EVIDENCE_SCANNER_JSON_SPACING_FALSE_POSITIVE"
+    "AUDIT_EVIDENCE_SCANNER_JSON_SPACING_FALSE_POSITIVE",
+    "F26_BRIDGE_INTEGRITY_PRE_SUITE_FIXTURE_MISSING",
+    "AUDIT_PRIVATE_SYNTHETIC_CANARY_EXPORT_UNREDACTED"
   ],
   "fixes": [
     "REVIEWER_CONTRACT_CERTIFIED",
@@ -42,7 +44,9 @@
     "WRAPPED_CANARY_VERIFIER_NORMALIZED_WITH_NO_RESEND",
     "PRESTART_RESEAL_REBOUND_ONLY_AUTHORIZED_SOURCE_NO_NATIVE_RUN",
     "FRESH_SHARED_F10_F11_FIXTURE_AND_SCOPE_CERTIFIED",
-    "STRICT_FORMAT_ONLY_JSON_COMPARISON_WITH_UNCHANGED_SECRET_SANITIZER"
+    "STRICT_FORMAT_ONLY_JSON_COMPARISON_WITH_UNCHANGED_SECRET_SANITIZER",
+    "REVIEWED_BRIDGE_BOUND_FRESH_PRE_SUITE_FIXTURE_CERTIFIED",
+    "APPROVED_WHOLE_FILE_EQUIVALENCE_RAW_PRIVATE_SANITIZED_EXPORT_CERTIFIED"
   ],
   "run_id": null,
   "harness_session_id": null,
@@ -56,17 +60,17 @@
   "stage_id": "4h-20261015-110202-059517",
   "controller_pid": null,
   "controller_birth": null,
-  "elapsed_seconds": 11247.233496700006,
-  "completed_tasks": 20,
+  "elapsed_seconds": null,
+  "completed_tasks": null,
   "evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-4h-20261015-110202-059517",
-  "native_status": "RUNNING",
+  "native_status": "NOT_RUNNING",
   "tool_session_id": null,
   "last_failure": {
-    "signature": "F26_STATE_RECOVERY_FIXTURE_DEPENDENCY",
+    "signature": "F26_BRIDGE_INTEGRITY_PRE_SUITE_FIXTURE_MISSING",
     "resolved": true,
-    "evidence": "evidence\\phase-26-audit-20261015-151401"
+    "evidence": "evidence\\phase-26-audit-20261015-152408"
   }
 }
-`
+```
 
-F24/F25/4H remain PASS,4H14781.279s/26tasks bd822cf. F26 first audit FAIL preserved; corrected F10/F11 fresh initialized shared-fixture dependency, unchanged suites/cleanup PASS;10 entry/scope controls PASS. Evidence precommit scanner also falsely flagged JSON spacing on existing [REDACTED] values; existing sanitizer unchanged, strict semantic formatting comparison9 cases PASS, both evidence directories PASS with original bytes untouched. After corrective commit/Git clean execute fresh full audit. Prepared pilot17/night23, no actualpilot. Actual final human review still required after concrete F27; no fabricated receipt. No push/updates.
+F24/F25/4H PASS unchanged. Two F26 adapter dependency FAILs preserved. Latest12 entry controls,41 human reconciliation cases,14 secret export/comparison cases PASS; zero browser access/sends. Original synthetic canary stays locally unchanged and Git-excluded; separately redacted copy/hash receipt exported, whole-file matched to the approved historic redacted fixture. No productive sanitizer/security change. Fresh complete audit still required. No push.
