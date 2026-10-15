@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "unit_tests": 19,
+  "live_owner_certification": "evidence/endurance-owner-cert-f9deb2ff/CERTIFIED.json",
+  "source_hashes": {
+    "tests/endurance_controller.py": "81c6863a7030788faa41331470cfb30f1a666933af479f449b18b009af51db9d",
+    "tests/endurance_workloads.py": "f7c1d8009089737f0203c5e66ea8474d580aabcae7d6a5d44138c72f856c1801",
+    "tests/endurance-model-owner.ps1": "41018f3b478cc137edc3b601bfd810c4051e3ab0ea8444459af4bb0ccace0a25",
+    "tests/test-endurance-controller.py": "55d1da9cc41ee5f72c27f76970365e01b52a26e0556c60bac81a7f3ae169b4c8",
+    "tests/certify-endurance-owner.py": "2325e8583effdfc4de12c1623aab0fc6f2493c3d27261ef6747b12f8db994de3"
+  },
+  "long_duration_started": false,
+  "F25": "NOT_RUN",
+  "4H": "NOT_RUN",
+  "F28": "NOT_RUN",
+  "dependencies_new": [],
+  "diagnostics_note": "First component passed but Python reader threads could not decode Windows OEM diagnostics. Adapter now retains stderr bytes and uses strict UTF-8 only for authoritative JSON; second live component clean PASS.",
+  "cleanup_note": "First two isolated cases retained observational Prepare LOCK metadata; normal Remove-RunnerOwnedLock released it with exact run/owner matching. Historical native snapshots preserved with supplemental cleanup receipts. Final component certification releases metadata before export."
+}

@@ -1,0 +1,23 @@
+schema_version: '1.0'
+run_id: run-20261015-050204
+project_id: project
+project_root: C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-owner-cert-f9cf971e/project
+objective: Model ownership component certification only
+acceptance_criteria:
+- owned external model adoption only
+autonomy_mode: unattended
+authorized: true
+authorized_at: '2026-10-15T05:02:05.951274-03:00'
+created_at: '2026-10-15T05:02:04.8302769-03:00'
+time_budget_minutes: 120
+allowed_actions:
+- edit_file
+- run_test
+- git_commit_local
+forbidden_actions:
+- git_push
+- delete_root
+- modify_runner_guardrails
+test_commands: []
+build_commands: []
+security_policy_reference: config/security.yaml

@@ -6,13 +6,13 @@
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
   "last_completed": "F24 ATTEMPT11 PASS",
-  "active_phase": "F25_PREPARATION",
+  "active_phase": "F25_ADMISSION",
   "last_cause": "Trace primitive-field allowlist dropped fields required by strict pre-send rollback validator",
   "last_fix": "Four safe trace fields preserved; actual fsync writer/rollback validation PASS13 and related suites10",
-  "last_commit": "978f3353ac662e633b1a1a5e8d807de6a2fa3de9",
-  "next_action": "Promote/test frozen endurance controller + live owner cert, then real7200s F25; do not repeat F24",
+  "last_commit": "ec96970a1b2a3fb1ec5bfcb398c1d7df023024bc",
+  "next_action": "Commit certified endurance test adapter/evidence; require Git clean; start tests/endurance_controller.py --stage F25 using Hermes Python; observe runtime/overnight/endurance-active.json, no duplication.",
   "run_pointer": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f24-attempt11-d37b24c8\\project\\.autopilot",
-  "updated_at": "2026-10-15T07:59:54.217009+00:00",
+  "updated_at": "2026-10-15T08:03:11.911595+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -42,4 +42,4 @@
 }
 ```
 
-F25 real2h →4h required06§33 →F26 →F27 safe pilot with actual human final review →F28 real6–8h on pilot →final audit. No push. Native STATE authority preserved. Endurance code currently logs/overnight;17 unit tests PASS, live model owner certification must precede long stage. F28 dedicated pilot workload not yet implemented.
+F24 ATTEMPT11 PASS28/28, ec96970. Native STATE/clock/history preserved. F25 real7200s then4H real14400s required06§33; controller19 deterministic tests and actual owner/adoption/parent-loss cert PASS. See docs/ENDURANCE-VALIDATION-PLAN.md. F26 audit then safe dedicated F27 pilot and required final human review; F28 real6–8h on that pilot. No push.

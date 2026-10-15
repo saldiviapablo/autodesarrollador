@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "backend": "probe",
+  "task": "Ownership component only, no agent",
+  "allowed_files": [
+    "module.py"
+  ],
+  "tests": [
+    {
+      "id": "unit",
+      "argv": [
+        "python",
+        "check.py"
+      ],
+      "marker": "OWNER_COMPONENT_PROBE",
+      "timeout_seconds": 10
+    }
+  ],
+  "builds": [],
+  "criteria": [
+    {
+      "criterion": "owned external model adoption only",
+      "test_id": "unit"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "module.py"
+    }
+  ],
+  "immutable_files": [],
+  "global_timeout_seconds": 60,
+  "phase_timeout_seconds": 15,
+  "restart_budget": 0,
+  "max_cycles": 1
+}
