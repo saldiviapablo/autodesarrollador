@@ -6,13 +6,13 @@
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
   "last_completed": "F25 PASS",
-  "active_phase": "4H_PREPARATION",
+  "active_phase": "4H_RUNNING",
   "last_cause": "New endurance adapter launcher argument contract",
   "last_fix": "Exact certified F24 launcher/recovery invocation;21 deterministic and A-H real fake-batch tests PASS",
-  "last_commit": "81785b8532bb2066f11334468e908b07abde9a53",
-  "next_action": "Start tests/endurance_controller.py --stage 4H once after clean local resume commit; observe endurance-active.json, never duplicate F25/F24",
+  "last_commit": "e745ba2e1b913acabadae0e9aa42858938c03969",
+  "next_action": "Observe existing controller; NO duplicate. Native STATE authoritative; do not alter frozen sources/config/history. Terminal PASS: independent closure and commit, then next phase.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T14:01:49.504030+00:00",
+  "updated_at": "2026-10-15T14:02:58.746937+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -37,16 +37,24 @@
   "run_id": null,
   "harness_session_id": null,
   "auxiliary_tool_sessions": {},
-  "active_run": null,
-  "active_task": null,
-  "current_native_project": null,
+  "active_run": "run-20261015-110236",
+  "active_task": "supervisor",
+  "current_native_project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-4h-20261015-110202-059517\\task-001-csv-ledger",
   "last_completed_stage_id": "f25-20261015-050751-1239ed",
   "last_completed_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-f25-20261015-050751-1239ed",
-  "historical_f24_consultation_id": "f24-a11-2d44843ee2c2460bbb643c927080e3f8"
+  "historical_f24_consultation_id": "f24-a11-2d44843ee2c2460bbb643c927080e3f8",
+  "stage_id": "4h-20261015-110202-059517",
+  "controller_pid": 27120,
+  "controller_birth": 1792072922.690486,
+  "elapsed_seconds": 5.654259100003401,
+  "completed_tasks": 0,
+  "evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-4h-20261015-110202-059517",
+  "native_status": "RUNNING",
+  "tool_session_id": 19192
 }
 ```
 
-F25 PASS independently certified:13 tasks,7772.088906300007s real, commit81785b8. No active native run. No repeat.4H remains required by06 section33; start a fresh independent14400s continuous stage.
+F24 and F25 remain PASS.4H independent real14400s clock; never add F25 time. Observe existing PID/birth and native project, not stale chat. No push.
 
 ## Prepared next-phase helpers
 

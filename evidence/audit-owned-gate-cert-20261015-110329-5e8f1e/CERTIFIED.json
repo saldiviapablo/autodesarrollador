@@ -1,0 +1,101 @@
+{
+  "status": "PASS",
+  "wrapper_sha256": "5f1a6369b8ea2496377d6e5ec89f29b3c606de5a4da0b1fe57bc4149f05dbef4",
+  "tests": {
+    "utf8": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.2501188,
+        "owned_identity": {
+          "controller_pid": 26688,
+          "pid": 11416,
+          "wrapper_pid": 36928,
+          "controller_birth_ticks": 639276698088053332,
+          "start_ticks": 639276698103342920,
+          "executable": "C:\\Users\\Pc\\AppData\\Local\\hermes\\installs\\f0a881ae792bab01\\environments\\d6bb9776990441fa960204f0f2b056ed\\venv\\Scripts\\python.exe"
+        }
+      },
+      "descendants_dead": true
+    },
+    "exit7": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 7,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "FAIL",
+        "stream_cleanup": true,
+        "duration_seconds": 0.22951749999999999,
+        "owned_identity": {
+          "controller_pid": 26688,
+          "pid": 21988,
+          "wrapper_pid": 35844,
+          "controller_birth_ticks": 639276698088053332,
+          "start_ticks": 639276698117305608,
+          "executable": "C:\\Users\\Pc\\AppData\\Local\\hermes\\installs\\f0a881ae792bab01\\environments\\d6bb9776990441fa960204f0f2b056ed\\venv\\Scripts\\python.exe"
+        }
+      },
+      "descendants_dead": true
+    },
+    "timeout-tree": {
+      "status": "PASS",
+      "process": {
+        "exit_code": null,
+        "reason": "AUDIT_GATE_TIMEOUT",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "FAIL",
+        "stream_cleanup": true,
+        "duration_seconds": 3.1238064,
+        "owned_identity": {
+          "controller_pid": 26688,
+          "pid": 10164,
+          "wrapper_pid": 27332,
+          "controller_birth_ticks": 639276698088053332,
+          "start_ticks": 639276698130870841,
+          "executable": "C:\\Users\\Pc\\AppData\\Local\\hermes\\installs\\f0a881ae792bab01\\environments\\d6bb9776990441fa960204f0f2b056ed\\venv\\Scripts\\python.exe"
+        }
+      },
+      "descendants_dead": true
+    },
+    "parent-loss-tree": {
+      "status": "PASS",
+      "process": {
+        "exit_code": null,
+        "reason": "AUDIT_CONTROLLER_LOST",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "FAIL",
+        "stream_cleanup": true,
+        "duration_seconds": 0.31807979999999997,
+        "owned_identity": {
+          "controller_pid": 11184,
+          "pid": 27456,
+          "wrapper_pid": 16320,
+          "controller_birth_ticks": 639276698162201557,
+          "start_ticks": 639276698174367761,
+          "executable": "C:\\Users\\Pc\\AppData\\Local\\hermes\\installs\\f0a881ae792bab01\\environments\\d6bb9776990441fa960204f0f2b056ed\\venv\\Scripts\\python.exe"
+        }
+      },
+      "descendants_dead": true
+    },
+    "preexisting-process-preserved": {
+      "status": "PASS",
+      "identity": {
+        "pid": 14020,
+        "birth": 1792073009.0692477
+      }
+    }
+  },
+  "no_inference": true,
+  "no_bridge": true,
+  "no_ledger": true,
+  "scope": "isolated harmless process wrapper only; not F26"
+}
