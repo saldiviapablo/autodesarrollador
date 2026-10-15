@@ -191,3 +191,7 @@ F24 ATTEMPT7 **FAIL**; run `run-20261015-014509`, duración 1062.94s. Worker SUC
 ## Estado vigente — F24 ATTEMPT 8 — 2026-10-15
 
 F24 ATTEMPT8 **FAIL**; run `run-20261015-025148`, duración 842.39s. Worker SUCCESS; 13 tests/build PASS/PASS; web y continuación real PASS/PASS; ChatGPT PRE_SEND_ABORTED, cero envíos; Reviewer y Completion Gate NOT_RUN. Cleanup/integridad PASS. Los28 gates no aprobaron: ejecución detenida antes de completar sus inputs. Intentos anteriores conservan sus FAIL históricos. F25 pendiente; aislar/fijar/certificar selector composer antes de nuevo E2E. docs/F24-ATTEMPT-8-REPORT.md; evidence/phase-24-attempt-8-20261015/
+
+## Estado vigente — F24 ATTEMPT9 — 2026-10-15
+
+F24 ATTEMPT9 **FAIL**, run `run-20261015-031335`, 1062.11s, gates incompletos (PASS no demostrado); Worker SUCCESS; tests/build PASS/PASS; web/continuación PASS/PASS; ChatGPT PRE_SEND_ABORTED, envíos 0, retry NOT_RUN, adicionales None; Reviewer NOT_ACCEPTED_OR_NOT_RUN; Completion NOT_RUN; cleanup/integridad PASS. F25 pendiente. docs/F24-ATTEMPT-9-REPORT.md; evidence/phase-24-attempt-9-20261015/
