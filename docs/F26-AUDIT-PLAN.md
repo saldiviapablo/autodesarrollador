@@ -25,3 +25,7 @@ The legacy security test emits a known synthetic canary artifact. Preserve raw l
 The installed-Qwen/mock-endpoint transport probe now captures original stdout/stderr bytes before strict UTF-8 JSON decoding; localized stderr cannot discard its successful result/evidence. All3 assertion ASTs unchanged. The observed old failure and successful isolated byte capture/installedCLI certificate remain preserved separately. Productive invoke-qwen-code.ps1 is unchanged.
 
 The historical heartbeat test observed parent death before independent guardian finalization. It now keeps its owner alive for a bounded15s observation of the same FAILED/report/unlocked conditions; all7 assertion ASTs, native budgets and Watchdog source unchanged. Actual test under owned wrapper passed33.977s. Historic failed raw streams/state snapshot remain in phase-26-audit-20261015-153405; isolated certificate audit-watchdog-finalization-20261015-154012.
+
+## Revisión final autorizada2026-10-15
+
+F26 yaPASS51suites/299checks y no se repite. El modo --final crea otra evidencia FINAL_GLOBAL_AUDIT después de F27 completo y aplica la exención explícita F28 ligada por SHA a4H certificada; jamás ejecuta o marcaPASS F28. Conserva todos los controles restantes, incluido review humano de F27 y sus7 archivos exactos. docs/ROADMAP-REVISION-F28-WAIVER-20261015.md

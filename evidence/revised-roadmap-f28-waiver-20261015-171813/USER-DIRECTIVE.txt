@@ -1,0 +1,58 @@
+CAMBIO DEFINITIVO DE OBJETIVO.
+
+NO ejecutar F28 de 6–8 horas.
+
+IMPORTANTE:
+- NO detener ni reiniciar el F27 que ya está corriendo.
+- NO repetir F24, F25, 4H ni F26.
+- NO aumentar restart_budget.
+- NO PUSH.
+
+Continuar exactamente el F27 actual hasta que termine.
+
+Si F27 termina PASS:
+
+→ NO iniciar F28
+→ ejecutar regresión final
+→ ejecutar auditoría final
+→ cleanup final
+→ integrity final
+→ actualizar documentación
+→ cerrar el proyecto
+
+La prueba prolongada ya realizada se acepta como suficiente:
+
+4H = PASS
+duración real ≈ 4 h 6 min
+26 tareas completas
+recovery = PASS
+Reviewer = PASS
+Completion Gate = PASS
+resources = PASS
+cleanup = PASS
+integrity = PASS
+
+Registrar formalmente:
+
+F28_ORIGINAL_6_8H = WAIVED_BY_USER
+F28_NOT_EXECUTED = TRUE
+F28_REPLACED_BY = CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION
+
+NO marcar F28 como PASS.
+
+Si F27 termina FAIL:
+
+- preservar el FAIL histórico;
+- aislar la causa;
+- corregirla;
+- certificarla de forma aislada;
+- repetir únicamente F27 si corresponde.
+
+NO iniciar F28 en ningún caso.
+
+Después de F27 PASS y de la regresión/auditoría final:
+
+PROJECT_STATUS = COMPLETE bajo roadmap revisado
+si todos los demás gates finales pasan.
+
+NO PUSH.

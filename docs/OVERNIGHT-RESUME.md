@@ -1,18 +1,18 @@
-# Overnight continuation
+# Overnight continuation — revised roadmap, noF28
 
 ```json
 {
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
-  "last_completed": "F27 technical E2E PASS; actual human final review pending",
+  "last_completed": "F27 technical E2E PASS; F28 waiver formally certified",
   "active_phase": "F27_HUMAN_FINAL_REVIEW_PENDING",
   "last_cause": "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC",
   "last_fix": "PLACEHOLDERS_ONLY_ACCEPTANCE_AND_RUNTIME_UNCHANGED",
-  "last_commit": "acac445329213eea93d77b5588d312e64017ae60",
-  "next_action": "Request final human review of concrete pilot artifacts; do not manufacture receipt or start F28. Continue independent final-audit/report preparation while pending.",
+  "last_commit": "git HEAD: explicit revised-roadmap waiver milestone",
+  "next_action": "NEVER START F28. Await actual final human review of concrete F27 result, then register accepted review, run tests/global-audit.py --final and independent final closure/report/cleanup/integrity. Do not repeat F24/F25/4H/F26. No push.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T20:14:18.545259+00:00",
+  "updated_at": "2026-10-15T20:18:13.546383+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -56,7 +56,7 @@
     "FINAL_ACCEPTED_REVIEWER_FULL_TARGET_SCOPE_CERTIFIED_WITH_LEGITIMATE_CORRECTION_NEGATIVE",
     "TRACKED_PENDING_REPORT_PLACEHOLDERS_EXACT_RUNNER_HASH_GUARD_CERTIFIED"
   ],
-  "run_id": "run-20261015-165354",
+  "run_id": null,
   "harness_session_id": null,
   "auxiliary_tool_sessions": {},
   "active_run": null,
@@ -66,13 +66,13 @@
   "last_completed_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-4h-20261015-110202-059517",
   "historical_f24_consultation_id": "f24-a11-2d44843ee2c2460bbb643c927080e3f8",
   "stage_id": "f27-20261015-165308-d37c78",
-  "controller_pid": 14636,
-  "controller_birth": 1792093987.9378245,
+  "controller_pid": null,
+  "controller_birth": null,
   "elapsed_seconds": null,
   "completed_tasks": null,
   "evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-f27-20261015-165308-d37c78",
-  "native_status": "RUNNING",
-  "tool_session_id": 24278,
+  "native_status": "COMPLETED",
+  "tool_session_id": null,
   "last_failure": {
     "signature": "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC",
     "resolved": true,
@@ -93,41 +93,11 @@
     "current_f27_run_id": "run-20261015-165354",
     "current_f27_unchanged": true,
     "no_push": true
-  }
+  },
+  "f28_waiver_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\revised-roadmap-f28-waiver-20261015-171813\\USER-F28-WAIVER.json"
 }
 ```
 
-# F27 — piloto local seguro: revisión final pendiente
+F24/F25/4H/F26 remain PASS. Current F27 run completed technically, all17 tests/build/real-web-consumption/Reviewer/Completion/cleanup/integrity PASS; native duration1097.308088s,2 normal Worker restarts, no timeout/budget edits. Actual final human review still pending; async review request presented with concrete report/files, no fabricated receipt.
 
-Technical E2E PASS; F27 is not yet PASS. A fresh dedicated disposable pilot completed its native Runner/Worker/tests/build/independent read-only Reviewer/Completion/report/cleanup. The initial rounding bug and incomplete feature/docs were solved only by Qwen, against17 pre-START immutable acceptance tests. No personal project, push or deployment.
-
-Project: C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-f27-20261015-165308-d37c78\pilot-002
-
-Native run: run-20261015-165354
-
-Review source module.py, README.md, generated artifact-report.json/REPORT.md, immutable test_module.py/build.py/sample-records.json and the actual worker-diff.patch in evidence/endurance-f27-20261015-165308-d37c78/tasks/002/. Backup, native report, full-target read-only proof, hashes and resources remain in evidence/endurance-f27-20261015-165308-d37c78/.
-
-Human review package (pending, NOT a receipt): HUMAN-REVIEW-PACKAGE.json. Roadmap07 section30 requires actual final human review before REAL PILOT PASS. This report does not manufacture that review or authorize F28.
-
-```json
-{
-  "samples": 210,
-  "RAM_min_available_mib": 271.63671875,
-  "pagefile_max_used_gib": 3.8184814443811774,
-  "VRAM_max_mib": 4644,
-  "llama_max_working_set_mib": 20474.4609375,
-  "duration_label": "Pilot summary spans stage start through final cleanup/integrity; native task duration is recorded separately"
-}
-```
-
-## Archivos para la revisión humana final
-
-- [Código del Worker](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/module.py>)
-- [README y ejemplos](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/README.md>)
-- [Reporte legible](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/REPORT.md>)
-- [Reporte JSON](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/artifact-report.json>)
-- [Tests inmutables](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/test_module.py>)
-- [Diff real del Worker](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/evidence/endurance-f27-20261015-165308-d37c78/tasks/002/worker-diff.patch>)
-- [Reporte nativo y cleanup](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/.autopilot/reports/runner-result.json>)
-
-La revisión debe confirmar que el resultado del piloto cumple su objetivo y criterios. Una aprobación inicial de ejecución no acredita esta revisión del resultado final.
+F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION. NEVER START F28 or mark it PASS. Formal binding/11 waiver controls+12admission+15pilot controls PASS. Current plan docs/ROADMAP-REVISION-F28-WAIVER-20261015.md. After actual F27 final human acceptance: register proof/local commit, fresh final-global-audit (--final), independent final report/cleanup/integrity and COMPLETE under revised roadmap only if all remaining gates pass. No push.

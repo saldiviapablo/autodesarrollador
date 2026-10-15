@@ -55,7 +55,9 @@ class Night(Pilot):
    write(self.E/'SHARED-STAGE-RESULT.json',s);s.update(status='FAIL',failure='PILOT_SPECIFIC_GATE_FAILED');write(self.E/'SUMMARY.json',s);self.terminal='FAIL';self.persist();return 1
   return result
 def main():
- v=READ(R/'config/INSTALLATION-STATE.json')['validation_8'];assert v.get('f25')==v.get('4h')==v.get('f26')==v.get('f27')=='PASS','ALL_PRIOR_GATES_REQUIRED'
+ install=READ(R/'config/INSTALLATION-STATE.json');v=install['validation_8']
+ assert not install.get('F28_NOT_EXECUTED') and v.get('f28')!='WAIVED_BY_USER','F28_FORBIDDEN_BY_EXPLICIT_USER_REVISION'
+ assert v.get('f25')==v.get('4h')==v.get('f26')==v.get('f27')=='PASS','ALL_PRIOR_GATES_REQUIRED'
  receipt=Path(v['f27_human_review_receipt']);assert receipt.resolve().is_relative_to(R/'evidence');review=READ(receipt);assert review['method']=='HUMAN_FINAL_REVIEW' and review['decision']=='ACCEPTED' and review.get('human_confirmation_reference'),'ACTUAL_FINAL_HUMAN_REVIEW_REQUIRED'
  assert not subprocess.check_output(['git','status','--porcelain=v1'],cwd=R,text=True).strip(),'CLEAN_GIT_REQUIRED'
  assert READ(R/'runtime/overnight/endurance-active.json')['status']!='RUNNING'

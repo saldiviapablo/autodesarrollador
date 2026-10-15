@@ -9,6 +9,7 @@ R=Path(__file__).resolve().parents[2]
 if not(R/'AGENTS.md').exists():R=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(R/'tests'))
 from endurance_controller import READ,write,sha,ps,q,PYTHON
+from final_roadmap_gate import verify_final_waiver
 PY=PYTHON;HP=sys.executable
 def owns_fixture_metadata(auto,state,declared):
  try:relative=Path(auto).relative_to(R/'sandbox')
@@ -41,7 +42,9 @@ def prepare_bridge_integrity_fixture(destination):
 def main():
  parser=argparse.ArgumentParser();parser.add_argument('--final',action='store_true');args=parser.parse_args()
  install=READ(R/'config/INSTALLATION-STATE.json');v=install['validation_8'];assert v.get('f25')==v.get('4h')=='PASS','ACTUAL_2H_AND_4H_REQUIRED'
- if args.final:assert all(v.get(n)=='PASS' for n in ['f26','f27','f28']),'ALL_ACTUAL_FINAL_PHASES_REQUIRED'
+ if args.final:
+  assert all(v.get(n)=='PASS' for n in ['f26','f27']),'ALL_ACTUAL_FINAL_PHASES_REQUIRED'
+  verify_final_waiver(install,R)
  assert READ(R/'runtime/overnight/endurance-active.json')['status']!='RUNNING','NO_AUDIT_DURING_ACTIVE_STAGE'
  active_pointer=R/'runtime/overnight/audit-active.json'
  if active_pointer.exists():assert READ(active_pointer).get('status')!='RUNNING','EXISTING_OR_INTERRUPTED_AUDIT_REQUIRES_DISK_RECONCILIATION_NO_DUPLICATE'
@@ -134,7 +137,9 @@ def main():
    run(name,[exe,R/'tests'/name],180)
   run('audit-entry-guards',[HP,Path(__file__).with_name('test-audit-entry-guards.py')],60)
   run('audit-secret-comparison',[HP,Path(__file__).with_name('test-audit-secret-scan.py')],60)
-  if args.final:run('pilot-controller-controls',[HP,R/'tests/test-pilot-controllers.py'],60)
+  if args.final:
+   run('pilot-controller-controls',[HP,R/'tests/test-pilot-controllers.py'],60)
+   run('revised-final-waiver-controls',[HP,R/'tests/test-final-roadmap-gate.py'],60)
   for name,directory,timeout in [
    ('test-phase23-pathguard.py','evidence/phase-23-attempt-3',180),
    ('test-phase23-prepare-admission.py','evidence/phase-23-attempt-3',180),
@@ -170,20 +175,18 @@ def main():
    for t in s['tasks']:check(key+'-native-task-'+str(t['index']),READ(Path(t['project'])/'.autopilot/STATE.json')['status']=='COMPLETED')
    first=Path(s['tasks'][0]['project'])/'.autopilot';chat=READ(first/'evidence/CHATGPT.json');retry=READ(first/'evidence/CHATGPT-RETRY.json');check(key+'-real-chatgpt-utf8',chat['status']=='SUCCESS' and chat['source_text_equals_dom_text'] and chat['composer_cleared']);check(key+'-real-idempotency',retry['status']=='ALREADY_SENT' and retry['additional_physical_sends']==0 and retry['ledger_unchanged'])
   if args.final:
-   pilot=R/v['f27_evidence'];night=R/v['f28_evidence'];review=READ(v['f27_human_review_receipt']);n=READ(night/'SUMMARY.json');pg=READ(night/'PILOT-GATE.json')
+   pilot=R/v['f27_evidence'];review_path=(R/v['f27_human_review_receipt']).resolve(strict=True);review=READ(review_path)
+   check('F27-human-receipt-scope',review_path.is_relative_to((R/'evidence').resolve()))
    check('F27-human-final-review',review['method']=='HUMAN_FINAL_REVIEW' and review['decision']=='ACCEPTED' and bool(review.get('human_confirmation_reference')))
+   origin=Path(review['project']).resolve(strict=True);required={'module.py','README.md','test_module.py','build.py','sample-records.json','artifact-report.json','REPORT.md'}
+   check('F27-complete-human-file-binding',required.issubset(review['reviewed_files']) and origin.is_relative_to((R/'sandbox').resolve()) and all((origin/name).resolve(strict=True).is_relative_to(origin) for name in review['reviewed_files']))
    check('F27-reviewed-files-unchanged',all(sha(Path(review['project'])/name)==h for name,h in review['reviewed_files'].items()))
-   check('F27-native-completion',READ(Path(review['project'])/'.autopilot/STATE.json')['status']=='COMPLETED')
+   native=READ(origin/'.autopilot/STATE.json');check('F27-native-completion',native['status']=='COMPLETED' and native['run_id']==review['native_run_id'])
    check('F27-technical-closure',READ(pilot/'INDEPENDENT-TECHNICAL-CLOSURE.json')['status']=='PASS')
-   check('F28-actual6to8h',n['status']=='PASS' and 21600<=n['duration_seconds']<=28800 and all(n['gates'].values()))
-   check('F28-pilot-gate',pg['status']=='PASS' and all(pg['checks'].values()) and sha(v['f27_human_review_receipt'])==pg['review_receipt_sha256'])
-   check('F28-independent-closure',READ(night/'INDEPENDENT-CLOSURE.json')['status']=='PASS')
-   for t in n['tasks']:
-    native=Path(t['project'])/'.autopilot';check('F28-native-'+str(t['index']),READ(native/'STATE.json')['status']=='COMPLETED' and READ(native/'evidence/completion-gate.json')['status']=='COMPLETED')
-    check('F28-full-readonly-'+str(t['index']),READ(night/'tasks'/str(t['index']).zfill(3)/'reviewer-full-target.json')['status']=='PASS')
-   chain=READ(night/'PILOT-CHAIN.json');check('F28-memory-chain',len(chain)==len(n['tasks']) and all(t['predecessor_unchanged'] and sha(Path(t['project'])/'module.py')==t['module_after_sha256'] and sha(Path(t['project'])/'artifact-report.json')==t['report_after_sha256'] for t in chain))
-   frozen=READ(night/'FROZEN.json')['sources'];check('F28-runtime-current',all(sha(R/name)==h for name,h in frozen.items() if name.startswith(('runner/','scripts/','tools/'))))
-   first=Path(n['tasks'][0]['project'])/'.autopilot';chat=READ(first/'evidence/CHATGPT.json');retry=READ(first/'evidence/CHATGPT-RETRY.json');check('F28-bridge-utf8-idempotent',chat['status']=='SUCCESS' and chat['source_text_equals_dom_text'] and chat['composer_cleared'] and retry['status']=='ALREADY_SENT' and retry['additional_physical_sends']==0)
+   check('F27-full-target-final-reviewer-readonly',READ(pilot/'tasks/002/reviewer-full-target.json')['status']=='PASS')
+   revised=verify_final_waiver(install,R);write(E/'REVISED-ROADMAP-GATE.json',revised)
+   check('F28-explicit-user-waiver-no-execution',revised['explicit_user_waiver'] and revised['original_F28_not_marked_PASS'] and revised['F28_NOT_EXECUTED'])
+   check('revised-actual4h-replacement',revised['accepted_real_4h_seconds']>=14400 and revised['accepted_real_4h_tasks']==26)
   # Frozen binaries/native runtime and each protected security/plugin component.
   protected=READ(R/'evidence/phase-24-attempt-11-20261015/protected-final.json') if (R/'evidence/phase-24-attempt-11-20261015/protected-final.json').exists() else READ(R/'evidence/phase-24-attempt-5-20261014/protected-final.json')
   for n,h in protected['hashes'].items():check('protected-'+n,sha(n)==h)

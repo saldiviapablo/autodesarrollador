@@ -67,7 +67,7 @@
 | **Fase 25** | Prueba2h | **PASS** | docs/F25-REPORT-f25-20261015-050751-1239ed.md; evidence/endurance-f25-20261015-050751-1239ed/ |
 | **Fase 26** | Auditoría integral | **PASS** | docs/F26-REPORT-phase-26-audit-20261015-154228.md; evidence/phase-26-audit-20261015-154228/ |
 | **Fase 27** | Piloto local seguro | **TECHNICAL_PASS / PENDING_HUMAN_FINAL_REVIEW** | docs/F27-TECHNICAL-REPORT-f27-20261015-165308-d37c78.md; evidence/endurance-f27-20261015-165308-d37c78 |
-| **Fase 28** | Prueba nocturna 6-8 horas | **NOT_RUN** | Prueba definitiva de autonomía prolongada desatendida. |
+| **Fase 28** | Prueba6–8h original | **WAIVED_BY_USER / NOT_EXECUTED** | docs/ROADMAP-REVISION-F28-WAIVER-20261015.md; reemplazo4H certificada + F27 real + regresión final. |
 
 ---
 
@@ -233,3 +233,7 @@ First attempt FAIL preserved; placeholders-only correction15 controls PASS. No R
 ## F27 technical pilot — 2026-10-15T20:14:18.545259+00:00
 
 TECHNICAL_PASS_AWAITING_HUMAN_REVIEW. docs/F27-TECHNICAL-REPORT-f27-20261015-165308-d37c78.md; evidence/endurance-f27-20261015-165308-d37c78/. F28 NOT_RUN.
+
+## Roadmap revisado por instrucción humana — 2026-10-15T20:18:13.546383+00:00
+
+F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION. No F28 PASS. Los demás gates permanecen obligatorios. docs/ROADMAP-REVISION-F28-WAIVER-20261015.md

@@ -940,3 +940,6 @@ Si descubre que un requisito no es técnicamente viable, debe:
 3. proponer alternativas;
 4. no cambiar silenciosamente la arquitectura.
 
+## Roadmap revisado por instrucción humana — 2026-10-15T20:18:13.546383+00:00
+
+F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION. No F28 PASS. Los demás gates permanecen obligatorios. docs/ROADMAP-REVISION-F28-WAIVER-20261015.md

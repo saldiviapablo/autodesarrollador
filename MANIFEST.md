@@ -98,7 +98,7 @@ Parámetros validados:
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
 - **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **PASS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5 — Bot Mode + Subagentes`: **PASS**; `7A.6 — Git Worktrees`: **PASS**; `7A.7 — Cron + No-Agent Jobs`: **PASS**; `7A.8 — Native Dashboard`: **PASS**; `7A.9 — Gateway`: **PASS**; `7A.10 — Controlled Auto-update`: **PASS**; `ChatGPT Idempotency`: **PASS**; `regression gate`: **PASS**). Preflight correctivo aprobado en commit `f133bab`.
 - **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PASS**
-- **Macrofase 8 (Validación Final - Fases23 a28):** **IN_PROGRESS**; F23/F24/F25/4H/F26 PASS; F27/F28 pendientes
+- **Macrofase 8 (Validación Final):** **IN_PROGRESS bajo roadmap revisado**; F24/F25/4H/F26 PASS; F27 revisión humana final pendiente; F28 **WAIVED_BY_USER / NOT_EXECUTED**
 
 ---
 
@@ -215,3 +215,7 @@ F25 PASS: 7772.089s reales, 13 tareas completas, recuperación real, cero interv
 ## Estado vigente — F26 — 2026-10-15T18:49:43.769161+00:00
 
 F26 PASS: 51 regression suites, 299 audit checks, 259 source hashes and 6119 historical evidence files verified. Actual F24/2h/4h evidence binds native roles, recovery, bridge and cleanup. docs/F26-REPORT-phase-26-audit-20261015-154228.md
+
+## Roadmap revisado por instrucción humana — 2026-10-15T20:18:13.546383+00:00
+
+F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION. No F28 PASS. Los demás gates permanecen obligatorios. docs/ROADMAP-REVISION-F28-WAIVER-20261015.md
