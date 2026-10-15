@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-15T19:52:33.975158+00:00",
+  "updated_at": "2026-10-15T20:14:18.545259+00:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -76,7 +76,7 @@
     "24": "PASS",
     "25": "PASS",
     "26": "PASS",
-    "27": "IN_PROGRESS",
+    "27": "PENDING_HUMAN_FINAL_REVIEW",
     "28": "NOT_RUN"
   },
   "validation_8": {
@@ -676,7 +676,7 @@
     "f26": "PASS",
     "f26_evidence": "evidence/phase-26-audit-20261015-154228",
     "f26_report": "docs/F26-REPORT-phase-26-audit-20261015-154228.md",
-    "f27": "PENDING_CLEAN_ATTEMPT",
+    "f27": "TECHNICAL_PASS_AWAITING_HUMAN_REVIEW",
     "f27_historical_attempt_1": {
       "status": "FAIL",
       "run_id": "run-20261015-155210",
@@ -686,7 +686,20 @@
       "integrity": "PASS"
     },
     "f27_fixture_fix": "PASS",
-    "f27_fixture_fix_evidence": "evidence/f27-placeholder-fixture-cert-20261015-165122"
+    "f27_fixture_fix_evidence": "evidence/f27-placeholder-fixture-cert-20261015-165122",
+    "f27_evidence": "evidence/endurance-f27-20261015-165308-d37c78",
+    "f27_report": "docs/F27-TECHNICAL-REPORT-f27-20261015-165308-d37c78.md",
+    "f27_project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f27-20261015-165308-d37c78\\pilot-002",
+    "f27_native_run_id": "run-20261015-165354",
+    "f27_human_review": "NOT_PERFORMED",
+    "f27_resources": {
+      "samples": 210,
+      "RAM_min_available_mib": 271.63671875,
+      "pagefile_max_used_gib": 3.8184814443811774,
+      "VRAM_max_mib": 4644,
+      "llama_max_working_set_mib": 20474.4609375,
+      "duration_label": "Pilot summary spans stage start through final cleanup/integrity; native task duration is recorded separately"
+    }
   },
   "ready_for_real_pilot": true
 }

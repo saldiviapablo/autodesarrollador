@@ -1,18 +1,18 @@
-# Overnight continuation — active F27
+# Overnight continuation
 
 ```json
 {
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
-  "last_completed": "F26 PASS; F27 placeholder fixture certification PASS15",
-  "active_phase": "F27_NATIVE_RUNNING",
+  "last_completed": "F27 technical E2E PASS; actual human final review pending",
+  "active_phase": "F27_HUMAN_FINAL_REVIEW_PENDING",
   "last_cause": "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC",
   "last_fix": "PLACEHOLDERS_ONLY_ACCEPTANCE_AND_RUNTIME_UNCHANGED",
-  "last_commit": "git HEAD: active F27 recovery checkpoint",
-  "next_action": "Observe existing F27 exact controller/native Runner; never duplicate or edit frozen sources. F24/F25/4H/F26 already PASS, not rerun.",
+  "last_commit": "acac445329213eea93d77b5588d312e64017ae60",
+  "next_action": "Request final human review of concrete pilot artifacts; do not manufacture receipt or start F28. Continue independent final-audit/report preparation while pending.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T19:54:29.575536+00:00",
+  "updated_at": "2026-10-15T20:14:18.545259+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -59,9 +59,9 @@
   "run_id": "run-20261015-165354",
   "harness_session_id": null,
   "auxiliary_tool_sessions": {},
-  "active_run": "run-20261015-165354",
-  "active_task": "supervisor",
-  "current_native_project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f27-20261015-165308-d37c78\\pilot-002",
+  "active_run": null,
+  "active_task": null,
+  "current_native_project": null,
   "last_completed_stage_id": "4h-20261015-110202-059517",
   "last_completed_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-4h-20261015-110202-059517",
   "historical_f24_consultation_id": "f24-a11-2d44843ee2c2460bbb643c927080e3f8",
@@ -77,12 +77,57 @@
     "signature": "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC",
     "resolved": true,
     "evidence": "evidence/endurance-f27-20261015-155126-d8e81a"
+  },
+  "f28_waiver": {
+    "method": "EXPLICIT_USER_OBJECTIVE_REVISION",
+    "at": "2026-10-15T20:11:51.845738+00:00",
+    "user_instruction": "CAMBIO DEFINITIVO DE OBJETIVO. NO ejecutar F28 de 6–8 horas. Continuar exactamente F27 actual sin detener/reiniciar/aumentar restart_budget. Si PASS, regression/audit/cleanup/integrity/documentation final y cierre bajo roadmap revisado.",
+    "F28_ORIGINAL_6_8H": "WAIVED_BY_USER",
+    "F28_NOT_EXECUTED": true,
+    "F28_REPLACED_BY": "CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION",
+    "F28_MUST_NOT_BE_MARKED_PASS": true,
+    "accepted_4h_stage_id": "4h-20261015-110202-059517",
+    "accepted_4h_duration_seconds": 14781.278687099999,
+    "accepted_4h_completed_tasks": 26,
+    "accepted_4h_summary_sha256": "f5e9cc51e910c3961f702701188fa0b550f731f6b06f6260c985ab68218afe55",
+    "current_f27_run_id": "run-20261015-165354",
+    "current_f27_unchanged": true,
+    "no_push": true
   }
 }
 ```
 
-F24/F25/4H/F26 remain PASS; do not repeat. First F27 FAIL run-20261015-155210 preserved, corrected only new fixture pending artifacts,15 controls PASS, unchanged17 acceptance tests and productive Runner/scripts/tools. Fix fdcd20d.
+# F27 — piloto local seguro: revisión final pendiente
 
-Current exact stage f27-20261015-165308-d37c78, native run run-20261015-165354, controller PID14636, native project sandbox/endurance-f27-20261015-165308-d37c78/pilot-002. Observe runtime/overnight/pilot-active.json and native .autopilot STATE/EVENTS/clock/RESTARTS/PROCESSES; do not create another controller after quota interruption. Runtime/native STATE is authoritative; this document is the current start checkpoint. No source/contract/budget edits during the active run. Only Qwen implements the application.
+Technical E2E PASS; F27 is not yet PASS. A fresh dedicated disposable pilot completed its native Runner/Worker/tests/build/independent read-only Reviewer/Completion/report/cleanup. The initial rounding bug and incomplete feature/docs were solved only by Qwen, against17 pre-START immutable acceptance tests. No personal project, push or deployment.
 
-After actual technical completion: independent closure/commit, then actual human final review per07§30 before F27 PASS/F28. No initial execution authorization is fabricated as final result review. No push.
+Project: C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\endurance-f27-20261015-165308-d37c78\pilot-002
+
+Native run: run-20261015-165354
+
+Review source module.py, README.md, generated artifact-report.json/REPORT.md, immutable test_module.py/build.py/sample-records.json and the actual worker-diff.patch in evidence/endurance-f27-20261015-165308-d37c78/tasks/002/. Backup, native report, full-target read-only proof, hashes and resources remain in evidence/endurance-f27-20261015-165308-d37c78/.
+
+Human review package (pending, NOT a receipt): HUMAN-REVIEW-PACKAGE.json. Roadmap07 section30 requires actual final human review before REAL PILOT PASS. This report does not manufacture that review or authorize F28.
+
+```json
+{
+  "samples": 210,
+  "RAM_min_available_mib": 271.63671875,
+  "pagefile_max_used_gib": 3.8184814443811774,
+  "VRAM_max_mib": 4644,
+  "llama_max_working_set_mib": 20474.4609375,
+  "duration_label": "Pilot summary spans stage start through final cleanup/integrity; native task duration is recorded separately"
+}
+```
+
+## Archivos para la revisión humana final
+
+- [Código del Worker](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/module.py>)
+- [README y ejemplos](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/README.md>)
+- [Reporte legible](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/REPORT.md>)
+- [Reporte JSON](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/artifact-report.json>)
+- [Tests inmutables](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/test_module.py>)
+- [Diff real del Worker](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/evidence/endurance-f27-20261015-165308-d37c78/tasks/002/worker-diff.patch>)
+- [Reporte nativo y cleanup](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/.autopilot/reports/runner-result.json>)
+
+La revisión debe confirmar que el resultado del piloto cumple su objetivo y criterios. Una aprobación inicial de ejecución no acredita esta revisión del resultado final.

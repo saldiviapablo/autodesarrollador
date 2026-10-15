@@ -66,7 +66,7 @@
 | **Fase 24** | End-to-End corto | **PASS** | ATTEMPT11 run-20261015-044359; docs/F24-ATTEMPT-11-REPORT.md; evidence/phase-24-attempt-11-20261015/ |
 | **Fase 25** | Prueba2h | **PASS** | docs/F25-REPORT-f25-20261015-050751-1239ed.md; evidence/endurance-f25-20261015-050751-1239ed/ |
 | **Fase 26** | Auditoría integral | **PASS** | docs/F26-REPORT-phase-26-audit-20261015-154228.md; evidence/phase-26-audit-20261015-154228/ |
-| **Fase 27** | Piloto local seguro | **IN_PROGRESS** | Primer intento FAIL preservado; fixture corregido/certificado, nuevo intento pendiente. docs/F27-FIRST-ATTEMPT-FAIL.md |
+| **Fase 27** | Piloto local seguro | **TECHNICAL_PASS / PENDING_HUMAN_FINAL_REVIEW** | docs/F27-TECHNICAL-REPORT-f27-20261015-165308-d37c78.md; evidence/endurance-f27-20261015-165308-d37c78 |
 | **Fase 28** | Prueba nocturna 6-8 horas | **NOT_RUN** | Prueba definitiva de autonomía prolongada desatendida. |
 
 ---
@@ -229,3 +229,7 @@ F26 PASS: 51 regression suites, 299 audit checks, 259 source hashes and 6119 his
 ## F27 fixture correction — 2026-10-15T19:52:33.975158+00:00
 
 First attempt FAIL preserved; placeholders-only correction15 controls PASS. No Runner/acceptance changes, F24/F25/4H/F26 PASS unchanged. docs/F27-FIRST-ATTEMPT-FAIL.md
+
+## F27 technical pilot — 2026-10-15T20:14:18.545259+00:00
+
+TECHNICAL_PASS_AWAITING_HUMAN_REVIEW. docs/F27-TECHNICAL-REPORT-f27-20261015-165308-d37c78.md; evidence/endurance-f27-20261015-165308-d37c78/. F28 NOT_RUN.
