@@ -3,7 +3,7 @@
   "sealed": true,
   "mode": "MINIMAL_NORMAL_ADMISSION_NO_RECERTIFICATION_CAMPAIGN",
   "at": "2026-10-15T07:37:14.104143+00:00",
-  "source_commit": "1ededd5dee255032688b22e9a41a7d6a7054d8fc",
+  "source_commit": "59e0abfbd44cf845c5a4519dbae45b488c5ba635",
   "gates_sha256": "690949c59fbf278f1863a35f4b27b07f3ab3b99960420c939a628625fc526953",
   "total_gates": 28,
   "source_hashes": {
@@ -163,7 +163,7 @@
     "tests/test-chatgpt-human-reconciliation.js": "d69ea6a8806508ffee6ce4de063440c0ce5a4d86aac91ed2052d8101d015b9c5",
     "tests/test-chatgpt-idempotency-real.ps1": "c1456725cb1a276ee37c5bf1d9c2034bac979ff926a6200d7947b134b7a24c87",
     "tests/test-chatgpt-idempotency.js": "472d30181837ad407ab7159537748238d3227b6b50ff68fca66c6920f4ff77a1",
-    "tests/test-chatgpt-pointer-preflight.js": "aac2259822c63761db730d3cb6015397f9542b90193324adcf9a2f9d6bc2f1bc",
+    "tests/test-chatgpt-pointer-preflight.js": "6bf0392b3a00252933e1dd9ed20def509d66533ff09177166d8f32a060f754bd",
     "tests/test-chatgpt-send-actuator.js": "9f8c3ff9f10d58c244bb5babb5a8d2514aa735c49466baa9be5f2d78162cdea9",
     "tests/test-chatgpt-single-physical-click.js": "76aa43ab10d42b8f4836685b2133e105b79d00afae810bc233d99ae171f2fe62",
     "tests/test-chatgpt-state-schema.py": "b2120235205316a008377f5494efbd56cd1d867f17755772e91baff83cfb5b22",
@@ -248,7 +248,7 @@
     "tools/chatgpt-composer-prepare.js": "5153449a25f5f3c1366ef309ae88c3b5c0468323be41df1ee43101e82d533ed4",
     "tools/chatgpt-composer.js": "99d7532f17388015114f6e1cf96733c27df94357a2e5b11fc0c1573fceafd1fc",
     "tools/chatgpt-conversation.js": "788f804e3c92f3d7b7e62bb487fbc764187fa68c146740284a1eb88e214ea6eb",
-    "tools/chatgpt-delivery.js": "c902f022889530e20149d3e0d26e44eb2e957ef4499ca18c3ace1a2b9043bc6f",
+    "tools/chatgpt-delivery.js": "a1aca7a50554402ac75b7db10812c2f8ec95b530b996d75418484dd85800ef17",
     "tools/chatgpt-fresh-chat.js": "c84ba6643b468729bce16e18c112c70f52e7c7d60ff616bc36633093833c474a",
     "tools/chatgpt-ledger.js": "310de4f81f53ef18444bc760b7c390dd5f44de5fb4e7994bcdd4c772f330e965",
     "tools/chatgpt-pre-send.js": "48ebbb99b657916c75feb7eb883a77efd306b28abc5e325dd4c4c772ed6d29cb",
@@ -275,5 +275,16 @@
     "phase_timeout_seconds": 300,
     "restart_budget": 2,
     "max_cycles": 5
+  },
+  "prestart_reseal": {
+    "at": "2026-10-15T07:42:48.218359+00:00",
+    "reason": "Trace serializer correction certified before any A11 Prepare/approval/START; original admission/history preserved",
+    "changed_sources": [
+      "tests/test-chatgpt-pointer-preflight.js",
+      "tools/chatgpt-delivery.js"
+    ],
+    "certification": "evidence/chatgpt-pointer-trace-fields-20261015/CERTIFIED.json",
+    "budgets_unchanged": true,
+    "run_or_consultation_created": false
   }
 }
