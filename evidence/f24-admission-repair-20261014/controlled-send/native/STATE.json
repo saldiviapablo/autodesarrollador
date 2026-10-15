@@ -1,0 +1,73 @@
+﻿{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261014-223939",
+    "project_id":  "test-send-actuator-153deadd913e4bdfbbc081196d7f1c63",
+    "objective":  "One controlled ChatGPT send actuator test only; not F24 E2E",
+    "status":  "ABORTED",
+    "created_at":  "2026-10-14T22:39:39.7964381-03:00",
+    "updated_at":  "2026-10-14T22:41:05.6632109-03:00",
+    "cycle":  0,
+    "max_cycles":  20,
+    "current_phase":  "FASE_0_INITIALIZATION",
+    "current_task":  "Inicialización del espacio de trabajo y contratos",
+    "completed_tasks":  [
+
+                        ],
+    "pending_tasks":  [
+                          "One controlled ChatGPT send actuator test only; not F24 E2E"
+                      ],
+    "acceptance_criteria":  [
+                                "single physical action and captured response; retry no resend"
+                            ],
+    "current_delegation_id":  null,
+    "hermes_session_id":  null,
+    "qwen_session_id":  null,
+    "git":  {
+                "branch":  "agent/macro8-20261013",
+                "head":  "7080d55",
+                "dirty":  true,
+                "changed_files":  [
+                                      "runner/contract.py",
+                                      "tests/preflight-f24-harness.py",
+                                      "tests/seal-f24-preflight.py",
+                                      "tests/test-chatgpt-actuator-live.ps1",
+                                      "tests/test-phase22.py",
+                                      "tests/test-phase24-attempt6-live.py",
+                                      "tools/chatgpt-bridge.js",
+                                      "evidence/f24-admission-repair-20261014/",
+                                      "tests/prepare-f24-admission-repair.py",
+                                      "tests/test-chatgpt-fresh-chat.js",
+                                      "tests/test-controlled-send-utf8.js",
+                                      "tools/chatgpt-fresh-chat.js"
+                                  ]
+            },
+    "tests":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null,
+                  "last_run_at":  null
+              },
+    "build":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null
+              },
+    "progress":  {
+                     "score":  0,
+                     "last_progress_at":  null,
+                     "no_progress_cycles":  0
+                 },
+    "failure":  {
+                    "last_signature":  null,
+                    "repeated_count":  0
+                },
+    "checkpoint":  {
+                       "last_id":  null,
+                       "last_created_at":  null
+                   },
+    "next_action":  "Controlled actuator test closed; no full Runner execution claimed",
+    "chatgpt":  {
+                    "queries_used":  2,
+                    "max_queries":  5
+                }
+}

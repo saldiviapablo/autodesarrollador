@@ -63,7 +63,7 @@
 | **Fase 21** | Reportes | **PASS** | evidence/phase-21/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 22** | Cleanup garantizado | **PASS** | evidence/phase-22/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 23** | Sandbox integral | **PASS** | Reviewer real ACCEPTED, Completion Gate PASS; histórico preservado. evidence/hermes-prompt-transport-20261014/. |
-| **Fase 24** | End-to-End corto | **FAIL / BLOCKED_REQUIRES_HUMAN** | ATTEMPT 5: web context/tests/build/recovery completo PASS; ChatGPT botón no disponible/unívoco, 0 envíos y ledger UNKNOWN_DELIVERY. Reviewer/gate NOT_RUN. Admisión ATTEMPT6 FAIL antes de START (prueba ChatGPT y probe cleanup); sin nuevo run. evidence/f24-attempt6-preflight-20261014/. |
+| **Fase 24** | End-to-End corto | **FAIL / BLOCKED_REQUIRES_HUMAN** | ATTEMPT 5: web context/tests/build/recovery completo PASS; ChatGPT botón no disponible/unívoco, 0 envíos y ledger UNKNOWN_DELIVERY. Reviewer/gate NOT_RUN. Admisión ATTEMPT6 detenida: Nuevo chat conserva borrador; 0 envíos y sin nuevo run. Heartbeat fix NOT_VERIFIED; preflight NOT_RUN. evidence/f24-admission-repair-20261014/. |
 | **Fase 25** | Prueba 2 horas | **NOT_RUN** | Validación de estabilidad autónoma continua de 2 horas. |
 | **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
 | **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
@@ -176,3 +176,7 @@ WEB_GATE_FIX PASS, F24_HARNESS_PREFLIGHT PASS, 28 gates congelados (8c8bfdf; run
 ## Estado vigente — admisión F24 ATTEMPT 6 detenida — 2026-10-14
 
 Actuador ChatGPT A–L y UI read-only PASS; prueba real controlada FAIL antes de envío: navegar a raíz conservó el borrador histórico, PREEXISTING_COMPOSER_NO_SEND, 0 intentos físicos. No retry/reconciliación. Preflight del harness FAIL por HEARTBEAT_STALE repetido en probe de recovery/cleanup. ATTEMPT6 NOT_RUN, sin nuevo run/clock/aprobación; no ATTEMPT7. ATTEMPT5 y 955 archivos históricos intactos. Cleanup final e integridad PASS; F24 conserva FAIL; READY_FOR_F25 NO. Informe: docs/F24-ATTEMPT-6-ADMISSION-STOP-REPORT.md; evidence/f24-attempt6-preflight-20261014/.
+
+## Estado vigente — Nuevo chat conserva borrador; STOP — 2026-10-14
+
+Fix de aislamiento UI implementado y deterministas PASS. Un click de navegación Nuevo chat no produjo composer vacío: FRESH_CHAT_READY FAIL, hash histórico intacto. 0 envíos, 0 DELIVERY_INTENT, ledger de prueba no reservado; ATTEMPT5 sin cambios/reconciliación. STOP explícito; heartbeat fixture corregido pero NOT_VERIFIED, preflight completo NOT_RUN, ATTEMPT6 NOT_CREATED/NOT_RUN. Cleanup e integridad PASS (4146 archivos y 6 componentes protegidos). F24 conserva FAIL; READY_FOR_F25 NO; no ATTEMPT7/F25/F27/F28/push. docs/F24-FRESH-CHAT-STOP-REPORT.md; evidence/f24-admission-repair-20261014/.

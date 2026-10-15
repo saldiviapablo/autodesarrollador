@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "source": "observed command outputs before live fresh-chat STOP; not a full harness preflight",
+  "commands": [
+    "node tests/test-chatgpt-fresh-chat.js",
+    "node tests/test-chatgpt-send-actuator.js",
+    "node tests/test-chatgpt-delivery.js",
+    "node tests/test-chatgpt-single-physical-click.js",
+    "node tests/test-controlled-send-utf8.js"
+  ],
+  "fresh_chat_cases": 10,
+  "actuator_checks": 13,
+  "delivery_checks": 8,
+  "single_click_checks": 4,
+  "UTF8_SOURCE": "PASS",
+  "UTF8_PROMPT_BYTES": "PASS",
+  "heartbeat_recovery_probe_executed": false,
+  "full_preflight_executed": false
+}
