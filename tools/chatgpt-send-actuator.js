@@ -1,6 +1,7 @@
 'use strict';
 const {hash,normalize}=require('./chatgpt-ledger');
 const {conversationId}=require('./chatgpt-delivery');
+const {chatGptComposers}=require('./chatgpt-composer');
 // Executed only in the approved top document. Inspection is read-only: no focus,
 // insertion, DOM submit, or synthetic DOM keyboard/mouse event.
 function inspectComposer(expectedText) {
@@ -8,8 +9,8 @@ function inspectComposer(expectedText) {
   const visible=el=>{if(el.isConnected===false)return false;for(let n=el;n;n=n.parentElement){const s=getComputedStyle(n);if(n.hidden||n.inert||n.getAttribute?.('aria-hidden')==='true'||s.visibility==='hidden'||s.visibility==='collapse'||s.display==='none')return false;}const r=el.getBoundingClientRect();return r.width>0&&r.height>0;};
   const text=el=>{const ps=Array.from(el.querySelectorAll('p'));return norm(ps.length?ps.map(p=>p.innerText).join('\n'):(el.value??el.innerText??''));};
   const allEditors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea'));
-  const editors=allEditors.filter(el=>visible(el)&&!el.disabled&&!el.readOnly&&!el.parentElement?.closest('[contenteditable="true"]'));
-  const matches=editors.filter(el=>expectedText===undefined||text(el)===norm(expectedText));
+  const editors=chatGptComposers();
+  const matches=editors.length===1?editors.filter(el=>expectedText===undefined||text(el)===norm(expectedText)):editors;
   const prose=matches.length===1?matches[0]:null;
   const streaming=!!document.querySelector('button[data-testid*="stop"],button[aria-label*="Stop"],button[aria-label*="Detener"],.result-streaming');
   if(!prose)return {url:location.href,composer_found:false,composer_matches:matches.length,isStreaming:streaming,buttons:[]};

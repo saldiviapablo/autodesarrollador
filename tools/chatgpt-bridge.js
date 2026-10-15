@@ -12,6 +12,7 @@ const { ConsultationLedger, acquireBrowserLease, hash, normalize, reconcileObser
 const { Budget, Trace, budgets, deliver } = require('./chatgpt-delivery');
 const {inspectComposer,selectActuator,sendPhysicalEnter,probePointerMove,prepareSendActuator}=require('./chatgpt-send-actuator');
 const {prepareComposerText}=require('./chatgpt-composer-prepare');
+const {composerBindings}=require('./chatgpt-composer');
 const {findNewChatControl,requestFreshChat}=require('./chatgpt-fresh-chat');
 const {recoverOwnedPreSendDraft,LEGACY_ID,requireEmptyComposer}=require('./chatgpt-pre-send');
 const {conversationBindings}=require('./chatgpt-conversation');
@@ -99,7 +100,7 @@ async function readPrepared(ws) {
 }
 
 async function readActuator(ws,expectedText) {
-  const result=await sendCdp(ws,'Runtime.evaluate',{expression:`(${inspectComposer.toString()})(${expectedText===undefined?'undefined':JSON.stringify(expectedText)})`,returnByValue:true});
+  const result=await sendCdp(ws,'Runtime.evaluate',{expression:`(()=>{${composerBindings()}return (${inspectComposer.toString()})(${expectedText===undefined?'undefined':JSON.stringify(expectedText)});})()`,returnByValue:true});
   return result.result?.value||{};
 }
 
@@ -115,7 +116,7 @@ async function clearOwnedComposer(ws,observation,record){
     const norm=s=>s.trim().replace(/\\r\\n/g,'\\n').replace(/\\n\\n+/g,'\\n');
     ${conversationBindings()}
     if(conversationTurns('user').length!==${record.user_turns_before}||conversationTurns('assistant').length!==${record.assistant_turns_before}||document.querySelector('button[data-testid*="stop"],button[aria-label*="Stop"],button[aria-label*="Detener"],.result-streaming'))throw Error('ROLLBACK_BASELINE_CHANGED');
-    const editors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea')).filter(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&s.display!=='none'&&!e.disabled&&!e.readOnly&&!e.parentElement?.closest('[contenteditable="true"]');});
+    const editors=chatGptComposers();
     if(editors.length!==1)throw Error('ROLLBACK_COMPOSER_NOT_UNIQUE');const prose=editors[0],ps=Array.from(prose.querySelectorAll('p'));const text=norm(ps.length?ps.map(p=>p.innerText).join('\\n'):(prose.value??prose.innerText??''));
     if(text!==expected)throw Error('ROLLBACK_COMPOSER_CHANGED');
     prose.focus();if(document.activeElement!==prose&&!prose.contains(document.activeElement))throw Error('ROLLBACK_FOCUS_FAILED');
@@ -140,7 +141,8 @@ async function openFreshChat(ws){
       activeTrace?.emit('NEW_CHAT_NAVIGATION_END');
     },
     focusEmpty:async()=>{await sendCdp(ws,'Runtime.evaluate',{expression:`(() => {
-      const editors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea')).filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&!e.parentElement?.closest('[contenteditable="true"]');});
+      ${composerBindings()}
+      const editors=chatGptComposers();
       if(editors.length!==1||(editors[0].value??editors[0].innerText??'').trim())throw Error('FRESH_CHAT_FOCUS_NONEMPTY_DENIED');
       editors[0].focus();return true;
     })()`,returnByValue:true});},recoverOwnedDraft:()=>recoverDraft(ws,new ConsultationLedger()),trace:activeTrace
@@ -535,6 +537,7 @@ async function main() {
 
       const roundtripRes = await sendCdp(ws, 'Runtime.evaluate', {
         expression: `(() => {
+          ${composerBindings()}
           const inspect=${inspectComposer.toString()};
           const prepared=(${prepareComposerText.toString()})(${JSON.stringify(testText)},inspect);
           const observation=inspect(${JSON.stringify(testText)});
@@ -647,7 +650,7 @@ async function main() {
 
       // 2. Inyectar texto en composer
       const injectRes = confirmedRetry ? { result:{value:{success:true,domText:(await readPrepared(ws)).composer}} } : await sendCdp(ws, 'Runtime.evaluate', {
-        expression: `(${prepareComposerText.toString()})(${JSON.stringify(fullPrompt)},${inspectComposer.toString()})`,
+        expression: `(()=>{${composerBindings()}return (${prepareComposerText.toString()})(${JSON.stringify(fullPrompt)},${inspectComposer.toString()});})()`,
         returnByValue: true
       });
 

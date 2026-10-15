@@ -10,9 +10,9 @@ const directory=path.resolve(__dirname,'../sandbox/actuator-'+crypto.randomUUID(
 // association and unrelated global submit controls. No browser/network access.
 function fixture(localCount,globalCount=0){
  const rect={x:1,y:1,width:20,height:20};
- const composer={innerText:prompt,isContentEditable:true,tagName:'DIV',querySelectorAll:()=>[],getBoundingClientRect:()=>rect,contains:x=>x===composer};
+ const composer={id:'prompt-textarea',innerText:prompt,isContentEditable:true,tagName:'DIV',querySelectorAll:()=>[],getBoundingClientRect:()=>rect,contains:x=>x===composer};
  const buttons=Array.from({length:localCount},()=>({type:'submit',getAttribute:()=>null,getBoundingClientRect:()=>rect,contains:()=>true}));
- const scope={querySelectorAll:()=>buttons,contains:x=>x===composer};composer.closest=()=>scope;composer.parentElement={closest:()=>null};
+ const scope={querySelectorAll:()=>buttons,contains:x=>x===composer};composer.closest=selector=>selector==='form,[role="form"]'?scope:null;composer.parentElement={closest:()=>null};
  global.location={href:url};global.getComputedStyle=()=>({visibility:'visible',display:'block'});
  global.document={activeElement:composer,querySelectorAll:selector=>selector==='[contenteditable="true"],textarea'?[composer]:[...buttons,...Array(globalCount).fill({})],querySelector:()=>null,elementFromPoint:()=>({})};
  return inspectComposer(prompt);

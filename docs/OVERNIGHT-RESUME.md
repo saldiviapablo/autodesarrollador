@@ -6,13 +6,13 @@
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
   "last_completed": "F24 ATTEMPT10 historical FAIL; delivered consultation COMPLETED and response recovered read-only",
-  "active_phase": "COMPOSER_IDENTITY_FIX",
+  "active_phase": "F24_ATTEMPT11_PREPARATION",
   "last_cause": "assistant CodeMirror contenteditable was counted as a second composer",
-  "last_fix": "Approved pre-intent fallback;12 pointer cases,11 composer cases,10 regression suites,live nonsend pointer and3 completed live bridge canaries",
+  "last_fix": "Shared semantic composer identity;13 cases,10 bridge suites,11 prep/12 pointer cases and real CodeMirror reply read-only PASS",
   "last_commit": "f7ae73393ddd0b3d1de330508fa58ca7829d6674",
-  "next_action": "Backup/implement shared semantic composer selector, deterministic tests + live readonly current CodeMirror + controlled code-response send. No resend A10. No new E2E until certified.",
+  "next_action": "Commit isolated identity fix, prepare fresh A11, normal28 gates/budgets. No A10 resend. Then F25 after PASS.",
   "run_pointer": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f24-attempt10-367d25c4\\project\\.autopilot",
-  "updated_at": "2026-10-15T07:22:41.148006+00:00",
+  "updated_at": "2026-10-15T07:33:44.360726+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -25,7 +25,8 @@
     "REVIEWER_CONTRACT_CERTIFIED",
     "NONFINITE_ORACLE_EXPANDED_BEFORE_NEW_START",
     "ACTIVE_COMPOSER_CERTIFIED",
-    "PRE_INTENT_POINTER_FALLBACK_CERTIFIED"
+    "PRE_INTENT_POINTER_FALLBACK_CERTIFIED",
+    "SHARED_POSITIVE_COMPOSER_IDENTITY_CERTIFIED"
   ],
   "run_id": "run-20261015-035008",
   "consultation_id": "f24-a10-9ef973fcd207446197d8ffd7e8b4b12d",
@@ -39,4 +40,4 @@
 }
 ```
 
-No active F24/model/controller. A10 preserved FAIL; no resend, its ledger is already COMPLETED. Next isolated composer identity fix must exclude assistant CodeMirror. Then fresh A11 if certified; F25 real2h →4h →F26 →F27 human-reviewed safe pilot →F28 real6–8h →final audit. No push. Unpromoted endurance code in logs/overnight;14 unit tests PASS, owner live cert NOT_RUN and requires F24 PASS.
+No active F24/model. A10 historicalFAIL preserved596c8b0; consultation COMPLETED, response exact-hash recovered; no resend. Identity fix certified on actual existing CodeMirror reply with no new query. Next commit + fresh A11. Then F25 real2h →4h →F26 →F27 safe pilot with actual human final review →F28 real6–8h →final audit. Unpromoted endurance code in logs/overnight;14 deterministic tests PASS, owner live cert NOT_RUN. No push.

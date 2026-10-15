@@ -5,6 +5,7 @@ const fs=require('fs'),path=require('path'),assert=require('assert/strict'),cryp
 const {verifyDedicatedProfile,validateDomain,guardPageExpression}=require('../tools/chatgpt-bridge');
 const {inspectComposer,selectActuator,probePointerMove}=require('../tools/chatgpt-send-actuator');
 const {prepareComposerText}=require('../tools/chatgpt-composer-prepare');
+const {composerBindings}=require('../tools/chatgpt-composer');
 const {conversationBindings}=require('../tools/chatgpt-conversation');
 const {acquireBrowserLease,hash,normalize}=require('../tools/chatgpt-ledger');
 const R=path.resolve(__dirname,'..'),E=path.resolve(process.env.F24_PREFLIGHT_E||''),D=path.join(R,'runtime/chatgpt-consultations');
@@ -25,7 +26,7 @@ function ledgerHashes(){return Object.fromEntries(fs.readdirSync(D).filter(n=>/^
   const evaluate=async expression=>(await dispatch(ws,'Runtime.evaluate',{expression,returnByValue:true})).result.value;
   const inspect=()=>evaluate(`(()=>{${conversationBindings()}return {...readConversationSnapshot(),...(${inspectComposer.toString()})()};})()`);
   const before=await inspect();assert.equal(before.user,0);assert.equal(before.assistant,0);assert.equal(before.composer,'');assert.equal(before.isStreaming,false);assert.equal(before.composer_matches,1);
-  await dispatch(ws,'Page.bringToFront');await evaluate(`(${prepareComposerText.toString()})(${JSON.stringify(text)},${inspectComposer.toString()})`);inserted=true;
+  await dispatch(ws,'Page.bringToFront');await evaluate(`(()=>{${composerBindings()}return (${prepareComposerText.toString()})(${JSON.stringify(text)},${inspectComposer.toString()});})()`);inserted=true;
   await new Promise(r=>setTimeout(r,700));const prepared=await inspect();assert.equal(hash(normalize(prepared.composer)),hash(normalize(text)));assert.equal(prepared.user,0);assert.equal(prepared.assistant,0);
   const input={delivery_state:'PREPARED',send_attempts:0,prompt_sha256:hash(normalize(text)),conversation_url:prepared.url};
   const primary=selectActuator(input,prepared);const button=prepared.buttons.find(b=>b.visible&&b.width>0&&b.height>0);assert(button,'LIVE_POINTER_TARGET_NOT_PRESENT');

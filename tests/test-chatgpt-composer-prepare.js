@@ -3,6 +3,7 @@ const assert=require('node:assert/strict'),vm=require('node:vm');
 const {inspectComposer}=require('../tools/chatgpt-send-actuator');
 const {prepareComposerText}=require('../tools/chatgpt-composer-prepare');
 const {conversationBindings}=require('../tools/chatgpt-conversation');
+const {composerBindings}=require('../tools/chatgpt-composer');
 const prompt='Consulta UTF-8: áéíóú ñ — € °\nSegunda línea\n\nfin';
 function fixture({count=1,dirty=false,streaming=false,focusFail=false,corrupt=false,hiddenAncestor=false}={}){
  let selected,insertions=0;const rect={x:0,y:0,width:400,height:30};
@@ -11,7 +12,7 @@ function fixture({count=1,dirty=false,streaming=false,focusFail=false,corrupt=fa
    getAttribute:()=>null,hasAttribute:()=>false,getBoundingClientRect:()=>visible?rect:{...rect,width:0},getClientRects:()=>visible?[rect]:[],
    querySelectorAll:()=>[],contains(x){return x===this;},closest:()=>null,
    focus(){if(!focusFail)doc.activeElement=this;},dispatchEvent(){},});
- const hidden=node(false,'');const editors=Array.from({length:count},()=>node(true,dirty?'preexisting':''));
+ const hidden=node(false,'');const editors=Array.from({length:count},()=>({...node(true,dirty?'preexisting':''),id:'prompt-textarea'}));
  if(hiddenAncestor&&editors[0])editors[0].parentElement=node(false);
  doc.querySelectorAll=s=>s==='[contenteditable="true"],textarea'?[hidden,...editors]:[];
  doc.querySelector=s=>s==='.ProseMirror'?hidden:s.includes('stop')&&streaming?{}:null;
@@ -19,8 +20,8 @@ function fixture({count=1,dirty=false,streaming=false,focusFail=false,corrupt=fa
  doc.execCommand=(command,_,text)=>{assert.equal(command,'insertText');assert.equal(selected,doc.activeElement);selected.innerText=corrupt?'damaged':text;insertions++;return true;};
  const ctx=vm.createContext({document:doc,location:{href:'https://chatgpt.com/'},getComputedStyle:n=>n.style||{display:'block',visibility:'visible'},window:{getSelection:()=>({removeAllRanges(){},addRange(){}})},Event:class{}});
  const evaluate=s=>vm.runInContext(s,ctx);
- const inspect=()=>evaluate(`(${inspectComposer.toString()})()`);
- const prepare=()=>evaluate(`(${prepareComposerText.toString()})(${JSON.stringify(prompt)},${inspectComposer.toString()})`);
+ const inspect=()=>evaluate(`(()=>{${composerBindings()}return (${inspectComposer.toString()})();})()`);
+ const prepare=()=>evaluate(`(()=>{${composerBindings()}return (${prepareComposerText.toString()})(${JSON.stringify(prompt)},${inspectComposer.toString()});})()`);
  const snapshot=()=>evaluate(`(()=>{${conversationBindings()}return readConversationSnapshot();})()`);
  return {doc,hidden,editors,inspect,prepare,snapshot,insertions:()=>insertions};
 }

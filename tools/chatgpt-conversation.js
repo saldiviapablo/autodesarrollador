@@ -1,4 +1,5 @@
 'use strict';
+const {chatGptComposers,composerBindings}=require('./chatgpt-composer');
 
 // These functions run in the approved top document. Layout membership is
 // independent of scrolling: a rendered turn outside the viewport still counts.
@@ -30,7 +31,7 @@ function readConversationSnapshot() {
   const users = conversationTurns('user'), assistants = conversationTurns('assistant');
   return {
     user: users.length, assistant: assistants.length,
-    composer_empty: (() => { const editors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea')).filter(p=>isRenderedConversationTurn(p)&&!p.disabled&&!p.readOnly&&!p.parentElement?.closest('[contenteditable="true"]'));return editors.length===1&&!(editors[0].value??editors[0].innerText??'').trim(); })(),
+    composer_empty: (() => {const editors=chatGptComposers();return editors.length===1&&!(editors[0].value??editors[0].innerText??'').trim();})(),
     lastUserText: users.length ? users[users.length - 1].innerText.trim().replace(/^(You said:|Tú dijiste:)\s*/i, '') : '',
     lastAssistantText: assistants.length ? assistants[assistants.length - 1].innerText.trim().replace(/^(ChatGPT said:|ChatGPT dijo:)\s*/i, '') : '',
     isStreaming: !!document.querySelector('button[data-testid*="stop"],button[aria-label*="Stop"],button[aria-label*="Detener"],.result-streaming'),
@@ -40,7 +41,8 @@ function readConversationSnapshot() {
 
 // Inject the exact same lexical bindings into read and guarded rollback scripts.
 function conversationBindings() {
-  return `const isRenderedConversationTurn = ${isRenderedConversationTurn.toString()};
+  return `${composerBindings()}
+const isRenderedConversationTurn = ${isRenderedConversationTurn.toString()};
 const conversationTurns = ${conversationTurns.toString()};
 const readConversationSnapshot = ${readConversationSnapshot.toString()};`;
 }

@@ -23,7 +23,7 @@ function element(text = '', options = {}) {
   return node;
 }
 function page(families = {}) {
-  const editor = element('', {tagName: 'TEXTAREA', value: '', getBoundingClientRect: () => rect,
+  const editor = element('', {id:'prompt-textarea',tagName: 'TEXTAREA', value: '', getBoundingClientRect: () => rect,
     focus() { document.activeElement = this; }, contains(other) { return this === other; },
     querySelectorAll: () => [], dispatchEvent() { this.events = (this.events || 0) + 1; }});
   const document = {
