@@ -1,0 +1,796 @@
+{
+  "status": "FAIL",
+  "failure": "test-qwen-research-model-input.py: Exception in thread Thread-3 (_readerthread):\r\nTraceback (most recent call last):\r\n  File \"C:\\Python314\\Lib\\threading.py\", line 1082, in _bootstrap_inner\r\n    self._context.run(self.run)\r\n    ~~~~~~~~~~~~~~~~~^^^^^^^^^^\r\n  File \"C:\\Python314\\Lib\\threading.py\", line 1024, in run\r\n    self._target(*self._args, **self._kwargs)\r\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Python314\\Lib\\subprocess.py\", line 1614, in _readerthread\r\n    buffer.append(fh.read())\r\n                  ~~~~~~~^^\r\n  File \"<frozen codecs>\", line 325, in decode\r\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xa2 in position 268: invalid start byte\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-qwen-research-model-input.py\", line 24, in <module>\r\n    (E/'native-qwen.stdout.txt').write_text(r.stdout,encoding='utf-8');(E/'native-qwen.stderr.txt').write_text(r.stderr,encoding='utf-8');assert r.returncode==0,r.stderr\r\n                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Python314\\Lib\\pathlib\\__init__.py\", line 807, in write_text\r\n    raise TypeError('data must be str, not %s' %\r\n                    data.__class__.__name__)\r\nTypeError: data must be str, not NoneType\r\n ",
+  "tests": {
+    "central-config": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 1.237204,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 35512,
+          "wrapper_pid": 34608,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858227185730,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 1.775040499996976,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\verify-config.ps1",
+        "-LogFile",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\central-config.log.txt"
+      ]
+    },
+    "state": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 2.3489714999999998,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 33840,
+          "wrapper_pid": 16136,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858245179626,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 2.9124524000071688,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-fase10-state.ps1",
+        "-SandboxDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f26-continuity-7c9b4946",
+        "-EvidenceDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\state",
+        "-LogFile",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\state.log.txt"
+      ]
+    },
+    "recovery-memory": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 6.5525196,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 10432,
+          "wrapper_pid": 15516,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858274082447,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 7.085333099996205,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-fase11-recovery.ps1",
+        "-SandboxDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f26-continuity-7c9b4946",
+        "-EvidenceDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\recovery-memory",
+        "-LogFile",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\recovery-memory.log.txt"
+      ]
+    },
+    "security": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.9304684,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 36896,
+          "wrapper_pid": 22088,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858345124272,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 1.474612599995453,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-fase15-security.ps1",
+        "-SandboxDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f26-security-aef31a5b",
+        "-EvidenceDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\security"
+      ]
+    },
+    "checkpoint-integrity": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 2.7799936,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 32484,
+          "wrapper_pid": 17508,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858359783959,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 3.315329600009136,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-checkpoint-integrity.ps1",
+        "-SandboxDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f26-checkpoint-bba6c365"
+      ]
+    },
+    "anti-loop-timeouts": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 4.4290307,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 28752,
+          "wrapper_pid": 19024,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858392995158,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 4.966367600005469,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-fase16-anti-loop.ps1",
+        "-EvidenceDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\anti-loop"
+      ]
+    },
+    "inference-lock": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 9.3689514,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 37016,
+          "wrapper_pid": 29472,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858442567209,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 9.895060299997567,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-inference-lock.ps1",
+        "-EvidenceDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\lock",
+        "-LogFile",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\lock.log.txt"
+      ]
+    },
+    "domain-powershell": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.6706481,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 25752,
+          "wrapper_pid": 24628,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858541773088,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 1.2200645999982953,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-domain-lock.ps1"
+      ]
+    },
+    "bridge-child-timeout-cleanup": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.40849169999999996,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 8200,
+          "wrapper_pid": 28448,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858553960365,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 0.9532293000083882,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-child-cleanup.ps1"
+      ]
+    },
+    "budget-state-merge": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 1.8961367999999998,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 34148,
+          "wrapper_pid": 13256,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858563397149,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 2.428314100005082,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-runner-budget-merge.ps1"
+      ]
+    },
+    "atomic-budget-smoke": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 6.8613558,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 25300,
+          "wrapper_pid": 17776,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858587774797,
+          "executable": "C:/Python314/python.exe"
+        }
+      },
+      "duration_seconds": 7.400824599986663,
+      "argv": [
+        "C:/Python314/python.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-audit-budget-smoke.py",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\budget-race"
+      ]
+    },
+    "reviewer-core": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.5267961999999999,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 23392,
+          "wrapper_pid": 25948,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858661748611,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 1.0566047000029357,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-reviewer-core.ps1",
+        "-EvidenceRoot",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-153013\\reviewer"
+      ]
+    },
+    "chatgpt-domain-lock": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 1.5990932,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 2120,
+          "wrapper_pid": 17176,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858672370855,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 2.1328887999989092,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-domain-lock.js"
+      ]
+    },
+    "chatgpt-conversation": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.1074967,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 27228,
+          "wrapper_pid": 31076,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858693644792,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.632273900002474,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-conversation.js"
+      ]
+    },
+    "chatgpt-composer-identity": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.1380024,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 27916,
+          "wrapper_pid": 36848,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858700083594,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.6705103000131203,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-composer-identity.js"
+      ]
+    },
+    "chatgpt-composer-prepare": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.0930144,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 21740,
+          "wrapper_pid": 28160,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858706821827,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.6272017000010237,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-composer-prepare.js"
+      ]
+    },
+    "chatgpt-pointer-preflight": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.164456,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 33156,
+          "wrapper_pid": 3552,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858713238880,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.708997099995031,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-pointer-preflight.js"
+      ]
+    },
+    "chatgpt-send-actuator": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.17916859999999998,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 25752,
+          "wrapper_pid": 34896,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858720215916,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.7095785999990767,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-send-actuator.js"
+      ]
+    },
+    "chatgpt-single-physical-click": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.090012,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 31064,
+          "wrapper_pid": 9928,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858727383439,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.6231297000049381,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-single-physical-click.js"
+      ]
+    },
+    "chatgpt-delivery": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.40089189999999997,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 5152,
+          "wrapper_pid": 1808,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858733874539,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.9570812000019941,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-delivery.js"
+      ]
+    },
+    "chatgpt-idempotency": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.23635879999999998,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 34736,
+          "wrapper_pid": 25580,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858743303250,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.7745085000060499,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-idempotency.js"
+      ]
+    },
+    "chatgpt-human-reconciliation": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.7351844,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 3960,
+          "wrapper_pid": 31640,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858751034648,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 1.2732363999966765,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-human-reconciliation.js"
+      ]
+    },
+    "chatgpt-fresh-chat": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.085015,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 25084,
+          "wrapper_pid": 34680,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858763847114,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.6257217000093078,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-fresh-chat.js"
+      ]
+    },
+    "chatgpt-transaction": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.4087598,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 9092,
+          "wrapper_pid": 20000,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858770033754,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.9395564000005834,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-chatgpt-transaction.js"
+      ]
+    },
+    "controlled-utf8-deterministic": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 0.3500973,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 23112,
+          "wrapper_pid": 36804,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858779396669,
+          "executable": "node.exe"
+        }
+      },
+      "duration_seconds": 0.8749480999977095,
+      "argv": [
+        "node.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-controlled-send-utf8.js"
+      ]
+    },
+    "test-reviewer-contract.py": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 1.7077339999999999,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 14372,
+          "wrapper_pid": 28460,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858788254032,
+          "executable": "C:/Python314/python.exe"
+        }
+      },
+      "duration_seconds": 2.2402334999933373,
+      "argv": [
+        "C:/Python314/python.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-reviewer-contract.py"
+      ]
+    },
+    "test-hermes-prompt-transport.py": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 15.035813699999999,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 16480,
+          "wrapper_pid": 37648,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858810652561,
+          "executable": "C:/Python314/python.exe"
+        }
+      },
+      "duration_seconds": 15.566033700000844,
+      "argv": [
+        "C:/Python314/python.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-hermes-prompt-transport.py"
+      ]
+    },
+    "test-research-handoff.py": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 1.7265363,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 28948,
+          "wrapper_pid": 23116,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858966460017,
+          "executable": "C:/Python314/python.exe"
+        }
+      },
+      "duration_seconds": 2.268819499993697,
+      "argv": [
+        "C:/Python314/python.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-research-handoff.py"
+      ]
+    },
+    "test-qwen-research-model-input.py": {
+      "status": "FAIL",
+      "process": {
+        "exit_code": 1,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "FAIL",
+        "stream_cleanup": true,
+        "duration_seconds": 4.0318192,
+        "owned_identity": {
+          "controller_pid": 26476,
+          "pid": 35916,
+          "wrapper_pid": 25652,
+          "controller_birth_ticks": 639276858129086091,
+          "start_ticks": 639276858989124265,
+          "executable": "C:/Python314/python.exe"
+        }
+      },
+      "duration_seconds": 4.5666630000050645,
+      "argv": [
+        "C:/Python314/python.exe",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-qwen-research-model-input.py"
+      ]
+    }
+  },
+  "historical_files": 5523,
+  "no_push": true,
+  "new_dependencies": []
+}

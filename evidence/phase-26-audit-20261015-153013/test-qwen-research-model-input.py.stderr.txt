@@ -1,0 +1,21 @@
+Exception in thread Thread-3 (_readerthread):
+Traceback (most recent call last):
+  File "C:\Python314\Lib\threading.py", line 1082, in _bootstrap_inner
+    self._context.run(self.run)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python314\Lib\threading.py", line 1024, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\subprocess.py", line 1614, in _readerthread
+    buffer.append(fh.read())
+                  ~~~~~~~^^
+  File "<frozen codecs>", line 325, in decode
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xa2 in position 268: invalid start byte
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\tests\test-qwen-research-model-input.py", line 24, in <module>
+    (E/'native-qwen.stdout.txt').write_text(r.stdout,encoding='utf-8');(E/'native-qwen.stderr.txt').write_text(r.stderr,encoding='utf-8');assert r.returncode==0,r.stderr
+                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\pathlib\__init__.py", line 807, in write_text
+    raise TypeError('data must be str, not %s' %
+                    data.__class__.__name__)
+TypeError: data must be str, not NoneType

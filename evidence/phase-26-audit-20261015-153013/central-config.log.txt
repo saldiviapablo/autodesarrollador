@@ -1,0 +1,85 @@
+﻿[2026-10-15 15:30:22] [INFO] ==============================================================================
+[2026-10-15 15:30:22] [INFO] Iniciando verificación determinista de configuración (Fase 4)
+[2026-10-15 15:30:22] [INFO] ConfigDir: C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\config
+[2026-10-15 15:30:23] [INFO] LogFile:   C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\evidence\phase-26-audit-20261015-153013\central-config.log.txt
+[2026-10-15 15:30:23] [INFO] Python:    C:\Python314\python.exe
+[2026-10-15 15:30:23] [INFO] ==============================================================================
+[2026-10-15 15:30:23] [INFO] 1. Verificando existencia física de archivos de configuración...
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml existe (C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\config\system.yaml)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml no está vacío (8095 bytes)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml existe (C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\config\security.yaml)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml no está vacío (4518 bytes)
+[2026-10-15 15:30:23] [OK]   [PASS] VERSIONS.lock existe (C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\config\VERSIONS.lock)
+[2026-10-15 15:30:23] [OK]   [PASS] VERSIONS.lock no está vacío (4174 bytes)
+[2026-10-15 15:30:23] [OK]   [PASS] README.md existe (C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\config\README.md)
+[2026-10-15 15:30:23] [INFO] 2. Validando sintaxis YAML de los archivos...
+[2026-10-15 15:30:23] [OK]   [PASS] Python ejecutable disponible (C:\Python314\python.exe)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml sintaxis YAML válida 
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml sintaxis YAML válida 
+[2026-10-15 15:30:23] [OK]   [PASS] VERSIONS.lock sintaxis YAML válida 
+[2026-10-15 15:30:23] [INFO] 3. Verificando campos obligatorios en los esquemas...
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene system.name (Desarrollador Autónomo)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene system.environment (local)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene paths.infrastructure_root (C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene llama.executable (C:\AI\llama.cpp\llama-server.exe)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene llama.model (C:\Users\Pc\.cache\huggingface\hub\models--ggml-org--Qwen3.6-35B-A3B-GGUF\snapshots\baec3ebee244827cda0f4557eafa8b28f7545fa6\Qwen3.6-35B-A3B-Q4_K_M.gguf)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene llama.endpoints (health & completions endpoints)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene runner timeouts (llama_start_timeout=180s)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene inference_lock (lock_timeout=120s)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene limits (max_cycles=20)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene logging (level=INFO)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene recovery (auto_reconcile=True)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene chatgpt (profile=HERMES-CHATGPT)
+[2026-10-15 15:30:23] [OK]   [PASS] system.yaml contiene known_warnings (MMAP_CPU_MOE_TENSOR_OVERRIDE)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml contiene workspace bounds (canonical bounds)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml contiene git policies (git section defined)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml contiene system policies (system section defined)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml contiene network policies (network section defined)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml contiene browser policies (browser section defined)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml contiene chatgpt policies (chatgpt domain locked)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml contiene autonomy limits (autonomy section defined)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml contiene secret_policy (secret policy defined)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml contiene protected_paths (5 paths)
+[2026-10-15 15:30:23] [OK]   [PASS] security.yaml contiene blocked_commands (13 patterns)
+[2026-10-15 15:30:23] [OK]   [PASS] VERSIONS.lock contiene lock_version (version 1.0)
+[2026-10-15 15:30:23] [OK]   [PASS] VERSIONS.lock contiene environment OS & HW (Win11 Build 26200)
+[2026-10-15 15:30:23] [OK]   [PASS] VERSIONS.lock contiene llama_cpp VALIDATED (Build 11368)
+[2026-10-15 15:30:23] [OK]   [PASS] VERSIONS.lock contiene qwen_model VALIDATED (Qwen3.6-35B-A3B)
+[2026-10-15 15:30:23] [OK]   [PASS] VERSIONS.lock contiene runtimes (python, node, powershell) (Python & Node locked)
+[2026-10-15 15:30:23] [OK]   [PASS] VERSIONS.lock contiene tools (git, chrome) (Git & Chrome locked)
+[2026-10-15 15:30:23] [INFO] 4. Verificando rutas configuradas contra el sistema de archivos real...
+[2026-10-15 15:30:23] [OK]   [PASS] Ruta llama.executable existe físicamente (C:\AI\llama.cpp\llama-server.exe)
+[2026-10-15 15:30:23] [OK]   [PASS] Ruta llama.model existe físicamente (C:\Users\Pc\.cache\huggingface\hub\models--ggml-org--Qwen3.6-35B-A3B-GGUF\snapshots\baec3ebee244827cda0f4557eafa8b28f7545fa6\Qwen3.6-35B-A3B-Q4_K_M.gguf)
+[2026-10-15 15:30:23] [OK]   [PASS] Symlink llama.model apunta a blob existente (C:\Users\Pc\.cache\huggingface\hub\models--ggml-org--Qwen3.6-35B-A3B-GGUF\blobs\671e47e0ec53c665d048b98c3ecbfd5236b5ca9c3e02ed19fc8f81f7b85140c7)
+[2026-10-15 15:30:23] [OK]   [PASS] Ruta paths.infrastructure_root existe (C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo)
+[2026-10-15 15:30:23] [INFO] 5. Verificando correspondencia de valores críticos aprobados...
+[2026-10-15 15:30:23] [OK]   [PASS] llama.host == '127.0.0.1' (127.0.0.1)
+[2026-10-15 15:30:23] [OK]   [PASS] llama.port == 8080 (8080)
+[2026-10-15 15:30:23] [OK]   [PASS] llama.ctx_size == 65536 (65536 tokens)
+[2026-10-15 15:30:23] [OK]   [PASS] llama.parallel == 1 (1 slot)
+[2026-10-15 15:30:23] [OK]   [PASS] llama.alias == 'qwen36' (qwen36)
+[2026-10-15 15:30:23] [OK]   [PASS] llama.cpu_moe == true (cpu_moe=True)
+[2026-10-15 15:30:23] [OK]   [PASS] llama.n_gpu_layers == 99 (n_gpu_layers=99)
+[2026-10-15 15:30:23] [OK]   [PASS] llama.flash_attention == true (flash_attn=True)
+[2026-10-15 15:30:23] [OK]   [PASS] llama.cache_type_k == 'q8_0' (q8_0)
+[2026-10-15 15:30:23] [OK]   [PASS] llama.cache_type_v == 'q8_0' (q8_0)
+[2026-10-15 15:30:23] [OK]   [PASS] llama.jinja == true (jinja=True)
+[2026-10-15 15:30:23] [OK]   [PASS] security.git.allow_push == false (push disabled)
+[2026-10-15 15:30:23] [OK]   [PASS] security.git.allow_force_push == false (force push disabled)
+[2026-10-15 15:30:23] [OK]   [PASS] security.git.allow_destructive_reset == false (reset hard disabled)
+[2026-10-15 15:30:23] [OK]   [PASS] security.git.allow_clean_fdx == false (clean fdx disabled)
+[2026-10-15 15:30:23] [OK]   [PASS] security.network.llama_public == false (network public disabled)
+[2026-10-15 15:30:23] [OK]   [PASS] security.network.llama_host == '127.0.0.1' (local host enforced)
+[2026-10-15 15:30:23] [OK]   [PASS] security.workspace.allow_write_outside == false (writes jailed to workspace)
+[2026-10-15 15:30:23] [OK]   [PASS] security.system.allow_admin_runtime == false (no admin required)
+[2026-10-15 15:30:23] [OK]   [PASS] security.system.allow_shutdown == false (shutdown blocked)
+[2026-10-15 15:30:23] [OK]   [PASS] security.chatgpt.allowed_domain == 'chatgpt.com' (domain locked)
+[2026-10-15 15:30:23] [INFO] 6. Verificando ausencia de secretos o credenciales en archivos...
+[2026-10-15 15:30:23] [OK]   [PASS] Sin secretos ni API keys en config/ (Escaneo regex limpio)
+[2026-10-15 15:30:23] [INFO] ==============================================================================
+[2026-10-15 15:30:23] [INFO] Resumen de Verificación de Configuración Central:
+[2026-10-15 15:30:23] [INFO]   Total pruebas: 66
+[2026-10-15 15:30:23] [INFO]   Aprobadas:     66
+[2026-10-15 15:30:23] [INFO]   Fallidas:      0
+[2026-10-15 15:30:23] [INFO]   Duración:      0.87s
+[2026-10-15 15:30:23] [OK] RESULTADO GLOBAL: [PASS] Configuración válida y determinista.

@@ -1,0 +1,24 @@
+==============================================================================
+INICIANDO VERIFICACION DE GUARDRAILS DE SEGURIDAD (FASE 15)
+Sandbox:     C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\f26-security-aef31a5b
+EvidenceDir: C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\evidence\phase-26-audit-20261015-153013\security
+==============================================================================
+[1/5] Test 1: Command Guard contra Comandos Peligrosos...
+  [PASS] Command Guard Bloquea Todos los Comandos Destructivos (Bloqueados=11/11)
+[2/5] Test 2: Path Guard (Escapes y Destrucción de Raíz)...
+  [PASS] Path Guard Bloquea Escapes y Destrucción de Raíz (Inside=True, EscapeRel=True, EscapeAbs=True, RootDestroy=True)
+[3/5] Test 3: Protección contra Junction / Symlink Escape...
+  [PASS] Junction/Symlink Escape Bloqueado (JunctionTested=True)
+[4/5] Test 4: Prevención de Exfiltración de Secretos (Secret Redaction)...
+  [PASS] Detección y Redacción de Secretos (LeaksDetected=2, Redacted=True)
+[5/5] Test 5: Policy Merge (security.yaml overrides RUN-CONTRACT)...
+  [PASS] Policy Merge Aplica Intersección Estricta (AllowPush=False (Contract=True Overridden))
+==============================================================================
+RESUMEN DE PRUEBAS DE FASE 15 (GUARDRAILS Y SEGURIDAD):
+  [PASS] Command Guard Bloquea Todos los Comandos Destructivos - Bloqueados=11/11
+  [PASS] Path Guard Bloquea Escapes y Destrucción de Raíz - Inside=True, EscapeRel=True, EscapeAbs=True, RootDestroy=True
+  [PASS] Junction/Symlink Escape Bloqueado - JunctionTested=True
+  [PASS] Detección y Redacción de Secretos - LeaksDetected=2, Redacted=True
+  [PASS] Policy Merge Aplica Intersección Estricta - AllowPush=False (Contract=True Overridden)
+==============================================================================
+RESULTADO FINAL DE FASE 15: [PASS]

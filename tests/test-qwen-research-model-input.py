@@ -20,9 +20,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
 server=http.server.ThreadingHTTPServer(('127.0.0.1',8080),Handler);thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start();q=lambda v:"'"+str(v).replace("'","''")+"'"
 try:
  body="$ErrorActionPreference='Stop';$env:PSModulePath=Join-Path $PSHOME 'Modules';[Console]::OutputEncoding=[Text.Encoding]::UTF8;$p=[IO.File]::ReadAllText("+q(p/'prompt.txt')+",[Text.Encoding]::UTF8);$r=& "+q(ROOT/'scripts/invoke-qwen-code.ps1')+' -Prompt $p -WorkingDir '+q(p)+' -ResearchProject '+q(p)+' -ApprovalMode plan -MaxToolCalls 0 -TimeoutSeconds 40 -MaxWallTime 30s;$r|ConvertTo-Json -Depth 20 -Compress'
- r=subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-EncodedCommand',base64.b64encode(body.encode('utf-16le')).decode()],cwd=ROOT,capture_output=True,encoding='utf-8',timeout=55,env=dict(os.environ,PYTHONUTF8='1',PYTHONDONTWRITEBYTECODE='1'))
- (E/'native-qwen.stdout.txt').write_text(r.stdout,encoding='utf-8');(E/'native-qwen.stderr.txt').write_text(r.stderr,encoding='utf-8');assert r.returncode==0,r.stderr
- out=json.loads(r.stdout.lstrip('\ufeff'));assert out['Success'],out
+ r=subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-EncodedCommand',base64.b64encode(body.encode('utf-16le')).decode()],cwd=ROOT,capture_output=True,timeout=55,env=dict(os.environ,PYTHONUTF8='1',PYTHONDONTWRITEBYTECODE='1'))
+ (E/'native-qwen.stdout.txt').write_bytes(r.stdout);(E/'native-qwen.stderr.txt').write_bytes(r.stderr);assert r.returncode==0,r.stderr
+ out=json.loads(r.stdout.decode('utf-8-sig'));assert out['Success'],out
  (a/'worker.json').write_text(json.dumps({'data':{'WorkerOutput':out}}),encoding='utf-8');proof=h.verify(p,'.autopilot/evidence/worker.json')
  payload=h.block(h.envelope(p));bound=[]
  for request in requests:

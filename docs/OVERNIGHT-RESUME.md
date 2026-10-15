@@ -10,9 +10,9 @@
   "last_cause": "New endurance adapter launcher argument contract",
   "last_fix": "STRICT_FORMAT_ONLY_JSON_COMPARISON_WITH_UNCHANGED_SECRET_SANITIZER",
   "last_commit": "34ee06bd71fc4712123757a9b022ebbff2e05b24",
-  "next_action": "After corrective commit clean Git, execute fresh tests/global-audit.py; preserve both prior F26 adapter FAILs and the private original synthetic canary.",
+  "next_action": "After corrective commit run fresh complete tests/global-audit.py; three distinct historical audit adapter FAILs retained.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T18:29:56.361005+00:00",
+  "updated_at": "2026-10-15T18:33:47.951164+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -29,7 +29,8 @@
     "F26_STATE_RECOVERY_FIXTURE_DEPENDENCY",
     "AUDIT_EVIDENCE_SCANNER_JSON_SPACING_FALSE_POSITIVE",
     "F26_BRIDGE_INTEGRITY_PRE_SUITE_FIXTURE_MISSING",
-    "AUDIT_PRIVATE_SYNTHETIC_CANARY_EXPORT_UNREDACTED"
+    "AUDIT_PRIVATE_SYNTHETIC_CANARY_EXPORT_UNREDACTED",
+    "AUDIT_QWEN_PROBE_LOCALIZED_STDERR_DECODING"
   ],
   "fixes": [
     "REVIEWER_CONTRACT_CERTIFIED",
@@ -46,7 +47,8 @@
     "FRESH_SHARED_F10_F11_FIXTURE_AND_SCOPE_CERTIFIED",
     "STRICT_FORMAT_ONLY_JSON_COMPARISON_WITH_UNCHANGED_SECRET_SANITIZER",
     "REVIEWED_BRIDGE_BOUND_FRESH_PRE_SUITE_FIXTURE_CERTIFIED",
-    "APPROVED_WHOLE_FILE_EQUIVALENCE_RAW_PRIVATE_SANITIZED_EXPORT_CERTIFIED"
+    "APPROVED_WHOLE_FILE_EQUIVALENCE_RAW_PRIVATE_SANITIZED_EXPORT_CERTIFIED",
+    "PROBE_LOSSLESS_BYTE_STREAMS_STRICT_UTF8_JSON_UNCHANGED_ASSERTIONS"
   ],
   "run_id": null,
   "harness_session_id": null,
@@ -66,11 +68,11 @@
   "native_status": "NOT_RUNNING",
   "tool_session_id": null,
   "last_failure": {
-    "signature": "F26_BRIDGE_INTEGRITY_PRE_SUITE_FIXTURE_MISSING",
+    "signature": "AUDIT_QWEN_PROBE_LOCALIZED_STDERR_DECODING",
     "resolved": true,
-    "evidence": "evidence\\phase-26-audit-20261015-152408"
+    "evidence": "evidence\\phase-26-audit-20261015-153013"
   }
 }
 ```
 
-F24/F25/4H PASS unchanged. Two F26 adapter dependency FAILs preserved. Latest12 entry controls,41 human reconciliation cases,14 secret export/comparison cases PASS; zero browser access/sends. Original synthetic canary stays locally unchanged and Git-excluded; separately redacted copy/hash receipt exported, whole-file matched to the approved historic redacted fixture. No productive sanitizer/security change. Fresh complete audit still required. No push.
+F24/F25/4H PASS unchanged. F26 last stopped in localized stderr decoding of the native CLI/mock endpoint transport probe despite wrapperSuccess=true. Probe now preserves both raw streams; strict UTF-8 JSON and all3 acceptance assertion ASTs unchanged. Isolated installedCLI transport and deterministic nonUTF8 stderr capture passed. No productive wrapper/security/model/config changed. Third historical F26 FAIL retained; fresh complete audit required. Prepared pilot observer additional legitimate Worker correction fixture reproduced false denial and14 controls nowPASS in logs only; promote after F26. No push.
