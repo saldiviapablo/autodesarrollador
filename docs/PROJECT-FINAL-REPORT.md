@@ -57,3 +57,7 @@ Después de la revisión humana aceptada: registrar referencia humana real y7SHA
 ## Actualización documental F27 — 2026-10-15T21:11:46.294653+00:00
 
 El usuario solicitó cambios, no aceptó F27. Los tres ejemplos de README fueron corregidos;17tests originales/build/artefactos/Reviewer nuevo ACCEPTED/Completion COMPLETED/cleanup/integridad PASS. Nuevo paquete de7SHA y aprobación humana explícita pendientes. docs/F27-DOCUMENTATION-REVALIDATION-20261015-180725.md; evidence/f27-documentation-revalidation-20261015-180725/. F27 sigue PENDING_HUMAN_FINAL_REVIEW; proyecto NO COMPLETE; F28 WAIVED_BY_USER/NOT_EXECUTED; sin auditoría final ni push. Los contadores19/19 anteriores son el snapshot previo: ahora20 causas verificadas/20 corregidas, incluida esta observación documental humana.
+
+## F27 aprobado — 2026-10-15T21:47:05.349035+00:00
+
+RESUELTO el gate humano anterior: aceptación explícita real del resultado corregido; F27 REAL PILOT PASS. docs/F27-FINAL-REPORT.md. Estado ACTUAL del proyecto FINAL_VALIDATION_IN_PROGRESS: regresión/auditoría/cleanup/integridad globales pendientes. El snapshot BLOCKED anterior queda histórico, no vigente. F28 WAIVED_BY_USER / NOT_EXECUTED.

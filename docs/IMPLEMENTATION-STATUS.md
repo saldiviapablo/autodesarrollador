@@ -66,7 +66,7 @@
 | **Fase 24** | End-to-End corto | **PASS** | ATTEMPT11 run-20261015-044359; docs/F24-ATTEMPT-11-REPORT.md; evidence/phase-24-attempt-11-20261015/ |
 | **Fase 25** | Prueba2h | **PASS** | docs/F25-REPORT-f25-20261015-050751-1239ed.md; evidence/endurance-f25-20261015-050751-1239ed/ |
 | **Fase 26** | Auditoría integral | **PASS** | docs/F26-REPORT-phase-26-audit-20261015-154228.md; evidence/phase-26-audit-20261015-154228/ |
-| **Fase 27** | Piloto local seguro | **TECHNICAL_PASS / PENDING_HUMAN_FINAL_REVIEW** | docs/F27-TECHNICAL-REPORT-f27-20261015-165308-d37c78.md; evidence/endurance-f27-20261015-165308-d37c78 |
+| **Fase 27** | Piloto local seguro | **PASS / REAL PILOT PASS** | docs/F27-FINAL-REPORT.md; evidence/f27-human-final-acceptance-20261015-184705 |
 | **Fase 28** | Prueba6–8h original | **WAIVED_BY_USER / NOT_EXECUTED** | docs/ROADMAP-REVISION-F28-WAIVER-20261015.md; reemplazo4H certificada + F27 real + regresión final. |
 
 ---
@@ -241,3 +241,7 @@ F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFI
 ## Actualización documental F27 — 2026-10-15T21:11:46.294653+00:00
 
 El usuario solicitó cambios, no aceptó F27. Los tres ejemplos de README fueron corregidos;17tests originales/build/artefactos/Reviewer nuevo ACCEPTED/Completion COMPLETED/cleanup/integridad PASS. Nuevo paquete de7SHA y aprobación humana explícita pendientes. docs/F27-DOCUMENTATION-REVALIDATION-20261015-180725.md; evidence/f27-documentation-revalidation-20261015-180725/. F27 sigue PENDING_HUMAN_FINAL_REVIEW; proyecto NO COMPLETE; F28 WAIVED_BY_USER/NOT_EXECUTED; sin auditoría final ni push. Los contadores19/19 anteriores son el snapshot previo: ahora20 causas verificadas/20 corregidas, incluida esta observación documental humana.
+
+## F27 aceptación humana final — 2026-10-15T21:47:05.349035+00:00
+
+F27=PASS / REAL PILOT PASS tras aceptación explícita del resultado corregido y sus7SHA. docs/F27-FINAL-REPORT.md. F28 WAIVED_BY_USER / NOT_EXECUTED. Cierre global pendiente de gates finales.

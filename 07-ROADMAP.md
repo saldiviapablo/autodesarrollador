@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final revisada | F24/F25/4H/F26 PASS; F27 revisión humana final pendiente; F28 WAIVED_BY_USER / NOT_EXECUTED | **IN_PROGRESS** |
+| **Macrofase 8** | Validación Final revisada | F24/F25/4H/F26 PASS; F27 REAL PILOT PASS; regresión/auditoría final pendientes; F28 WAIVED_BY_USER / NOT_EXECUTED | **IN_PROGRESS** |
 
 Cada fase debe producir:
 
@@ -1468,3 +1468,7 @@ F26 PASS: 51 regression suites, 299 audit checks, 259 source hashes and 6119 his
 ## Roadmap revisado por instrucción humana — 2026-10-15T20:18:13.546383+00:00
 
 F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION. No F28 PASS. Los demás gates permanecen obligatorios. docs/ROADMAP-REVISION-F28-WAIVER-20261015.md
+
+## F27 aceptación humana final — 2026-10-15T21:47:05.349035+00:00
+
+F27=PASS / REAL PILOT PASS tras aceptación explícita del resultado corregido y sus7SHA. docs/F27-FINAL-REPORT.md. F28 WAIVED_BY_USER / NOT_EXECUTED. Cierre global pendiente de gates finales.

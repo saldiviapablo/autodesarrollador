@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-15T21:11:46.294653+00:00",
+  "updated_at": "2026-10-15T21:47:05.349035+00:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -76,7 +76,7 @@
     "24": "PASS",
     "25": "PASS",
     "26": "PASS",
-    "27": "PENDING_HUMAN_FINAL_REVIEW",
+    "27": "PASS",
     "28": "WAIVED_BY_USER"
   },
   "validation_8": {
@@ -86,7 +86,7 @@
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
     "current_security_revalidation": "PASS_F26_FULL_AUDIT",
     "checkpoint_4h": "PASS",
-    "regression_gate_final": "NOT_RUN_AWAITING_F27_HUMAN_FINAL_REVIEW",
+    "regression_gate_final": "PENDING",
     "ready_for_real_pilot": true,
     "prepare_zero_write_on_deny": "PASS",
     "historical_attempt_1": "FAIL / SECURITY_REGRESSION; unchanged evidence/phase-23/",
@@ -676,7 +676,7 @@
     "f26": "PASS",
     "f26_evidence": "evidence/phase-26-audit-20261015-154228",
     "f26_report": "docs/F26-REPORT-phase-26-audit-20261015-154228.md",
-    "f27": "TECHNICAL_PASS_AWAITING_HUMAN_REVIEW",
+    "f27": "PASS",
     "f27_historical_attempt_1": {
       "status": "FAIL",
       "run_id": "run-20261015-155210",
@@ -691,7 +691,7 @@
     "f27_report": "docs/F27-TECHNICAL-REPORT-f27-20261015-165308-d37c78.md",
     "f27_project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f27-20261015-165308-d37c78\\pilot-002",
     "f27_native_run_id": "run-20261015-165354",
-    "f27_human_review": "CHANGES_CORRECTED_AWAITING_NEW_EXPLICIT_APPROVAL",
+    "f27_human_review": "ACCEPTED",
     "f27_resources": {
       "samples": 210,
       "RAM_min_available_mib": 271.63671875,
@@ -703,17 +703,22 @@
     "f28": "WAIVED_BY_USER",
     "f28_waiver_evidence": "evidence/revised-roadmap-f28-waiver-20261015-171813/USER-F28-WAIVER.json",
     "f28_waiver_sha256": "d980ac85edd965def6fe923441c74db1332e0e5727d1864359036392be1b4477",
-    "final_audit": "NOT_RUN_AWAITING_F27_HUMAN_FINAL_REVIEW",
+    "final_audit": "PENDING_FINAL_REGRESSION",
     "roadmap_revision": "EXPLICIT_USER_F28_WAIVER_20261015",
     "final_preparation_evidence": "evidence/revised-final-preparation-20261015-172403",
     "f27_documentation_revalidation": "PASS",
     "f27_documentation_revalidation_evidence": "evidence/f27-documentation-revalidation-20261015-180725",
     "f27_current_review_package": "evidence/f27-documentation-revalidation-20261015-180725/HUMAN-REVIEW-PACKAGE.json",
-    "f27_documentation_revalidation_report": "docs/F27-DOCUMENTATION-REVALIDATION-20261015-180725.md"
+    "f27_documentation_revalidation_report": "docs/F27-DOCUMENTATION-REVALIDATION-20261015-180725.md",
+    "f27_classification": "REAL_PILOT_PASS",
+    "f27_human_review_receipt": "evidence/f27-human-final-acceptance-20261015-184705/HUMAN-FINAL-REVIEW.json",
+    "f27_human_review_receipt_sha256": "f33c4163029dadaa8b4ee36fc254afea235a8a302596396128dc44cde34c577d",
+    "f27_final_evidence": "evidence/f27-human-final-acceptance-20261015-184705",
+    "f27_final_report": "docs/F27-FINAL-REPORT.md"
   },
   "ready_for_real_pilot": true,
   "F28_ORIGINAL_6_8H": "WAIVED_BY_USER",
   "F28_NOT_EXECUTED": true,
   "F28_REPLACED_BY": "CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION",
-  "project_status": "BLOCKED_REQUIRES_HUMAN"
+  "project_status": "FINAL_VALIDATION_IN_PROGRESS"
 }
