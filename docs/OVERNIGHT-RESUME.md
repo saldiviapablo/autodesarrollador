@@ -5,14 +5,14 @@
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
-  "last_completed": "F26 PASS51 suites/299 checks; pilot pre-START14 controls PASS",
+  "last_completed": "F26 PASS; F27 placeholder fixture certification PASS15",
   "active_phase": "F27_PREPARATION",
   "last_cause": "New endurance adapter launcher argument contract",
-  "last_fix": "STRICT_FORMAT_ONLY_JSON_COMPARISON_WITH_UNCHANGED_SECRET_SANITIZER",
-  "last_commit": "git HEAD: pilot preparation milestone",
-  "next_action": "Execute tests/pilot-controller.py once after clean local preparation commit; observe exact pilot-active PID/birth. No F28 before actual human final review.",
+  "last_fix": "PLACEHOLDERS_ONLY_ACCEPTANCE_AND_RUNTIME_UNCHANGED",
+  "last_commit": "git HEAD: F27 fixture repair milestone",
+  "next_action": "Execute tests/pilot-controller.py once after this clean local commit; fresh F27 only. No F24/F25/4H/F26 rerun. Preserve first FAIL; no old clock/budget reset.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T18:51:16.570560+00:00",
+  "updated_at": "2026-10-15T19:52:33.975158+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -32,7 +32,8 @@
     "AUDIT_PRIVATE_SYNTHETIC_CANARY_EXPORT_UNREDACTED",
     "AUDIT_QWEN_PROBE_LOCALIZED_STDERR_DECODING",
     "AUDIT_HEARTBEAT_TEST_READS_BEFORE_GUARDIAN_FINALIZATION",
-    "PILOT_OBSERVER_MISCLASSIFIES_INTER_REVIEW_WORKER_CORRECTION"
+    "PILOT_OBSERVER_MISCLASSIFIES_INTER_REVIEW_WORKER_CORRECTION",
+    "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC"
   ],
   "fixes": [
     "REVIEWER_CONTRACT_CERTIFIED",
@@ -52,7 +53,8 @@
     "APPROVED_WHOLE_FILE_EQUIVALENCE_RAW_PRIVATE_SANITIZED_EXPORT_CERTIFIED",
     "PROBE_LOSSLESS_BYTE_STREAMS_STRICT_UTF8_JSON_UNCHANGED_ASSERTIONS",
     "BOUNDED_WATCHDOG_TERMINAL_REPORT_OBSERVATION_UNCHANGED_ASSERTIONS",
-    "FINAL_ACCEPTED_REVIEWER_FULL_TARGET_SCOPE_CERTIFIED_WITH_LEGITIMATE_CORRECTION_NEGATIVE"
+    "FINAL_ACCEPTED_REVIEWER_FULL_TARGET_SCOPE_CERTIFIED_WITH_LEGITIMATE_CORRECTION_NEGATIVE",
+    "TRACKED_PENDING_REPORT_PLACEHOLDERS_EXACT_RUNNER_HASH_GUARD_CERTIFIED"
   ],
   "run_id": null,
   "harness_session_id": null,
@@ -63,20 +65,20 @@
   "last_completed_stage_id": "4h-20261015-110202-059517",
   "last_completed_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-4h-20261015-110202-059517",
   "historical_f24_consultation_id": "f24-a11-2d44843ee2c2460bbb643c927080e3f8",
-  "stage_id": "4h-20261015-110202-059517",
+  "stage_id": "f27-20261015-155126-d8e81a",
   "controller_pid": null,
   "controller_birth": null,
   "elapsed_seconds": null,
   "completed_tasks": null,
-  "evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-4h-20261015-110202-059517",
+  "evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-f27-20261015-155126-d8e81a",
   "native_status": "NOT_RUNNING",
   "tool_session_id": null,
   "last_failure": {
-    "signature": "AUDIT_HEARTBEAT_TEST_READS_BEFORE_GUARDIAN_FINALIZATION",
+    "signature": "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC",
     "resolved": true,
-    "evidence": "evidence\\phase-26-audit-20261015-153405"
+    "evidence": "evidence/endurance-f27-20261015-155126-d8e81a"
   }
 }
 ```
 
-F24/F25/4H/F26 PASS. Pilot preparation14 fixture/control tests PASS,17 initial acceptance cases present/executed as expected FAIL before START; night23 cases prepared. No actual F27/F28 yet. Only Qwen may implement target. Whole-target final accepted Reviewer read-only certification retains prior baselines and allows legitimate intervening Worker correction, productive reviewer policy unchanged. Actual final human review is still required after concrete F27 output per07§30; do not fabricate receipt. No push.
+F24/F25/4H/F26 PASS. First F27 FAIL is preserved,29.838s native/70.656s outer. Cleanup/integrity PASS; no active controller. New fixture adds ONLY pending report placeholders; TASK/17acceptance/BUILD/INITIAL unchanged.15 controls/exact Runner hash guards PASS. Current Runner/scripts/tools match F26; no productive changes or old-run continuation. Next clean new F27 after local commit; actual final human review remains required by07§30 before F27 PASS/F28. No push.

@@ -8,6 +8,12 @@ def load(name,filename):
 pilot=load('pilot_control_unit','pilot-controller.py');night=load('night_control_unit','night-pilot-controller.py');work=load('pilot_workload_unit','pilot_workload.py');nw=load('night_workload_unit','night-pilot-workload.py')
 R=pilot.R
 class Controls(unittest.TestCase):
+ def test_diagnostic_write_set_exists_before_start(self):
+  v=work.pilot_fixture();files=v['files']
+  for name in ['module.py','README.md','artifact-report.json','REPORT.md']:self.assertIn(name,files)
+  self.assertEqual(json.loads(files['artifact-report.json']),{})
+  self.assertIn('Pending',files['REPORT.md'])
+  self.assertIn('not a completed artifact',files['REPORT.md'])
  def test_pilot_f26_missing_denies_before_creation(self):
   with patch.object(pilot,'READ',return_value={'validation_8':{'f26':'NOT_RUN'}}),patch.object(pilot,'Pilot') as ctor:
    with self.assertRaises(AssertionError):pilot.main()

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-15T18:49:43.769161+00:00",
+  "updated_at": "2026-10-15T19:52:33.975158+00:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -76,7 +76,7 @@
     "24": "PASS",
     "25": "PASS",
     "26": "PASS",
-    "27": "NOT_RUN",
+    "27": "IN_PROGRESS",
     "28": "NOT_RUN"
   },
   "validation_8": {
@@ -675,7 +675,18 @@
     "4h_integrity": "PASS",
     "f26": "PASS",
     "f26_evidence": "evidence/phase-26-audit-20261015-154228",
-    "f26_report": "docs/F26-REPORT-phase-26-audit-20261015-154228.md"
+    "f26_report": "docs/F26-REPORT-phase-26-audit-20261015-154228.md",
+    "f27": "PENDING_CLEAN_ATTEMPT",
+    "f27_historical_attempt_1": {
+      "status": "FAIL",
+      "run_id": "run-20261015-155210",
+      "evidence": "evidence/endurance-f27-20261015-155126-d8e81a",
+      "reason": "FIXTURE_MISSING_PENDING_ARTIFACTS_BEFORE_READONLY_DIAGNOSTIC",
+      "cleanup": "PASS",
+      "integrity": "PASS"
+    },
+    "f27_fixture_fix": "PASS",
+    "f27_fixture_fix_evidence": "evidence/f27-placeholder-fixture-cert-20261015-165122"
   },
   "ready_for_real_pilot": true
 }

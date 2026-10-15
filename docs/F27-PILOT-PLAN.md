@@ -17,3 +17,7 @@ El cierre técnico verifica copias nativas, reloj, aprobaciones, SHA de tests/fu
 La condición de salida de07§30 incluye «revisión humana final». TECHNICAL_PASS_AWAITING_HUMAN_REVIEW no equivale a F27 PASS. Sólo después del resultado real se entrega el paquete de7 archivos con hashes, código/diff/README/reportes, y se solicita la revisión humana del resultado. No se fabrica un receipt ni se inicia F28 sin esa confirmación real.
 
 F28 preparado reutiliza copias byte exactas del piloto realmente revisado y de su reporte anterior, con memoria inmutable/hash chain y23 tests previos. Es preparación, no ejecución ni certificación de6–8h.
+
+## Corrección del fixture antes del segundo intento
+
+Primer F27 histórico FAIL preservado (run-20261015-155210). El diagnóstico hashea el conjunto permitido antes de Worker; todo archivo permitido debe existir inicialmente. Nuevos fixtures incluyen artifact-report.json={} y REPORT.md explícitamente pendiente, ambos tracked antes de START. No representan artefactos finales: el build debe regenerarlos. Los17 tests/TASK/BUILD/INITIAL son byte exactos al criterio original;15 controles y el guard real de hash PASS. No se modifica Runner ni criterios. docs/F27-FIRST-ATTEMPT-FAIL.md
