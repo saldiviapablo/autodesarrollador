@@ -53,3 +53,7 @@ Métricas originales aceptadas preservadas: F25 tuvo una muestra de RAM disponib
 Preparación final:8 controles de cierre,11 de exención,12 de admisión y15 del piloto PASS;54 suites finales previstas, todavía NO ejecutadas. El estado actual de cleanup/integridad PASS es una inspección posterior al piloto, no un reemplazo de auditoría/regresión finales. Evidencia: evidence/revised-final-preparation-20261015-172403/.
 
 Después de la revisión humana aceptada: registrar referencia humana real y7SHA, commit local, ejecutar tests/global-audit.py --final en evidencia nueva, y tests/close-final-validation.py --evidence <ruta real> --commit sólo si todoPASS. PROJECT_STATUS=COMPLETE se permite exclusivamente bajo roadmap revisado con los demás gates aprobados. No F28, push, update o dependencias nuevas.
+
+## Actualización documental F27 — 2026-10-15T21:11:46.294653+00:00
+
+El usuario solicitó cambios, no aceptó F27. Los tres ejemplos de README fueron corregidos;17tests originales/build/artefactos/Reviewer nuevo ACCEPTED/Completion COMPLETED/cleanup/integridad PASS. Nuevo paquete de7SHA y aprobación humana explícita pendientes. docs/F27-DOCUMENTATION-REVALIDATION-20261015-180725.md; evidence/f27-documentation-revalidation-20261015-180725/. F27 sigue PENDING_HUMAN_FINAL_REVIEW; proyecto NO COMPLETE; F28 WAIVED_BY_USER/NOT_EXECUTED; sin auditoría final ni push. Los contadores19/19 anteriores son el snapshot previo: ahora20 causas verificadas/20 corregidas, incluida esta observación documental humana.

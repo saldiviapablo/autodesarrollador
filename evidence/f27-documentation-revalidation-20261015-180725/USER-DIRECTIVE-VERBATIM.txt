@@ -1,0 +1,38 @@
+Solicito cambios en F27 únicamente por las inconsistencias documentales detectadas en README.md.
+
+Corregir exactamente estos tres puntos:
+
+1. El ejemplo round_seconds(1.005) debe indicar "1.01", no "1.00".
+
+2. El ejemplo Decimal(str(1.005)) debe mostrar Decimal('1.005'),
+   no una expansión binaria larga.
+
+3. El ejemplo/comentario del total debe reflejar el contrato real:
+   se suman los valores normalizados y el resultado correcto es "3.80",
+   no "3.79".
+
+IMPORTANTE:
+
+- No modificar module.py salvo que aparezca una contradicción real nueva.
+- No modificar los 17 tests de aceptación originales.
+- No relajar ningún criterio.
+- No aumentar presupuestos ni restart_budget.
+- No repetir F24, F25, 4H ni F26.
+- NO ejecutar F28.
+- NO PUSH.
+
+Después de corregir README.md:
+
+1. Ejecutar nuevamente los 17 tests originales.
+2. Ejecutar build.
+3. Verificar que los artefactos siguen siendo correctos.
+4. Ejecutar Reviewer independiente.
+5. Ejecutar Completion Gate.
+6. Verificar cleanup e integridad.
+7. Mostrarme exactamente el diff documental realizado.
+
+Preservar como evidencia la revisión humana anterior que detectó estos errores.
+
+NO marcar F27 como PASS todavía.
+
+Cuando todo vuelva a pasar, detenerse y pedirme nuevamente la aprobación humana final.

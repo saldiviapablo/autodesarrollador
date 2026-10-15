@@ -1,0 +1,8 @@
+Solicito cambios en F27 únicamente por las inconsistencias documentales detectadas en README.md.
+1. El ejemplo round_seconds(1.005) debe indicar "1.01", no "1.00".
+2. El ejemplo Decimal(str(1.005)) debe mostrar Decimal('1.005'), no una expansión binaria larga.
+3. Se suman los valores normalizados y el resultado correcto es "3.80", no "3.79".
+No modificar module.py ni los 17 tests originales, relajar criterios o aumentar presupuestos/restart_budget.
+No repetir F24/F25/4H/F26. No F28. No push. Reejecutar tests/build, verificar artefactos,
+Reviewer independiente, Completion Gate, cleanup e integridad. Preservar la revisión anterior.
+NO marcar F27 PASS: detenerse y solicitar nuevamente aprobación humana final.

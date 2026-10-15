@@ -237,3 +237,7 @@ TECHNICAL_PASS_AWAITING_HUMAN_REVIEW. docs/F27-TECHNICAL-REPORT-f27-20261015-165
 ## Roadmap revisado por instrucción humana — 2026-10-15T20:18:13.546383+00:00
 
 F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION. No F28 PASS. Los demás gates permanecen obligatorios. docs/ROADMAP-REVISION-F28-WAIVER-20261015.md
+
+## Actualización documental F27 — 2026-10-15T21:11:46.294653+00:00
+
+El usuario solicitó cambios, no aceptó F27. Los tres ejemplos de README fueron corregidos;17tests originales/build/artefactos/Reviewer nuevo ACCEPTED/Completion COMPLETED/cleanup/integridad PASS. Nuevo paquete de7SHA y aprobación humana explícita pendientes. docs/F27-DOCUMENTATION-REVALIDATION-20261015-180725.md; evidence/f27-documentation-revalidation-20261015-180725/. F27 sigue PENDING_HUMAN_FINAL_REVIEW; proyecto NO COMPLETE; F28 WAIVED_BY_USER/NOT_EXECUTED; sin auditoría final ni push. Los contadores19/19 anteriores son el snapshot previo: ahora20 causas verificadas/20 corregidas, incluida esta observación documental humana.

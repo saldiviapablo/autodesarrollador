@@ -1,0 +1,33 @@
+--- a/README.md
++++ b/README.md
+@@ -19,8 +19,8 @@
+ >>> from module import round_seconds
+ >>> round_seconds('1.005')   # string → Decimal preserves exactness
+ '1.01'
+->>> round_seconds(1.005)     # float loses precision before Decimal sees it → floor
+-'1.00'
++>>> round_seconds(1.005)     # Decimal(str(value)) preserves this value
++'1.01'
+ ```
+ 
+ The canonical approach is to pass the **string** directly to `Decimal(str(value))` so `1.005` is rounded up to `1.01` as expected.
+@@ -91,7 +91,7 @@
+ >>> s = summarize(recs)
+ >>> s['counts']
+ {'PASS': 1, 'FAIL': 1, 'BLOCKED': 1, 'TIMEOUT': 1}
+->>> s['total_seconds']   # 0.105 + 2.675 + 0 + 1.005 = 3.785 → 3.79
++>>> s['total_seconds']   # Sum normalized values: 0.11 + 2.68 + 0.00 + 1.01 = 3.80
+ '3.80'
+ >>> s['max_seconds']     # 2.675 → 2.68
+ '2.68'
+@@ -178,8 +178,8 @@
+ Always pass **strings** to `Decimal()` to avoid float precision loss:
+ 
+ ```python
+->>> Decimal(str(1.005))   # float loses precision first → '1.00499...'
+-Decimal('1.00499999999999989341858963598497211933135986328125')
++>>> Decimal(str(1.005))   # str(1.005) is '1.005'
++Decimal('1.005')
+ >>> Decimal('1.005')      # string preserves exact value
+ Decimal('1.005')
+ ```

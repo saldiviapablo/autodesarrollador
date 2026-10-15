@@ -1,18 +1,18 @@
-# Overnight continuation — actual human F27 review required
+# F27 documentation corrected: new human approval pending
 
 ```json
 {
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
-  "last_completed": "F27 technical E2E PASS; F28 waiver formally certified",
+  "last_completed": "F27 requested three README examples corrected; fresh17tests/build/artifacts/Reviewer/Completion/cleanup/integrity PASS; NEW final human approval pending",
   "active_phase": "F27_HUMAN_FINAL_REVIEW_PENDING",
   "last_cause": "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC",
   "last_fix": "PLACEHOLDERS_ONLY_ACCEPTANCE_AND_RUNTIME_UNCHANGED",
-  "last_commit": "git HEAD: revised final preparation / actual human review checkpoint",
-  "next_action": "Await actual human final F27 review. No fabrication. NEVER F28. On acceptance register reviewed7SHA/reference, final F27 PASS/local commit, actual global-audit.py --final then close-final-validation.py and COMPLETE only after all gates PASS.",
+  "last_commit": "1d7f1af7389d6030a7bc485b50d7a8988e61b6d0",
+  "next_action": "Ask NEW explicit human final approval against corrected README/current7SHA package. No F27 PASS, final audit, F28 or push before approval.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T20:24:03.060616+00:00",
+  "updated_at": "2026-10-15T21:11:46.294653+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -33,7 +33,8 @@
     "AUDIT_QWEN_PROBE_LOCALIZED_STDERR_DECODING",
     "AUDIT_HEARTBEAT_TEST_READS_BEFORE_GUARDIAN_FINALIZATION",
     "PILOT_OBSERVER_MISCLASSIFIES_INTER_REVIEW_WORKER_CORRECTION",
-    "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC"
+    "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC",
+    "F27_README_EXAMPLES_FLOAT_CONVERSION_AND_NORMALIZED_SUM_INCORRECT"
   ],
   "fixes": [
     "REVIEWER_CONTRACT_CERTIFIED",
@@ -54,7 +55,8 @@
     "PROBE_LOSSLESS_BYTE_STREAMS_STRICT_UTF8_JSON_UNCHANGED_ASSERTIONS",
     "BOUNDED_WATCHDOG_TERMINAL_REPORT_OBSERVATION_UNCHANGED_ASSERTIONS",
     "FINAL_ACCEPTED_REVIEWER_FULL_TARGET_SCOPE_CERTIFIED_WITH_LEGITIMATE_CORRECTION_NEGATIVE",
-    "TRACKED_PENDING_REPORT_PLACEHOLDERS_EXACT_RUNNER_HASH_GUARD_CERTIFIED"
+    "TRACKED_PENDING_REPORT_PLACEHOLDERS_EXACT_RUNNER_HASH_GUARD_CERTIFIED",
+    "THREE_README_EXAMPLES_CORRECTED_17_ORIGINAL_TESTS_BUILD_FRESH_REVIEWER_COMPLETION_CERTIFIED"
   ],
   "run_id": null,
   "harness_session_id": null,
@@ -74,9 +76,9 @@
   "native_status": "COMPLETED",
   "tool_session_id": null,
   "last_failure": {
-    "signature": "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC",
+    "signature": "F27_README_EXAMPLES_FLOAT_CONVERSION_AND_NORMALIZED_SUM_INCORRECT",
     "resolved": true,
-    "evidence": "evidence/endurance-f27-20261015-155126-d8e81a"
+    "evidence": "evidence/f27-documentation-revalidation-20261015-180725"
   },
   "f28_waiver": {
     "method": "EXPLICIT_USER_OBJECTIVE_REVISION",
@@ -96,12 +98,86 @@
   },
   "f28_waiver_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\revised-roadmap-f28-waiver-20261015-171813\\USER-F28-WAIVER.json",
   "status": "BLOCKED_REQUIRES_HUMAN",
-  "project_status": "BLOCKED_REQUIRES_HUMAN"
+  "project_status": "BLOCKED_REQUIRES_HUMAN",
+  "f27_documentation_revalidation_evidence": "evidence/f27-documentation-revalidation-20261015-180725",
+  "f27_current_review_package": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\f27-documentation-revalidation-20261015-180725\\HUMAN-REVIEW-PACKAGE.json",
+  "f27_documentation_revalidation_report": "docs/F27-DOCUMENTATION-REVALIDATION-20261015-180725.md"
 }
 ```
 
-F24/F25/4H/F26 PASS, do not repeat. F27 technicalE2EPASS1097.308088s,17tests/buildPASS,ReviewerACCEPTED/read-only,CompletionCOMPLETED,cleanup/integrityPASS; actual final human review pending per07§30. Review question presented with concrete files, no acceptance received. No active native process/run.
+# F27: corrección documental y nueva revisión humana pendiente
 
-F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION. NEVER START F28/markitPASS. After actual F27 acceptance: real reference/7SHA receipt, F27 finalPASS/localcommit, tests/global-audit.py --final (54suites), independent tests/close-final-validation.py --evidence <actualfinalE> --commit. Both entry paths deny pending human review. Prepared controls8+11+12+15PASS, not finalaudit.
+F27 NO se declara PASS. El usuario solicitó cambios sobre tres ejemplos del README después de revisar el resultado real. La revisión anterior, el README original, las decisiones técnicas y todo el run nativo se preservan.
 
-Current post-pilot cleanup/integrityPASS evidence evidence/revised-final-preparation-20261015-172403/. docs/PROJECT-FINAL-REPORT.md is an honest pending-gate status, NOT COMPLETE. No push/dependency/update/extraChatGPTsend.
+Sólo README.md cambió dentro del piloto. No se modificó module.py, ninguno de los17 tests originales, build.py, sample-records.json ni los dos artefactos finales. No se reabrió el Runner terminado, ni se alteró Started/deadline/presupuestos/restart_budget/STATE nativo/contratos/contadores. Esta validación documental autorizada es independiente del reloj del E2E original, que duró1097.308088s y consumió2 reinicios normales.
+
+Correcciones exactas: round_seconds(1.005) devuelve1.01; Decimal(str(1.005)) produce Decimal('1.005'); se suman valores NORMALIZADOS0.11+2.68+0.00+1.01=3.80.
+
+| Comprobación nueva | Resultado |
+|---|---|
+| 17 tests de aceptación originales | PASS |
+| Build original | PASS |
+| Artefactos y sus bytes | PASS, sin cambios |
+| Tres ejemplos contra el código real | PASS |
+| Hermes Reviewer independiente | ACCEPTED |
+| Reviewer read-only, archivos y Git HEAD | PASS |
+| Contrato original aprobado | PASS, sin cambios |
+| Completion Gate productivo reejecutado read-only | COMPLETED |
+| Gate de revalidación con tests/build/Reviewer nuevos vinculados al resultado actual | COMPLETED |
+| Cleanup e integridad | PASS |
+| Revisión humana final NUEVA | PENDING |
+
+El evaluador productivo se ejecutó sin cambiar su código ni sobrescribir los receipts históricos del run. Por ello conserva la lectura de roles/checks históricos. COMPLETION-REVALIDATION.json exige ADEMÁS los17 tests/build originales recién ejecutados, artefactos exactos y Reviewer nuevo ACCEPTED sobre el conjunto actual de archivos; ningún resultado anterior sustituye esas comprobaciones nuevas. El resultado es una revalidación documental, no un nuevo E2E ni una extensión del run original.
+
+El Reviewer fue invocado por scripts/invoke-hermes-role.ps1 con perfil read-only y contrato SHA; inferencia serializada mediante el mutex productivo. Se mantuvieron qwen36/127.0.0.1:8080/ctx65536/parallel1, sin actualizaciones ni dependencias nuevas. Se cerró únicamente el modelo propio de esta validación; puertos8080/9119 libres, tres mutex libres, Chrome preexistente preservado.
+
+No se repitieron F24/F25/4H/F26, no hubo consulta ChatGPT, no se ejecutó auditoría/regresión final, no se ejecutó F28 y no hubo push. F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE. Falta exclusivamente la nueva aprobación humana para cerrar F27; la regresión/auditoría final sigue pendiente de esa aprobación.
+
+Reviewer session: 20261015_180841_072af5. Revalidación completa: 187.05s. Evidence: evidence/f27-documentation-revalidation-20261015-180725/.
+
+## Diff documental exacto
+
+```diff
+--- a/README.md
++++ b/README.md
+@@ -19,8 +19,8 @@
+ >>> from module import round_seconds
+ >>> round_seconds('1.005')   # string → Decimal preserves exactness
+ '1.01'
+->>> round_seconds(1.005)     # float loses precision before Decimal sees it → floor
+-'1.00'
++>>> round_seconds(1.005)     # Decimal(str(value)) preserves this value
++'1.01'
+ ```
+
+ The canonical approach is to pass the **string** directly to `Decimal(str(value))` so `1.005` is rounded up to `1.01` as expected.
+@@ -91,7 +91,7 @@
+ >>> s = summarize(recs)
+ >>> s['counts']
+ {'PASS': 1, 'FAIL': 1, 'BLOCKED': 1, 'TIMEOUT': 1}
+->>> s['total_seconds']   # 0.105 + 2.675 + 0 + 1.005 = 3.785 → 3.79
++>>> s['total_seconds']   # Sum normalized values: 0.11 + 2.68 + 0.00 + 1.01 = 3.80
+ '3.80'
+ >>> s['max_seconds']     # 2.675 → 2.68
+ '2.68'
+@@ -178,8 +178,8 @@
+ Always pass **strings** to `Decimal()` to avoid float precision loss:
+
+ ```python
+->>> Decimal(str(1.005))   # float loses precision first → '1.00499...'
+-Decimal('1.00499999999999989341858963598497211933135986328125')
++>>> Decimal(str(1.005))   # str(1.005) is '1.005'
++Decimal('1.005')
+ >>> Decimal('1.005')      # string preserves exact value
+ Decimal('1.005')
+ ```
+```
+
+- [README corregido](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/README.md>)
+- [Código intacto](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/endurance-f27-20261015-165308-d37c78/pilot-002/module.py>)
+- [17 tests originales](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/evidence/f27-documentation-revalidation-20261015-180725/tests.stderr.txt>)
+- [Resultado Reviewer](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/evidence/f27-documentation-revalidation-20261015-180725/REVIEWER-VALIDATION.json>)
+- [Completion revalidation](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/evidence/f27-documentation-revalidation-20261015-180725/COMPLETION-REVALIDATION.json>)
+- [Cleanup](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/evidence/f27-documentation-revalidation-20261015-180725/CLEANUP.json>)
+- [Integridad](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/evidence/f27-documentation-revalidation-20261015-180725/INTEGRITY.json>)
+- [Nuevo paquete de revisión humana pendiente](<C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/evidence/f27-documentation-revalidation-20261015-180725/HUMAN-REVIEW-PACKAGE.json>)
