@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\tests\test-phase24-attempt11-live.py", line 201, in <module>
+    if not preflight.get('sealed') or any(sha(ROOT/path)!=digest for path,digest in preflight.get('source_hashes',{}).items()):raise RuntimeError('PREFLIGHT_SOURCES_CHANGED_OR_UNSEALED')
+                                                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: PREFLIGHT_SOURCES_CHANGED_OR_UNSEALED
