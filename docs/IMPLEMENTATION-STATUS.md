@@ -63,7 +63,7 @@
 | **Fase 21** | Reportes | **PASS** | evidence/phase-21/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 22** | Cleanup garantizado | **PASS** | evidence/phase-22/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 23** | Sandbox integral | **PASS** | Reviewer real ACCEPTED, Completion Gate PASS; histórico preservado. evidence/hermes-prompt-transport-20261014/. |
-| **Fase 24** | End-to-End corto | **FAIL / MANDATORY_TEST_FAILED** | ATTEMPT 4: entrega web explícita PASS, consumo por Qwen NOT_PROVEN. Worker SUCCESS tras 1 reinicio; ChatGPT/Reviewer/gate NOT_RUN. evidence/phase-24-attempt-4-20261014/. |
+| **Fase 24** | End-to-End corto | **FAIL / BLOCKED_REQUIRES_HUMAN** | ATTEMPT 5: web context/tests/build/recovery completo PASS; ChatGPT botón no disponible/unívoco, 0 envíos y ledger UNKNOWN_DELIVERY. Reviewer/gate NOT_RUN. evidence/phase-24-attempt-5-20261014/. |
 | **Fase 25** | Prueba 2 horas | **NOT_RUN** | Validación de estabilidad autónoma continua de 2 horas. |
 | **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
 | **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
@@ -168,3 +168,7 @@ Fronteras A/B/C y smokes previos PASS (aabf021, 7de9bf9, c846e2a). Nuevo run-202
 ## Preflight cerrado para F24 ATTEMPT 5 — 2026-10-14
 
 WEB_GATE_FIX PASS: fetched/context delivered/task result separados; binding de input real, sesión y SHA/rango sin eco del modelo. Pruebas A–J y CLI Qwen instalado con endpoint simulado PASS, cero inferencias/mensajes reales. F24_HARNESS_PREFLIGHT PASS, 28 gates congelados; transporte ChatGPT/Reviewer, Completion, crash/START-Recover, cleanup, presupuesto STATE sin campo previo y mutex PASS. ATTEMPT4 conserva FAIL histórico; ATTEMPT3/ledger intactos. F24 aún FAIL hasta el E2E nuevo; F25 no iniciada. docs/F24-WEB-GATE-FIX.md; docs/F24-GATES.json; evidence/f24-harness-preflight-20261014/.
+
+## Estado vigente — F24 ATTEMPT 5 — 2026-10-14
+
+WEB_GATE_FIX PASS, F24_HARNESS_PREFLIGHT PASS, 28 gates congelados (8c8bfdf; runtime import fix c2b1268, previo a Prepare/START). Run nuevo run-20261014-210131: Worker SUCCESS, web fetch/context delivered PASS, 13 tests/build PASS antes y después de crash/Watchdog/START-Recover/continuación reales PASS. ChatGPT FAIL por SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS antes de click: 0 envíos, ledger UNKNOWN_DELIVERY/no_resend, reserva 1/5 preservada. Reviewer/Completion Gate NOT_RUN. F24 FAIL / BLOCKED_REQUIRES_HUMAN. Duración 684.78s, límites 2700/fase300/restart2/maxcycles5 intactos, cero reinicios de agentes. Cleanup/integridad PASS; 629 archivos históricos intactos, ATTEMPT4 mantiene FAIL histórico y ATTEMPT3 no reconciliada/reenvíada. No corrección post-START, reenvío, ATTEMPT6 ni F25/F27/F28. READY_FOR_F25 NO. docs/F24-ATTEMPT-5-STOP-REPORT.md; evidence/phase-24-attempt-5-20261014/.

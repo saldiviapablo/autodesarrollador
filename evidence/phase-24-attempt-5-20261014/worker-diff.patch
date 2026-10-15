@@ -1,0 +1,134 @@
+diff --git a/README.md b/README.md
+index 6b861ce..7ecd7d0 100644
+--- a/README.md
++++ b/README.md
+@@ -1,2 +1,33 @@
+ # Invoice sandbox
+-TODO document precise rounding and allocations.
++
++## Precise monetary rounding
++
++All monetary values are handled with Python's ``decimal.Decimal`` using the
++``ROUND_HALF_UP`` rounding mode and exactly two decimal places — this is the
++behaviour required for accounting and financial applications where schoolbook
++arithmetic must be preserved (see
++https://docs.python.org/3/library/decimal.html).
++
++| Function | Contract |
++|---|---|
++| ``cents(value)`` | Rounds *value* to two decimal digits using ``ROUND_HALF_UP``.  Accepts str, int, or float.  Rejects ``NaN``, ``Infinity``, and any non-parseable input by raising ``ValueError``. |
++| ``total(lines)`` | Computes ``sum(price × quantity)`` across *lines* and rounds **once** at the end to ``0.01`` with ``ROUND_HALF_UP``.  Individual prices are **not** rounded first. |
++| ``allocate(value, weights)`` | Distributes a non-negative *amount* across buckets using the **largest remainder method** in integer cents.  *weights* must be numeric; individual zero weights are allowed, but the total weight must be ``>= 0`` and strictly positive to succeed.  Returns a list of two-decimal strings that sum **exactly** to the rounded amount.  Ties are broken in favour of the earlier input index. |
++
++### Examples
++
++```python
++>>> cents("2.675")
++'2.68'
++>>> total([("2.675", 2), ("1.00", 3)])
++'8.35'
++>>> allocate("0.05", [1, 1, 1])
++['0.02', '0.02', '0.01']
++>>> allocate("1.00", [1, 2, 3])
++['0.17', '0.33', '0.50']
++```
++
++### References
++
++- Decimal arithmetic (official docs): https://docs.python.org/3/library/decimal.html
++- Largest remainder method — fair allocation algorithm that distributes integer units and awards the remaining units one-by-one to the shares with the largest fractional remainders, with ties broken by earlier input index.
+diff --git a/invoice.py b/invoice.py
+index 9f2d856..12eb888 100644
+--- a/invoice.py
++++ b/invoice.py
+@@ -1,8 +1,86 @@
++from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
++
++_CENT = Decimal("0.01")
++
++
+ def cents(value):
+-    return str(round(float(value),2))
++    """Round *value* to two decimal places using ROUND_HALF_UP.
++
++    Accepts str or numeric types.  Rejects non-finite values
++    (NaN, Infinity) and anything that cannot be parsed into a Decimal
++    by raising ``ValueError``.
++    """
++    if isinstance(value, str):
++        value = value.strip()
++    try:
++        d = Decimal(str(value))
++    except (InvalidOperation, TypeError, ValueError):
++        raise ValueError(f"cannot parse monetary amount: {value!r}")
++    if not d.is_finite():
++        raise ValueError(f"non-finite monetary amount: {value!r}")
++    return str(d.quantize(_CENT, rounding=ROUND_HALF_UP))
++
+ 
+ def total(lines):
+-    raise NotImplementedError("missing invoice feature")
++    """Return the invoice total as a two-decimal string.
++
++    *lines* is an iterable of (price, quantity) pairs.  Prices are
++    NOT rounded individually; the sum of *price*×*quantity* is rounded
++    once at the end using ROUND_HALF_UP to 0.01.
++    """
++    acc = Decimal("0")
++    for price, qty in lines:
++        acc += Decimal(str(price)) * Decimal(str(qty))
++    return str(acc.quantize(_CENT, rounding=ROUND_HALF_UP))
++
++
++def allocate(value, weights):
++    """Largest-remainder allocation in integer cents.
++
++    *value* — non-negative monetary string (e.g. "1.00").
++    *weights* — positive numeric weights; individual zero weights are
++    allowed but the **total** weight must be strictly positive.
++
++    Returns a list of two-decimal strings that sum exactly to the
++    rounded value.  Ties are broken in favour of the earlier input
++    index.
++    """
++    # --- validate amount ---------------------------------------------------
++    d_value = Decimal(str(value).strip())
++    if not d_value.is_finite() or d_value < 0:
++        raise ValueError(f"invalid amount: {value!r}")
++    target_cents = int(d_value.quantize(_CENT, rounding=ROUND_HALF_UP) * 100)
++
++    # --- validate weights --------------------------------------------------
++    weights = list(weights)
++    if len(weights) == 0:
++        raise ValueError(f"empty weights: {weights!r}")
++    numeric_weights = []
++    for w in weights:
++        try:
++            nw = Decimal(str(w))
++        except (InvalidOperation, TypeError, ValueError):
++            raise ValueError(f"invalid weight: {w!r}")
++        if nw < 0 or not nw.is_finite():
++            raise ValueError(f"invalid weight: {w!r}")
++        numeric_weights.append(nw)
++
++    total_weight = sum(numeric_weights)
++    if total_weight == 0:
++        raise ValueError(f"zero total weight: {weights!r}")
++
++    # --- integer-cent allocation via largest remainder ---------------------
++    base_cents = [int((w / total_weight) * target_cents) for w in numeric_weights]
++    remainder = target_cents - sum(base_cents)
++
++    # fractional parts for tie-breaking (earlier index wins)
++    frac = [(Decimal(str(w)) * Decimal(target_cents) / total_weight) % 1
++            for w in numeric_weights]
++    # Sort indices by descending fractional remainder, ties → earlier index
++    for idx in sorted(range(len(frac)), key=lambda i: frac[i], reverse=True):
++        if remainder <= 0:
++            break
++        base_cents[idx] += 1
++        remainder -= 1
+ 
+-def allocate(value,weights):
+-    raise NotImplementedError("missing allocation feature")
++    return [str((Decimal(c) / 100).quantize(_CENT, rounding=ROUND_HALF_UP)) for c in base_cents]

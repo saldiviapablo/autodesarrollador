@@ -1,0 +1,211 @@
+{
+  "report": {
+    "schema_version": "1.0",
+    "run_id": "run-20261014-210131",
+    "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f24-attempt5-e6230453\\project",
+    "objective": "Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox",
+    "duration_seconds": 684.4536797999999,
+    "status": "BLOCKED_REQUIRES_HUMAN",
+    "technical_status": "FAIL",
+    "reason": "BLOCKED_REQUIRES_HUMAN_CHATGPT_ERROR_NO_RESEND",
+    "tasks_completed": [],
+    "pending_tasks": [
+      "Implement precise invoice arithmetic and cent-conserving allocation in isolated sandbox"
+    ],
+    "changed_files": [
+      "invoice.py",
+      "README.md"
+    ],
+    "commits": [],
+    "tests": [
+      {
+        "output": "F24_UNIT_DOC_PASS\r\n",
+        "status": "PASS",
+        "marker_present": true,
+        "id": "unit",
+        "exit_code": 0
+      }
+    ],
+    "builds": [
+      {
+        "output": "F24_BUILD_PASS\r\n",
+        "status": "PASS",
+        "marker_present": true,
+        "id": "build",
+        "exit_code": 0
+      }
+    ],
+    "linters": [],
+    "errors": [
+      "BLOCKED_REQUIRES_HUMAN_CHATGPT_ERROR_NO_RESEND"
+    ],
+    "retries": {
+      "llama": 0,
+      "supervisor": 0,
+      "reviewer": 0,
+      "worker": 0
+    },
+    "recoveries": [
+      {
+        "schema_version": "1.0",
+        "seq": 27,
+        "event_id": "evt-ba7bec210891",
+        "timestamp": "2026-10-14T21:09:20.8842462-03:00",
+        "run_id": "run-20261014-210131",
+        "actor": "watchdog",
+        "type": "PARENT_CRASH_RECOVERED",
+        "payload": {
+          "parent_pid": 3884,
+          "reason": "PARENT_PROCESS_LOST"
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "seq": 31,
+        "event_id": "evt-c13282b10e33",
+        "timestamp": "2026-10-14T21:09:24.6779168-03:00",
+        "run_id": "run-20261014-210131",
+        "actor": "runner",
+        "type": "RUN_RECOVERED_FROM_DISK",
+        "payload": {
+          "status": "RECOVERED"
+        }
+      }
+    ],
+    "web_queries": [],
+    "chatgpt_queries_used": 1,
+    "blocks": [
+      "BLOCKED_REQUIRES_HUMAN_CHATGPT_ERROR_NO_RESEND"
+    ],
+    "completion_gate": {
+      "status": "NOT_EVALUATED",
+      "reason": "BLOCKED_REQUIRES_HUMAN_CHATGPT_ERROR_NO_RESEND"
+    },
+    "cleanup": {
+      "job_closed": true,
+      "owned_survivors": [],
+      "run_mutex_released": true,
+      "run_lock_removed": true,
+      "inference_mutex": "FREE",
+      "external_model_preserved": false,
+      "errors": []
+    },
+    "processes": [
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 30920,
+        "name": "watchdog",
+        "executable": "powershell.exe",
+        "start_ticks": 639276192975867809
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 10360,
+        "name": "llama",
+        "executable": "C:\\AI\\llama.cpp\\llama-server.exe",
+        "start_ticks": 639276192983927323
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 23128,
+        "name": "supervisor",
+        "executable": "powershell.exe",
+        "start_ticks": 639276193027396782
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 21208,
+        "name": "worker",
+        "executable": "powershell.exe",
+        "start_ticks": 639276193572057304
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 16616,
+        "name": "check-unit",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639276194752672157
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 36688,
+        "name": "web-research",
+        "executable": "powershell.exe",
+        "start_ticks": 639276194754147188
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 36208,
+        "name": "worker",
+        "executable": "powershell.exe",
+        "start_ticks": 639276194774323270
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 17364,
+        "name": "check-unit",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639276197566328683
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 15596,
+        "name": "check-build",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639276197567355170
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 14012,
+        "name": "watchdog",
+        "executable": "powershell.exe",
+        "start_ticks": 639276197649555648
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 28804,
+        "name": "llama",
+        "executable": "C:\\AI\\llama.cpp\\llama-server.exe",
+        "start_ticks": 639276197660206067
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 30560,
+        "name": "supervisor",
+        "executable": "powershell.exe",
+        "start_ticks": 639276197698335738
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 36240,
+        "name": "worker",
+        "executable": "powershell.exe",
+        "start_ticks": 639276198022332107
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 35844,
+        "name": "check-unit",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639276199705361712
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 17248,
+        "name": "check-build",
+        "executable": "C:/Python314/python.exe",
+        "start_ticks": 639276199706410569
+      },
+      {
+        "ownership": "OWNED_BY_RUN",
+        "pid": 35548,
+        "name": "chatgpt",
+        "executable": "powershell.exe",
+        "start_ticks": 639276199707609209
+      }
+    ],
+    "generated_at": "2026-10-14T21:13:01.5274638-03:00"
+  },
+  "gate": {},
+  "roles": {}
+}

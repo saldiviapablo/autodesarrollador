@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final | F23 PASS; F24 ATTEMPT 4 consumo web no demostrado | **FAIL / MANDATORY_TEST_FAILED** |
+| **Macrofase 8** | Validación Final | F23 PASS; F24 ATTEMPT 5 ChatGPT precheck FAIL | **FAIL / BLOCKED_REQUIRES_HUMAN** |
 
 Cada fase debe producir:
 
@@ -1414,3 +1414,7 @@ ATTEMPT 2 (run-20261014-020920) cerrado como FAIL / GLOBAL_TIMEOUT; sus 216 arch
 ## Estado vigente — F24 ATTEMPT 4 — 2026-10-14
 
 Fronteras A/B/C y smokes previos PASS (aabf021, 7de9bf9, c846e2a). Nuevo run-20261014-201149: Prepare/preflight/aprobación/launcher/Supervisor/diagnóstico FAIL inicial/fetch/entrega explícita PASS. Worker TIMEOUT y un reinicio normal 1/2; Worker final SUCCESS con 13 tests/build PASS en sus herramientas, pero consumo web NOT_PROVEN (marcador/SHA ausentes). Runner STOP RESEARCH_CONSUMPTION_NOT_PROVEN; F24 FAIL / MANDATORY_TEST_FAILED. Crash/START-Recover E2E/ChatGPT/Reviewer/Completion Gate NOT_RUN. Consulta nueva no ejecutada, cero envíos. Duración 729.54s; límites 2700/fase300/restart2/maxcycles5 sin ampliar. Cleanup/integridad PASS, 419 archivos históricos intactos. ATTEMPT3 permanece HISTORICAL FAIL / BLOCKED_REQUIRES_HUMAN y su ledger no se tocó. F23 PASS; READY_FOR_F25 NO; F25/F27/F28 no iniciadas. docs/F24-ATTEMPT-4-STOP-REPORT.md; evidence/phase-24-attempt-4-20261014/.
+
+## Estado vigente — F24 ATTEMPT 5 — 2026-10-14
+
+WEB_GATE_FIX PASS, F24_HARNESS_PREFLIGHT PASS, 28 gates congelados (8c8bfdf; runtime import fix c2b1268, previo a Prepare/START). Run nuevo run-20261014-210131: Worker SUCCESS, web fetch/context delivered PASS, 13 tests/build PASS antes y después de crash/Watchdog/START-Recover/continuación reales PASS. ChatGPT FAIL por SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS antes de click: 0 envíos, ledger UNKNOWN_DELIVERY/no_resend, reserva 1/5 preservada. Reviewer/Completion Gate NOT_RUN. F24 FAIL / BLOCKED_REQUIRES_HUMAN. Duración 684.78s, límites 2700/fase300/restart2/maxcycles5 intactos, cero reinicios de agentes. Cleanup/integridad PASS; 629 archivos históricos intactos, ATTEMPT4 mantiene FAIL histórico y ATTEMPT3 no reconciliada/reenvíada. No corrección post-START, reenvío, ATTEMPT6 ni F25/F27/F28. READY_FOR_F25 NO. docs/F24-ATTEMPT-5-STOP-REPORT.md; evidence/phase-24-attempt-5-20261014/.
