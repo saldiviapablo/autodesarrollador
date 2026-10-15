@@ -76,6 +76,11 @@ Defectos encontrados y corregidos antes de START:
   compara primero contra Git HEAD, sin tocar el histórico ni el bridge.
 
 Los primeros fallos de preflight se conservan en la carpeta nueva. No hubo
+START al detectar un import yaml ausente en el runtime Hermes del harness:
+se eliminó esa dependencia allí y el YAML se procesa con Python canónico ya
+instalado. Una prueba de imports usa ahora el runtime Hermes real antes de sellar.
+No se creó run/sandbox/reloj/consulta en ese fallo previo a Prepare/START.
+No hubo
 inferencia ni mensajes ChatGPT en esos tests. No se cambian security.yaml,
 Inference Lock, hooks ni configuración qwen36/127.0.0.1:8080/ctx65536/parallel1.
 Hermes v0.21.6 permanece sin actualizar. Sin dependencias nuevas. NO PUSH.

@@ -5,7 +5,6 @@ sandbox and owned processes; target implementation changes belong to Qwen Code.
 No previous run, approval, deadline, ledger, or evidence is reused as execution.
 """
 
-import yaml
 from f24_gates import catalog, evaluate as evaluate_frozen_gates
 import base64
 import datetime as dt
@@ -247,7 +246,8 @@ try:
     checks['prepare'] = prepared['status'] == 'PASS'
     assert checks['prepare'], 'MANDATORY_TEST_FAILED: PREPARE'
     # New, still-unapproved contract/state reflect the stricter normal plan limits.
-    cp=auto/'RUN-CONTRACT.yaml';contract=yaml.safe_load(cp.read_text(encoding='utf-8-sig'));contract['time_budget_minutes']=45;cp.write_text(yaml.safe_dump(contract,sort_keys=False,allow_unicode=True),encoding='utf-8')
+    cp=auto/'RUN-CONTRACT.yaml'
+    subprocess.run([PYTHON,'-c',"import pathlib,sys,yaml;p=pathlib.Path(sys.argv[1]);c=yaml.safe_load(p.read_text(encoding='utf-8-sig'));c['time_budget_minutes']=45;p.write_text(yaml.safe_dump(c,sort_keys=False,allow_unicode=True),encoding='utf-8')",str(cp)],check=True,capture_output=True,timeout=15)
     state=read(auto/'STATE.json');state['max_cycles']=5;(auto/'STATE.json').write_text(json.dumps(state,ensure_ascii=False,indent=2),encoding='utf-8')
     ps('. '+q(ROOT/'scripts/state-manager.ps1')+';$state=Get-Content -LiteralPath '+q(auto/'STATE.json')+' -Raw -Encoding UTF8|ConvertFrom-Json; $null=Write-AtomicState -StateObj $state -AutopilotDir '+q(auto)+' -ValidateTransition $false; @{status="PASS"}')
     git('add', '--', 'QWEN.md')
