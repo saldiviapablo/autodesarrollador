@@ -1,0 +1,48 @@
+{
+  "status": "ROOT_CAUSE_IDENTIFIED",
+  "native_transport": "stdin chat --query-file -; exact packet at native reader; only native outer CRLF trim at model boundary",
+  "full_prompt_preserved": true,
+  "correct_reviewer_system_role": true,
+  "tools_disabled": true,
+  "profile_matches_approved": true,
+  "no_resume_argv": true,
+  "F23_decision": "ACCEPTED (historical real evidence)",
+  "F24_A7_raw_result": "python test_invoice.py\npython build.py",
+  "observed_defect": "F24 appends executable Worker task after audit instruction, without a final authoritative decision contract or an enclosing evidence boundary; F23 successful route did not append Worker task",
+  "model_internal_reason": "not directly observable; the instruction/data boundary defect is verified from the actual model request",
+  "parser_current": "Completion correctly rejects absence of decision; upstream transport SUCCESS alone is not acceptance",
+  "next_fix": "Enclose all task/diff/tests as quoted untrusted evidence, repeat readonly decision contract after payload; validate exact single decision and input binding; preserve native stdin route",
+  "new_local_inferences": 0,
+  "data": {
+    "F23": {
+      "prompt_sha256": "9a405db484108341d27e36eb190c2f127e80ee3956e0845a5cfaa72f014810f6",
+      "prompt_bytes": 1970,
+      "native_query_equals_packet": true,
+      "model_user_equals_packet_after_native_outer_strip": true,
+      "native_outer_whitespace_trimmed_bytes": 0,
+      "message_roles": [
+        "system",
+        "user"
+      ],
+      "tools": [],
+      "network_sent": false,
+      "contains_worker_imperatives": false,
+      "appended_worker_task": false
+    },
+    "F24_A7": {
+      "prompt_sha256": "cdd70185a7058adacaad3ad2686c3300cbac9700b555a092b1764518ad6897cc",
+      "prompt_bytes": 12411,
+      "native_query_equals_packet": true,
+      "model_user_equals_packet_after_native_outer_strip": true,
+      "native_outer_whitespace_trimmed_bytes": 2,
+      "message_roles": [
+        "system",
+        "user"
+      ],
+      "tools": [],
+      "network_sent": false,
+      "contains_worker_imperatives": true,
+      "appended_worker_task": true
+    }
+  }
+}

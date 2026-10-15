@@ -1,5 +1,7 @@
 """Deterministic multi-criterion completion; agent text and exit0 are insufficient."""
 import argparse,hashlib,json,pathlib,re,subprocess,sys,jsonschema
+sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
+from reviewer_contract import parse_decision
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 def evaluate(project):
     p=pathlib.Path(project).resolve();auto=p/'.autopilot'
@@ -12,9 +14,9 @@ def evaluate(project):
     except jsonschema.ValidationError:checks['state_schema_valid']=False
     checks['native_live_backend']=plan.get('backend','live')=='live'
     checks['roles_success']=all(roles.get(role,{}).get('status')=='SUCCESS' for role in ('supervisor','worker','reviewer'))
-    text=roles.get('reviewer',{}).get('text','');match=re.search(r'\{.*\}',text,re.S)
-    try:accepted=json.loads(match.group())['decision']=='ACCEPTED' if match else False
-    except (KeyError,json.JSONDecodeError):accepted=False
+    text=roles.get('reviewer',{}).get('text','')
+    try:accepted=parse_decision(text)['decision']=='ACCEPTED'
+    except (ValueError,KeyError,TypeError):accepted=False
     checks['independent_reviewer_accepted']=accepted
     checks['run_id_consistent']=evidence.get('run_id')==state['run_id']
     all_results={r['id']:r for group in ('tests','builds','linters') for r in evidence.get(group,[]) if r}

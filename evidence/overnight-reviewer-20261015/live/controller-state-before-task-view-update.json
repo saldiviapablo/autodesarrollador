@@ -1,0 +1,67 @@
+﻿{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261015-024034",
+    "project_id":  "reviewer-cert-control-bd25b691",
+    "objective":  "Isolated readonly Reviewer certification; no coding or consultation",
+    "status":  "COMPLETED",
+    "created_at":  "2026-10-15T02:40:35.0466616-03:00",
+    "updated_at":  "2026-10-15T02:41:42.7224733-03:00",
+    "cycle":  0,
+    "max_cycles":  20,
+    "current_phase":  "RUNNER",
+    "current_task":  "isolated Reviewer: ",
+    "completed_tasks":  [
+
+                        ],
+    "pending_tasks":  [
+                          "Isolated readonly Reviewer certification; no coding or consultation"
+                      ],
+    "acceptance_criteria":  [
+                                "Valid independent Reviewer decision with target and historical files unchanged"
+                            ],
+    "current_delegation_id":  null,
+    "hermes_session_id":  null,
+    "qwen_session_id":  null,
+    "git":  {
+                "branch":  "agent/macro8-20261013",
+                "head":  "728a475",
+                "dirty":  true,
+                "changed_files":  [
+                                      "runner/agent-step.ps1",
+                                      "runner/completion.py",
+                                      "runner/core.ps1",
+                                      "scripts/invoke-hermes-role.ps1",
+                                      "docs/OVERNIGHT-RESUME.md",
+                                      "evidence/overnight-reviewer-20261015/",
+                                      "runner/reviewer_contract.py",
+                                      "tests/audit-reviewer-input.py",
+                                      "tests/certify-reviewer-live.ps1",
+                                      "tests/test-reviewer-contract.py"
+                                  ]
+            },
+    "tests":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null,
+                  "last_run_at":  null
+              },
+    "build":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null
+              },
+    "progress":  {
+                     "score":  0,
+                     "last_progress_at":  null,
+                     "no_progress_cycles":  0
+                 },
+    "failure":  {
+                    "last_signature":  null,
+                    "repeated_count":  0
+                },
+    "checkpoint":  {
+                       "last_id":  null,
+                       "last_created_at":  null
+                   },
+    "next_action":  "Ejecutar preflight checks y autorizar el inicio del ciclo"
+}

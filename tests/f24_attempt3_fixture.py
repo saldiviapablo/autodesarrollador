@@ -80,7 +80,8 @@ class InvoiceAcceptance(unittest.TestCase):
                     allocate("1.00", bad)
 
     def test_invalid_monetary_amounts(self):
-        for bad in ("NaN", "Infinity", "bad"):
+        for bad in ("NaN", "Infinity", "bad", float("nan"), float("inf"),
+                    Decimal("NaN"), Decimal("Infinity"), None):
             with self.subTest(value=bad):
                 with self.assertRaises(ValueError):
                     cents(bad)

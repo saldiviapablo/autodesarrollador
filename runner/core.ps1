@@ -126,13 +126,23 @@ function Invoke-RunnerManaged([string]$Name,[string]$Exe,[array]$Arguments,[int]
     }finally{$stageJob.Dispose();$null=$item.process.WaitForExit(5000)}
 }
 function Invoke-RunnerAgent([string]$Role,$Packet){
+    if($Packet.role -cne $Role){throw 'ROLE_PACKET_MISMATCH'}
     $script:CurrentTask=$Role
+    if($Role -eq 'reviewer'){
+        $Packet.review_input_sha256=([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($Packet.prompt)))).Replace('-','').ToLowerInvariant()
+    }
     $packetPath=Join-Path $script:Auto ('packet-'+$Role+'.json');Write-RunnerJson $packetPath $Packet
     $limit=3;if($script:Admission.plan.restart_budget -ne $null){$limit=[Math]::Min($limit,$script:Admission.plan.restart_budget)}
     while($true){
         try{
             $result=Invoke-RunnerManaged $Role 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $script:RunnerInfra 'runner/agent-step.ps1'),'-PacketPath',$packetPath) ($Packet.timeout+10)
-            if($result.exit_code -ne 0){throw ('AGENT_FAILED:'+ $Role)}
+            if($result.exit_code -ne 0){
+                if($Role -eq 'reviewer'){
+                    try{$invalid=$result.stdout|ConvertFrom-Json}catch{$invalid=$null}
+                    if($invalid.error_class -eq 'REVIEWER_DECISION_INVALID'){throw 'REVIEWER_DECISION_INVALID: isolate before another E2E'}
+                }
+                throw ('AGENT_FAILED:'+ $Role)
+            }
             return ($result.stdout|ConvertFrom-Json)
         }catch{
             $reason=$_.Exception.Message

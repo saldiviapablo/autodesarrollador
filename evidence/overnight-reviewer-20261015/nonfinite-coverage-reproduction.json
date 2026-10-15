@@ -1,0 +1,33 @@
+{
+  "status": "DEFECT_REPRODUCED",
+  "criterion": "cents rejects malformed or non-finite amounts with ValueError (unchanged approved RUN-PLAN)",
+  "historical_target_unchanged": true,
+  "results": [
+    {
+      "input_repr": "nan",
+      "returned": "NaN",
+      "correct_ValueError": false
+    },
+    {
+      "input_repr": "inf",
+      "exception": "InvalidOperation",
+      "correct_ValueError": false
+    },
+    {
+      "input_repr": "Decimal('NaN')",
+      "returned": "NaN",
+      "correct_ValueError": false
+    },
+    {
+      "input_repr": "Decimal('Infinity')",
+      "exception": "InvalidOperation",
+      "correct_ValueError": false
+    },
+    {
+      "input_repr": "None",
+      "exception": "InvalidOperation",
+      "correct_ValueError": false
+    }
+  ],
+  "next_action": "extend existing immutable test method before new fresh F24; Qwen alone implements target"
+}
