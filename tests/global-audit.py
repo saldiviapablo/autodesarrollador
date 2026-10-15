@@ -140,6 +140,7 @@ def main():
   if args.final:
    run('pilot-controller-controls',[HP,R/'tests/test-pilot-controllers.py'],60)
    run('revised-final-waiver-controls',[HP,R/'tests/test-final-roadmap-gate.py'],60)
+   run('final-closure-entry-controls',[HP,R/'tests/test-close-final-validation.py'],60)
   for name,directory,timeout in [
    ('test-phase23-pathguard.py','evidence/phase-23-attempt-3',180),
    ('test-phase23-prepare-admission.py','evidence/phase-23-attempt-3',180),

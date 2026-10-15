@@ -1,4 +1,4 @@
-# Overnight continuation — revised roadmap, noF28
+# Overnight continuation — actual human F27 review required
 
 ```json
 {
@@ -9,10 +9,10 @@
   "active_phase": "F27_HUMAN_FINAL_REVIEW_PENDING",
   "last_cause": "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC",
   "last_fix": "PLACEHOLDERS_ONLY_ACCEPTANCE_AND_RUNTIME_UNCHANGED",
-  "last_commit": "git HEAD: explicit revised-roadmap waiver milestone",
-  "next_action": "NEVER START F28. Await actual final human review of concrete F27 result, then register accepted review, run tests/global-audit.py --final and independent final closure/report/cleanup/integrity. Do not repeat F24/F25/4H/F26. No push.",
+  "last_commit": "git HEAD: revised final preparation / actual human review checkpoint",
+  "next_action": "Await actual human final F27 review. No fabrication. NEVER F28. On acceptance register reviewed7SHA/reference, final F27 PASS/local commit, actual global-audit.py --final then close-final-validation.py and COMPLETE only after all gates PASS.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T20:18:13.546383+00:00",
+  "updated_at": "2026-10-15T20:24:03.060616+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -94,10 +94,14 @@
     "current_f27_unchanged": true,
     "no_push": true
   },
-  "f28_waiver_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\revised-roadmap-f28-waiver-20261015-171813\\USER-F28-WAIVER.json"
+  "f28_waiver_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\revised-roadmap-f28-waiver-20261015-171813\\USER-F28-WAIVER.json",
+  "status": "BLOCKED_REQUIRES_HUMAN",
+  "project_status": "BLOCKED_REQUIRES_HUMAN"
 }
 ```
 
-F24/F25/4H/F26 remain PASS. Current F27 run completed technically, all17 tests/build/real-web-consumption/Reviewer/Completion/cleanup/integrity PASS; native duration1097.308088s,2 normal Worker restarts, no timeout/budget edits. Actual final human review still pending; async review request presented with concrete report/files, no fabricated receipt.
+F24/F25/4H/F26 PASS, do not repeat. F27 technicalE2EPASS1097.308088s,17tests/buildPASS,ReviewerACCEPTED/read-only,CompletionCOMPLETED,cleanup/integrityPASS; actual final human review pending per07§30. Review question presented with concrete files, no acceptance received. No active native process/run.
 
-F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION. NEVER START F28 or mark it PASS. Formal binding/11 waiver controls+12admission+15pilot controls PASS. Current plan docs/ROADMAP-REVISION-F28-WAIVER-20261015.md. After actual F27 final human acceptance: register proof/local commit, fresh final-global-audit (--final), independent final report/cleanup/integrity and COMPLETE under revised roadmap only if all remaining gates pass. No push.
+F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION. NEVER START F28/markitPASS. After actual F27 acceptance: real reference/7SHA receipt, F27 finalPASS/localcommit, tests/global-audit.py --final (54suites), independent tests/close-final-validation.py --evidence <actualfinalE> --commit. Both entry paths deny pending human review. Prepared controls8+11+12+15PASS, not finalaudit.
+
+Current post-pilot cleanup/integrityPASS evidence evidence/revised-final-preparation-20261015-172403/. docs/PROJECT-FINAL-REPORT.md is an honest pending-gate status, NOT COMPLETE. No push/dependency/update/extraChatGPTsend.
