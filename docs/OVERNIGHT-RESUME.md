@@ -7,7 +7,7 @@ last_completed: F23 PASS; F24 ATTEMPT7 historical FAIL
 active_phase: F24_ATTEMPT8_PREPARATION
 last_cause: Reviewer instruction/data boundary; native transport and role verified correct
 last_fix: Readonly evidence envelope, SHA input binding and strict single decision parser; isolated native Reviewer ACCEPTED
-last_commit: 728a475
+last_commit: 1796a93de2812606422dbef2f11b9c6da09574be
 next_action: Create/commit fresh ATTEMPT8 harness and minimal admission; start new E2E with strengthened immutable 13-test fixture
 run_pointer: None
 updated_at: 2026-10-15T05:48:04.037230+00:00
