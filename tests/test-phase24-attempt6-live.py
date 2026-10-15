@@ -27,7 +27,7 @@ from windows_launcher_adapter import launch_batch
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 E = ROOT / 'evidence/phase-24-attempt-6-20261014'
 E.mkdir(exist_ok=True)
-PRESERVATION = ROOT / 'evidence/f24-attempt6-preflight-20261014/history-before.json'
+PRESERVATION = ROOT / 'evidence/f24-admission-repair-20261014/history-before.json'
 case = ROOT / 'sandbox' / ('f24-attempt6-' + uuid.uuid4().hex[:8])
 project = case / 'project'
 auto = project / '.autopilot'
@@ -196,7 +196,7 @@ def observe_clock():
         progress('NATIVE_CLOCK_STARTED', run_id=run_id, global_timeout_seconds=GLOBAL_SECONDS)
 
 
-preflight=read(ROOT/'evidence/f24-attempt6-preflight-20261014/PREFLIGHT.json')
+preflight=read(ROOT/'evidence/f24-admission-repair-20261014/PREFLIGHT.json')
 if not preflight or preflight.get('status')!='PASS':raise RuntimeError('F24_HARNESS_PREFLIGHT_REQUIRED')
 if not preflight.get('sealed') or any(sha(ROOT/path)!=digest for path,digest in preflight.get('source_hashes',{}).items()):raise RuntimeError('PREFLIGHT_SOURCES_CHANGED_OR_UNSEALED')
 if sha(ROOT/'docs/F24-GATES.json')!=preflight['gates_sha256']:raise RuntimeError('FROZEN_GATES_CHANGED')

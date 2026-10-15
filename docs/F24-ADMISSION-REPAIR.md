@@ -1,0 +1,7 @@
+# F24 admission corrections
+
+New consultation preparation now uses the visible, hit-tested ChatGPT **Nuevo chat / New chat** navigation control. It inspects the current draft but never erases, overwrites or sends it. Root navigation no longer stands for a fresh conversation. A unique visible editable composer must be empty with exact approved domain, no conversation ID, 0/0 turns, no streaming and a local control or focused Enter capability. The consultation ledger is reserved only after this proof; the selected send strategy and irreversible delivery proof are unchanged. Any retained draft stops preparation.
+
+The cleanup fixture's deliberate one-second heartbeat injection now runs in a separate fault fixture. Its pre-injection normal plan bytes are saved. Recovery uses a distinct normal fixture whose plan is verified byte-for-byte and SHA-256 against that snapshot before its single approval and again across recovery; the approval digest must remain unchanged. The fault fixture is never resumed. Production Watchdog policy and timeouts are untouched. This changes the probe, not the 28 frozen F24 gates.
+
+UTF-8 source BOM and the actual PowerShell 5 AST prompt bytes were checked without executing the send script. Source encoding was already correct and was preserved. Tests and evidence: `evidence/f24-admission-repair-20261014/`. Live outcomes and any STOP are recorded separately; these implementation notes do not certify live delivery or heartbeat recovery.

@@ -11,6 +11,7 @@ const { spawn, spawnSync } = require('child_process');
 const { ConsultationLedger, acquireBrowserLease, hash, normalize, reconcileObservation } = require('./chatgpt-ledger');
 const { Budget, Trace, budgets, deliver } = require('./chatgpt-delivery');
 const {inspectComposer,selectActuator,sendPhysicalEnter}=require('./chatgpt-send-actuator');
+const {findNewChatControl,requestFreshChat}=require('./chatgpt-fresh-chat');
 let activeLedger;
 let activeBudget, activeTrace, activeSocket, deadlineTimer;
 async function safeExit(code) {
@@ -129,6 +130,24 @@ async function readPrepared(ws) {
 async function readActuator(ws,expectedText) {
   const result=await sendCdp(ws,'Runtime.evaluate',{expression:`(${inspectComposer.toString()})(${expectedText===undefined?'undefined':JSON.stringify(expectedText)})`,returnByValue:true});
   return result.result?.value||{};
+}
+
+async function openFreshChat(ws){
+  return requestFreshChat({
+    inspect:async()=>({...await readConversation(ws),...await readActuator(ws)}),
+    findControl:async()=>{const r=await sendCdp(ws,'Runtime.evaluate',{expression:`(${findNewChatControl.toString()})()`,returnByValue:true});return r.result?.value||[];},
+    clickNavigation:async b=>{
+      activeTrace?.emit('NEW_CHAT_NAVIGATION_START');
+      await sendCdp(ws,'Input.dispatchMouseEvent',{type:'mousePressed',x:b.x,y:b.y,button:'left',buttons:1,pointerType:'mouse',clickCount:1});
+      await sendCdp(ws,'Input.dispatchMouseEvent',{type:'mouseReleased',x:b.x,y:b.y,button:'left',buttons:0,pointerType:'mouse',clickCount:1});
+      activeTrace?.emit('NEW_CHAT_NAVIGATION_END');
+    },
+    focusEmpty:async()=>{await sendCdp(ws,'Runtime.evaluate',{expression:`(() => {
+      const editors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea')).filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&!e.parentElement?.closest('[contenteditable="true"]');});
+      if(editors.length!==1||(editors[0].value??editors[0].innerText??'').trim())throw Error('FRESH_CHAT_FOCUS_NONEMPTY_DENIED');
+      editors[0].focus();return true;
+    })()`,returnByValue:true});},trace:activeTrace
+  });
 }
 
 // 1. Verificación Estricta de Domain Lock
@@ -367,17 +386,13 @@ async function main() {
   }
   acquireBrowserLease();
   if (action === 'consult') {
-    if (!confirmedRetry && !ledger.reserve(consultationId, preparedPrompt())) {
-      console.log(JSON.stringify(ledger.result(consultationId), null, 2)); await safeExit(0);
-    }
-    activeLedger = ledger;
     activeBudget = new Budget(timeoutSec);
     activeTrace = new Trace(ledger.file(consultationId).replace(/\.json$/,'.trace.jsonl'),consultationId);
     activeTrace.emit('BRIDGE_START',{pid:process.pid});
     deadlineTimer=setTimeout(async()=>{
       activeTrace.emit('TIMEOUT',{phase:'internal'});
       const confirmed=!!ledger.read(consultationId)?.message_confirmed;
-      if(!confirmed)ledger.update(consultationId,{delivery_state:'UNKNOWN_DELIVERY'});
+      if(!confirmed&&ledger.read(consultationId))ledger.update(consultationId,{delivery_state:'UNKNOWN_DELIVERY'});
       try{activeSocket?.close();}catch{}
       console.log(JSON.stringify({status:confirmed?'SENT_CONFIRMED':'UNKNOWN_DELIVERY',response_state:'PENDING',no_resend:true,consultation_id:consultationId}));
       await safeExit(1);
@@ -396,7 +411,7 @@ async function main() {
       await safeExit(1);
     }
   }
-  if(['consult','reconcile-human','inspect-prepared'].includes(action)) verifyDedicatedProfile();
+  if(['consult','reconcile-human','inspect-prepared','request-fresh-chat'].includes(action)) verifyDedicatedProfile();
 
   // Enforzar single tab y domain lock
   const tabCheck = await enforceSingleTabAndDomainLock();
@@ -442,9 +457,6 @@ async function main() {
   }
 
   activeSocket=ws;
-  if(newConversation && action==='consult' && !confirmedRetry){
-    await sendCdp(ws,'Page.navigate',{url:'https://chatgpt.com/'});
-  }
   try {
     // CDP may expose the intended tab before its initial about:blank document
     // has committed. Read only URL/readiness metadata; perform no DOM action
@@ -457,7 +469,7 @@ async function main() {
         returnByValue: true,
       });
       const current = metadata.result?.value;
-      if (current && validateDomain(current.url) && current.ready !== 'loading' && (action!=='consult'||current.prompt_ready) && (!newConversation || new URL(current.url).pathname==='/')) break;
+      if (current && validateDomain(current.url) && current.ready !== 'loading' && (action!=='consult'||current.prompt_ready)) break;
       if (current && current.url !== 'about:blank' && !validateDomain(current.url)) {
         throw new Error('DOMAIN_BLOCKED');
       }
@@ -481,6 +493,9 @@ async function main() {
     });
 
     const pageState = evalResult.result ? evalResult.result.value : {};
+    if(action==='request-fresh-chat'){
+      const fresh=await openFreshChat(ws);console.log(JSON.stringify(fresh,null,2));ws.close();await safeExit(0);return;
+    }
 
     // Acción check-session
     if (action === 'check-session') {
@@ -612,9 +627,13 @@ async function main() {
         await safeExit(3);
       }
 
+      let freshChat;
+      if(newConversation&&!confirmedRetry)freshChat=await openFreshChat(ws);
       activeBudget.enter('prepare');
       const initialComposer=await readPrepared(ws);
       if(!confirmedRetry && normalize(initialComposer.composer||''))throw Error('PREEXISTING_COMPOSER_NO_SEND');
+      if(!confirmedRetry&&!ledger.reserve(consultationId,preparedPrompt()))throw Error('CONSULTATION_RESERVATION_RACE_NO_SEND');
+      activeLedger=ledger;
       // Preparar prompt final
       const fullPrompt = preparedPrompt();
 
@@ -730,6 +749,8 @@ async function main() {
 
       const out = {
         status: "SUCCESS",
+        fresh_chat_ready:!!freshChat?.FRESH_CHAT_READY,
+        fresh_chat:freshChat,
         response: finalResponse,
         consultation_id: consultationId,
         source: "chatgpt_web_real",

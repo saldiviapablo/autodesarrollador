@@ -1,6 +1,6 @@
 import os
 """Actual owned process teardown, external preservation, crash and disk recovery."""
-import ctypes,datetime,importlib.util,json,pathlib,subprocess,time
+import ctypes,datetime,hashlib,importlib.util,json,pathlib,subprocess,time
 ROOT=pathlib.Path(__file__).resolve().parents[1];s=importlib.util.spec_from_file_location('f',ROOT/'tests/runner-fixtures.py');f=importlib.util.module_from_spec(s);s.loader.exec_module(f)
 e=pathlib.Path(os.environ.get('F24_PREFLIGHT_E',str(ROOT/'evidence/phase-22')))/'cleanup';e.mkdir(parents=True,exist_ok=True);cases={}
 kernel=ctypes.WinDLL('kernel32',use_last_error=True);kernel.OpenProcess.argtypes=[ctypes.c_ulong,ctypes.c_int,ctypes.c_ulong];kernel.OpenProcess.restype=ctypes.c_void_p;kernel.CloseHandle.argtypes=[ctypes.c_void_p];kernel.GetProcessTimes.argtypes=[ctypes.c_void_p]+[ctypes.POINTER(ctypes.c_ulonglong)]*4
@@ -41,10 +41,14 @@ try:
     report=verify(p,'blocked_external','BLOCKED_REQUIRES_HUMAN');assert external.poll() is None
     assert (p/'.autopilot/reports/BLOCKED.md').exists();cases['blocked_external']['external_process_preserved']=True
 finally:external.terminate();external.wait(timeout=10)
+normal_heartbeat_snapshot=None
 def running(name,stale=False):
+    global normal_heartbeat_snapshot
     p=f.project('cleanup22-'+name,delay=10,phase_timeout=15,global_timeout=90)
     if stale:
-        path=p/'.autopilot/RUN-PLAN.json';d=read(path);d['heartbeat_stale_seconds']=1;path.write_text(json.dumps(d))
+        path=p/'.autopilot/RUN-PLAN.json';normal_heartbeat_snapshot=path.read_bytes();(e/'normal-plan-before-fault.json').write_bytes(normal_heartbeat_snapshot)
+        d=read(path);d['heartbeat_stale_seconds']=1;path.write_text(json.dumps(d))
+        (e/'fault-only-plan.json').write_bytes(path.read_bytes())
     f.approve(p);proc=subprocess.Popen(['powershell.exe','-NoProfile','-NonInteractive','-File',str(ROOT/'runner/run.ps1'),'-ProjectRoot',str(p),'-Action','Start'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     deadline=time.monotonic()+20
     while time.monotonic()<deadline:
@@ -61,9 +65,27 @@ for name,stale in [('parent_crash',False),('heartbeat_stale',True)]:
     while time.monotonic()<deadline and not (p/'.autopilot/reports/watchdog-failure.json').exists():time.sleep(.1)
     assert (p/'.autopilot/reports/watchdog-failure.json').exists();time.sleep(.5);verify(p,name,'FAILED')
     if stale:
+        fault_project=p
+        assert read(p/'.autopilot/reports/watchdog-failure.json')['reason']=='HEARTBEAT_STALE'
+        # Fault-only fixture remains terminal and immutable. Recovery uses a
+        # distinct fixture with the exact normal bytes saved BEFORE injection.
+        p,normal_proc=running('normal-heartbeat-recovery',False)
+        normal_plan=p/'.autopilot/RUN-PLAN.json';approved_bytes=normal_plan.read_bytes()
+        assert approved_bytes==normal_heartbeat_snapshot and 'heartbeat_stale_seconds' not in read(normal_plan)
+        before_info=f.admission(p,'validate')[1];assert before_info['status']=='PASS'
+        normal_proc.kill();normal_proc.wait(timeout=15)
+        deadline=time.monotonic()+20
+        while time.monotonic()<deadline and not(p/'.autopilot/reports/watchdog-failure.json').exists():time.sleep(.1)
+        assert read(p/'.autopilot/reports/watchdog-failure.json')['reason']=='PARENT_PROCESS_LOST'
+        verify(p,'normal_config_parent_crash','FAILED')
+        assert normal_plan.read_bytes()==normal_heartbeat_snapshot
         r=f.powershell('runner/run.ps1','-ProjectRoot',p,'-Action','Start','-Recover',timeout=75)
         report=verify(p,'disk_recovery_after_crash','FAILED');assert report['technical_status']=='SUCCESS',(report,r.stderr)
         assert not (p/'.autopilot/WATCHDOG-SIGNAL.json').exists()
+        after_info=f.admission(p,'validate')[1];assert after_info['status']=='PASS' and after_info['digest']==before_info['digest']
+        assert normal_plan.read_bytes()==approved_bytes==normal_heartbeat_snapshot
+        proof={'status':'PASS','STALE_INJECTION':'PASS','STALE_DETECTED':'PASS','FAULT_CONFIG_REMOVED':'PASS','NORMAL_HEARTBEAT_CONFIG_RESTORED':'PASS','START_RECOVER':'PASS','RECOVERY_TECHNICAL_STATUS':report['technical_status'],'CLEANUP':'PASS','fault_fixture':str(fault_project),'recovery_fixture':str(p),'normal_snapshot_sha256':hashlib.sha256(normal_heartbeat_snapshot).hexdigest(),'recovery_plan_sha256':hashlib.sha256(normal_plan.read_bytes()).hexdigest(),'normal_effective_heartbeat_seconds':120,'production_policy_changed':False,'same_approval_digest':True,'fault_fixture_not_resumed':True}
+        (e/'heartbeat-recovery-fix.json').write_text(json.dumps(proof,indent=2)+'\n',encoding='utf-8')
 p=f.project('cleanup22-clock',global_timeout=10);info=f.approve(p);clock=ROOT/'runtime/run-clocks'/pathlib.Path(info['receipt_path']).name;clock.parent.mkdir(exist_ok=True);clock.write_text(json.dumps({'run_id':info['contract']['run_id'],'started_at':(datetime.datetime.now().astimezone()-datetime.timedelta(minutes=1)).isoformat()}));f.start(p,40);report=verify(p,'persisted_wall_clock','FAILED');assert report['reason']=='GLOBAL_TIMEOUT'
 mutex_command=r'$m=New-Object Threading.Mutex($false,"Local\DesarrolladorAutonomo_RunMutex");$held=$false;try{try{$held=$m.WaitOne(0)}catch [Threading.AbandonedMutexException]{$held=$true};if(-not $held){exit 2}}finally{if($held){$m.ReleaseMutex()};$m.Dispose()}'
 r=subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-Command',mutex_command],capture_output=True,text=True,timeout=15);assert r.returncode==0,r.stderr

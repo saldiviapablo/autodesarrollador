@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),{spawnSync}=require('child_process');
+const root=path.resolve(__dirname,'..'),file=path.join(root,'tests/test-chatgpt-actuator-live.ps1'),bytes=fs.readFileSync(file);
+assert(bytes.subarray(0,3).equals(Buffer.from([0xef,0xbb,0xbf])));
+const source=new TextDecoder('utf-8',{fatal:true}).decode(bytes),expected='Responde \u00fanicamente OK \u00e1\u00e9\u00ed\u00f3\u00fa \u00f1. Prueba \u00fanica ';
+const literal=/\$question='([^']+)'/.exec(source)[1];assert.equal(literal,expected);
+const code=`$e=$null;$t=$null;$a=[Management.Automation.Language.Parser]::ParseFile('${file.replace(/'/g,"''")}',[ref]$t,[ref]$e);if($e.Count){throw 'SOURCE_PARSE_FAILED'};$v=$a.FindAll({param($n)$n -is [Management.Automation.Language.StringConstantExpressionAst] -and $n.Value.StartsWith('Responde ')},$true)|Select-Object -First 1;[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($v.Value))`;
+const r=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',Buffer.from(code,'utf16le').toString('base64')],{encoding:'utf8',timeout:15000,windowsHide:true});assert.equal(r.status,0,r.stderr);assert.equal(r.stdout.trim(),Buffer.from(expected,'utf8').toString('base64'));
+const proof={status:'PASS',UTF8_SOURCE:'PASS',UTF8_PROMPT_BYTES:'PASS',powershell5_parser:true,script_executed:false,encoding_changed:false};
+const e=process.env.F24_PREFLIGHT_E||path.join(root,'evidence/f24-admission-repair-20261014');fs.writeFileSync(path.join(e,'controlled-source-utf8.json'),JSON.stringify(proof,null,2));console.log(JSON.stringify(proof));

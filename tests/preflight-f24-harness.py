@@ -9,6 +9,8 @@ assert bridge.read_bytes()==approved,'APPROVED_BRIDGE_CHANGED'
 tests=[('web',[sys.executable,'tests/test-research-handoff.py']),('delivery',['node','tests/test-chatgpt-delivery.js']),('domain',['node','tests/test-chatgpt-domain-lock.js']),('idempotency',['node','tests/test-chatgpt-idempotency.js']),('human',['node','tests/test-chatgpt-human-reconciliation.js']),('single-click',['node','tests/test-chatgpt-single-physical-click.js']),('child-cleanup',['powershell.exe','-NoProfile','-NonInteractive','-File','tests/test-chatgpt-child-cleanup.ps1']),('launcher',[sys.executable,'tests/test-windows-launcher-adapter.py']),('reviewer-transport',[sys.executable,'tests/test-hermes-prompt-transport.py']),('completion',[sys.executable,'tests/test-phase20.py']),('recovery',[sys.executable,'tests/test-recovery-continuation.py']),('cleanup',[sys.executable,'tests/test-phase22.py']),('syntax-lock',['powershell.exe','-NoProfile','-NonInteractive','-File','tests/smoke-f24-frontiers.ps1'])]
 results={}
 tests.insert(1,('send-actuator',['node','tests/test-chatgpt-send-actuator.js']))
+tests.insert(1,('fresh-chat',['node','tests/test-chatgpt-fresh-chat.js']))
+tests.insert(1,('controlled-utf8',['node','tests/test-controlled-send-utf8.js']))
 tests.insert(1,('frozen-evaluator',[sys.executable,'tests/test-f24-frozen-evaluator.py']))
 tests.insert(2,('budget-cache',['powershell.exe','-NoProfile','-NonInteractive','-File','tests/test-runner-budget-merge.ps1']))
 tests.append(('native-qwen-input',[sys.executable,'tests/test-qwen-research-model-input.py']))
