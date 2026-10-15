@@ -1,0 +1,245 @@
+diff --git a/README.md b/README.md
+index cf21d06..694e74d 100644
+--- a/README.md
++++ b/README.md
+@@ -1,3 +1,81 @@
+-# intervals
++# intervals — Merge, gaps and peak concurrency
+ 
+-Documentation incomplete.
++Python module (`module.py`) that provides three core functions for working
++with integer half-open time intervals `[start, end)`.
++
++## Half-open / touching semantics
++
++Every interval is **half-open**: it includes `start` but **excludes** `end`.
++Consequently, **touching endpoints do not overlap**.
++
++| Intervals | Overlap? | Merged result |
++|---|---|---|
++| `[1, 3]` and `[3, 5]` | No (3 excluded from both) | `[1, 5]` — touched, so merged |
++| `[1, 3]` and `[4, 6]` | No (gap at 3, 4) | `[1, 3]`, `[4, 6]` |
++| `[1, 5]` and `[3, 7]` | Yes (3, 4 overlap) | `[1, 7]` |
++
++> **Touching** (`end_a == start_b`) is treated as "merge" in `merge_intervals`.
++> **Concurrency** in `peak_load` respects the half-open rule: `[1,3)` and `[3,5)` never overlap, so they contribute 1 to the peak, not 2.
++
++## API
++
++### `merge_intervals(intervals)`
++
++Merges a list of `[start, end]` pairs.  Overlapping and touching intervals
++are fused.  Returns a sorted list of tuples.  **Does not mutate** the input.
++
++```python
++>>> merge_intervals([[5, 8], [1, 3], [3, 5], [10, 12]])
++[(1, 8), (10, 12)]
++```
++
++**Validation** — raises `ValueError` for:
++
++- Non-list input
++- Elements that are not 2-element lists/tuples
++- Non-integer values (booleans, floats, strings)
++- `start < 0` or `end < 0` or `start >= end`
++
++### `gaps(intervals, start, end)`
++
++Computes intervals within `[start, end)` that are **not** covered by any
++input interval.  All input intervals must lie fully inside the window.
++
++```python
++>>> gaps([[2, 4], [4, 6], [8, 9]], 0, 10)
++[(0, 2), (6, 8), (9, 10)]
++```
++
++**Validation** — raises `ValueError` for non-integer `start`/`end`,
++`start >= end`, or intervals outside the window.
++
++### `peak_load(intervals)`
++
++Maximum number of **concurrently active** intervals at any point.
++Uses half-open semantics — touching endpoints do not count as overlap.
++
++```python
++>>> peak_load([[0, 4], [1, 3], [2, 5]])
++3
++>>> peak_load([[0, 2], [2, 4]])   # touching, no overlap
++1
++```
++
++## CLI usage
++
++```bash
++# Valid input
++echo '{"intervals":[[1,3],[3,5]],"start":0,"end":6}' | python module.py
++# → {"merged":[[1,5]],"gaps":[[0,1],[5,6]],"peak":1}
++
++# Invalid input → exit code 2, concise error on stderr
++echo 'bad' | python module.py; echo $?
++# → 2
++```
++
++## Run tests
++
++```bash
++python test_module.py
++python build.py
++```
+diff --git a/module.py b/module.py
+index 818fb93..29e146d 100644
+--- a/module.py
++++ b/module.py
+@@ -1,9 +1,145 @@
+-"""Incomplete intervals utility. Worker must implement approved API."""
+-def merge_intervals(*args,**kwargs):
+- raise NotImplementedError("incomplete baseline")
++"""Merge integer time intervals, compute gaps and peak concurrency.
+ 
+-def gaps(*args,**kwargs):
+- raise NotImplementedError("incomplete baseline")
++All intervals are half-open [start, end): they include start but exclude end.
++Touching endpoints do NOT overlap (e.g. [1,3] and [3,5] are disjoint).
++"""
++import sys
++import json
+ 
+-def peak_load(*args,**kwargs):
+- raise NotImplementedError("incomplete baseline")
++
++# ---------------------------------------------------------------------------
++# Validation helpers
++# ---------------------------------------------------------------------------
++
++def _check_int(v, label):
++    """Raise ValueError unless *v* is a genuine ``int`` (not ``bool``)."""
++    if isinstance(v, bool) or not isinstance(v, int):
++        raise ValueError(f"{label} must be an integer")
++
++
++def _validate_intervals(intervals):
++    """Validate that *intervals* is a list of [start, end] pairs with
++    0 <= start < end where both are plain integers."""
++    if not isinstance(intervals, list):
++        raise ValueError("intervals must be a list")
++    for iv in intervals:
++        if not isinstance(iv, (list, tuple)) or len(iv) != 2:
++            raise ValueError("each interval must be a [start, end] pair")
++        start, end = iv
++        _check_int(start, "start")
++        _check_int(end, "end")
++        if start < 0 or end < 0:
++            raise ValueError("start and end must be >= 0")
++        if start >= end:
++            raise ValueError("start must be < end")
++
++
++# ---------------------------------------------------------------------------
++# Public API
++# ---------------------------------------------------------------------------
++
++def merge_intervals(intervals):
++    """Merge overlapping and touching intervals.
++
++    Returns a sorted list of merged tuples.  Touching intervals
++    (e.g. ``[1, 3]`` and ``[3, 5]``) are merged into one.
++    **Does not mutate** *intervals*.
++    """
++    _validate_intervals(intervals)
++    if not intervals:
++        return []
++    sorted_iv = sorted(intervals, key=lambda x: (x[0], x[1]))
++    merged = [tuple(sorted_iv[0])]
++    for start, end in sorted_iv[1:]:
++        prev_start, prev_end = merged[-1]
++        if start <= prev_end:          # overlap or touch
++            merged[-1] = (prev_start, max(prev_end, end))
++        else:
++            merged.append((start, end))
++    return merged
++
++
++def gaps(intervals, start, end):
++    """Compute uncovered intervals inside window ``[start, end)``.
++
++    Requires *start* / *end* to be integer (not bool) with ``0 <= start < end``
++    and every interval fully contained in ``[start, end)``.
++    Returns a sorted list of uncovered tuples.
++    """
++    _check_int(start, "start")
++    _check_int(end, "end")
++    if start < 0 or end < 0:
++        raise ValueError("start and end must be >= 0")
++    if start >= end:
++        raise ValueError("start must be < end")
++    _validate_intervals(intervals)
++    for iv in intervals:
++        if iv[0] < start or iv[1] > end:
++            raise ValueError("all intervals must be within [start, end)")
++    merged = merge_intervals(intervals)
++    result = []
++    current = start
++    for s, e in merged:
++        if s > current:
++            result.append((current, s))
++        current = max(current, e)
++    if current < end:
++        result.append((current, end))
++    return result
++
++
++def peak_load(intervals):
++    """Maximum number of concurrently active half-open intervals.
++
++    Touching endpoints do **not** overlap.  Empty input returns ``0``.
++    """
++    _validate_intervals(intervals)
++    if not intervals:
++        return 0
++    events = []
++    for start, end in intervals:
++        events.append((start, 1))     # interval starts
++        events.append((end, -1))      # interval ends
++    events.sort()
++    max_load = 0
++    current_load = 0
++    for _, delta in events:
++        current_load += delta
++        if current_load > max_load:
++            max_load = current_load
++    return max_load
++
++
++# ---------------------------------------------------------------------------
++# CLI entry-point  (python module.py)
++# ---------------------------------------------------------------------------
++
++def _cli():
++    raw = sys.stdin.read()
++    try:
++        data = json.loads(raw)
++        iv = data["intervals"]
++        s = data["start"]
++        e = data["end"]
++    except Exception:
++        sys.stderr.write("invalid input\n")
++        sys.exit(2)
++
++    try:
++        merged = merge_intervals(iv)
++        g = gaps(iv, s, e)
++        p = peak_load(iv)
++    except ValueError:
++        sys.stderr.write("validation error\n")
++        sys.exit(2)
++
++    out = {
++        "merged": [list(t) for t in merged],
++        "gaps": [list(t) for t in g],
++        "peak": p,
++    }
++    sys.stdout.write(json.dumps(out) + "\n")
++
++
++if __name__ == "__main__":
++    _cli()

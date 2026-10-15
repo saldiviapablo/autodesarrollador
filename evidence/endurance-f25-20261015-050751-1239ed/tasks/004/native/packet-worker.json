@@ -1,0 +1,32 @@
+{
+    "probe_delay_seconds":  null,
+    "backend":  "live",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-004-csv-ledger",
+    "research_inline":  false,
+    "role":  "worker",
+    "timeout":  300,
+    "request":  {
+                    "allowed_actions":  [
+                                            "edit_file",
+                                            "run_test",
+                                            "git_commit_local"
+                                        ],
+                    "schema_version":  "1.0",
+                    "workspace":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-004-csv-ledger",
+                    "delegation_id":  "del-run-20261015-054407",
+                    "forbidden_actions":  [
+                                              "git_push",
+                                              "delete_root",
+                                              "modify_runner_guardrails"
+                                          ],
+                    "objective":  "Normalize CSV ledger rows and aggregate exact decimal amounts",
+                    "tests":  [
+
+                              ],
+                    "task":  "Implement parse_ledger(text) accepting a CSV string with exact header date,category,amount. Return a list of dicts with ISO calendar-valid YYYY-MM-DD date (reject noncanonical formats), nonempty stripped category and amount string quantized to two decimal digits with Decimal(str(x)) ROUND_HALF_UP. Preserve row order and Unicode. Reject malformed headers/row widths/invalid dates/nonfinite or malformed amounts with ValueError. Blank input is invalid; header alone returns []. Implement totals(rows) over parse_ledger output, aggregating by category with Decimal, returning a dict inserted in lexicographic category order and values as two-decimal strings. Negative amounts are allowed. Implement CLI: python module.py reads CSV from stdin; print JSON {\"rows\":...,\"totals\":...} ensure_ascii=False; invalid input -\u003e exit2 and concise stderr without traceback. Document API, CLI, validation, exact Decimal rounding, Unicode and official reference. Modify module.py and README.md only. Never edit tests/build/.autopilot. Run python test_module.py and python build.py.\nSupervisor plan (advisory, approved scope remains binding): {\"task\": \"Objective: Normalize CSV ledger rows and aggregate exact decimal amounts. Task: 1. Implement parse_ledger(text) in module.py: expect exact header \u0027date,category,amount\u0027, reject malformed headers/row widths with ValueError. For each data row, parse date strictly as ISO YYYY-MM-DD (raise ValueError if invalid), strip category (raise if empty), parse amount as Decimal(str(amount)) quantized to 2 decimal places using ROUND_HALF_UP (raise ValueError for nonfinite/malformed/non-numeric). Blank input raises ValueError; header-only input returns []. Preserve row order and Unicode. 2. Implement totals(rows): aggregate Decimal amounts by category, return dict sorted lexicographically by category, values as 2-decimal strings. Negative amounts allowed. 3. Add CLI to module.py: read CSV from stdin, call parse_ledger and totals, print JSON {\\\"rows\\\":..., \\\"totals\\\":...} with ensure_ascii=False. On ValueError, exit code 2 and print concise stderr without traceback. 4. Update README.md documenting API, CLI usage, validation rules, exact Decimal rounding behavior, Unicode preservation, and link to Python decimal docs. 5. Do not modify tests/, build/, or .autopilot. 6. Run python test_module.py and python build.py to verify correctness.\"}\nPrevious checks to correct: ",
+                    "acceptance_criteria":  [
+                                                "Normalize CSV ledger rows and aggregate exact decimal amounts; immutable acceptance and documented CLI verified"
+                                            ],
+                    "status":  "READY"
+                }
+}

@@ -98,7 +98,7 @@ Parámetros validados:
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
 - **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **PASS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5 — Bot Mode + Subagentes`: **PASS**; `7A.6 — Git Worktrees`: **PASS**; `7A.7 — Cron + No-Agent Jobs`: **PASS**; `7A.8 — Native Dashboard`: **PASS**; `7A.9 — Gateway`: **PASS**; `7A.10 — Controlled Auto-update`: **PASS**; `ChatGPT Idempotency`: **PASS**; `regression gate`: **PASS**). Preflight correctivo aprobado en commit `f133bab`.
 - **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PASS**
-- **Macrofase 8 (Validación Final - Fases 23 a 28):** **FAIL / MANDATORY_TEST_FAILED (F23 PASS; F24 ATTEMPT7 FAIL / Reviewer sin ACCEPTED)**
+- **Macrofase 8 (Validación Final - Fases23 a28):** **IN_PROGRESS**; F23/F24 PASS; F25 PASS; fases posteriores pendientes
 
 ---
 
@@ -203,3 +203,7 @@ F24 ATTEMPT10 **FAIL**, run `run-20261015-035008`, 1128.75s. Worker/tests13/buil
 ## Estado vigente — F24 ATTEMPT11 — 2026-10-15
 
 F24 ATTEMPT11 **PASS**, run `run-20261015-044359`, 881.50s, 28/28 gates; Worker SUCCESS;13 tests/build PASS/PASS; web/continuación PASS/PASS; ChatGPT COMPLETED, envíos 1, retry ALREADY_SENT, adicionales 0; Reviewer ACCEPTED; Completion COMPLETED; cleanup/integridad PASS. F25 pendiente. docs/F24-ATTEMPT-11-REPORT.md; evidence/phase-24-attempt-11-20261015/
+
+## Estado vigente — F25 — 2026-10-15T14:00:54.701948+00:00
+
+F25 PASS: 7772.089s reales, 13 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-f25-20261015-050751-1239ed/. docs/F25-REPORT-f25-20261015-050751-1239ed.md

@@ -1,0 +1,32 @@
+{
+    "probe_delay_seconds":  null,
+    "backend":  "live",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-010-csv-ledger",
+    "research_inline":  false,
+    "role":  "worker",
+    "timeout":  300,
+    "request":  {
+                    "allowed_actions":  [
+                                            "edit_file",
+                                            "run_test",
+                                            "git_commit_local"
+                                        ],
+                    "schema_version":  "1.0",
+                    "workspace":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-010-csv-ledger",
+                    "delegation_id":  "del-run-20261015-063919",
+                    "forbidden_actions":  [
+                                              "git_push",
+                                              "delete_root",
+                                              "modify_runner_guardrails"
+                                          ],
+                    "objective":  "Normalize CSV ledger rows and aggregate exact decimal amounts",
+                    "tests":  [
+
+                              ],
+                    "task":  "Implement parse_ledger(text) accepting a CSV string with exact header date,category,amount. Return a list of dicts with ISO calendar-valid YYYY-MM-DD date (reject noncanonical formats), nonempty stripped category and amount string quantized to two decimal digits with Decimal(str(x)) ROUND_HALF_UP. Preserve row order and Unicode. Reject malformed headers/row widths/invalid dates/nonfinite or malformed amounts with ValueError. Blank input is invalid; header alone returns []. Implement totals(rows) over parse_ledger output, aggregating by category with Decimal, returning a dict inserted in lexicographic category order and values as two-decimal strings. Negative amounts are allowed. Implement CLI: python module.py reads CSV from stdin; print JSON {\"rows\":...,\"totals\":...} ensure_ascii=False; invalid input -\u003e exit2 and concise stderr without traceback. Document API, CLI, validation, exact Decimal rounding, Unicode and official reference. Modify module.py and README.md only. Never edit tests/build/.autopilot. Run python test_module.py and python build.py.\nSupervisor plan (advisory, approved scope remains binding): {\n  \"task\": \"Implement parse_ledger(text) in module.py to validate the exact header \u0027date,category,amount\u0027, reject blank input with ValueError, and parse rows into a list of dicts. Enforce strict YYYY-MM-DD dates (reject noncanonical formats), strip categories, and quantify amounts to two decimal places using Decimal(str(x)) with ROUND_HALF_UP. Implement totals(rows) to aggregate parsed rows by category using Decimal arithmetic, returning a dict with keys sorted lexicographically and values formatted as two-decimal strings. Add a CLI block in module.py that reads from stdin, prints the JSON output (ensure_ascii=False), and handles exceptions by exiting with code 2 and printing a concise error to stderr. Update README.md to document the API, CLI usage, strict validation rules, Decimal rounding specifics, and Unicode handling. Finally, run python test_module.py and python build.py to verify correctness.\"\n}\nPrevious checks to correct: ",
+                    "acceptance_criteria":  [
+                                                "Normalize CSV ledger rows and aggregate exact decimal amounts; immutable acceptance and documented CLI verified"
+                                            ],
+                    "status":  "READY"
+                }
+}

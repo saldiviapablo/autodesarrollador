@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "backend": "live",
+  "task": "Implement catalog(entries): entries is a list of dicts with exactly path,size,sha256. path must be a nonempty portable POSIX relative path, no backslash, colon, leading slash, empty component, . or .. component, NUL/newline. Unicode allowed. size must be integer >=0, bool forbidden. sha256 must be exactly64 lowercase hex characters. Reject malformed entries and duplicate paths with ValueError. Return new list of dicts sorted by path; never mutate input or access filesystem. Implement duplicate_groups(entries) using validated catalog: return lists of paths having same (size,sha256), each group sorted, only groups of >=2, groups sorted lexicographically. CLI reads JSON array stdin; outputs JSON {\"catalog\":...,\"duplicates\":...} ensure_ascii=False; invalid ->exit2 concise stderr. Document contract, Unicode, examples, no filesystem I/O. Modify module.py and README.md only. Never edit tests/build/.autopilot. Run python test_module.py and python build.py.",
+  "allowed_files": [
+    "module.py",
+    "README.md"
+  ],
+  "tests": [
+    {
+      "id": "unit",
+      "argv": [
+        "python",
+        "test_module.py"
+      ],
+      "marker": "ENDURANCE_TEST_PASS",
+      "timeout_seconds": 30
+    }
+  ],
+  "builds": [
+    {
+      "id": "build",
+      "argv": [
+        "python",
+        "build.py"
+      ],
+      "marker": "ENDURANCE_BUILD_PASS",
+      "timeout_seconds": 30
+    }
+  ],
+  "criteria": [
+    {
+      "criterion": "Validate a portable file catalog and report duplicates without filesystem access; immutable acceptance and documented CLI verified",
+      "test_id": "unit"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "module.py"
+    },
+    {
+      "path": "README.md"
+    }
+  ],
+  "immutable_files": [
+    {
+      "path": "test_module.py",
+      "sha256": "d2683aa83e188472b3faf8ba0d953caeebf9e570ca6617fa4d120e684fd2ade6"
+    },
+    {
+      "path": "build.py",
+      "sha256": "6e81a6ff00c26c01a8ba454b02c862899a599bac98b98985f76c27b400306f7c"
+    }
+  ],
+  "phase_timeout_seconds": 300,
+  "global_timeout_seconds": 1800,
+  "restart_budget": 2,
+  "max_cycles": 5
+}

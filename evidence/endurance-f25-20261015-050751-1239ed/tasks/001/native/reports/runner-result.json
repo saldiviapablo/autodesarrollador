@@ -1,0 +1,272 @@
+{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261015-050818",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-001-csv-ledger",
+    "objective":  "Normalize CSV ledger rows and aggregate exact decimal amounts",
+    "duration_seconds":  930.4154178,
+    "status":  "COMPLETED",
+    "technical_status":  "SUCCESS",
+    "reason":  "",
+    "tasks_completed":  [
+                            "Normalize CSV ledger rows and aggregate exact decimal amounts"
+                        ],
+    "pending_tasks":  [
+
+                      ],
+    "changed_files":  [
+                          "module.py",
+                          "README.md"
+                      ],
+    "commits":  [
+
+                ],
+    "tests":  [
+                  {
+                      "output":  "ENDURANCE_TEST_PASS\r\n",
+                      "status":  "PASS",
+                      "marker_present":  true,
+                      "id":  "unit",
+                      "exit_code":  0
+                  }
+              ],
+    "builds":  [
+                   {
+                       "output":  "ENDURANCE_BUILD_PASS\r\n",
+                       "status":  "PASS",
+                       "marker_present":  true,
+                       "id":  "build",
+                       "exit_code":  0
+                   }
+               ],
+    "linters":  [
+
+                ],
+    "errors":  [
+                   {
+                       "reason":  "AGENT_FAILED:worker",
+                       "count":  1,
+                       "role":  "worker"
+                   }
+               ],
+    "retries":  {
+                    "llama":  0,
+                    "supervisor":  0,
+                    "reviewer":  0,
+                    "worker":  1
+                },
+    "recoveries":  [
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  19,
+                           "event_id":  "evt-6679b3b1618e",
+                           "timestamp":  "2026-10-15T05:16:25.5549702-03:00",
+                           "run_id":  "run-20261015-050818",
+                           "actor":  "runner",
+                           "type":  "WATCHDOG_AGENT_RESTART",
+                           "payload":  {
+                                           "reason":  "AGENT_FAILED:worker",
+                                           "count":  1,
+                                           "role":  "worker"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  30,
+                           "event_id":  "evt-4ef267622997",
+                           "timestamp":  "2026-10-15T05:19:57.2334071-03:00",
+                           "run_id":  "run-20261015-050818",
+                           "actor":  "watchdog",
+                           "type":  "PARENT_CRASH_RECOVERED",
+                           "payload":  {
+                                           "parent_pid":  31188,
+                                           "reason":  "PARENT_PROCESS_LOST"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  34,
+                           "event_id":  "evt-fc2302bdcb11",
+                           "timestamp":  "2026-10-15T05:20:00.4811938-03:00",
+                           "run_id":  "run-20261015-050818",
+                           "actor":  "runner",
+                           "type":  "RUN_RECOVERED_FROM_DISK",
+                           "payload":  {
+                                           "status":  "RECOVERED"
+                                       }
+                       }
+                   ],
+    "web_queries":  [
+
+                    ],
+    "chatgpt_queries_used":  1,
+    "blocks":  [
+
+               ],
+    "completion_gate":  {
+                            "status":  "COMPLETED",
+                            "checks":  {
+                                           "state_schema_valid":  true,
+                                           "native_live_backend":  true,
+                                           "roles_success":  true,
+                                           "independent_reviewer_accepted":  true,
+                                           "run_id_consistent":  true,
+                                           "tests_all_required":  true,
+                                           "builds_all_required":  true,
+                                           "linters_all_required":  true,
+                                           "required_web_context_delivered":  true,
+                                           "required_consultation_captured":  true,
+                                           "consultation_retry_no_resend":  true,
+                                           "consultation_budget_persisted":  true,
+                                           "tests_exist":  true,
+                                           "no_build_approved_or_passed":  true,
+                                           "criteria_all_mapped_and_passed":  true,
+                                           "pending_empty":  true,
+                                           "failures_not_pending":  true,
+                                           "state_tests_pass":  true,
+                                           "immutable_test_module.py":  true,
+                                           "immutable_build.py":  true,
+                                           "artifact_module.py":  true,
+                                           "artifact_README.md":  true,
+                                           "diff_only_approved_files":  true,
+                                           "relevant_diff_exists":  true,
+                                           "state_git_head_consistent":  true
+                                       },
+                            "failed":  [
+
+                                       ],
+                            "changed_files":  [
+                                                  "README.md",
+                                                  "module.py"
+                                              ],
+                            "run_id":  "run-20261015-050818",
+                            "source":  "DETERMINISTIC_COMPLETION_GATE"
+                        },
+    "cleanup":  {
+                    "job_closed":  true,
+                    "owned_survivors":  [
+
+                                        ],
+                    "run_mutex_released":  true,
+                    "run_lock_removed":  true,
+                    "inference_mutex":  "FREE",
+                    "external_model_preserved":  true,
+                    "errors":  [
+
+                               ]
+                },
+    "processes":  [
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  22568,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276485028801672
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  33592,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276485038402868
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  13392,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276485468139399
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  23112,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276486772516172
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  27632,
+                          "name":  "web-research",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276486774060533
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  10868,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276486788866205
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  7136,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276489864608028
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  34072,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276491950104343
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  16292,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276491951837728
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  22696,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276492007539708
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  11556,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276492017691630
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  31124,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276492356581764
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  27100,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276493474508507
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  27252,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276493476340867
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  25308,
+                          "name":  "chatgpt",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276493477649620
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  20000,
+                          "name":  "reviewer",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276493644881312
+                      }
+                  ],
+    "generated_at":  "2026-10-15T05:23:52.8362683-03:00"
+}

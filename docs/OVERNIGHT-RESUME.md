@@ -5,14 +5,14 @@
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
-  "last_completed": "F24 ATTEMPT11 PASS",
-  "active_phase": "F25_ADMISSION",
+  "last_completed": "F25 PASS",
+  "active_phase": "4H_PREPARATION",
   "last_cause": "New endurance adapter launcher argument contract",
   "last_fix": "Exact certified F24 launcher/recovery invocation;21 deterministic and A-H real fake-batch tests PASS",
-  "last_commit": "ec96970a1b2a3fb1ec5bfcb398c1d7df023024bc",
-  "next_action": "Commit isolated fix and failed stage evidence; fresh F25 real7200s.",
-  "run_pointer": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f24-attempt11-d37b24c8\\project\\.autopilot",
-  "updated_at": "2026-10-15T08:03:11.911595+00:00",
+  "last_commit": "8cb558f49ef8eec77794e2e9833145c573503ebe",
+  "next_action": "Start fresh real14400s4H after local closure commit; never repeat F24/F25",
+  "run_pointer": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-001-csv-ledger",
+  "updated_at": "2026-10-15T14:00:54.701948+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -40,8 +40,11 @@
     "browser_readonly_observer": 82015,
     "thread_sleep_guard": 68334,
     "native_failure_observer": 96441
-  }
+  },
+  "stage_id": "f25-20261015-050751-1239ed",
+  "evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-f25-20261015-050751-1239ed"
 }
 ```
 
-F24 ATTEMPT11 PASS28/28 ec96970. First F25 admission failed before agents; native denial/historical FAIL preserved. Isolated adapter fix PASS21 + actual A-H test; next: fresh F25 real7200s; do not repeat F24. Then4H/F26/F27human review/F28actual6–8h. No push.
+Latest completed stage: F25 PASS: 7772.089s reales, 13 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-f25-20261015-050751-1239ed/.
+Native STATE remains authority. No push.

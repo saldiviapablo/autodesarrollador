@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-15T07:59:54.217009+00:00",
+  "updated_at": "2026-10-15T14:00:54.701948+00:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -22,7 +22,7 @@
   "hermes_plugins": "PASS",
   "hermes_document_extraction": "PASS",
   "runner": "PASS",
-  "e2e": "FAIL",
+  "e2e": "PASS",
   "macrophases": {
     "1": "PASS",
     "2": "PASS",
@@ -32,7 +32,7 @@
     "6": "PASS",
     "7A": "PASS",
     "7B": "PASS",
-    "8": "FAIL"
+    "8": "IN_PROGRESS"
   },
   "subphases_7a": {
     "7A.1": "PASS",
@@ -70,11 +70,11 @@
   "regression_gate_7b": "PASS",
   "e2e_7b": "PASS",
   "ready_for_8": false,
-  "e2e_scope": "F24 ATTEMPT 7 FAIL / MANDATORY_TEST_FAILED (Reviewer lacked ACCEPTED); e2e_7b historical PASS retained; F25 NOT_RUN",
+  "e2e_scope": "F24 ATTEMPT11 PASS28/28; F25 real duration PASS; historical FAILs retained",
   "phases_8": {
     "23": "PASS",
-    "24": "FAIL",
-    "25": "NOT_RUN",
+    "24": "PASS",
+    "25": "PASS",
     "26": "NOT_RUN",
     "27": "NOT_RUN",
     "28": "NOT_RUN"
@@ -642,9 +642,22 @@
       "f24_attempt8_created": true,
       "f24_attempt9_created": true
     },
-    "f25": "FAIL",
-    "f25_evidence": "evidence\\endurance-f25-20261015-050441-b014d5",
-    "f25_reason": "Test-controller launcher argument contract; zero native agents, zero consultation; isolated correction required"
+    "f25": "PASS",
+    "f25_evidence": "evidence/endurance-f25-20261015-050751-1239ed",
+    "f25_reason": null,
+    "f25_report": "docs/F25-REPORT-f25-20261015-050751-1239ed.md",
+    "f25_duration_seconds": 7772.088906300007,
+    "f25_resources": {
+      "samples": 1487,
+      "max_sample_gap": 9.921304899995448,
+      "critical": false,
+      "RAM_min_available_mib": 4.3125,
+      "pagefile_max_used_gib": 5.6463165283203125,
+      "VRAM_max_mib": 4419,
+      "llama_max_working_set_mib": 22724.03515625
+    },
+    "f25_cleanup": "PASS",
+    "f25_integrity": "PASS"
   },
   "ready_for_real_pilot": false
 }

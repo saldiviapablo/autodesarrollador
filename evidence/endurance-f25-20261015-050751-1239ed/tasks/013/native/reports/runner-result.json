@@ -1,0 +1,206 @@
+{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261015-070434",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-013-csv-ledger",
+    "objective":  "Normalize CSV ledger rows and aggregate exact decimal amounts",
+    "duration_seconds":  789.3793271,
+    "status":  "COMPLETED",
+    "technical_status":  "SUCCESS",
+    "reason":  "",
+    "tasks_completed":  [
+                            "Normalize CSV ledger rows and aggregate exact decimal amounts"
+                        ],
+    "pending_tasks":  [
+
+                      ],
+    "changed_files":  [
+                          "module.py",
+                          "README.md"
+                      ],
+    "commits":  [
+
+                ],
+    "tests":  [
+                  {
+                      "output":  "ENDURANCE_TEST_PASS\r\n",
+                      "status":  "PASS",
+                      "marker_present":  true,
+                      "id":  "unit",
+                      "exit_code":  0
+                  }
+              ],
+    "builds":  [
+                   {
+                       "output":  "ENDURANCE_BUILD_PASS\r\n",
+                       "status":  "PASS",
+                       "marker_present":  true,
+                       "id":  "build",
+                       "exit_code":  0
+                   }
+               ],
+    "linters":  [
+
+                ],
+    "errors":  [
+                   {
+                       "reason":  "AGENT_FAILED:supervisor",
+                       "count":  1,
+                       "role":  "supervisor"
+                   },
+                   {
+                       "reason":  "AGENT_FAILED:supervisor",
+                       "count":  2,
+                       "role":  "supervisor"
+                   }
+               ],
+    "retries":  {
+                    "llama":  0,
+                    "supervisor":  2,
+                    "reviewer":  0,
+                    "worker":  0
+                },
+    "recoveries":  [
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  8,
+                           "event_id":  "evt-e4b3d809a53a",
+                           "timestamp":  "2026-10-15T07:08:30.9077914-03:00",
+                           "run_id":  "run-20261015-070434",
+                           "actor":  "runner",
+                           "type":  "WATCHDOG_AGENT_RESTART",
+                           "payload":  {
+                                           "reason":  "AGENT_FAILED:supervisor",
+                                           "count":  1,
+                                           "role":  "supervisor"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  12,
+                           "event_id":  "evt-1e44d0959dce",
+                           "timestamp":  "2026-10-15T07:12:32.0703502-03:00",
+                           "run_id":  "run-20261015-070434",
+                           "actor":  "runner",
+                           "type":  "WATCHDOG_AGENT_RESTART",
+                           "payload":  {
+                                           "reason":  "AGENT_FAILED:supervisor",
+                                           "count":  2,
+                                           "role":  "supervisor"
+                                       }
+                       }
+                   ],
+    "web_queries":  [
+
+                    ],
+    "chatgpt_queries_used":  null,
+    "blocks":  [
+
+               ],
+    "completion_gate":  {
+                            "status":  "COMPLETED",
+                            "checks":  {
+                                           "state_schema_valid":  true,
+                                           "native_live_backend":  true,
+                                           "roles_success":  true,
+                                           "independent_reviewer_accepted":  true,
+                                           "run_id_consistent":  true,
+                                           "tests_all_required":  true,
+                                           "builds_all_required":  true,
+                                           "linters_all_required":  true,
+                                           "tests_exist":  true,
+                                           "no_build_approved_or_passed":  true,
+                                           "criteria_all_mapped_and_passed":  true,
+                                           "pending_empty":  true,
+                                           "failures_not_pending":  true,
+                                           "state_tests_pass":  true,
+                                           "immutable_test_module.py":  true,
+                                           "immutable_build.py":  true,
+                                           "artifact_module.py":  true,
+                                           "artifact_README.md":  true,
+                                           "diff_only_approved_files":  true,
+                                           "relevant_diff_exists":  true,
+                                           "state_git_head_consistent":  true
+                                       },
+                            "failed":  [
+
+                                       ],
+                            "changed_files":  [
+                                                  "README.md",
+                                                  "module.py"
+                                              ],
+                            "run_id":  "run-20261015-070434",
+                            "source":  "DETERMINISTIC_COMPLETION_GATE"
+                        },
+    "cleanup":  {
+                    "job_closed":  true,
+                    "owned_survivors":  [
+
+                                        ],
+                    "run_mutex_released":  true,
+                    "run_lock_removed":  true,
+                    "inference_mutex":  "FREE",
+                    "external_model_preserved":  true,
+                    "errors":  [
+
+                               ]
+                },
+    "processes":  [
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  6024,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276554790229697
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  34904,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276554800187332
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  35516,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276557118505949
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  28444,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276559529765116
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  14060,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276559906044079
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  11324,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276562048092943
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  12156,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276562050118624
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  18860,
+                          "name":  "reviewer",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276562051084663
+                      }
+                  ],
+    "generated_at":  "2026-10-15T07:17:47.9285209-03:00"
+}

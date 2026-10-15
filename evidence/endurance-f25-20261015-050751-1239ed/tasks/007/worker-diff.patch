@@ -1,0 +1,210 @@
+diff --git a/README.md b/README.md
+index 8f7b51b..fc8344d 100644
+--- a/README.md
++++ b/README.md
+@@ -1,3 +1,61 @@
+ # csv-ledger
+ 
+-Documentation incomplete.
++CSV ledger normalizer and exact-decimal aggregator.
++
++## API
++
++### `parse_ledger(text: str) -> list[dict]`
++
++Accepts a CSV string with the exact header `date,category,amount`.  Returns a list of dicts with keys `date`, `category`, `amount`:
++
++* **date** — ISO calendar-valid `YYYY-MM-DD` (rejects noncanonical formats such as `2024-1-01` or impossible dates like `2023-02-29`).
++* **category** — stripped, nonempty string.
++* **amount** — string quantized to two decimal places using `Decimal(str(x))` with `ROUND_HALF_UP` rounding.
++
++Negative amounts are allowed. Row order and Unicode characters are preserved.
++
++#### Validation & Errors
++
++* Blank input (empty / whitespace-only) → `ValueError`.
++* Malformed or unexpected header → `ValueError`.
++* Wrong row width (not exactly 3 fields) → `ValueError`.
++* Invalid / non-canonical dates → `ValueError`.
++* Non-finite (`NaN`, `Infinity`) or non-numeric amounts → `ValueError`.
++
++### `totals(rows: list[dict]) -> dict[str, str]`
++
++Aggregates `amount` values by `category` using exact `Decimal` arithmetic.  Returns a dict with:
++
++* **Keys** — category names in **lexicographic** order.
++* **Values** — two-decimal-place strings.
++
++Negative amounts are supported.
++
++## CLI
++
++```bash
++echo "date,category,amount
++2024-01-01,Food,10.505" | python module.py
++```
++
++Outputs JSON to stdout:
++
++```json
++{"rows": [{"date": "2024-01-01", "category": "Food", "amount": "10.51"}], "totals": {"Food": "10.51"}}
++```
++
++Invalid input exits with code **2** and prints a concise error to stderr (no traceback).
++
++## Rounding
++
++All amounts use Python's `decimal.Decimal` with `ROUND_HALF_UP` to exactly two decimal places, matching common financial rounding conventions.  See the [Python docs](https://docs.python.org/3/library/decimal.html) for details.
++
++## Unicode
++
++All input/output is UTF-8.  Unicode characters in category names (e.g. `Café`, `Ñ`) are preserved as-is.  The CLI uses `ensure_ascii=False` in JSON output.
++
++## References
++
++* [RFC 4180 — Common Format and MIME Type for CSV Files](https://www.ietf.org/rfc/rfc4180.txt)
++* [Python `decimal` module](https://docs.python.org/3/library/decimal.html)
++* [ISO 8601 — Date and Time Representations](https://www.iso.org/iso-8601-date-and-time-format.html)
+diff --git a/module.py b/module.py
+index 51704d3..6762402 100644
+--- a/module.py
++++ b/module.py
+@@ -1,6 +1,133 @@
+-"""Incomplete csv-ledger utility. Worker must implement approved API."""
+-def parse_ledger(*args,**kwargs):
+- raise NotImplementedError("incomplete baseline")
++"""CSV ledger normalizer and aggregator — exact Decimal arithmetic."""
++import csv
++import io
++import json
++import sys
++from datetime import date
++from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
+ 
+-def totals(*args,**kwargs):
+- raise NotImplementedError("incomplete baseline")
++_EXPECTED_HEADER = ["date", "category", "amount"]
++
++
++def parse_ledger(text: str) -> list[dict]:
++    """Normalize a CSV string with header ``date,category,amount`` into dicts.
++
++    Validation rules
++    ----------------
++    * **Blank input** (empty / whitespace-only) → ``ValueError``.
++    * **Header** must match ``date,category,amount`` exactly (case-sensitive,
++      stripped).  Any mismatch raises ``ValueError``.
++    * **Date** — must be ``YYYY-MM-DD`` where the parsed date is canonical
++      (``isoformat()`` reproduces the input), i.e. the calendar date is valid
++      (rejects ``2023-02-29``) and zero-padded (rejects ``2024-1-01``).
++    * **Category** — stripped value must be non-empty.
++    * **Amount** — must be a finite number; string is quantised to 2 decimals
++      with ``ROUND_HALF_UP``.  Rejects ``NaN``, ``Infinity``, non-numeric
++      strings.
++    * **Row width** — every data row must have exactly 3 fields.
++
++    Returns
++    -------
++    list[dict] — ``[{"date": "...", "category": "...", "amount": "..."}, ...]``
++    with amounts as 2-decimal strings preserving row order and Unicode.
++
++    Raises
++    ------
++    ValueError on any validation failure.
++    """
++    if not text or not text.strip():
++        raise ValueError("blank input")
++
++    reader = csv.reader(io.StringIO(text))
++    rows_raw = list(reader)
++
++    if not rows_raw:
++        raise ValueError("empty CSV")
++
++    # --- header ---
++    header = [h.strip() for h in rows_raw[0]]
++    if header != _EXPECTED_HEADER:
++        raise ValueError(
++            f"invalid header: expected {_EXPECTED_HEADER!r}, got {header!r}"
++        )
++
++    result: list[dict] = []
++    for row in rows_raw[1:]:
++        if len(row) != 3:
++            raise ValueError(
++                f"row width {len(row)} != 3: {row!r}"
++            )
++
++        raw_date, raw_category, raw_amount = row
++
++        # date validation — strict YYYY-MM-DD + canonical
++        raw_date = raw_date.strip()
++        if len(raw_date) != 10 or raw_date[4] != '-' or raw_date[7] != '-':
++            raise ValueError(f"invalid date format: {raw_date!r}")
++        try:
++            d = date(int(raw_date[:4]), int(raw_date[5:7]), int(raw_date[8:10]))
++        except ValueError:
++            raise ValueError(f"invalid date: {raw_date!r}")
++        if d.isoformat() != raw_date:
++            raise ValueError(f"non-canonical date: {raw_date!r}")
++
++        # category
++        category = raw_category.strip()
++        if not category:
++            raise ValueError("empty category")
++
++        # amount
++        amount_raw = raw_amount.strip()
++        try:
++            dec = Decimal(str(amount_raw))
++        except (InvalidOperation, ValueError):
++            raise ValueError(f"invalid amount: {amount_raw!r}")
++        if not dec.is_finite():
++            raise ValueError(f"non-finite amount: {amount_raw!r}")
++        amount_str = str(dec.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
++
++        result.append({
++            "date": d.isoformat(),
++            "category": category,
++            "amount": amount_str,
++        })
++
++    return result
++
++
++def totals(rows: list[dict]) -> dict[str, str]:
++    """Aggregate *rows* (output of :func:`parse_ledger`) by category.
++
++    Returns
++    -------
++    dict[str, str] — lexicographically sorted keys, values are 2-decimal
++    strings.  Negative amounts are allowed.
++    """
++    agg: dict[str, Decimal] = {}
++    for row in rows:
++        cat = row["category"]
++        amt = Decimal(str(row["amount"]))
++        agg[cat] = agg.get(cat, Decimal("0")) + amt
++
++    return {
++        k: str(v.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
++        for k, v in sorted(agg.items())
++    }
++
++
++def _cli() -> None:
++    """CLI entry-point: read CSV from stdin, print JSON to stdout."""
++    import os
++    try:
++        text = sys.stdin.read()
++        rows = parse_ledger(text)
++        t = totals(rows)
++        print(json.dumps({"rows": rows, "totals": t}, ensure_ascii=False))
++    except (ValueError, KeyError, TypeError) as exc:
++        # Concise error without traceback; exit code 2.
++        sys.stderr.write(f"error: {exc}\n")
++        sys.exit(2)
++
++
++if __name__ == "__main__":
++    _cli()

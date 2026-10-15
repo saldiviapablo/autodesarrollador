@@ -1,0 +1,174 @@
+{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261015-050818",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-001-csv-ledger",
+    "objective":  "Normalize CSV ledger rows and aggregate exact decimal amounts",
+    "duration_seconds":  695.03916689999994,
+    "status":  "FAILED",
+    "technical_status":  "INTERRUPTED",
+    "reason":  "PARENT_PROCESS_LOST",
+    "tasks_completed":  [
+
+                        ],
+    "pending_tasks":  [
+                          "Normalize CSV ledger rows and aggregate exact decimal amounts"
+                      ],
+    "changed_files":  [
+                          "module.py",
+                          "README.md"
+                      ],
+    "commits":  [
+
+                ],
+    "tests":  [
+                  {
+                      "output":  "ENDURANCE_TEST_PASS\r\n",
+                      "status":  "PASS",
+                      "marker_present":  true,
+                      "id":  "unit",
+                      "exit_code":  0
+                  }
+              ],
+    "builds":  [
+                   {
+                       "output":  "ENDURANCE_BUILD_PASS\r\n",
+                       "status":  "PASS",
+                       "marker_present":  true,
+                       "id":  "build",
+                       "exit_code":  0
+                   }
+               ],
+    "linters":  [
+
+                ],
+    "errors":  [
+                   {
+                       "reason":  "AGENT_FAILED:worker",
+                       "count":  1,
+                       "role":  "worker"
+                   },
+                   "PARENT_PROCESS_LOST"
+               ],
+    "retries":  {
+                    "llama":  0,
+                    "supervisor":  0,
+                    "reviewer":  0,
+                    "worker":  1
+                },
+    "recoveries":  [
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  19,
+                           "event_id":  "evt-6679b3b1618e",
+                           "timestamp":  "2026-10-15T05:16:25.5549702-03:00",
+                           "run_id":  "run-20261015-050818",
+                           "actor":  "runner",
+                           "type":  "WATCHDOG_AGENT_RESTART",
+                           "payload":  {
+                                           "reason":  "AGENT_FAILED:worker",
+                                           "count":  1,
+                                           "role":  "worker"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  30,
+                           "event_id":  "evt-4ef267622997",
+                           "timestamp":  "2026-10-15T05:19:57.2334071-03:00",
+                           "run_id":  "run-20261015-050818",
+                           "actor":  "watchdog",
+                           "type":  "PARENT_CRASH_RECOVERED",
+                           "payload":  {
+                                           "parent_pid":  31188,
+                                           "reason":  "PARENT_PROCESS_LOST"
+                                       }
+                       }
+                   ],
+    "web_queries":  [
+
+                    ],
+    "chatgpt_queries_used":  null,
+    "blocks":  [
+
+               ],
+    "completion_gate":  {
+                            "status":  "NOT_EVALUATED",
+                            "reason":  "PARENT_PROCESS_LOST"
+                        },
+    "cleanup":  {
+                    "guardian_exits_after_report":  true,
+                    "job_closed":  true,
+                    "inference_mutex":  "FREE",
+                    "parent_identity_verified":  true,
+                    "run_lock_removed":  true,
+                    "owned_survivors":  [
+
+                                        ]
+                },
+    "processes":  [
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  22568,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276485028801672
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  33592,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276485038402868
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  13392,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276485468139399
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  23112,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276486772516172
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  27632,
+                          "name":  "web-research",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276486774060533
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  10868,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276486788866205
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  7136,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276489864608028
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  34072,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276491950104343
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  16292,
+                          "name":  "check-build",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276491951837728
+                      }
+                  ],
+    "generated_at":  "2026-10-15T05:19:58.0642531-03:00"
+}

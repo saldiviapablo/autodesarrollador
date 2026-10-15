@@ -1,0 +1,59 @@
+﻿{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261015-050818",
+    "project_id":  "task-001-csv-ledger",
+    "objective":  "Normalize CSV ledger rows and aggregate exact decimal amounts",
+    "status":  "FAILED",
+    "created_at":  "2026-10-15T05:08:18.9026063-03:00",
+    "updated_at":  "2026-10-15T05:19:56.9698973-03:00",
+    "cycle":  0,
+    "max_cycles":  5,
+    "current_phase":  "WATCHDOG_FAILOVER",
+    "current_task":  "PARENT_PROCESS_LOST",
+    "completed_tasks":  [
+
+                        ],
+    "pending_tasks":  [
+                          "Normalize CSV ledger rows and aggregate exact decimal amounts"
+                      ],
+    "acceptance_criteria":  [
+                                "Normalize CSV ledger rows and aggregate exact decimal amounts; immutable acceptance and documented CLI verified"
+                            ],
+    "current_delegation_id":  null,
+    "hermes_session_id":  null,
+    "qwen_session_id":  null,
+    "git":  {
+                "branch":  "agent/f25-20261015-050751-1239ed-1",
+                "head":  "8d65eca",
+                "dirty":  true,
+                "changed_files":  [
+                                      "README.md",
+                                      "module.py"
+                                  ]
+            },
+    "tests":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null,
+                  "last_run_at":  null
+              },
+    "build":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null
+              },
+    "progress":  {
+                     "score":  0,
+                     "last_progress_at":  null,
+                     "no_progress_cycles":  0
+                 },
+    "failure":  {
+                    "last_signature":  null,
+                    "repeated_count":  0
+                },
+    "checkpoint":  {
+                       "last_id":  "chk-endurance-before-crash-950451b2",
+                       "last_created_at":  "2026-10-15T05:19:56.2456658-03:00"
+                   },
+    "next_action":  "Recover from persisted state; no blind restart"
+}

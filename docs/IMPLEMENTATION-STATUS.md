@@ -64,7 +64,7 @@
 | **Fase 22** | Cleanup garantizado | **PASS** | evidence/phase-22/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 23** | Sandbox integral | **PASS** | Reviewer real ACCEPTED, Completion Gate PASS; histórico preservado. evidence/hermes-prompt-transport-20261014/. |
 | **Fase 24** | End-to-End corto | **PASS** | ATTEMPT11 run-20261015-044359; docs/F24-ATTEMPT-11-REPORT.md; evidence/phase-24-attempt-11-20261015/ |
-| **Fase 25** | Prueba 2 horas | **NOT_RUN** | Validación de estabilidad autónoma continua de 2 horas. |
+| **Fase 25** | Prueba2h | **PASS** | docs/F25-REPORT-f25-20261015-050751-1239ed.md; evidence/endurance-f25-20261015-050751-1239ed/ |
 | **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
 | **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
 | **Fase 28** | Prueba nocturna 6-8 horas | **NOT_RUN** | Prueba definitiva de autonomía prolongada desatendida. |
@@ -213,3 +213,7 @@ F24 ATTEMPT11 **PASS**, run `run-20261015-044359`, 881.50s, 28/28 gates; Worker 
 ## F25 — primer inicio detenido en admisión — 2026-10-15
 
 F24 ATTEMPT11 mantiene PASS28/28. F25 parcial FAIL (6.264s): el adaptador nuevo pasó START en lugar de PROJECT_ROOT como primer argumento del launcher; producción rechazó ABSOLUTE_PROJECT_ROOT_REQUIRED antes de inferir o enviar. Integrity PASS. Cleanup original detectó metadata LOCK de Prepare; liberada posteriormente por Remove-RunnerOwnedLock con run/owner exactos, receipt POST-TERMINAL-CLEANUP PASS. Sin reset de reloj, contratos ni presupuestos; native-at-admission-failure conserva STATE original. Corregir adaptador y certificar antes de nueva corrida real7200s. evidence/endurance-f25-20261015-050441-b014d5/.
+
+## Estado vigente — F25 — 2026-10-15T14:00:54.701948+00:00
+
+F25 PASS: 7772.089s reales, 13 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-f25-20261015-050751-1239ed/. docs/F25-REPORT-f25-20261015-050751-1239ed.md

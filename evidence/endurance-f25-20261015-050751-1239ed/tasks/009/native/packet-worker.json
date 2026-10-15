@@ -1,0 +1,32 @@
+{
+    "probe_delay_seconds":  null,
+    "backend":  "live",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-009-catalog",
+    "research_inline":  false,
+    "role":  "worker",
+    "timeout":  300,
+    "request":  {
+                    "allowed_actions":  [
+                                            "edit_file",
+                                            "run_test",
+                                            "git_commit_local"
+                                        ],
+                    "schema_version":  "1.0",
+                    "workspace":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\endurance-f25-20261015-050751-1239ed\\task-009-catalog",
+                    "delegation_id":  "del-run-20261015-063245",
+                    "forbidden_actions":  [
+                                              "git_push",
+                                              "delete_root",
+                                              "modify_runner_guardrails"
+                                          ],
+                    "objective":  "Validate a portable file catalog and report duplicates without filesystem access",
+                    "tests":  [
+
+                              ],
+                    "task":  "Implement catalog(entries): entries is a list of dicts with exactly path,size,sha256. path must be a nonempty portable POSIX relative path, no backslash, colon, leading slash, empty component, . or .. component, NUL/newline. Unicode allowed. size must be integer \u003e=0, bool forbidden. sha256 must be exactly64 lowercase hex characters. Reject malformed entries and duplicate paths with ValueError. Return new list of dicts sorted by path; never mutate input or access filesystem. Implement duplicate_groups(entries) using validated catalog: return lists of paths having same (size,sha256), each group sorted, only groups of \u003e=2, groups sorted lexicographically. CLI reads JSON array stdin; outputs JSON {\"catalog\":...,\"duplicates\":...} ensure_ascii=False; invalid -\u003eexit2 concise stderr. Document contract, Unicode, examples, no filesystem I/O. Modify module.py and README.md only. Never edit tests/build/.autopilot. Run python test_module.py and python build.py.\nSupervisor plan (advisory, approved scope remains binding): ```json\n{\n  \"task\": \"1. Read module.py, README.md, test_module.py to understand current state.\\n2. Implement catalog(path, size, sha256 validation logic in module.py.\\n3. Implement duplicate_groups logic in module.py.\\n4. Add CLI entry point to module.py.\\n5. Update README.md.\\n6. Run tests.\"\n}\n```\nPrevious checks to correct: ",
+                    "acceptance_criteria":  [
+                                                "Validate a portable file catalog and report duplicates without filesystem access; immutable acceptance and documented CLI verified"
+                                            ],
+                    "status":  "READY"
+                }
+}
