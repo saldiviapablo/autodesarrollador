@@ -5,20 +5,21 @@
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
-  "last_completed": "F24 ATTEMPT9 FAIL",
-  "active_phase": "F24_ATTEMPT10_PREPARATION",
-  "last_cause": "A9 mouseMoved pre-intent CDP acknowledgement timeout was treated as terminal rather than approved pre-intent actuator unavailability",
+  "last_completed": "F24 ATTEMPT10 historical FAIL; delivered consultation COMPLETED and response recovered read-only",
+  "active_phase": "COMPOSER_IDENTITY_FIX",
+  "last_cause": "assistant CodeMirror contenteditable was counted as a second composer",
   "last_fix": "Approved pre-intent fallback;12 pointer cases,11 composer cases,10 regression suites,live nonsend pointer and3 completed live bridge canaries",
-  "last_commit": "c738ae460ca8ac2d824cb9d7c82b1d34bb9ecac8",
-  "next_action": "Fresh ATTEMPT10 with same28 gates and normal2700/300/restart2/maxcycles5; then F25 if PASS",
-  "run_pointer": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f24-attempt9-2c28c8f9\\project\\.autopilot",
-  "updated_at": "2026-10-15T06:47:04.300873+00:00",
+  "last_commit": "f7ae73393ddd0b3d1de330508fa58ca7829d6674",
+  "next_action": "Backup/implement shared semantic composer selector, deterministic tests + live readonly current CodeMirror + controlled code-response send. No resend A10. No new E2E until certified.",
+  "run_pointer": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f24-attempt10-367d25c4\\project\\.autopilot",
+  "updated_at": "2026-10-15T07:22:41.148006+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
     "NONFINITE_NUMERIC_ACCEPTANCE_COVERAGE",
     "HIDDEN_RETAINED_COMPOSER_GLOBAL_SELECTOR",
-    "PRE_INTENT_POINTER_TIMEOUT_TERMINAL_INSTEAD_OF_FALLBACK"
+    "PRE_INTENT_POINTER_TIMEOUT_TERMINAL_INSTEAD_OF_FALLBACK",
+    "ASSISTANT_CODE_EDITOR_MISCLASSIFIED_AS_COMPOSER"
   ],
   "fixes": [
     "REVIEWER_CONTRACT_CERTIFIED",
@@ -26,14 +27,16 @@
     "ACTIVE_COMPOSER_CERTIFIED",
     "PRE_INTENT_POINTER_FALLBACK_CERTIFIED"
   ],
-  "run_id": "run-20261015-031335",
-  "consultation_id": "f24-a9-5163e5e3c3204daeaee1593450b9c4b5",
-  "harness_session_id": 79951,
+  "run_id": "run-20261015-035008",
+  "consultation_id": "f24-a10-9ef973fcd207446197d8ffd7e8b4b12d",
+  "harness_session_id": 10394,
   "auxiliary_tool_sessions": {
-    "first_segment_observer": 49419,
-    "browser_readonly_observer": 75510
+    "first_segment_observer": 92129,
+    "browser_readonly_observer": 55996,
+    "thread_sleep_guard": 62653,
+    "native_failure_observer": 99550
   }
 }
 ```
 
-F24 ATTEMPT9 historicalFAIL preserved df2562f. Pointer fix certified in evidence/chatgpt-pointer-preintent-20261015/CERTIFIED.json; pending local source commit and fresh ATTEMPT10. No active F24/controller process. F25/4H/F26/F27/F28 NOT_RUN. Prepared but unpromoted endurance controller/workloads/model-owner/tests remain under logs/overnight;13 deterministic controller tests PASS, not duration proof. F28 requires a dedicated pilot workload and actual human final review at F27; do not fabricate it. No push.
+No active F24/model/controller. A10 preserved FAIL; no resend, its ledger is already COMPLETED. Next isolated composer identity fix must exclude assistant CodeMirror. Then fresh A11 if certified; F25 real2h →4h →F26 →F27 human-reviewed safe pilot →F28 real6–8h →final audit. No push. Unpromoted endurance code in logs/overnight;14 unit tests PASS, owner live cert NOT_RUN and requires F24 PASS.

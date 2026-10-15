@@ -1,0 +1,73 @@
+1. Causa probable
+
+El problema suele originarse por redondear cada cuota individualmente, provocando diferencias entre la suma distribuida y el importe original.
+
+Largest Remainder evita esto:
+
+amount >= 0
+
+weights[i] >= 0
+
+sum(weights) > 0
+
+Calcular cuotas proporcionales exactas.
+
+Aplicar floor a cada cuota en centavos.
+
+Distribuir los centavos restantes según el mayor residuo.
+
+Empates: priorizar el índice original más bajo, garantizando determinismo.
+
+2. Dos estrategias alternativas
+
+A. Largest Remainder (recomendada)
+
+Ejemplo: distribuir 0.05 entre tres pesos iguales.
+
+Cuotas exactas: 1.666… centavos cada una.
+
+Cuotas base: [1, 1, 1].
+
+Restan 2 centavos.
+
+Resultado: [2, 2, 1].
+
+B. Redondeo independiente + reconciliación
+
+Redondear cada cuota y corregir posteriormente las diferencias. Es más sencillo inicialmente, pero puede introducir sesgos y resultados menos predecibles.
+
+3. ROUND_HALF_UP
+
+Redondea al entero más cercano; ante un empate exacto, redondea alejándose de cero.
+
+Python
+Ejecutar
+from decimal import Decimal, ROUND_HALF_UP
+
+
+amount = Decimal("2.675")
+result = amount.quantize(
+    Decimal("0.01"),
+    rounding=ROUND_HALF_UP
+)
+
+
+print(result)  # 2.68
+
+Importante: utilizar Decimal construido desde texto para evitar errores de representación binaria.
+
+4. Riesgos técnicos asociados
+
+Pérdida de precisión utilizando float.
+
+Distribuciones cuya suma no coincide con el total.
+
+Empates no deterministas.
+
+División por cero si todos los pesos son cero.
+
+Aplicar ROUND_HALF_UP a cuotas individuales en lugar de utilizar floor dentro de Largest Remainder.
+
+Conclusión: utilizar ROUND_HALF_UP para convertir el importe monetario a centavos y Largest Remainder con desempate por índice para distribuirlo exactamente. Así se garantiza precisión, reproducibilidad y conservación del total.
+
+Validación UTF-8: áéíóú ñ.

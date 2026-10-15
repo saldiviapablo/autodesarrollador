@@ -1,7 +1,7 @@
 # Estado de Implementación
 ## Proyecto: Desarrollador Autónomo
 
-**Última actualización:** 2026-10-15T06:34:23.724135+00:00
+**Última actualización:** 2026-10-15T07:22:41.148006+00:00
 **Estado documental:** APROBADO / FROZEN PARA IMPLEMENTACIÓN DE MACROFASE 7A
 **Baseline de arquitectura:** Hermes Agent (v0.21.6) + Qwen Code CLI (@qwen-code/qwen-code@0.25.1) + llama.cpp local (Qwen3.6-35B-A3B Q4_K_M)
 
@@ -63,7 +63,7 @@
 | **Fase 21** | Reportes | **PASS** | evidence/phase-21/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 22** | Cleanup garantizado | **PASS** | evidence/phase-22/; pruebas, seguridad, timeout/cleanup y commit local. |
 | **Fase 23** | Sandbox integral | **PASS** | Reviewer real ACCEPTED, Completion Gate PASS; histórico preservado. evidence/hermes-prompt-transport-20261014/. |
-| **Fase 24** | End-to-End corto | **FAIL** | ATTEMPT9 run-20261015-031335; docs/F24-ATTEMPT-9-REPORT.md; evidence/phase-24-attempt-9-20261015/ |
+| **Fase 24** | End-to-End corto | **FAIL** | ATTEMPT10 run-20261015-035008; docs/F24-ATTEMPT-10-REPORT.md; evidence/phase-24-attempt-10-20261015/ |
 | **Fase 25** | Prueba 2 horas | **NOT_RUN** | Validación de estabilidad autónoma continua de 2 horas. |
 | **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
 | **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
@@ -200,3 +200,7 @@ F24 ATTEMPT8 **FAIL**; run `run-20261015-025148`, duración 842.39s. Worker SUCC
 ## Estado vigente — F24 ATTEMPT9 — 2026-10-15
 
 F24 ATTEMPT9 **FAIL**, run `run-20261015-031335`, 1062.11s, gates incompletos (PASS no demostrado); Worker SUCCESS; tests/build PASS/PASS; web/continuación PASS/PASS; ChatGPT PRE_SEND_ABORTED, envíos 0, retry NOT_RUN, adicionales None; Reviewer NOT_ACCEPTED_OR_NOT_RUN; Completion NOT_RUN; cleanup/integridad PASS. F25 pendiente. docs/F24-ATTEMPT-9-REPORT.md; evidence/phase-24-attempt-9-20261015/
+
+## Estado vigente — F24 ATTEMPT10 — 2026-10-15
+
+F24 ATTEMPT10 **FAIL**, run `run-20261015-035008`, 1128.75s. Worker/tests13/build/web/recovery y continuación PASS. Ledger COMPLETED,1 envío físico, respuesta recuperada read-only con SHA exacto; retry lógico posterior ALREADY_SENT/+0. Fallo final del clasificador: CodeMirror de la respuesta confundido con composer. Reviewer/Completion NOT_RUN;28 gates no aprobados. Cleanup/integridad PASS; F25 pendiente. docs/F24-ATTEMPT-10-REPORT.md; evidence/phase-24-attempt-10-20261015/

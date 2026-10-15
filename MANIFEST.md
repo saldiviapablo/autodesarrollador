@@ -195,3 +195,7 @@ F24 ATTEMPT8 **FAIL**; run `run-20261015-025148`, duración 842.39s. Worker SUCC
 ## Estado vigente — F24 ATTEMPT9 — 2026-10-15
 
 F24 ATTEMPT9 **FAIL**, run `run-20261015-031335`, 1062.11s, gates incompletos (PASS no demostrado); Worker SUCCESS; tests/build PASS/PASS; web/continuación PASS/PASS; ChatGPT PRE_SEND_ABORTED, envíos 0, retry NOT_RUN, adicionales None; Reviewer NOT_ACCEPTED_OR_NOT_RUN; Completion NOT_RUN; cleanup/integridad PASS. F25 pendiente. docs/F24-ATTEMPT-9-REPORT.md; evidence/phase-24-attempt-9-20261015/
+
+## Estado vigente — F24 ATTEMPT10 — 2026-10-15
+
+F24 ATTEMPT10 **FAIL**, run `run-20261015-035008`, 1128.75s. Worker/tests13/build/web/recovery y continuación PASS. Ledger COMPLETED,1 envío físico, respuesta recuperada read-only con SHA exacto; retry lógico posterior ALREADY_SENT/+0. Fallo final del clasificador: CodeMirror de la respuesta confundido con composer. Reviewer/Completion NOT_RUN;28 gates no aprobados. Cleanup/integridad PASS; F25 pendiente. docs/F24-ATTEMPT-10-REPORT.md; evidence/phase-24-attempt-10-20261015/
