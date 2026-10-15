@@ -5,14 +5,14 @@
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
-  "last_completed": "F26 PASS",
+  "last_completed": "F26 PASS51 suites/299 checks; pilot pre-START14 controls PASS",
   "active_phase": "F27_PREPARATION",
   "last_cause": "New endurance adapter launcher argument contract",
   "last_fix": "STRICT_FORMAT_ONLY_JSON_COMPARISON_WITH_UNCHANGED_SECRET_SANITIZER",
-  "last_commit": "c8cbbd2873896f028a3b1bc8feb7d7cde2331f44",
-  "next_action": "Certify/promote prepared local disposable pilot helpers; clean local commit then real F27. Obtain actual final human review only after technical completion; no F28 before it.",
+  "last_commit": "git HEAD: pilot preparation milestone",
+  "next_action": "Execute tests/pilot-controller.py once after clean local preparation commit; observe exact pilot-active PID/birth. No F28 before actual human final review.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T18:49:43.769161+00:00",
+  "updated_at": "2026-10-15T18:51:16.570560+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -31,7 +31,8 @@
     "F26_BRIDGE_INTEGRITY_PRE_SUITE_FIXTURE_MISSING",
     "AUDIT_PRIVATE_SYNTHETIC_CANARY_EXPORT_UNREDACTED",
     "AUDIT_QWEN_PROBE_LOCALIZED_STDERR_DECODING",
-    "AUDIT_HEARTBEAT_TEST_READS_BEFORE_GUARDIAN_FINALIZATION"
+    "AUDIT_HEARTBEAT_TEST_READS_BEFORE_GUARDIAN_FINALIZATION",
+    "PILOT_OBSERVER_MISCLASSIFIES_INTER_REVIEW_WORKER_CORRECTION"
   ],
   "fixes": [
     "REVIEWER_CONTRACT_CERTIFIED",
@@ -50,7 +51,8 @@
     "REVIEWED_BRIDGE_BOUND_FRESH_PRE_SUITE_FIXTURE_CERTIFIED",
     "APPROVED_WHOLE_FILE_EQUIVALENCE_RAW_PRIVATE_SANITIZED_EXPORT_CERTIFIED",
     "PROBE_LOSSLESS_BYTE_STREAMS_STRICT_UTF8_JSON_UNCHANGED_ASSERTIONS",
-    "BOUNDED_WATCHDOG_TERMINAL_REPORT_OBSERVATION_UNCHANGED_ASSERTIONS"
+    "BOUNDED_WATCHDOG_TERMINAL_REPORT_OBSERVATION_UNCHANGED_ASSERTIONS",
+    "FINAL_ACCEPTED_REVIEWER_FULL_TARGET_SCOPE_CERTIFIED_WITH_LEGITIMATE_CORRECTION_NEGATIVE"
   ],
   "run_id": null,
   "harness_session_id": null,
@@ -77,6 +79,4 @@
 }
 ```
 
-F26 PASS: 51 regression suites, 299 audit checks, 259 source hashes and 6119 historical evidence files verified. Actual F24/2h/4h evidence binds native roles, recovery, bridge and cleanup.
-
-F27 helpers prepared under logs/overnight (pilot_workload.py, pilot-controller.py, night-pilot-workload.py, night-pilot-controller.py, test-pilot-controllers.py). Technical pilot is not human review. Roadmap07 section30 requires actual final human review; preserve all historical FAILs. No push.
+F24/F25/4H/F26 PASS. Pilot preparation14 fixture/control tests PASS,17 initial acceptance cases present/executed as expected FAIL before START; night23 cases prepared. No actual F27/F28 yet. Only Qwen may implement target. Whole-target final accepted Reviewer read-only certification retains prior baselines and allows legitimate intervening Worker correction, productive reviewer policy unchanged. Actual final human review is still required after concrete F27 output per07§30; do not fabricate receipt. No push.

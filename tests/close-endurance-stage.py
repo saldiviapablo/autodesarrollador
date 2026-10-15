@@ -1,0 +1,88 @@
+"""Independent terminal PASS verification and documentary closure; no inference."""
+from pathlib import Path
+import argparse,datetime,hashlib,json,shutil,subprocess,sys
+R=Path(__file__).resolve().parents[2]
+if not (R/'AGENTS.md').exists():R=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(R/'tests'))
+from endurance_controller import READ,write,sha,ps,q,validate_stage
+from audit_secret_scan import scan_evidence,prepare_evidence_export,stage_evidence
+ap=argparse.ArgumentParser();ap.add_argument('--stage-id',required=True);ap.add_argument('--commit',action='store_true');arg=ap.parse_args()
+assert arg.stage_id.startswith(('f25-','4h-','f28-')) and '/' not in arg.stage_id and '\\' not in arg.stage_id
+E=R/'evidence'/('endurance-'+arg.stage_id);s=READ(E/'SUMMARY.json');phase=s['stage'];assert phase in ['F25','4H','F28'] and s['stage_id']==arg.stage_id
+assert s['status']=='PASS' and not s['failure'] and all(s['gates'].values()),'PARTIAL_OR_FAILED_STAGE_CANNOT_PASS'
+assert s['integrity'] and s['cleanup'] and READ(E/'INTEGRITY.json')['status']==READ(E/'CLEANUP.json')['status']=='PASS'
+if phase=='F28':
+ pilot_gate=READ(E/'PILOT-GATE.json');assert pilot_gate['status']=='PASS' and all(pilot_gate['checks'].values())
+ v=READ(R/'config/INSTALLATION-STATE.json')['validation_8'];assert all(v.get(n)=='PASS' for n in ['f25','4h','f26','f27'])
+ receipt=Path(v['f27_human_review_receipt']);review=READ(receipt);assert sha(receipt)==pilot_gate['review_receipt_sha256'] and review['method']=='HUMAN_FINAL_REVIEW' and review['decision']=='ACCEPTED' and review.get('human_confirmation_reference')
+ assert all(sha(Path(review['project'])/n)==h for n,h in review['reviewed_files'].items())
+f=READ(E/'FROZEN.json');bad=[]
+for group in ['sources','history','protected']:
+ for n,h in f[group].items():
+  p=Path(n) if group=='protected' else R/n
+  if sha(p)!=h:bad.append(group+':'+n)
+assert not bad,'INDEPENDENT_HASH_MISMATCH:'+repr(bad)
+samples=[json.loads(x) for x in (E/'resource-samples.jsonl').read_text(encoding='utf-8').splitlines() if x.strip()]
+assert len(samples)==s['resources']['samples']
+assert all(samples[i]['elapsed_seconds']<samples[i+1]['elapsed_seconds'] for i in range(len(samples)-1))
+assert s['resources']['RAM_min_available_mib']==min(x['ram_available_bytes'] for x in samples)/2**20
+assert s['resources']['pagefile_max_used_gib']==max(x['pagefile']['used'] for x in samples)/2**30
+assert all(validate_stage(phase,s['duration_seconds'],s['tasks'],s['resources'],True,True).values())
+copies={}
+for task in s['tasks']:
+ p=Path(task['project']);assert p.resolve().is_relative_to((R/'sandbox').resolve());a=p/'.autopilot';e=E/'tasks'/str(task['index']).zfill(3)
+ for n in ['STATE.json','RUN-PLAN.json','RUN-CONTRACT.yaml','reports/runner-result.json','evidence/completion-gate.json','evidence/checks.json','evidence/roles.json','RESTARTS.json','EVENTS.jsonl']:
+  assert sha(a/n)==sha(e/'native'/n),'NATIVE_EXPORT_CHANGED:'+n
+ report=READ(a/'reports/runner-result.json');gate=READ(a/'evidence/completion-gate.json');state=READ(a/'STATE.json');plan=READ(a/'RUN-PLAN.json')
+ assert state['status']==report['status']=='COMPLETED' and not state['pending_tasks'] and gate['status']=='COMPLETED' and all(gate['checks'].values())
+ assert report['technical_status']=='SUCCESS' and not report['cleanup']['errors'] and not report['cleanup']['owned_survivors'] and not (a/'LOCK.json').exists()
+ assert plan['global_timeout_seconds']==1800 and plan['phase_timeout_seconds']==300 and plan['restart_budget']==2 and plan['max_cycles']==5
+ assert all(sha(p/i['path'])==i['sha256'] for i in plan['immutable_files'])
+ assert READ(e/'reviewer-before.json')=={n:sha(p/n) for n in READ(e/'reviewer-before.json')}
+ clock=READ(e/'clock-initial.json');assert sha(clock['path'])==clock['sha256'];shutil.copyfile(clock['path'],e/'native-clock.json')
+ approval=READ(e/'approval.json');shutil.copyfile(approval['receipt_path'],e/'approval-receipt.json')
+ for native in (e/'native').rglob('*'):
+  if native.is_file():copies[native.relative_to(E).as_posix()]={'source':str(a/native.relative_to(e/'native')),'sha256':sha(native)}
+checks=ps('. '+q(R/'runner/core.ps1')+';. '+q(R/'runner/cleanup.ps1')+';@{inference=(Test-RunnerInferenceReleased);ports=@(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue|Where-Object {$_.LocalPort -in @(8080,9119)}|Select-Object LocalPort,OwningProcess)}')
+assert checks['inference']=='FREE' and not checks['ports']
+shutil.copyfile(__file__,E/'CLOSURE-SCRIPT.py.txt')
+write(E/'INDEPENDENT-CLOSURE.json',{'status':'PASS','source_files':len(f['sources']),'historical_files':len(f['history']),'protected_components':len(f['protected']),'native_exports':len(copies),'checks':checks,'closure_script_sha256':sha(E/'CLOSURE-SCRIPT.py.txt'),'no_native_or_ledger_mutation':True})
+write(E/'capture-manifest.json',copies)
+(E/'.gitattributes').write_text('* -text whitespace=-blank-at-eol,-blank-at-eof,space-before-tab,cr-at-eol\n',encoding='utf-8')
+stamp=datetime.datetime.now(datetime.timezone.utc).isoformat();B=R/'backups'/('close-'+arg.stage_id);B.mkdir(exist_ok=False)
+names=['00-README.md','07-ROADMAP.md','MANIFEST.md','docs/IMPLEMENTATION-STATUS.md','config/INSTALLATION-STATE.json']
+for n in names:
+ d=B/n;d.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(R/n,d)
+doc='docs/'+phase+'-REPORT-'+arg.stage_id+'.md';summary=f"{phase} PASS: {s['duration_seconds']:.3f}s reales, {len(s['tasks'])} tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: {E.relative_to(R).as_posix()}/."
+report='# '+phase+' — prueba prolongada real\n\n'+summary+'\n\n```json\n'+json.dumps(s,ensure_ascii=False,indent=2)+'\n```\n\nSe ejecutó el controlador de carga sobre Runner productivo. Sólo Qwen Code modificó module.py/README. Las aceptaciones/tests/build se congelaron antes de START de cada tarea. Cada reloj/contrato/aprobación fue nuevo y conservó límites normales; se adoptó un único modelo del fixture, liberado al terminar. Inference Lock serializó las inferencias. La primera tarea realizó diagnóstico, web oficial/handoff, crash controlado de padre propio, Watchdog, Start-Recover, continuación y consulta ChatGPT nueva/idempotente. Las tareas posteriores variaron utilidad y datos. Las muestras originales JSONL, STATE/EVENTS, controles nativos, fallos de roles y métricas se conservan. No se usa tiempo de setup/cleanup/integridad para alcanzar la duración requerida. Los FAIL anteriores permanecen intactos.\n\nVerificación independiente: fuentes/histórico/componentes protegidos y copias nativas byte exactas; clocks/tests/read-only Reviewer; puertos8080/9119 libres e Inference Lock FREE. Sin dependencias nuevas, updates ni push. Los detalles del fixture y gates están en docs/ENDURANCE-VALIDATION-PLAN.md.\n'
+(R/doc).write_text(report,encoding='utf-8')
+for n in names[:-1]:
+ p=R/n;t=p.read_text(encoding='utf-8-sig')
+ import re
+ # Update the present-state indexes, preserving the append-only historical
+ # sections. F24's first documentary closure left some old index values behind.
+ if n=='00-README.md':t=re.sub(r'^Macrofase 8:  Validación Final.*$', 'Macrofase 8:  Validación Final (Fases23 a28) — IN_PROGRESS; F23/F24 PASS; '+phase+' PASS; fases posteriores pendientes',t,count=1,flags=re.M)
+ if n=='MANIFEST.md':t=re.sub(r'^- \*\*Macrofase 8 \(Validación Final.*$', '- **Macrofase 8 (Validación Final - Fases23 a28):** **IN_PROGRESS**; F23/F24 PASS; '+phase+' PASS; fases posteriores pendientes',t,count=1,flags=re.M)
+ if n=='07-ROADMAP.md':t=re.sub(r'^\| \*\*Macrofase 8\*\*.*$', '| **Macrofase 8** | Validación Final | F23/F24 PASS; '+phase+' PASS; fases posteriores pendientes | **IN_PROGRESS** |',t,count=1,flags=re.M)
+ if n=='docs/IMPLEMENTATION-STATUS.md' and phase=='F25':
+  import re
+  t=re.sub(r'^\| \*\*Fase 25\*\*.*$',f'| **Fase 25** | Prueba2h | **PASS** | {doc}; {E.relative_to(R).as_posix()}/ |',t,flags=re.M)
+ p.write_text(t.rstrip()+'\n\n## Estado vigente — '+phase+' — '+stamp+'\n\n'+summary+' '+doc+'\n',encoding='utf-8')
+p=R/'config/INSTALLATION-STATE.json';v=READ(p);key={'F25':'f25','4H':'4h','F28':'f28'}[phase];v['validation_8'].update({key:'PASS',key+'_evidence':E.relative_to(R).as_posix(),key+'_report':doc,key+'_duration_seconds':s['duration_seconds'],key+'_resources':s['resources'],key+'_cleanup':'PASS',key+'_integrity':'PASS'});v['e2e']='PASS';v['e2e_scope']='F24 ATTEMPT11 PASS28/28; '+phase+' real duration PASS; historical FAILs retained';v['phases_8']['24']='PASS';v['phases_8']['25']='PASS';v['macrophases']['8']='IN_PROGRESS';v['validation_8']['status']='IN_PROGRESS';v['validation_8']['f25_reason']=None
+if phase=='4H':v['validation_8']['checkpoint_4h']='PASS'
+if phase=='F28':v['phases_8']['28']='PASS'
+v['updated_at']=stamp;write(p,v)
+p=R/'runtime/overnight/STATE.json';v=READ(p);v.update(last_completed=phase+' PASS',active_phase={'F25':'4H_PREPARATION','4H':'F26_AUDIT','F28':'FINAL_AUDIT_AND_REGRESSION'}[phase],active_run=None,active_task=None,current_native_project=None,run_pointer=None,run_id=None,last_completed_stage_id=arg.stage_id,last_completed_evidence=str(E),tool_session_id=None,last_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=R,text=True).strip(),next_action={'F25':'Start fresh real14400s4H after local closure commit; never repeat F24/F25','4H':'Run F26 audit/global regression in new evidence; then safe F27 pilot/final human review and F28 real6–8h','F28':'Execute fresh final global audit/regression; inspect documentation/Git/owned processes/locks/ports/hashes, produce PROJECT-FINAL-REPORT only if all PASS'}[phase],updated_at=stamp);write(p,v);write(R/'runtime/overnight/checkpoints'/('closed-'+arg.stage_id+'.json'),v)
+(R/'docs/OVERNIGHT-RESUME.md').write_text('# Overnight continuation\n\n```json\n'+json.dumps(v,ensure_ascii=False,indent=2)+'\n```\n\nLatest completed stage: '+summary+'\nNative STATE remains authority. No push.\n',encoding='utf-8')
+with (R/'runtime/overnight/EVENTS.jsonl').open('a',encoding='utf-8') as h:h.write(json.dumps({'at':stamp,'event':'ENDURANCE_STAGE_CLOSED','stage':phase,'stage_id':arg.stage_id,'status':'PASS'})+'\n')
+if arg.commit:
+ # Use the existing sanitizer before selective staging. Do not rewrite raw proof.
+ prepare_evidence_export(E);result=scan_evidence(E);write(E/'SECRET-SCAN.json',result)
+ assert result['status']=='PASS','SECRET_SCAN_DENY'
+ subprocess.run(['git','add','--',*names,doc,'docs/OVERNIGHT-RESUME.md'],cwd=R,check=True)
+ excluded=stage_evidence(E)
+ subprocess.run(['git','diff','--cached','--check'],cwd=R,check=True)
+ for n,c in copies.items():assert hashlib.sha256(subprocess.check_output(['git','show',':'+(E/n).relative_to(R).as_posix()],cwd=R)).hexdigest()==c['sha256']
+ subprocess.run(['git','commit','-q','-m',f'test: certify real {phase} endurance stage {arg.stage_id}'],cwd=R,check=True)
+ assert not subprocess.check_output(['git','status','--porcelain=v1'],cwd=R,text=True).strip(),'WORKTREE_NOT_CLEAN_AFTER_STAGE'
+print(json.dumps({'status':'PASS','phase':phase,'duration_seconds':s['duration_seconds'],'tasks':len(s['tasks']),'report':doc,'commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=R,text=True).strip()},ensure_ascii=False))

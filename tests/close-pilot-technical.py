@@ -1,0 +1,57 @@
+"""Close real pilot technical evidence, preserving mandatory human final review."""
+from pathlib import Path
+import argparse,datetime,hashlib,json,shutil,subprocess,sys
+R=Path(__file__).resolve().parents[2]
+if not (R/'AGENTS.md').exists():R=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(R/'tests'))
+from endurance_controller import READ,write,sha,ps,q
+from audit_secret_scan import scan_evidence,prepare_evidence_export,stage_evidence
+def main():
+ ap=argparse.ArgumentParser();ap.add_argument('--evidence',required=True);ap.add_argument('--commit',action='store_true');a=ap.parse_args()
+ E=Path(a.evidence).resolve(strict=True);assert E.is_relative_to((R/'evidence').resolve()) and E.name.startswith('endurance-f27-')
+ s=READ(E/'SUMMARY.json');assert s['status']=='TECHNICAL_PASS_AWAITING_HUMAN_REVIEW' and s['human_review']=='NOT_PERFORMED' and not s['failure'] and s['cleanup'] and s['integrity'] and len(s['tasks'])==1
+ f=READ(E/'FROZEN.json')
+ for group in ['sources','history','protected']:
+  assert all(sha(Path(n) if group=='protected' else R/n)==h for n,h in f[group].items()),'PILOT_INTEGRITY_CHANGED:'+group
+ assert READ(E/'INTEGRITY.json')['status']==READ(E/'CLEANUP.json')['status']=='PASS'
+ t=s['tasks'][0];P=Path(t['project']);assert P.resolve(strict=True).is_relative_to((R/'sandbox').resolve())
+ native=P/'.autopilot';e=E/'tasks'/str(t['index']).zfill(3)
+ state=READ(native/'STATE.json');report=READ(native/'reports/runner-result.json');gate=READ(native/'evidence/completion-gate.json');plan=READ(native/'RUN-PLAN.json')
+ assert state['status']==report['status']==gate['status']=='COMPLETED' and report['technical_status']=='SUCCESS' and not state['pending_tasks'] and all(gate['checks'].values())
+ assert not report['cleanup']['errors'] and not report['cleanup']['owned_survivors'] and not (native/'LOCK.json').exists()
+ assert plan['global_timeout_seconds']==1800 and plan['phase_timeout_seconds']==300 and plan['restart_budget']==2 and plan['max_cycles']==5
+ assert all(sha(P/i['path'])==i['sha256'] for i in plan['immutable_files'])
+ assert all(sha(native/n.relative_to(e/'native'))==sha(n) for n in (e/'native').rglob('*') if n.is_file())
+ assert READ(e/'reviewer-full-target.json')['status']=='PASS' and READ(e/'reviewer-full-target.json')['all_target_content_unchanged']
+ clock=READ(e/'clock-initial.json');assert sha(clock['path'])==clock['sha256']
+ review_names=['module.py','README.md','test_module.py','build.py','sample-records.json','artifact-report.json','REPORT.md']
+ binding={'method':'HUMAN_REVIEW_PENDING_NOT_A_RECEIPT','decision':'NOT_PERFORMED','project':str(P),'native_run_id':state['run_id'],'reviewed_files':{n:sha(P/n) for n in review_names},'technical_evidence':str(E),'required':'Actual final human review per07-ROADMAP section30; no F27 PASS/F28 until explicit actual review'}
+ write(E/'HUMAN-REVIEW-PACKAGE.json',binding)
+ samples=READ(E/'resources.json')['samples'];gpu=READ(E/'resources.json')['gpu']
+ resources={'samples':len(samples),'RAM_min_available_mib':min(x['ram_available_bytes'] for x in samples)/2**20,'pagefile_max_used_gib':max(x['pagefile']['used'] for x in samples)/2**30,'VRAM_max_mib':max(int(x['memory_mib'].split(',')[0]) for x in gpu),'llama_max_working_set_mib':max(x['llama_working_set_bytes'] for x in samples)/2**20,'duration_label':'Pilot summary spans stage start through final cleanup/integrity; native task duration is recorded separately'}
+ shutil.copyfile(__file__,E/'CLOSURE-SCRIPT.py.txt')
+ write(E/'INDEPENDENT-TECHNICAL-CLOSURE.json',{'status':'PASS','F27':'PENDING_HUMAN_FINAL_REVIEW','resources':resources,'source_files':len(f['sources']),'historical_files':len(f['history']),'protected_components':len(f['protected']),'closure_script_sha256':sha(E/'CLOSURE-SCRIPT.py.txt'),'native_run_id':state['run_id'],'native_task_duration_seconds':report['duration_seconds'],'no_ledger_or_native_mutation':True})
+ (E/'.gitattributes').write_text('* -text whitespace=-blank-at-eol,-blank-at-eof,space-before-tab,cr-at-eol\n',encoding='utf-8')
+ prepare_evidence_export(E);scan=scan_evidence(E);write(E/'SECRET-SCAN.json',scan);assert scan['status']=='PASS','SECRET_SCAN_DENIED'
+ stamp=datetime.datetime.now(datetime.timezone.utc).isoformat();B=R/'backups'/('technical-close-'+E.name);B.mkdir(exist_ok=False)
+ names=['docs/IMPLEMENTATION-STATUS.md','config/INSTALLATION-STATE.json','docs/OVERNIGHT-RESUME.md']
+ for n in names:
+  p=B/n;p.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(R/n,p)
+ doc='docs/F27-TECHNICAL-REPORT-'+s['stage_id']+'.md'
+ text='# F27 — piloto local seguro: revisión final pendiente\n\nTechnical E2E PASS; F27 is not yet PASS. A fresh dedicated disposable pilot completed its native Runner/Worker/tests/build/independent read-only Reviewer/Completion/report/cleanup. The initial rounding bug and incomplete feature/docs were solved only by Qwen, against17 pre-START immutable acceptance tests. No personal project, push or deployment.\n\nProject: '+str(P)+'\n\nNative run: '+state['run_id']+'\n\nReview source module.py, README.md, generated artifact-report.json/REPORT.md, immutable test_module.py/build.py/sample-records.json and the actual worker-diff.patch in '+e.relative_to(R).as_posix()+'/. Backup, native report, full-target read-only proof, hashes and resources remain in '+E.relative_to(R).as_posix()+'/.\n\nHuman review package (pending, NOT a receipt): HUMAN-REVIEW-PACKAGE.json. Roadmap07 section30 requires actual final human review before REAL PILOT PASS. This report does not manufacture that review or authorize F28.\n\n```json\n'+json.dumps(resources,ensure_ascii=False,indent=2)+'\n```\n'
+ text+='\n## Archivos para la revisión humana final\n\n'
+ for title,path in [('Código del Worker',P/'module.py'),('README y ejemplos',P/'README.md'),('Reporte legible',P/'REPORT.md'),('Reporte JSON',P/'artifact-report.json'),('Tests inmutables',P/'test_module.py'),('Diff real del Worker',e/'worker-diff.patch'),('Reporte nativo y cleanup',native/'reports/runner-result.json')]:text+='- ['+title+'](<'+path.as_posix()+'>)\n'
+ text+='\nLa revisión debe confirmar que el resultado del piloto cumple su objetivo y criterios. Una aprobación inicial de ejecución no acredita esta revisión del resultado final.\n'
+ (R/doc).write_text(text,encoding='utf-8')
+ p=R/'docs/IMPLEMENTATION-STATUS.md';p.write_text(__import__('re').sub(r'^\| \*\*Fase 27\*\*.*$', '| **Fase 27** | Piloto local seguro | **TECHNICAL_PASS / PENDING_HUMAN_FINAL_REVIEW** | '+doc+'; '+E.relative_to(R).as_posix()+' |',p.read_text(encoding='utf-8-sig'),flags=__import__('re').M).rstrip()+'\n\n## F27 technical pilot — '+stamp+'\n\nTECHNICAL_PASS_AWAITING_HUMAN_REVIEW. '+doc+'; '+E.relative_to(R).as_posix()+'/. F28 NOT_RUN.\n',encoding='utf-8')
+ p=R/'config/INSTALLATION-STATE.json';v=READ(p);v['validation_8'].update(f27='TECHNICAL_PASS_AWAITING_HUMAN_REVIEW',f27_evidence=E.relative_to(R).as_posix(),f27_report=doc,f27_project=str(P),f27_native_run_id=state['run_id'],f27_human_review='NOT_PERFORMED',f27_resources=resources);v['phases_8']['27']='PENDING_HUMAN_FINAL_REVIEW';v['updated_at']=stamp;write(p,v)
+ p=R/'runtime/overnight/STATE.json';v=READ(p);v.update(last_completed='F27 technical E2E PASS; actual human final review pending',active_phase='F27_HUMAN_FINAL_REVIEW_PENDING',active_run=None,active_task=None,current_native_project=None,next_action='Request final human review of concrete pilot artifacts; do not manufacture receipt or start F28. Continue independent final-audit/report preparation while pending.',updated_at=stamp);write(p,v)
+ (R/'docs/OVERNIGHT-RESUME.md').write_text('# Overnight continuation\n\n```json\n'+json.dumps(v,ensure_ascii=False,indent=2)+'\n```\n\n'+text,encoding='utf-8')
+ if a.commit:
+  subprocess.run(['git','add','--',*names,doc],cwd=R,check=True);excluded=stage_evidence(E);subprocess.run(['git','diff','--cached','--check'],cwd=R,check=True)
+  for n in E.rglob('*'):
+   if n.is_file() and n.relative_to(E).as_posix() not in excluded:assert hashlib.sha256(subprocess.check_output(['git','show',':'+n.relative_to(R).as_posix()],cwd=R)).hexdigest()==sha(n)
+  subprocess.run(['git','commit','-q','-m','test: certify F27 technical pilot pending actual final human review'],cwd=R,check=True)
+  assert not subprocess.check_output(['git','status','--porcelain=v1'],cwd=R,text=True).strip()
+ print(json.dumps({'technical_status':'PASS','F27':'PENDING_HUMAN_FINAL_REVIEW','report':doc,'project':str(P),'evidence':str(E)}))
+if __name__=='__main__':main()

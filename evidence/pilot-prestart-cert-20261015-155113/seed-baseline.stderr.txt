@@ -1,0 +1,806 @@
+test_cli_fail_closed (__main__.Acceptance.test_cli_fail_closed) ... FAIL
+test_counts_sum_max (__main__.Acceptance.test_counts_sum_max) ... ERROR
+test_docs (__main__.Acceptance.test_docs) ... FAIL
+test_empty (__main__.Acceptance.test_empty) ... ERROR
+test_half_up_bug (__main__.Acceptance.test_half_up_bug) ... FAIL
+test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) ... 
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=None, fn=<function normalize at 0x00000188C0365220>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=None, fn=<function summarize at 0x00000188C03652D0>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad={}, fn=<function normalize at 0x00000188C0365220>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad={}, fn=<function summarize at 0x00000188C03652D0>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad='[]', fn=<function normalize at 0x00000188C0365220>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad='[]', fn=<function summarize at 0x00000188C03652D0>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=(), fn=<function normalize at 0x00000188C0365220>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=(), fn=<function summarize at 0x00000188C03652D0>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[None], fn=<function normalize at 0x00000188C0365220>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[None], fn=<function summarize at 0x00000188C03652D0>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[{}], fn=<function normalize at 0x00000188C0365220>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[{}], fn=<function summarize at 0x00000188C03652D0>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[[]], fn=<function normalize at 0x00000188C0365220>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[[]], fn=<function summarize at 0x00000188C03652D0>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[{'id': 'a', 'status': 'PASS', 'seconds': '1.005', 'extra': 1}], fn=<function normalize at 0x00000188C0365220>) ... ERROR
+  test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[{'id': 'a', 'status': 'PASS', 'seconds': '1.005', 'extra': 1}], fn=<function summarize at 0x00000188C03652D0>) ... ERROR
+test_invalid_ids (__main__.Acceptance.test_invalid_ids) ... 
+  test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id='') ... ERROR
+  test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id='  ') ... ERROR
+  test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id=1) ... ERROR
+  test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id=True) ... ERROR
+  test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id=None) ... ERROR
+  test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id=[]) ... ERROR
+  test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id={}) ... ERROR
+  test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id='a\nb') ... ERROR
+  test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id='a\rb') ... ERROR
+  test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id='a\x00b') ... ERROR
+test_invalid_ids (__main__.Acceptance.test_invalid_ids) ... ERROR
+test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) ... 
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=-1) ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='-.01') ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='1000000000000.01') ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='1e100') ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='NaN') ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='Infinity') ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='-Infinity') ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=nan) ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=inf) ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=None) ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=True) ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds={}) ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=[]) ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=()) ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=b'1') ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=Decimal('1')) ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='bad') ... ERROR
+  test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='') ... ERROR
+test_invalid_status (__main__.Acceptance.test_invalid_status) ... 
+  test_invalid_status (__main__.Acceptance.test_invalid_status) (status='pass') ... ERROR
+  test_invalid_status (__main__.Acceptance.test_invalid_status) (status='SUCCESS') ... ERROR
+  test_invalid_status (__main__.Acceptance.test_invalid_status) (status='') ... ERROR
+  test_invalid_status (__main__.Acceptance.test_invalid_status) (status=None) ... ERROR
+  test_invalid_status (__main__.Acceptance.test_invalid_status) (status=True) ... ERROR
+  test_invalid_status (__main__.Acceptance.test_invalid_status) (status=1) ... ERROR
+  test_invalid_status (__main__.Acceptance.test_invalid_status) (status=[]) ... ERROR
+  test_invalid_status (__main__.Acceptance.test_invalid_status) (status={}) ... ERROR
+test_json_cli (__main__.Acceptance.test_json_cli) ... ERROR
+test_many_exact_decimals (__main__.Acceptance.test_many_exact_decimals) ... ERROR
+test_markdown_cli (__main__.Acceptance.test_markdown_cli) ... ERROR
+test_markdown_complete_counts_totals_sorted (__main__.Acceptance.test_markdown_complete_counts_totals_sorted) ... ERROR
+test_markdown_empty_report (__main__.Acceptance.test_markdown_empty_report) ... ERROR
+test_markdown_unicode_escape (__main__.Acceptance.test_markdown_unicode_escape) ... ERROR
+test_seconds_boundaries (__main__.Acceptance.test_seconds_boundaries) ... FAIL
+test_unicode_sort_copy (__main__.Acceptance.test_unicode_sort_copy) ... ERROR
+
+======================================================================
+ERROR: test_counts_sum_max (__main__.Acceptance.test_counts_sum_max)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 13, in test_counts_sum_max
+    s=app.summarize(x);self.assertEqual(s['counts'],{'PASS':1,'FAIL':1,'BLOCKED':1,'TIMEOUT':1});self.assertEqual(s['total_seconds'],'3.80');self.assertEqual(s['max_seconds'],'2.68');self.assertEqual(s['records'],app.normalize(x));self.assertEqual(set(s),{'records','counts','total_seconds','max_seconds'})
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_empty (__main__.Acceptance.test_empty)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 14, in test_empty
+    def test_empty(self):self.assertEqual(app.summarize([]),{'records':[],'counts':{'PASS':0,'FAIL':0,'BLOCKED':0,'TIMEOUT':0},'total_seconds':'0.00','max_seconds':'0.00'})
+                                          ~~~~~~~~~~~~~^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=None, fn=<function normalize at 0x00000188C0365220>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=None, fn=<function summarize at 0x00000188C03652D0>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad={}, fn=<function normalize at 0x00000188C0365220>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad={}, fn=<function summarize at 0x00000188C03652D0>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad='[]', fn=<function normalize at 0x00000188C0365220>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad='[]', fn=<function summarize at 0x00000188C03652D0>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=(), fn=<function normalize at 0x00000188C0365220>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=(), fn=<function summarize at 0x00000188C03652D0>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[None], fn=<function normalize at 0x00000188C0365220>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[None], fn=<function summarize at 0x00000188C03652D0>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[{}], fn=<function normalize at 0x00000188C0365220>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[{}], fn=<function summarize at 0x00000188C03652D0>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[[]], fn=<function normalize at 0x00000188C0365220>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[[]], fn=<function summarize at 0x00000188C03652D0>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[{'id': 'a', 'status': 'PASS', 'seconds': '1.005', 'extra': 1}], fn=<function normalize at 0x00000188C0365220>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_container_and_shape (__main__.Acceptance.test_invalid_container_and_shape) (bad=[{'id': 'a', 'status': 'PASS', 'seconds': '1.005', 'extra': 1}], fn=<function summarize at 0x00000188C03652D0>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 22, in test_invalid_container_and_shape
+    with self.assertRaises(ValueError):fn(bad)
+                                       ~~^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 26, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row(id)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id='  ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 26, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row(id)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 26, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row(id)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 26, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row(id)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 26, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row(id)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 26, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row(id)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 26, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row(id)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id='a\nb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 26, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row(id)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id='a\rb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 26, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row(id)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids) (id='a\x00b')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 26, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row(id)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_ids (__main__.Acceptance.test_invalid_ids)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 27, in test_invalid_ids
+    with self.assertRaises(ValueError):app.normalize([self.row('a'),self.row(' a ')])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=-1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='-.01')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='1000000000000.01')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='1e100')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='NaN')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='Infinity')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='-Infinity')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=nan)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=inf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=())
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=b'1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds=Decimal('1'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='bad')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_seconds (__main__.Acceptance.test_invalid_seconds) (seconds='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 35, in test_invalid_seconds
+    with self.assertRaises(ValueError):app.normalize([self.row(seconds=seconds)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_status (__main__.Acceptance.test_invalid_status) (status='pass')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 31, in test_invalid_status
+    with self.assertRaises(ValueError):app.normalize([self.row(status=status)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_status (__main__.Acceptance.test_invalid_status) (status='SUCCESS')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 31, in test_invalid_status
+    with self.assertRaises(ValueError):app.normalize([self.row(status=status)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_status (__main__.Acceptance.test_invalid_status) (status='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 31, in test_invalid_status
+    with self.assertRaises(ValueError):app.normalize([self.row(status=status)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_status (__main__.Acceptance.test_invalid_status) (status=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 31, in test_invalid_status
+    with self.assertRaises(ValueError):app.normalize([self.row(status=status)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_status (__main__.Acceptance.test_invalid_status) (status=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 31, in test_invalid_status
+    with self.assertRaises(ValueError):app.normalize([self.row(status=status)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_status (__main__.Acceptance.test_invalid_status) (status=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 31, in test_invalid_status
+    with self.assertRaises(ValueError):app.normalize([self.row(status=status)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_status (__main__.Acceptance.test_invalid_status) (status=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 31, in test_invalid_status
+    with self.assertRaises(ValueError):app.normalize([self.row(status=status)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_invalid_status (__main__.Acceptance.test_invalid_status) (status={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 31, in test_invalid_status
+    with self.assertRaises(ValueError):app.normalize([self.row(status=status)])
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+ERROR: test_json_cli (__main__.Acceptance.test_json_cli)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 51, in test_json_cli
+    x=[self.row('ñ')];p=subprocess.run([sys.executable,'module.py'],input=json.dumps(x),text=True,capture_output=True);self.assertEqual(p.returncode,0,p.stderr);self.assertEqual(json.loads(p.stdout),app.summarize(x));self.assertIn('ñ',p.stdout)
+                                                                                                                                                                                  ~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python314\Lib\json\__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Python314\Lib\json\decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\json\decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: test_many_exact_decimals (__main__.Acceptance.test_many_exact_decimals)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 38, in test_many_exact_decimals
+    x=[self.row(str(i),seconds='0.10') for i in range(100)];self.assertEqual(app.summarize(x)['total_seconds'],'10.00')
+                                                                             ~~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_markdown_cli (__main__.Acceptance.test_markdown_cli)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 53, in test_markdown_cli
+    x=[self.row('ñ')];p=subprocess.run([sys.executable,'module.py','--markdown'],input=json.dumps(x),text=True,capture_output=True);self.assertEqual(p.returncode,0,p.stderr);self.assertEqual(p.stdout.strip(),app.markdown(app.summarize(x)).strip())
+                                                                                                                                                                                                                             ~~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_markdown_complete_counts_totals_sorted (__main__.Acceptance.test_markdown_complete_counts_totals_sorted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 42, in test_markdown_complete_counts_totals_sorted
+    summary=app.summarize([self.row('z','FAIL','2.675'),self.row('a','PASS','1.005')]);before=copy.deepcopy(summary);text=app.markdown(summary)
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_markdown_empty_report (__main__.Acceptance.test_markdown_empty_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 47, in test_markdown_empty_report
+    text=app.markdown(app.summarize([]))
+                      ~~~~~~~~~~~~~^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_markdown_unicode_escape (__main__.Acceptance.test_markdown_unicode_escape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 40, in test_markdown_unicode_escape
+    s=app.markdown(app.summarize([self.row('ñ|a')]));self.assertIsInstance(s,str);self.assertIn('# ',s);self.assertIn('ñ\\|a',s);self.assertIn('1.01',s)
+                   ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 9, in summarize
+    raise NotImplementedError('missing report aggregation')
+NotImplementedError: missing report aggregation
+
+======================================================================
+ERROR: test_unicode_sort_copy (__main__.Acceptance.test_unicode_sort_copy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 10, in test_unicode_sort_copy
+    self.assertEqual(app.normalize(x),[self.row('a',seconds='0.13'),self.row('ñ',seconds='2.00')]);self.assertEqual(x,before)
+                     ~~~~~~~~~~~~~^^^
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\module.py", line 6, in normalize
+    raise NotImplementedError('missing validation and normalization')
+NotImplementedError: missing validation and normalization
+
+======================================================================
+FAIL: test_cli_fail_closed (__main__.Acceptance.test_cli_fail_closed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 56, in test_cli_fail_closed
+    p=subprocess.run([sys.executable,'module.py',*args],input=text,text=True,capture_output=True);self.assertEqual(p.returncode,2);self.assertEqual(p.stdout,'');self.assertNotIn('Traceback',p.stderr);self.assertTrue(p.stderr.strip())
+                                                                                                  ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2
+
+======================================================================
+FAIL: test_docs (__main__.Acceptance.test_docs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 58, in test_docs
+    t=Path('README.md').read_text(encoding='utf-8');self.assertGreater(len(t),500)
+                                                    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: 52 not greater than 500
+
+======================================================================
+FAIL: test_half_up_bug (__main__.Acceptance.test_half_up_bug)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 7, in test_half_up_bug
+    def test_half_up_bug(self):self.assertEqual(app.round_seconds('1.005'),'1.01');self.assertEqual(app.normalize([self.row()])[0]['seconds'],'1.01')
+                               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '1.00' != '1.01'
+- 1.00
+?    ^
++ 1.01
+?    ^
+
+
+======================================================================
+FAIL: test_seconds_boundaries (__main__.Acceptance.test_seconds_boundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\logs\overnight\pilot-seed-prestart-20261015-155114\test_module.py", line 16, in test_seconds_boundaries
+    for value in [0,-0.0,'-0.00','0.00001']:self.assertEqual(app.round_seconds(value),'0.00')
+                                            ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '-0.00' != '0.00'
+- -0.00
+? -
++ 0.00
+
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.100s
+
+FAILED (failures=4, errors=62)

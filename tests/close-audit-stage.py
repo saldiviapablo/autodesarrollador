@@ -1,0 +1,63 @@
+"""Independently close a completed F26 audit; never execute its tests or infer."""
+from pathlib import Path
+import argparse,datetime,hashlib,json,shutil,subprocess,sys
+import psutil
+R=Path(__file__).resolve().parents[2]
+if not (R/'AGENTS.md').exists():R=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(R/'tests'))
+from endurance_controller import READ,write,sha,ps,q
+from audit_secret_scan import scan_evidence,prepare_evidence_export,stage_evidence
+def main():
+ ap=argparse.ArgumentParser();ap.add_argument('--evidence',required=True);ap.add_argument('--commit',action='store_true');a=ap.parse_args()
+ E=Path(a.evidence).resolve(strict=True);assert E.is_relative_to((R/'evidence').resolve()) and E.name.startswith('phase-26-audit-')
+ s=READ(E/'SUMMARY.json');assert s['status']=='PASS' and not s['failure']
+ assert len(s['tests'])>=40 and all(v['status']=='PASS' for v in s['tests'].values()),'COMPLETE_REGRESSION_REQUIRED'
+ checks=READ(E/'AUDIT-CHECKS.json');assert checks and all(v is True for v in checks.values())
+ sources=READ(E/'SOURCE-MANIFEST.json');history=READ(E/'HISTORICAL-MANIFEST.json')
+ assert all(sha(R/n)==h for n,h in sources.items()),'AUDIT_SOURCES_CHANGED'
+ assert all(sha(R/n)==h for n,h in history.items()),'AUDIT_HISTORY_CHANGED'
+ for name,item in s['tests'].items():
+  receipt=READ(E/(name+'.process.json'));assert receipt==item['process'] and receipt['status']=='PASS' and receipt['exit_code']==0 and receipt['owned_job_closed'] and receipt['owned_process_exited'] and receipt['stream_cleanup']
+  ident=receipt['owned_identity']
+  try:
+   p=psutil.Process(ident['pid']);assert abs(p.create_time()-(ident['start_ticks']/1e7-62135596800))>.01,'AUDIT_CHILD_STILL_ALIVE'
+  except psutil.NoSuchProcess:pass
+  assert (E/(name+'.stdout.txt')).is_file() and (E/(name+'.stderr.txt')).is_file()
+ for p in E.rglob('ADAPTER.json'):
+  ad=READ(p);assert ad['assertions_unchanged'] is True and not ad['dry_run'] and sha(ad['source'])==ad['source_sha256']
+ protected=READ(R/'evidence/phase-24-attempt-5-20261014/protected-final.json')['hashes'];assert all(sha(n)==h for n,h in protected.items())
+ live=ps('. '+q(R/'runner/core.ps1')+';. '+q(R/'runner/cleanup.ps1')+';@{inference=(Test-RunnerInferenceReleased);ports=@(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue|Where-Object {$_.LocalPort -in @(8080,9119)}|Select-Object LocalPort,OwningProcess)}');assert live['inference']=='FREE' and not live['ports']
+ shutil.copyfile(__file__,E/'CLOSURE-SCRIPT.py.txt')
+ stamp=datetime.datetime.now(datetime.timezone.utc).isoformat();write(E/'INDEPENDENT-CLOSURE.json',{'status':'PASS','at':stamp,'source_files':len(sources),'historical_files':len(history),'regression_suites':len(s['tests']),'audit_checks':len(checks),'protected_components':len(protected),'closure_script_sha256':sha(E/'CLOSURE-SCRIPT.py.txt'),'cleanup':live,'no_ledger_or_native_mutation':True})
+ # Check secrets before staging; never sanitize or rewrite raw evidence.
+ prepare_evidence_export(E);scan=scan_evidence(E);write(E/'SECRET-SCAN.json',scan)
+ assert scan['status']=='PASS','SECRET_SCAN_DENIED'
+ B=R/'backups'/('close-'+E.name);B.mkdir(exist_ok=False)
+ names=['00-README.md','07-ROADMAP.md','MANIFEST.md','docs/IMPLEMENTATION-STATUS.md','config/INSTALLATION-STATE.json','docs/OVERNIGHT-RESUME.md']
+ for n in names:
+  dest=B/n;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(R/n,dest)
+ doc='docs/F26-REPORT-'+E.name+'.md'
+ summary=f"F26 PASS: {len(s['tests'])} regression suites, {len(checks)} audit checks, {len(sources)} source hashes and {len(history)} historical evidence files verified. Actual F24/2h/4h evidence binds native roles, recovery, bridge and cleanup."
+ (R/doc).write_text('# F26 — auditoría integral\n\n'+summary+'\n\nEvidence: '+E.relative_to(R).as_posix()+'/\n\n```json\n'+json.dumps(checks,ensure_ascii=False,indent=2)+'\n```\n\nOld regression test outputs were relocated to fresh evidence without changing assertions; original SHA and instrumented source persist in each ADAPTER.json. No historical suites/evidence were overwritten. Owned timeout/parent-loss wrappers preserve raw streams and close their own child trees. No model inference, ChatGPT send, dependency update or push was requested by this audit. F27 and F28 remain pending; F26 does not certify them.\n',encoding='utf-8')
+ import re
+ for n in names[:4]:
+  p=R/n;t=p.read_text(encoding='utf-8-sig')
+  if n=='00-README.md':t=re.sub(r'^Macrofase 8:  Validación Final.*$', 'Macrofase 8:  Validación Final (Fases23 a28) — IN_PROGRESS; F23/F24/F25/4H/F26 PASS; F27/F28 pendientes',t,count=1,flags=re.M)
+  if n=='MANIFEST.md':t=re.sub(r'^- \*\*Macrofase 8 \(Validación Final.*$', '- **Macrofase 8 (Validación Final - Fases23 a28):** **IN_PROGRESS**; F23/F24/F25/4H/F26 PASS; F27/F28 pendientes',t,count=1,flags=re.M)
+  if n=='07-ROADMAP.md':t=re.sub(r'^\| \*\*Macrofase 8\*\*.*$', '| **Macrofase 8** | Validación Final | F23/F24/F25/4H/F26 PASS; F27/F28 pendientes | **IN_PROGRESS** |',t,count=1,flags=re.M)
+  if n=='docs/IMPLEMENTATION-STATUS.md':t=re.sub(r'^\| \*\*Fase 26\*\*.*$',f'| **Fase 26** | Auditoría integral | **PASS** | {doc}; {E.relative_to(R).as_posix()}/ |',t,flags=re.M)
+  p.write_text(t.rstrip()+'\n\n## Estado vigente — F26 — '+stamp+'\n\n'+summary+' '+doc+'\n',encoding='utf-8')
+ p=R/'config/INSTALLATION-STATE.json';v=READ(p);v['validation_8'].update(test='F26_CURRENT_SYSTEM_AUDIT',current_security_revalidation='PASS_F26_FULL_AUDIT',f26='PASS',f26_evidence=E.relative_to(R).as_posix(),f26_report=doc,regression_gate_final='PASS_AT_F26; final audit after F28 still required',ready_for_real_pilot=True);v['phases_8']['26']='PASS';v['ready_for_real_pilot']=True;v['ready_for_8']=True;v['macrophases']['8']='IN_PROGRESS';v['updated_at']=stamp;write(p,v)
+ p=R/'runtime/overnight/STATE.json';state=READ(p);state.update(last_completed='F26 PASS',active_phase='F27_PREPARATION',active_run=None,active_task=None,current_native_project=None,last_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=R,text=True).strip(),next_action='Certify/promote prepared local disposable pilot helpers; clean local commit then real F27. Obtain actual final human review only after technical completion; no F28 before it.',updated_at=stamp);write(p,state);write(R/'runtime/overnight/checkpoints'/('closed-'+E.name+'.json'),state)
+ (R/'docs/OVERNIGHT-RESUME.md').write_text('# Overnight continuation\n\n```json\n'+json.dumps(state,ensure_ascii=False,indent=2)+'\n```\n\n'+summary+'\n\nF27 helpers prepared under logs/overnight (pilot_workload.py, pilot-controller.py, night-pilot-workload.py, night-pilot-controller.py, test-pilot-controllers.py). Technical pilot is not human review. Roadmap07 section30 requires actual final human review; preserve all historical FAILs. No push.\n',encoding='utf-8')
+ with (R/'runtime/overnight/EVENTS.jsonl').open('a',encoding='utf-8') as h:h.write(json.dumps({'event':'F26_AUDIT_CLOSED','at':stamp,'status':'PASS','evidence':str(E)})+'\n')
+ if a.commit:
+  subprocess.run(['git','add','--',*names,doc],cwd=R,check=True);excluded=stage_evidence(E)
+  subprocess.run(['git','diff','--cached','--check'],cwd=R,check=True)
+  # Preserve every captured proof byte through Git's attribute/filter pipeline.
+  for p in E.rglob('*'):
+   if p.is_file() and p.relative_to(E).as_posix() not in excluded:assert hashlib.sha256(subprocess.check_output(['git','show',':'+p.relative_to(R).as_posix()],cwd=R)).hexdigest()==sha(p)
+  subprocess.run(['git','commit','-q','-m','test: certify F26 system audit and global regression'],cwd=R,check=True)
+  assert not subprocess.check_output(['git','status','--porcelain=v1'],cwd=R,text=True).strip(),'UNCLOSED_WORKTREE'
+ print(json.dumps({'status':'PASS','phase':'F26','report':doc,'evidence':str(E),'commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=R,text=True).strip()}))
+if __name__=='__main__':main()
