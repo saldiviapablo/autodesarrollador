@@ -8,10 +8,11 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn, spawnSync } = require('child_process');
-const { ConsultationLedger, acquireBrowserLease, hash, normalize, reconcileObservation } = require('./chatgpt-ledger');
+const { ConsultationLedger, acquireBrowserLease, hash, normalize, reconcileObservation,hasIntent,interruptedState } = require('./chatgpt-ledger');
 const { Budget, Trace, budgets, deliver } = require('./chatgpt-delivery');
 const {inspectComposer,selectActuator,sendPhysicalEnter}=require('./chatgpt-send-actuator');
 const {findNewChatControl,requestFreshChat}=require('./chatgpt-fresh-chat');
+const {recoverOwnedPreSendDraft,LEGACY_ID,requireEmptyComposer}=require('./chatgpt-pre-send');
 let activeLedger;
 let activeBudget, activeTrace, activeSocket, deadlineTimer;
 async function safeExit(code) {
@@ -24,7 +25,7 @@ process.once('exit', () => {
   if (!activeLedger) return;
   try {
     const record = activeLedger.read(consultationId);
-    if (record && !record.message_confirmed && !['COMPLETED', 'COMPLETED_RECONCILED'].includes(record.delivery_state)) activeLedger.update(consultationId, { delivery_state: 'UNKNOWN_DELIVERY' });
+    if(record&&record.schema_version==='2.0'&&!record.message_confirmed){const state=interruptedState(record);if(state!==record.delivery_state)activeLedger.update(consultationId,{delivery_state:state});}
     activeTrace?.emit('CLEANUP',{pid:process.pid});
   } catch {}
 });
@@ -132,6 +133,32 @@ async function readActuator(ws,expectedText) {
   return result.result?.value||{};
 }
 
+async function inspectOwned(ws){
+  const profile=verifyDedicatedProfile();
+  return {...await readConversation(ws),...await readActuator(ws),profile_match:profile.profile_match===true};
+}
+async function clearOwnedComposer(ws,observation,record){
+  verifyDedicatedProfile();
+  const result=await sendCdp(ws,'Runtime.evaluate',{expression:`(() => {
+    const expected=${JSON.stringify(normalize(observation.composer))};
+    if(location.href!==${JSON.stringify(observation.url)})throw Error('ROLLBACK_CONVERSATION_CHANGED');
+    const norm=s=>s.trim().replace(/\\r\\n/g,'\\n').replace(/\\n\\n+/g,'\\n');
+    const role=name=>{let a=Array.from(document.querySelectorAll('[data-message-author-role="'+name+'"]'));if(a.length)return a;a=Array.from(document.querySelectorAll('article[data-turn="'+name+'"]'));if(a.length)return a;const s=name==='user'?'.bg-user-message':'[class*="DilResponseRoot"]';return Array.from(document.querySelectorAll(s)).filter(e=>!e.parentElement?.closest(s));};
+    if(role('user').length!==${record.user_turns_before}||role('assistant').length!==${record.assistant_turns_before}||document.querySelector('button[data-testid*="stop"],button[aria-label*="Stop"],button[aria-label*="Detener"],.result-streaming'))throw Error('ROLLBACK_BASELINE_CHANGED');
+    const editors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea')).filter(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&s.display!=='none'&&!e.disabled&&!e.readOnly&&!e.parentElement?.closest('[contenteditable="true"]');});
+    if(editors.length!==1)throw Error('ROLLBACK_COMPOSER_NOT_UNIQUE');const prose=editors[0],ps=Array.from(prose.querySelectorAll('p'));const text=norm(ps.length?ps.map(p=>p.innerText).join('\\n'):(prose.value??prose.innerText??''));
+    if(text!==expected)throw Error('ROLLBACK_COMPOSER_CHANGED');
+    prose.focus();if(document.activeElement!==prose&&!prose.contains(document.activeElement))throw Error('ROLLBACK_FOCUS_FAILED');
+    if(prose.tagName==='TEXTAREA'){Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set.call(prose,'');}
+    else{const range=document.createRange();range.selectNodeContents(prose);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);if(!document.execCommand('delete',false,null))throw Error('ROLLBACK_DELETE_FAILED');}
+    prose.dispatchEvent(new Event('input',{bubbles:true}));return true;
+  })()`,returnByValue:true});
+  if(result.result?.value!==true)throw Error('ROLLBACK_CLEAR_NOT_CONFIRMED');
+}
+async function recoverDraft(ws,ledger,options={}){
+ return recoverOwnedPreSendDraft({ledger,inspect:()=>inspectOwned(ws),clearComposer:(o,r)=>clearOwnedComposer(ws,o,r),...options});
+}
+
 async function openFreshChat(ws){
   return requestFreshChat({
     inspect:async()=>({...await readConversation(ws),...await readActuator(ws)}),
@@ -146,7 +173,7 @@ async function openFreshChat(ws){
       const editors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea')).filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&!e.parentElement?.closest('[contenteditable="true"]');});
       if(editors.length!==1||(editors[0].value??editors[0].innerText??'').trim())throw Error('FRESH_CHAT_FOCUS_NONEMPTY_DENIED');
       editors[0].focus();return true;
-    })()`,returnByValue:true});},trace:activeTrace
+    })()`,returnByValue:true});},recoverOwnedDraft:()=>recoverDraft(ws,new ConsultationLedger()),trace:activeTrace
   });
 }
 
@@ -376,8 +403,10 @@ async function main() {
     console.log(JSON.stringify(ledger.result(consultationId), null, 2));
     await safeExit(0);
   }
-  const confirmedRetry = action === 'consult' && ledger.result(consultationId).status === 'RETRY_SAFE';
-  if (action === 'consult' && ledger.read(consultationId) && !confirmedRetry) {
+  const retryResult=ledger.result(consultationId);
+  const confirmedRetry = action === 'consult' && retryResult.status === 'RETRY_SAFE'&&retryResult.retry_kind!=='PRE_SEND';
+  const preSendRetry=action==='consult'&&retryResult.status==='RETRY_SAFE'&&retryResult.retry_kind==='PRE_SEND';
+  if (action === 'consult' && ledger.read(consultationId) && !confirmedRetry&&!preSendRetry) {
     console.log(JSON.stringify(ledger.result(consultationId), null, 2));
     await safeExit(0);
   }
@@ -392,9 +421,9 @@ async function main() {
     deadlineTimer=setTimeout(async()=>{
       activeTrace.emit('TIMEOUT',{phase:'internal'});
       const confirmed=!!ledger.read(consultationId)?.message_confirmed;
-      if(!confirmed&&ledger.read(consultationId))ledger.update(consultationId,{delivery_state:'UNKNOWN_DELIVERY'});
+      const record=ledger.read(consultationId);if(!confirmed&&record)ledger.update(consultationId,{delivery_state:interruptedState(record)});
       try{activeSocket?.close();}catch{}
-      console.log(JSON.stringify({status:confirmed?'SENT_CONFIRMED':'UNKNOWN_DELIVERY',response_state:'PENDING',no_resend:true,consultation_id:consultationId}));
+      console.log(JSON.stringify({status:confirmed?'SENT_CONFIRMED':ledger.result(consultationId).status,response_state:'PENDING',no_resend:true,consultation_id:consultationId}));
       await safeExit(1);
     },activeBudget.spec.internal_ms);
   }
@@ -411,7 +440,7 @@ async function main() {
       await safeExit(1);
     }
   }
-  if(['consult','reconcile-human','inspect-prepared','request-fresh-chat'].includes(action)) verifyDedicatedProfile();
+  if(['consult','reconcile-human','inspect-prepared','request-fresh-chat','recover-owned-draft','unicode-roundtrip'].includes(action)) verifyDedicatedProfile();
 
   // Enforzar single tab y domain lock
   const tabCheck = await enforceSingleTabAndDomainLock();
@@ -493,6 +522,12 @@ async function main() {
     });
 
     const pageState = evalResult.result ? evalResult.result.value : {};
+    if(action==='recover-owned-draft'){
+      const legacy=getArg('--recovery-mode')==='LEGACY_PRE_SEND_RECOVERY';
+      if(legacy&&consultationId!==LEGACY_ID)throw Error('LEGACY_RECOVERY_ID_DENIED');
+      const receipt=await recoverDraft(ws,ledger,{mode:legacy?'LEGACY_PRE_SEND_RECOVERY':'OWNED_PRE_SEND_RECOVERY',id:consultationId});
+      console.log(JSON.stringify(receipt,null,2));ws.close();await safeExit(0);return;
+    }
     if(action==='request-fresh-chat'){
       const fresh=await openFreshChat(ws);console.log(JSON.stringify(fresh,null,2));ws.close();await safeExit(0);return;
     }
@@ -530,10 +565,9 @@ async function main() {
 
       const roundtripRes = await sendCdp(ws, 'Runtime.evaluate', {
         expression: `(() => {
-          const prose = document.querySelector('.ProseMirror') ||
-                        document.querySelector('#prompt-textarea') ||
-                        document.querySelector('div[contenteditable="true"]');
-          if (!prose) return { success: false, reason: 'Composer not found' };
+          const editors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea')).filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&!e.parentElement?.closest('[contenteditable="true"]');});
+          if(editors.length!==1)throw Error('UNICODE_COMPOSER_NOT_UNIQUE');const prose=editors[0];
+          (${requireEmptyComposer.toString()})(prose);
 
           prose.focus();
           document.execCommand('selectAll', false, null);
@@ -551,6 +585,7 @@ async function main() {
           document.execCommand('delete', false, null);
           prose.dispatchEvent(new Event('input', { bubbles: true }));
 
+          if((prose.value??prose.innerText??'').trim())throw Error('UNICODE_ROUNDTRIP_CLEANUP_FAILED');
           return { success: true, domText, rawInnerText };
         })()`,
         returnByValue: true
@@ -632,7 +667,10 @@ async function main() {
       activeBudget.enter('prepare');
       const initialComposer=await readPrepared(ws);
       if(!confirmedRetry && normalize(initialComposer.composer||''))throw Error('PREEXISTING_COMPOSER_NO_SEND');
-      if(!confirmedRetry&&!ledger.reserve(consultationId,preparedPrompt()))throw Error('CONSULTATION_RESERVATION_RACE_NO_SEND');
+      if(preSendRetry){
+        if(ledger.read(consultationId).prompt_sha256!==hash(normalize(preparedPrompt())))throw Error('PRE_SEND_RETRY_PROMPT_CHANGED');
+        ledger.update(consultationId,{delivery_state:'RESERVED',draft_cleared:false});
+      }else if(!confirmedRetry&&!ledger.reserve(consultationId,preparedPrompt()))throw Error('CONSULTATION_RESERVATION_RACE_NO_SEND');
       activeLedger=ledger;
       // Preparar prompt final
       const fullPrompt = preparedPrompt();
@@ -689,31 +727,10 @@ async function main() {
       const textMatches = (normSource === normDom);
 
       if (!textMatches) {
-        // Limpiar composer y abortar envío
-        await sendCdp(ws, 'Runtime.evaluate', {
-          expression: `(() => {
-            const prose = document.querySelector('.ProseMirror') || document.querySelector('#prompt-textarea') || document.querySelector('div[contenteditable="true"]');
-            if (prose) {
-              prose.focus();
-              document.execCommand('selectAll', false, null);
-              document.execCommand('delete', false, null);
-              prose.dispatchEvent(new Event('input', { bubbles: true }));
-            }
-          })()`
-        });
-
-        console.log(JSON.stringify({
-          status: "CHATGPT_ENCODING_MISMATCH",
-          error: "El texto inyectado en el DOM no coincide carácter por carácter con el texto origen.",
-          prompt_sha256: hash(normSource),
-          dom_sha256: hash(normDom),
-          source_text_equals_dom_text: false,
-          consultation_id: consultationId,
-          timestamp: new Date().toISOString()
-        }, null, 2));
-        ws.close();
-        await safeExit(1);
+        throw Error('CHATGPT_ENCODING_MISMATCH_NO_UNCHECKED_CLEAR');
       }
+
+      if(!confirmedRetry){ledger.update(consultationId,{delivery_state:'PREPARED',user_turns_before:countsBefore.user,assistant_turns_before:countsBefore.assistant,conversation_url:countsBefore.url});activeTrace.emit('PREPARED',{prompt_sha256:hash(normDom)});}
 
       // Choose one actuator within the exact composer scope BEFORE intent.
       await sendCdp(ws,'Page.bringToFront');
@@ -772,6 +789,13 @@ async function main() {
       await safeExit(0);
     }
   } catch (err) {
+    let rollback;
+    const record=activeLedger?.read(consultationId);
+    if(record&&!record.message_confirmed&&!hasIntent(record)&&record.delivery_state==='PREPARED'){
+      try{activeBudget.enter('finalize');rollback=await recoverDraft(ws,activeLedger,{id:consultationId});activeTrace.emit('OWNED_DRAFT_ROLLBACK',{confirmed:true});}
+      catch(rollbackError){activeTrace.emit('FAILURE',{reason:'PRE_SEND_ROLLBACK_UNSAFE'});err=Error('PRE_SEND_ROLLBACK_UNSAFE: '+rollbackError.message);}
+    }
+    if(record&&hasIntent(record)&&!record.message_confirmed)activeLedger.update(consultationId,{delivery_state:'UNKNOWN_DELIVERY'});
     if (ws) {
       try { ws.close(); } catch {}
     }
@@ -779,6 +803,8 @@ async function main() {
     console.log(JSON.stringify({
       status: activeLedger?.read(consultationId)?.message_confirmed ? 'SENT_CONFIRMED' : err.message.includes('DOMAIN_BLOCKED') ? "DOMAIN_BLOCKED" : "ERROR",
       no_resend: true,
+      pre_send_state:activeLedger?.read(consultationId)?.delivery_state,
+      owned_draft_rollback:rollback?.OWNED_DRAFT_ROLLBACK,
       message_sent: !!activeLedger?.read(consultationId)?.message_confirmed,
       error: `Fallo durante interacción CDP: ${err.message}`,
       consultation_id: consultationId,

@@ -11,6 +11,7 @@ results={}
 tests.insert(1,('send-actuator',['node','tests/test-chatgpt-send-actuator.js']))
 tests.insert(1,('fresh-chat',['node','tests/test-chatgpt-fresh-chat.js']))
 tests.insert(1,('controlled-utf8',['node','tests/test-controlled-send-utf8.js']))
+tests.insert(1,('transaction',['node','tests/test-chatgpt-transaction.js']))
 tests.insert(1,('frozen-evaluator',[sys.executable,'tests/test-f24-frozen-evaluator.py']))
 tests.insert(2,('budget-cache',['powershell.exe','-NoProfile','-NonInteractive','-File','tests/test-runner-budget-merge.ps1']))
 tests.append(('native-qwen-input',[sys.executable,'tests/test-qwen-research-model-input.py']))

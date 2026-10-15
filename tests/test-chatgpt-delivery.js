@@ -9,6 +9,7 @@ const url='https://chatgpt.com/c/deterministic-sandbox';
 async function scenario(id,kind){
   let t=0,clicks=0;const clock=()=>t,budget=new Budget(4,clock),trace=new Trace(path.join(directory,id+'.trace.jsonl'),id,clock);
   ledger.reserve(id,prompt);ledger.update(id,{user_turns_before:2,assistant_turns_before:2,conversation_url:url});
+  ledger.update(id,{delivery_state:'PREPARED'});
   const probe=async()=>({url,user:kind==='no-turn'?2:3,assistant:kind==='fast'||kind==='slow'&&t>=1500?3:2,lastUserText:prompt,lastAssistantText:'Respuesta ñ',isStreaming:kind==='pending',composer:kind==='no-turn'?prompt:''});
   const result=await deliver({ledger,id,baseline:{user:2,assistant:2},click:async()=>{clicks++;trace.emit('MOUSE_PRESSED_START');trace.emit('MOUSE_PRESSED_END');trace.emit('MOUSE_RELEASED_START');trace.emit('MOUSE_RELEASED_END');},probe,budget,trace,sleep:async ms=>{t+=ms;}});
   return {result,clicks,trace:fs.readFileSync(trace.filename,'utf8')};

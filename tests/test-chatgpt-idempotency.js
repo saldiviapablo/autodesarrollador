@@ -15,7 +15,7 @@ const evidenceDirectory = path.resolve(ROOT, process.env.CHATGPT_TEST_EVIDENCE_D
     const prompt = 'Prueba UTF-8: áéíóú ñ ¿Dónde? — € °';
     assert(ledger.reserve('completed', prompt));
     assert(!ledger.reserve('completed', prompt));
-    assert.equal(ledger.result('completed').status, 'UNKNOWN_DELIVERY');
+    assert.equal(ledger.result('completed').status, 'RESERVED');
     ledger.update('completed', { delivery_state: 'DELIVERY_INTENT', send_attempts: 1, user_turns_before: 2, assistant_turns_before: 2 });
     assert.throws(() => ledger.update('completed', { delivery_state: 'DELIVERY_INTENT', send_attempts: 1 }), /NO_RESEND/);
     assert.throws(() => ledger.update('completed', { delivery_state: 'COMPLETED', user_turns_after: 4, assistant_turns_after: 3, message_confirmed: true }), /TURN_GATED/);
@@ -58,7 +58,7 @@ const evidenceDirectory = path.resolve(ROOT, process.env.CHATGPT_TEST_EVIDENCE_D
     checks.human_single_retry_preserves_history_and_count=true;
     assert(ledger.reserve('corrupt', prompt));
     fs.writeFileSync(ledger.file('corrupt'), '{');
-    assert.equal(ledger.result('corrupt').status, 'UNKNOWN_DELIVERY');
+    assert.equal(ledger.result('corrupt').status, 'LEDGER_CORRUPT');
     assert(!ledger.reserve('corrupt', prompt));
     checks.corrupt_record_fail_closed = true;
     assert.throws(() => ledger.reserve('../escape', prompt));

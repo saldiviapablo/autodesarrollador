@@ -4,7 +4,7 @@ const { hash, normalize } = require('./chatgpt-ledger');
 const now = () => Number(process.hrtime.bigint() / 1000n) / 1000;
 function budgets(responseSeconds) {
   if (!Number.isInteger(responseSeconds) || responseSeconds < 1 || responseSeconds > 300) throw Error('INVALID_RESPONSE_BUDGET');
-  const stages = {readiness:15000, prepare:15000, click:4000, confirmation:12000, response:responseSeconds*1000, finalize:4000};
+  const stages = {readiness:15000, prepare:15000, click:4000, confirmation:12000, response:responseSeconds*1000, finalize:20000};
   const internal_ms = Object.values(stages).reduce((a,b)=>a+b,0);
   return {stages, internal_ms, cleanup_margin_ms:5000, parent_ms:internal_ms+8000, cdp_ms:5000, click_event_ms:2000};
 }
@@ -35,8 +35,9 @@ function sentProof(record, observation, newConversation=false) {
     return identity&&observation.user===record.user_turns_before+1&&hash(normalize(observation.lastUserText||''))===record.prompt_sha256;
   } catch {return false;}
 }
-async function deliver({ledger,id,baseline,click,probe,budget,trace,sleep=ms=>new Promise(r=>setTimeout(r,ms)),newConversation=false,sendMethod='COMPOSER_SCOPED_SUBMIT'}) {
+async function deliverImpl({ledger,id,baseline,click,probe,budget,trace,sleep=ms=>new Promise(r=>setTimeout(r,ms)),newConversation=false,sendMethod='COMPOSER_SCOPED_SUBMIT'}) {
   const record=ledger.read(id);
+  if(record.schema_version==='2.0'&&record.delivery_state!=='PREPARED'&&!(record.delivery_state==='NOT_DELIVERED_CONFIRMED'&&record.human_retry_remaining===1))throw Error('DELIVERY_REQUIRES_PREPARED');
   if(!['COMPOSER_SCOPED_SUBMIT','COMPOSER_ENTER_KEY'].includes(sendMethod))throw Error('INVALID_SEND_METHOD');
   if(record.send_method&&record.send_method!==sendMethod)throw Error('SEND_METHOD_IMMUTABLE');
   ledger.update(id,{send_method:sendMethod});
@@ -71,5 +72,8 @@ async function deliver({ledger,id,baseline,click,probe,budget,trace,sleep=ms=>ne
     await sleep(Math.min(1200,budget.remaining(1200)));
   }
   trace.emit('TIMEOUT',{phase:'response'});return {status:'SENT_CONFIRMED',response_state:'PENDING',no_resend:true};
+}
+async function deliver(args){
+ try{return await deliverImpl(args);}catch(error){const r=args.ledger.read(args.id);if(r&&!r.message_confirmed&&(r.send_attempts>=1||r.history?.some(e=>e.to==='DELIVERY_INTENT')))args.ledger.update(args.id,{delivery_state:'UNKNOWN_DELIVERY'});throw error;}
 }
 module.exports={budgets,Budget,Trace,conversationId,sentProof,deliver};

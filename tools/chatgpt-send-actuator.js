@@ -31,7 +31,7 @@ function inspectComposer(expectedText) {
 }
 function selectActuator(record,observation) {
   const humanRetry=record?.delivery_state==='NOT_DELIVERED_CONFIRMED'&&record.human_retry_remaining===1&&record.send_attempts===1;
-  if(!record||record.message_confirmed||(!humanRetry&&(record.send_attempts!==0||record.delivery_state!=='RESERVED'||record.history?.some(e=>e.to==='DELIVERY_INTENT'))))throw Error('ACTUATOR_PRIOR_INTENT_NO_SEND');
+  if(!record||record.message_confirmed||(!humanRetry&&(record.send_attempts!==0||!['RESERVED','PREPARED'].includes(record.delivery_state)||record.history?.some(e=>e.to==='DELIVERY_INTENT'))))throw Error('ACTUATOR_PRIOR_INTENT_NO_SEND');
   if(conversationId(record.conversation_url)!==conversationId(observation.url))throw Error('ACTUATOR_CONVERSATION_MISMATCH');
   if(!observation.composer_found||observation.composer_matches!==1||!observation.editable||hash(normalize(observation.composer||''))!==record.prompt_sha256)throw Error('ACTUATOR_COMPOSER_HASH_MISMATCH');
   if(observation.isStreaming!==false)throw Error('ACTUATOR_STREAMING_DENIED');

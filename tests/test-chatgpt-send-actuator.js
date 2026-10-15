@@ -30,11 +30,12 @@ const record={delivery_state:'RESERVED',send_attempts:0,prompt_sha256:hash(promp
  assert.throws(()=>selectActuator(record,{...fixture(0),focused:false}),/FOCUS/);checks.H_prior_intent_no_fallback='PASS';
  for(const method of ['COMPOSER_SCOPED_SUBMIT','COMPOSER_ENTER_KEY']){
   const id=method;ledger.reserve(id,prompt);ledger.update(id,{user_turns_before:0,assistant_turns_before:0,conversation_url:url});
+  ledger.update(id,{delivery_state:'PREPARED'});
   const calls=[];let t=0;const dispatch=async(_,name,params)=>{calls.push({name,params});throw Error('ambiguous transport');};
   await assert.rejects(deliver({ledger,id,baseline:{user:0,assistant:0},sendMethod:method,click:()=>method==='COMPOSER_SCOPED_SUBMIT'?sendSinglePhysicalClick(null,one.buttons[0],dispatch):sendPhysicalEnter(null,dispatch),probe:async()=>{throw Error('must not probe after transport rejection');},budget:new Budget(2,()=>t),trace:new Trace(path.join(directory,id+'.trace'),id)}),/ambiguous transport/);
   assert.equal(calls.length,1);assert.equal(ledger.read(id).send_method,method);assert.equal(ledger.read(id).send_attempts,1);assert.equal(ledger.read(id).physical_actions,1);
   assert.throws(()=>ledger.update(id,{send_method:method==='COMPOSER_ENTER_KEY'?'COMPOSER_SCOPED_SUBMIT':'COMPOSER_ENTER_KEY'}),/IMMUTABLE/);
-  await assert.rejects(deliver({ledger,id,baseline:{user:0,assistant:0},sendMethod:method,click:async()=>calls.push('AGAIN'),budget:new Budget(2,()=>t),trace:new Trace(path.join(directory,id+'.trace'),id)}),/ALREADY_ATTEMPTED/);assert.equal(calls.length,1);
+  await assert.rejects(deliver({ledger,id,baseline:{user:0,assistant:0},sendMethod:method,click:async()=>calls.push('AGAIN'),budget:new Budget(2,()=>t),trace:new Trace(path.join(directory,id+'.trace'),id)}),/ALREADY_ATTEMPTED|REQUIRES_PREPARED/);assert.equal(calls.length,1);
   assert(calls.every(c=>c.name===(method==='COMPOSER_ENTER_KEY'?'Input.dispatchKeyEvent':'Input.dispatchMouseEvent')));
  }
  checks.I_click_never_enter='PASS';checks.J_enter_never_click='PASS';
