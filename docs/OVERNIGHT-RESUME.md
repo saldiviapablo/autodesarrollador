@@ -1,18 +1,18 @@
-# F27 accepted — final validation next
+# Project complete — revised roadmap
 
 ```json
 {
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
-  "last_completed": "F27 REAL PILOT PASS with actual human approval of corrected7SHA result",
-  "active_phase": "FINAL_REGRESSION_AND_AUDIT",
+  "last_completed": "PROJECT COMPLETE UNDER REVISED ROADMAP",
+  "active_phase": "COMPLETE",
   "last_cause": "F27_FIXTURE_MISSING_PENDING_OUTPUTS_BEFORE_DIAGNOSTIC",
   "last_fix": "PLACEHOLDERS_ONLY_ACCEPTANCE_AND_RUNTIME_UNCHANGED",
-  "last_commit": "a5ac02cb66d4d9c77719115d15b4b8b71e2fa17f",
-  "next_action": "Execute tests/global-audit.py --final ONCE. Observe persisted audit-active PID/birth; no F28 or repeated E2E. Close only after every gate PASS.",
+  "last_commit": "See Git HEAD for the final closure commit; pre-closure F27 acceptance commit c0172d3",
+  "next_action": "STOP. Never execute waived F28. No push.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T21:47:05.349035+00:00",
+  "updated_at": "2026-10-15T21:55:16.796550+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -97,23 +97,14 @@
     "no_push": true
   },
   "f28_waiver_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\revised-roadmap-f28-waiver-20261015-171813\\USER-F28-WAIVER.json",
-  "status": "FINAL_VALIDATION_IN_PROGRESS",
-  "project_status": "FINAL_VALIDATION_IN_PROGRESS",
+  "status": "COMPLETED",
+  "project_status": "COMPLETE",
   "f27_documentation_revalidation_evidence": "evidence/f27-documentation-revalidation-20261015-180725",
   "f27_current_review_package": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\f27-documentation-revalidation-20261015-180725\\HUMAN-REVIEW-PACKAGE.json",
   "f27_documentation_revalidation_report": "docs/F27-DOCUMENTATION-REVALIDATION-20261015-180725.md",
-  "f27_human_review_receipt": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\f27-human-final-acceptance-20261015-184705\\HUMAN-FINAL-REVIEW.json"
+  "f27_human_review_receipt": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\f27-human-final-acceptance-20261015-184705\\HUMAN-FINAL-REVIEW.json",
+  "final_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\final-global-audit-20261015-184713"
 }
 ```
 
-# F27 — REAL PILOT PASS
-
-El usuario revisó el resultado corregido y lo aceptó explícitamente. La aceptación está ligada a los7 archivos actuales por SHA-256, al run nativo run-20261015-165354 y a la revalidación documental posterior a los cambios solicitados.
-
-E2E original COMPLETED1097.308088s; Worker implementó la herramienta,17 tests/build PASS, Reviewer independiente ACCEPTED, Completion Gate COMPLETED, cleanup/integridad PASS. Dos reinicios normales de Worker dentro del presupuesto original2, sin extensión del reloj. Primer intento FAIL y todas las evidencias originales permanecen preservados.
-
-El usuario solicitó tres correcciones documentales. Sólo README.md cambió. Revalidación187.050s:17 tests originales/build/artefactos byte exactos/Reviewer nuevo ACCEPTED/Completion productivo read-only + gate de revalidación actual COMPLETED/cleanup/integridad PASS. module.py/tests/build/input/artefactos y metadata nativa permanecieron intactos.
-
-Aceptación humana real: evidence\f27-human-final-acceptance-20261015-184705\HUMAN-FINAL-REVIEW.json. Evidencia de revalidación: evidence/f27-documentation-revalidation-20261015-180725/. Informe técnico original: docs/F27-TECHNICAL-REPORT-f27-20261015-165308-d37c78.md. Informe documental: docs/F27-DOCUMENTATION-REVALIDATION-20261015-180725.md.
-
-F27=PASS / REAL PILOT PASS. El proyecto todavía NO se declara COMPLETE: faltan regresión/auditoría/cleanup/integridad finales. F28=WAIVED_BY_USER / NOT_EXECUTED; nunca PASS ni prueba6–8h. No repetir F24/F25/4H/F26 ni enviar ChatGPT; no push.
+STOP. All remaining authorized gates PASS. Original F28 WAIVED_BY_USER / NOT_EXECUTED, not PASS. docs/PROJECT-FINAL-REPORT.md

@@ -1,0 +1,41 @@
+import importlib.util, json, pathlib, subprocess, time, uuid
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+spec = importlib.util.spec_from_file_location('fixtures', ROOT / 'tests/runner-fixtures.py')
+f = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(f)
+checks = {}
+p = f.project('concurrency17', delay=5, global_timeout=30)
+f.approve(p)
+proc = subprocess.Popen(['powershell.exe', '-NoProfile', '-NonInteractive', '-File', str(ROOT / 'runner/run.ps1'), '-ProjectRoot', str(p), '-Action', 'Start'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+deadline = time.monotonic() + 15
+while time.monotonic() < deadline and (not (p / '.autopilot/PROCESSES.json').exists()):
+    time.sleep(0.1)
+other = f.start(p, 30)
+checks['concurrent_start_denied'] = 'RUN_ALREADY_ACTIVE' in other.stdout
+proc.communicate(timeout=60)
+checks['metadata_lock_released'] = not (p / '.autopilot/LOCK.json').exists()
+plan = p / '.autopilot/RUN-PLAN.json'
+original = plan.read_bytes()
+changed = json.loads(original)
+changed['task'] = 'tampered task must be denied'
+plan.write_text(json.dumps(changed))
+denied = f.start(p, 30)
+checks['approval_digest_tamper_denied'] = 'APPROVAL_REQUIRED_OR_CHANGED' in denied.stdout
+plan.write_bytes(original)
+r, data = f.admission(ROOT, 'inspect')
+checks['infra_not_managed_project'] = r.returncode != 0
+project = ROOT / 'sandbox' / ('7b-prepare-' + uuid.uuid4().hex[:8])
+project.mkdir()
+prepared = f.powershell('runner/run.ps1', '-ProjectRoot', project, '-Action', 'Prepare', '-Objective', 'Explicit prepare generates run id', '-AcceptanceCriteria', 'addition verified', '-PlanPath', plan)
+checks['run_id_generated_and_draft'] = prepared.returncode == 0 and 'approval_digest' in prepared.stdout
+r, info = f.admission(project)
+checks['draft_not_authorized'] = not info['contract']['authorized']
+denied = f.start(project, 30)
+checks['draft_cannot_start'] = 'APPROVAL_REQUIRED' in denied.stdout
+f.approve(project)
+r, approved = f.admission(project, 'validate')
+checks['explicit_single_approval'] = r.returncode == 0 and approved['contract']['authorized']
+result = {'status': 'PASS' if all(checks.values()) else 'FAIL', 'checks': checks, 'projects': [str(p), str(project)]}
+__import__('pathlib').Path('C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\final-global-audit-20261015-184713\\relocated-test-phase17-admission.py\\admission.json').write_text(json.dumps(result, indent=2) + '\n')
+print(json.dumps(result))
+assert all(checks.values())

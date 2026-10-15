@@ -1,0 +1,20 @@
+import importlib.util, json, pathlib, subprocess, time
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+spec = importlib.util.spec_from_file_location('fixtures', ROOT / 'tests/runner-fixtures.py')
+f = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(f)
+p = f.project('no-progress18', delay=10)
+f.approve(p)
+state_path = p / '.autopilot/STATE.json'
+state = json.loads(state_path.read_text(encoding='utf-8-sig'))
+state['progress']['no_progress_cycles'] = 3
+state_path.write_text(json.dumps(state))
+r = f.start(p, 40)
+result = json.loads((p / '.autopilot/reports/runner-result.json').read_text(encoding='utf-8-sig'))
+assert result['status'] == 'STALLED' and result['reason'] == 'NO_PROGRESS_STALLED', result
+command = '$m=New-Object Threading.Mutex($false,"Local\\DesarrolladorAutonomo_RunMutex");$a=$false;try{try{$a=$m.WaitOne(0)}catch [Threading.AbandonedMutexException]{$a=$true};if(-not $a){exit 2};"MUTEX_FREE"}finally{if($a){$m.ReleaseMutex()};$m.Dispose()}'
+check = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-Command', command], capture_output=True, text=True, timeout=15)
+assert check.returncode == 0 and 'MUTEX_FREE' in check.stdout, check.stderr
+report = {'status': 'PASS', 'no_progress_terminal': 'STALLED', 'run_mutex_free_after_failure': True, 'source_of_truth': 'STATE from disk', 'project': str(p)}
+__import__('pathlib').Path('C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\final-global-audit-20261015-184713\\relocated-test-phase18-progress-lock.py\\progress-lock.json').write_text(json.dumps(report, indent=2) + '\n')
+print(json.dumps(report))

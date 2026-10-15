@@ -1,0 +1,20 @@
+==============================================================================
+INICIANDO VERIFICACION DE ANTI-LOOP Y TIMEOUTS (FASE 16)
+EvidenceDir: C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\evidence\final-global-audit-20261015-184713\anti-loop
+==============================================================================
+[1/4] Test 1: Normalización Determinista de Firmas de Error...
+  [PASS] Normalización de Errores (Misma Firma para Errores Idénticos con Metadatos Variables) (Sig1=dbff8067fb57f165, Sig2=dbff8067fb57f165, DiffSig=1b046157e017d674)
+[2/4] Test 2: Detección de Bucles Repetidos y Avance Real...
+  [PASS] Detección de Repetición y Reinicio con Avance Real (C1=RETRY, C2=NEW_APPROACH, C3=WEB_RESEARCH, C4=CONTINUE)
+[3/4] Test 3: Escalera de Escalamiento Completa hasta BLOCKED_REQUIRES_HUMAN...
+  [PASS] Escalera de Escalamiento y Límite Absoluto de Ciclos (20) (EscaladaCompleta=True, MaxCyclesLimit=True)
+[4/4] Test 4: Timeout Determinista y Terminación de Procesos Huérfanos...
+  [PASS] Timeout con Terminación de Árbol de Procesos (Sin Huérfanos) (Normal=True, TimeoutKilled=True, NoOrphan=True (Pid=33948))
+==============================================================================
+RESUMEN DE PRUEBAS DE FASE 16 (ANTI-LOOP Y TIMEOUTS):
+  [PASS] Normalización de Errores (Misma Firma para Errores Idénticos con Metadatos Variables) - Sig1=dbff8067fb57f165, Sig2=dbff8067fb57f165, DiffSig=1b046157e017d674
+  [PASS] Detección de Repetición y Reinicio con Avance Real - C1=RETRY, C2=NEW_APPROACH, C3=WEB_RESEARCH, C4=CONTINUE
+  [PASS] Escalera de Escalamiento y Límite Absoluto de Ciclos (20) - EscaladaCompleta=True, MaxCyclesLimit=True
+  [PASS] Timeout con Terminación de Árbol de Procesos (Sin Huérfanos) - Normal=True, TimeoutKilled=True, NoOrphan=True (Pid=33948)
+==============================================================================
+RESULTADO FINAL DE FASE 16: [PASS]

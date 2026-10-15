@@ -1,0 +1,150 @@
+{
+  "status": "PASS",
+  "cases": {
+    "A_NORMAL": {
+      "status": "PASS",
+      "response": {
+        "status": "PASS",
+        "action": "Prepare",
+        "phase": "PREPARE_APPLY",
+        "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\prepare-admission-911dd7e5\\normal",
+        "run_id": "run-20261015-185122",
+        "approval_digest": "57c40915b6f7b97f69675d0896e7aa80df4cac9dd76425a6c6cb8ea795111e96",
+        "prepare_write_count": 13,
+        "pre_admission": "PASS",
+        "revalidation": "PASS",
+        "cleanup": "NO_AUXILIARY_PROCESSES"
+      },
+      "exit_code": 0,
+      "stderr": ""
+    },
+    "B_ROOT_JUNCTION": {
+      "status": "PASS",
+      "response": {
+        "status": "DENY",
+        "phase": "PREPARE_PRE_ADMISSION",
+        "reason": "REPARSE_POINT_DENIED",
+        "prepare_write_count": 0,
+        "cleanup": "NO_WRITES"
+      },
+      "exit_code": 2,
+      "stderr": ""
+    },
+    "C_PARENT_JUNCTION": {
+      "status": "PASS",
+      "response": {
+        "status": "DENY",
+        "phase": "PREPARE_PRE_ADMISSION",
+        "reason": "REPARSE_POINT_DENIED",
+        "prepare_write_count": 0,
+        "cleanup": "NO_WRITES"
+      },
+      "exit_code": 2,
+      "stderr": ""
+    },
+    "D_DESTINATION_JUNCTION": {
+      "status": "PASS",
+      "response": {
+        "status": "DENY",
+        "phase": "PREPARE_PRE_ADMISSION",
+        "reason": "REPARSE_POINT_DENIED",
+        "prepare_write_count": 0,
+        "cleanup": "NO_WRITES"
+      },
+      "exit_code": 2,
+      "stderr": ""
+    },
+    "E_TRAVERSAL": {
+      "status": "PASS",
+      "response": {
+        "status": "DENY",
+        "phase": "PREPARE_PRE_ADMISSION",
+        "reason": "PATH_TRAVERSAL_DENIED",
+        "prepare_write_count": 0,
+        "cleanup": "NO_WRITES"
+      },
+      "exit_code": 2,
+      "stderr": ""
+    },
+    "F_OUTSIDE_DECLARED_SCOPE": {
+      "status": "PASS",
+      "response": {
+        "status": "DENY",
+        "phase": "PREPARE_PRE_ADMISSION",
+        "reason": "PATH_BOUNDARY_VIOLATION",
+        "prepare_write_count": 0,
+        "cleanup": "NO_WRITES"
+      },
+      "exit_code": 2,
+      "stderr": ""
+    },
+    "G_SYMLINK": {
+      "status": "PASS",
+      "response": {
+        "status": "DENY",
+        "phase": "PREPARE_PRE_ADMISSION",
+        "reason": "REPARSE_POINT_DENIED",
+        "prepare_write_count": 0,
+        "cleanup": "NO_WRITES"
+      },
+      "exit_code": 2,
+      "stderr": ""
+    },
+    "H_UNICODE_SPACES": {
+      "status": "PASS",
+      "response": {
+        "status": "PASS",
+        "action": "Prepare",
+        "phase": "PREPARE_APPLY",
+        "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\prepare-admission-911dd7e5\\proyecto válido ñ 漢字",
+        "run_id": "run-20261015-185127",
+        "approval_digest": "d58c322e73a4757f3d67d71ef2bb69e5091d3f3bc9109fbc7e3181705eb70516",
+        "prepare_write_count": 13,
+        "pre_admission": "PASS",
+        "revalidation": "PASS",
+        "cleanup": "NO_AUXILIARY_PROCESSES"
+      },
+      "exit_code": 0,
+      "stderr": ""
+    },
+    "INVALID_PLAN": {
+      "status": "PASS",
+      "response": {
+        "status": "DENY",
+        "phase": "PREPARE_PRE_ADMISSION",
+        "reason": "INVALID_PREPARE_INPUT",
+        "prepare_write_count": 0,
+        "cleanup": "NO_WRITES"
+      },
+      "exit_code": 2,
+      "stderr": ""
+    },
+    "EXISTING_PRESERVED": {
+      "status": "PASS",
+      "response": {
+        "status": "DENY",
+        "phase": "PREPARE_PRE_ADMISSION",
+        "reason": "EXISTING_PREPARE_ARTIFACTS_PRESERVED",
+        "prepare_write_count": 0,
+        "cleanup": "NO_WRITES"
+      },
+      "exit_code": 2,
+      "stderr": ""
+    }
+  },
+  "smoke": {
+    "TOCTOU_REVALIDATION_ZERO_WRITE": true,
+    "APPLY_FAILURE_FAIL_SAFE": true,
+    "DRAFT_CONTRACT_AND_STATE": true,
+    "NORMAL_USER_FILE_PRESERVED": true,
+    "NO_TEMP_ARTIFACTS": true,
+    "ATOMIC_STATE_WRITE": true,
+    "RUN_MUTEX_ZERO_WRITE": true,
+    "OWNED_INITIALIZATION_LOCK_CLEANUP_normal": true,
+    "OWNED_INITIALIZATION_LOCK_CLEANUP_proyecto válido ñ 漢字": true
+  },
+  "case_root": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\prepare-admission-911dd7e5",
+  "local_inferences": 0,
+  "launcher_prepare": "NOT_APPLICABLE: launcher has no Prepare action",
+  "cleanup": "Owned reparse entries removed; fixtures preserved as evidence"
+}

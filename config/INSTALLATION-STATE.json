@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-15T21:47:05.349035+00:00",
+  "updated_at": "2026-10-15T21:55:16.796550+00:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -32,7 +32,7 @@
     "6": "PASS",
     "7A": "PASS",
     "7B": "PASS",
-    "8": "IN_PROGRESS"
+    "8": "PASS"
   },
   "subphases_7a": {
     "7A.1": "PASS",
@@ -80,13 +80,13 @@
     "28": "WAIVED_BY_USER"
   },
   "validation_8": {
-    "status": "IN_PROGRESS",
+    "status": "PASS",
     "test": "F26_CURRENT_SYSTEM_AUDIT",
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
     "current_security_revalidation": "PASS_F26_FULL_AUDIT",
     "checkpoint_4h": "PASS",
-    "regression_gate_final": "PENDING",
+    "regression_gate_final": "PASS",
     "ready_for_real_pilot": true,
     "prepare_zero_write_on_deny": "PASS",
     "historical_attempt_1": "FAIL / SECURITY_REGRESSION; unchanged evidence/phase-23/",
@@ -703,7 +703,7 @@
     "f28": "WAIVED_BY_USER",
     "f28_waiver_evidence": "evidence/revised-roadmap-f28-waiver-20261015-171813/USER-F28-WAIVER.json",
     "f28_waiver_sha256": "d980ac85edd965def6fe923441c74db1332e0e5727d1864359036392be1b4477",
-    "final_audit": "PENDING_FINAL_REGRESSION",
+    "final_audit": "PASS",
     "roadmap_revision": "EXPLICIT_USER_F28_WAIVER_20261015",
     "final_preparation_evidence": "evidence/revised-final-preparation-20261015-172403",
     "f27_documentation_revalidation": "PASS",
@@ -714,11 +714,16 @@
     "f27_human_review_receipt": "evidence/f27-human-final-acceptance-20261015-184705/HUMAN-FINAL-REVIEW.json",
     "f27_human_review_receipt_sha256": "f33c4163029dadaa8b4ee36fc254afea235a8a302596396128dc44cde34c577d",
     "f27_final_evidence": "evidence/f27-human-final-acceptance-20261015-184705",
-    "f27_final_report": "docs/F27-FINAL-REPORT.md"
+    "f27_final_report": "docs/F27-FINAL-REPORT.md",
+    "final_evidence": "evidence/final-global-audit-20261015-184713",
+    "final_cleanup": "PASS",
+    "final_integrity": "PASS"
   },
   "ready_for_real_pilot": true,
   "F28_ORIGINAL_6_8H": "WAIVED_BY_USER",
   "F28_NOT_EXECUTED": true,
   "F28_REPLACED_BY": "CERTIFIED_4H_ENDURANCE + F27_REAL_PILOT + FINAL_REGRESSION",
-  "project_status": "FINAL_VALIDATION_IN_PROGRESS"
+  "project_status": "COMPLETE",
+  "project_status_scope": "REVISED_ROADMAP_EXPLICIT_USER_F28_WAIVER",
+  "final_report": "docs/PROJECT-FINAL-REPORT.md"
 }

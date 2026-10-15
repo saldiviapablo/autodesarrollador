@@ -1,0 +1,2 @@
+C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\tests\test-phase18-progress-lock.py:7: SyntaxWarning: "\D" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\D"? A raw string is also an option.
+  command='$m=New-Object Threading.Mutex($false,"Local\DesarrolladorAutonomo_RunMutex");$a=$false;try{try{$a=$m.WaitOne(0)}catch [Threading.AbandonedMutexException]{$a=$true};if(-not $a){exit 2};"MUTEX_FREE"}finally{if($a){$m.ReleaseMutex()};$m.Dispose()}'

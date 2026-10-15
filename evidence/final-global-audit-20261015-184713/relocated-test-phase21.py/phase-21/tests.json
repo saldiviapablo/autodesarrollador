@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "unit": {
+    "unit_fixture_only": true,
+    "status": "PASS",
+    "secret_sanitization": "PASS",
+    "terminal_statuses": [
+      "COMPLETED",
+      "FAILED",
+      "STALLED",
+      "BLOCKED_REQUIRES_HUMAN",
+      "ABORTED"
+    ],
+    "required_fields": true
+  },
+  "actual_lifecycle_cases": {
+    "timeout": {
+      "status": "PASS",
+      "terminal": "FAILED",
+      "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-report21-timeout-4467d798",
+      "reason": "GLOBAL_TIMEOUT"
+    },
+    "stalled": {
+      "status": "PASS",
+      "terminal": "STALLED",
+      "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-report21-stalled-b68965bd",
+      "reason": "NO_PROGRESS_STALLED"
+    },
+    "gate_denied_probe": {
+      "status": "PASS",
+      "terminal": "FAILED",
+      "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-report21-gate_denied_probe-9e3e4276",
+      "reason": "COMPLETION_REJECTED: native_live_backend,independent_reviewer_accepted,relevant_diff_exists"
+    }
+  },
+  "unattended_no_prompt_report_checkpoint": "PASS",
+  "dependencies_added": []
+}

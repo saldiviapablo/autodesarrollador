@@ -98,7 +98,7 @@ Parámetros validados:
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
 - **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **PASS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5 — Bot Mode + Subagentes`: **PASS**; `7A.6 — Git Worktrees`: **PASS**; `7A.7 — Cron + No-Agent Jobs`: **PASS**; `7A.8 — Native Dashboard`: **PASS**; `7A.9 — Gateway`: **PASS**; `7A.10 — Controlled Auto-update`: **PASS**; `ChatGPT Idempotency`: **PASS**; `regression gate`: **PASS**). Preflight correctivo aprobado en commit `f133bab`.
 - **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PASS**
-- **Macrofase 8 (Validación Final):** **IN_PROGRESS bajo roadmap revisado**; F24/F25/4H/F26 PASS; F27 revisión humana final pendiente; F28 **WAIVED_BY_USER / NOT_EXECUTED**
+- **Macrofase 8 (Validación Final): PASS bajo roadmap revisado**; F23–F27/4H/regresión/auditoría PASS; F28 **WAIVED_BY_USER / NOT_EXECUTED**
 
 ---
 
@@ -223,3 +223,7 @@ F28_ORIGINAL_6_8H=WAIVED_BY_USER; F28_NOT_EXECUTED=TRUE; F28_REPLACED_BY=CERTIFI
 ## F27 aceptación humana final — 2026-10-15T21:47:05.349035+00:00
 
 F27=PASS / REAL PILOT PASS tras aceptación explícita del resultado corregido y sus7SHA. docs/F27-FINAL-REPORT.md. F28 WAIVED_BY_USER / NOT_EXECUTED. Cierre global pendiente de gates finales.
+
+## Cierre final bajo roadmap revisado — 2026-10-15T21:55:16.796550+00:00
+
+PROJECT_STATUS=COMPLETE; todos los gates restantes PASS; F28 original WAIVED_BY_USER/NOT_EXECUTED, nunca PASS. docs/PROJECT-FINAL-REPORT.md
