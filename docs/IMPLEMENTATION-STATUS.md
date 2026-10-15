@@ -208,3 +208,8 @@ F24 ATTEMPT10 **FAIL**, run `run-20261015-035008`, 1128.75s. Worker/tests13/buil
 ## Estado vigente — F24 ATTEMPT11 — 2026-10-15
 
 F24 ATTEMPT11 **PASS**, run `run-20261015-044359`, 881.50s, 28/28 gates; Worker SUCCESS;13 tests/build PASS/PASS; web/continuación PASS/PASS; ChatGPT COMPLETED, envíos 1, retry ALREADY_SENT, adicionales 0; Reviewer ACCEPTED; Completion COMPLETED; cleanup/integridad PASS. F25 pendiente. docs/F24-ATTEMPT-11-REPORT.md; evidence/phase-24-attempt-11-20261015/
+
+
+## F25 — primer inicio detenido en admisión — 2026-10-15
+
+F24 ATTEMPT11 mantiene PASS28/28. F25 parcial FAIL (6.264s): el adaptador nuevo pasó START en lugar de PROJECT_ROOT como primer argumento del launcher; producción rechazó ABSOLUTE_PROJECT_ROOT_REQUIRED antes de inferir o enviar. Integrity PASS. Cleanup original detectó metadata LOCK de Prepare; liberada posteriormente por Remove-RunnerOwnedLock con run/owner exactos, receipt POST-TERMINAL-CLEANUP PASS. Sin reset de reloj, contratos ni presupuestos; native-at-admission-failure conserva STATE original. Corregir adaptador y certificar antes de nueva corrida real7200s. evidence/endurance-f25-20261015-050441-b014d5/.

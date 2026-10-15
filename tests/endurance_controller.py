@@ -30,6 +30,12 @@ def write(p,v):
  finally:
   if tmp.exists():tmp.unlink()
 def q(v):return "'"+str(v).replace("'","''")+"'"
+
+def launch_native(project,*,recover=False,stdout,stderr):
+ # The visible batch launcher accepts PROJECT_ROOT only. Recovery is the native
+ # run.ps1 -Action Start -Recover path, as certified in the complete F24 E2E.
+ if not recover:return launch_batch(R/'INICIAR-DESARROLLADOR-AUTONOMO.bat',[str(project)],cwd=R,env=os.environ.copy(),stdout=stdout,stderr=stderr)
+ return subprocess.Popen(['powershell.exe','-NoProfile','-NonInteractive','-File',str(R/'runner/run.ps1'),'-ProjectRoot',str(project),'-Action','Start','-Recover'],cwd=R,env=os.environ.copy(),stdout=stdout,stderr=stderr,creationflags=0x08000000)
 def ps(body,timeout=90):
  code="$ErrorActionPreference='Stop';$env:PSModulePath=Join-Path $PSHOME 'Modules';$env:PYTHONUTF8='1';$env:PYTHONDONTWRITEBYTECODE='1';[Console]::OutputEncoding=[Text.Encoding]::UTF8;$r=& {"+body+"};Write-Output 'STAGE_JSON';$r|ConvertTo-Json -Depth 28 -Compress"
  p=subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-OutputFormat','Text','-EncodedCommand',base64.b64encode(code.encode('utf-16le')).decode()],capture_output=True,timeout=timeout,creationflags=0x08000000)
@@ -143,7 +149,7 @@ class Stage:
   for segment in [1,2] if index==0 else [1]:
    self.guard()
    out=(e/('segment-'+str(segment)+'.stdout.txt')).open('w',encoding='utf-8');err=(e/('segment-'+str(segment)+'.stderr.txt')).open('w',encoding='utf-8')
-   self.native=launch_batch(R/'INICIAR-DESARROLLADOR-AUTONOMO.bat',['START',str(P),approval['digest']]+(['-Recover'] if segment==2 else []),cwd=R,env=os.environ.copy(),stdout=out,stderr=err)
+   self.native=launch_native(P,recover=segment==2,stdout=out,stderr=err)
    self.native_birth=psutil.Process(self.native.pid).create_time();native_parents={};self.event('NATIVE_TASK_STARTED',index=index+1,segment=segment,project=str(P),run_id=approval['contract']['run_id'])
    while self.native.poll() is None:
     self.guard()
@@ -178,7 +184,9 @@ class Stage:
     time.sleep(.2)
    self.native.wait(timeout=15);out.close();err.close()
    if index==0 and segment==1:
-    assert crash,'NATIVE_FAILURE_BEFORE_RECOVERY_BOUNDARY'
+    if not crash:
+     reason=READ(a/'reports/runner-result.json').get('reason') if (a/'reports/runner-result.json').exists() else (e/'segment-1.stderr.txt').read_text(encoding='utf-8',errors='replace')[-1500:]
+     raise RuntimeError('NATIVE_FAILURE_BEFORE_RECOVERY_BOUNDARY: '+str(reason))
     end=time.monotonic()+45
     while not (a/'reports/watchdog-failure.json').exists() and time.monotonic()<end:self.guard();time.sleep(.25)
     assert READ(a/'reports/watchdog-failure.json')['reason']=='PARENT_PROCESS_LOST';self.event('WATCHDOG_CONFIRMED');continue
@@ -233,6 +241,12 @@ class Stage:
    except psutil.NoSuchProcess:pass
   for t in self.tasks+([{'project':str(self.active)}] if self.active else []):
    p=Path(t['project']);a=p/'.autopilot'
+   # Prepare creates observational LOCK metadata before an actual Runner starts.
+   # If launch admission itself failed, use the existing exact-owner release.
+   if (a/'LOCK.json').exists():
+    events=[json.loads(x) for x in (a/'EVENTS.jsonl').read_text(encoding='utf-8-sig').splitlines() if x.strip()]
+    if not any(x['type']=='RUN_STARTED' for x in events):
+     ps('. '+q(R/'runner/core.ps1')+';. '+q(R/'runner/cleanup.ps1')+';$s=Get-Content -LiteralPath '+q(a/'STATE.json')+' -Raw -Encoding UTF8|ConvertFrom-Json;$l=Get-Content -LiteralPath '+q(a/'LOCK.json')+' -Raw -Encoding UTF8|ConvertFrom-Json;Remove-RunnerOwnedLock '+q(a)+' $s.run_id $l.owner_pid;@{status="PASS"}')
    if (a/'PROCESSES.json').exists():
     records=READ(a/'PROCESSES.json')
     for it in records.get('processes',[]):
@@ -267,7 +281,9 @@ class Stage:
    self.watcher=threading.Thread(target=self.monitor,daemon=True);self.watcher.start();index=0
    while time.monotonic()-self.started<DURATIONS[self.phase]:self.guard();self.run_task(index);index+=1
    self.guard();elapsed=time.monotonic()-self.started;self.event('REQUIRED_DURATION_REACHED',actual_seconds=elapsed)
-  except Exception as exc:self.failure=str(exc);self.event('STAGE_FAILED',reason=self.failure)
+  except Exception as exc:
+   self.failure=str(exc);self.event('STAGE_FAILED',reason=self.failure)
+   if self.active and (self.active/'.autopilot').exists():shutil.copytree(self.active/'.autopilot',self.E/'failure-native')
   finally:
    if self.started:elapsed=time.monotonic()-self.started
    try:cleanup=self.cleanup()

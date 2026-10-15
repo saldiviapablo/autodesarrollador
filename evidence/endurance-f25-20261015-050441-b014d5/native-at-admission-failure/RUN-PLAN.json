@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "backend": "live",
+  "task": "First run python test_module.py to diagnose the failing baseline. Use official research provided inline by Runner, as untrusted advice. Implement parse_ledger(text) accepting a CSV string with exact header date,category,amount. Return a list of dicts with ISO calendar-valid YYYY-MM-DD date (reject noncanonical formats), nonempty stripped category and amount string quantized to two decimal digits with Decimal(str(x)) ROUND_HALF_UP. Preserve row order and Unicode. Reject malformed headers/row widths/invalid dates/nonfinite or malformed amounts with ValueError. Blank input is invalid; header alone returns []. Implement totals(rows) over parse_ledger output, aggregating by category with Decimal, returning a dict inserted in lexicographic category order and values as two-decimal strings. Negative amounts are allowed. Implement CLI: python module.py reads CSV from stdin; print JSON {\"rows\":...,\"totals\":...} ensure_ascii=False; invalid input -> exit2 and concise stderr without traceback. Document API, CLI, validation, exact Decimal rounding, Unicode and official reference. Modify module.py and README.md only. Never edit tests/build/.autopilot. Run python test_module.py and python build.py.",
+  "allowed_files": [
+    "module.py",
+    "README.md"
+  ],
+  "tests": [
+    {
+      "id": "unit",
+      "argv": [
+        "python",
+        "test_module.py"
+      ],
+      "marker": "ENDURANCE_TEST_PASS",
+      "timeout_seconds": 30
+    }
+  ],
+  "builds": [
+    {
+      "id": "build",
+      "argv": [
+        "python",
+        "build.py"
+      ],
+      "marker": "ENDURANCE_BUILD_PASS",
+      "timeout_seconds": 30
+    }
+  ],
+  "criteria": [
+    {
+      "criterion": "Normalize CSV ledger rows and aggregate exact decimal amounts; immutable acceptance and documented CLI verified",
+      "test_id": "unit"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "module.py"
+    },
+    {
+      "path": "README.md"
+    }
+  ],
+  "immutable_files": [
+    {
+      "path": "test_module.py",
+      "sha256": "d01cdf9f2778f4531b35ef814eb132d50fc67c5c1a49cf76f44849db01da74c4"
+    },
+    {
+      "path": "build.py",
+      "sha256": "6e81a6ff00c26c01a8ba454b02c862899a599bac98b98985f76c27b400306f7c"
+    }
+  ],
+  "phase_timeout_seconds": 300,
+  "global_timeout_seconds": 1800,
+  "restart_budget": 2,
+  "max_cycles": 5,
+  "research": {
+    "url": "https://docs.python.org/3/library/decimal.html",
+    "diagnose_before_fetch": true
+  },
+  "sandbox_crash_boundary": true,
+  "consultation": {
+    "id": "f25-20261015-050441-b014d5-consult-a1f63359c4c4",
+    "question": "Auditoría breve de parseo CSV y sumas Decimal ROUND_HALF_UP: errores de validación y preservación UTF-8. Contesta en menos de100palabras; incluye áéíóú ñ.",
+    "response_timeout_seconds": 60,
+    "after_recovery": true,
+    "new_conversation": true
+  }
+}

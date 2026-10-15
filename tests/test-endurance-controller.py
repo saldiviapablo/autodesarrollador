@@ -2,7 +2,7 @@
 from pathlib import Path
 import ast,copy,json,subprocess,sys,unittest,uuid,concurrent.futures
 from unittest.mock import patch
-from endurance_controller import validate_stage,DURATIONS,R,write,ps
+from endurance_controller import validate_stage,DURATIONS,R,write,ps,launch_native
 from endurance_workloads import fixture
 class Policy(unittest.TestCase):
  def setUp(self):
@@ -11,6 +11,14 @@ class Policy(unittest.TestCase):
  def gate(self,**kwargs):
   args=dict(stage='F25',elapsed=7200,tasks=self.tasks,resource=self.resource,integrity=True,cleanup=True);args.update(kwargs);return validate_stage(**args)
  def test_valid_evidence_shape(self):self.assertTrue(all(self.gate().values()))
+ def test_visible_launcher_accepts_project_only(self):
+  p=R/'sandbox'/'path with spaces'
+  with patch('endurance_controller.launch_batch') as launcher:
+   launch_native(p,stdout=None,stderr=None);self.assertEqual(launcher.call_args.args,(R/'INICIAR-DESARROLLADOR-AUTONOMO.bat',[str(p)]))
+ def test_recovery_uses_native_runner_switch(self):
+  p=R/'sandbox'/'path with spaces'
+  with patch('endurance_controller.subprocess.Popen') as launcher:
+   launch_native(p,recover=True,stdout=None,stderr=None);self.assertEqual(launcher.call_args.args[0],['powershell.exe','-NoProfile','-NonInteractive','-File',str(R/'runner/run.ps1'),'-ProjectRoot',str(p),'-Action','Start','-Recover'])
  def test_powershell_diagnostic_bytes_do_not_corrupt_json(self):
   completed=subprocess.CompletedProcess([],0,b'STAGE_JSON\n{"status":"PASS"}\n',b'legacy OEM diagnostic \xa2')
   with patch('endurance_controller.subprocess.run',return_value=completed):self.assertEqual(ps('component fixture'),{'status':'PASS'})
