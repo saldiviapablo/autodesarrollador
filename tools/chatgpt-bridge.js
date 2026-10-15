@@ -13,6 +13,7 @@ const { Budget, Trace, budgets, deliver } = require('./chatgpt-delivery');
 const {inspectComposer,selectActuator,sendPhysicalEnter}=require('./chatgpt-send-actuator');
 const {findNewChatControl,requestFreshChat}=require('./chatgpt-fresh-chat');
 const {recoverOwnedPreSendDraft,LEGACY_ID,requireEmptyComposer}=require('./chatgpt-pre-send');
+const {conversationBindings}=require('./chatgpt-conversation');
 let activeLedger;
 let activeBudget, activeTrace, activeSocket, deadlineTimer;
 async function safeExit(code) {
@@ -87,25 +88,7 @@ Por favor proporciona:
 }
 async function readConversation(ws) {
   const result = await sendCdp(ws, 'Runtime.evaluate', {
-    expression: `(() => {
-      const role = name => {
-        const messages = Array.from(document.querySelectorAll('[data-message-author-role="' + name + '"]'));
-        if (messages.length) return messages;
-        const articles = Array.from(document.querySelectorAll('article[data-turn="' + name + '"]'));
-        if (articles.length) return articles;
-        // The current ChatGPT UI mirrors DIL content in the approved top document.
-        // Count each outer message once; never attach to the cross-origin renderer iframe.
-        const selector = name === 'user' ? '.bg-user-message' : '[class*="DilResponseRoot"]';
-        return Array.from(document.querySelectorAll(selector)).filter(el => !el.parentElement?.closest(selector));
-      };
-      const users = role('user'), assistants = role('assistant');
-      return { user: users.length, assistant: assistants.length,
-        composer_empty: (()=>{const p=document.querySelector('.ProseMirror')||document.querySelector('#prompt-textarea')||document.querySelector('div[contenteditable="true"]');return !!p&&!p.innerText?.trim();})(),
-        lastUserText: users.length ? users[users.length - 1].innerText.trim().replace(/^(You said:|Tú dijiste:)\\s*/i, '') : '',
-        lastAssistantText: assistants.length ? assistants[assistants.length - 1].innerText.trim().replace(/^(ChatGPT said:|ChatGPT dijo:)\\s*/i, '') : '',
-        isStreaming: !!document.querySelector('button[data-testid*="stop"],button[aria-label*="Stop"],button[aria-label*="Detener"],.result-streaming'),
-        url: location.href };
-    })()`, returnByValue: true
+    expression: `(() => { ${conversationBindings()} return readConversationSnapshot(); })()`, returnByValue: true
   });
   return result.result ? result.result.value : {};
 }
@@ -143,8 +126,8 @@ async function clearOwnedComposer(ws,observation,record){
     const expected=${JSON.stringify(normalize(observation.composer))};
     if(location.href!==${JSON.stringify(observation.url)})throw Error('ROLLBACK_CONVERSATION_CHANGED');
     const norm=s=>s.trim().replace(/\\r\\n/g,'\\n').replace(/\\n\\n+/g,'\\n');
-    const role=name=>{let a=Array.from(document.querySelectorAll('[data-message-author-role="'+name+'"]'));if(a.length)return a;a=Array.from(document.querySelectorAll('article[data-turn="'+name+'"]'));if(a.length)return a;const s=name==='user'?'.bg-user-message':'[class*="DilResponseRoot"]';return Array.from(document.querySelectorAll(s)).filter(e=>!e.parentElement?.closest(s));};
-    if(role('user').length!==${record.user_turns_before}||role('assistant').length!==${record.assistant_turns_before}||document.querySelector('button[data-testid*="stop"],button[aria-label*="Stop"],button[aria-label*="Detener"],.result-streaming'))throw Error('ROLLBACK_BASELINE_CHANGED');
+    ${conversationBindings()}
+    if(conversationTurns('user').length!==${record.user_turns_before}||conversationTurns('assistant').length!==${record.assistant_turns_before}||document.querySelector('button[data-testid*="stop"],button[aria-label*="Stop"],button[aria-label*="Detener"],.result-streaming'))throw Error('ROLLBACK_BASELINE_CHANGED');
     const editors=Array.from(document.querySelectorAll('[contenteditable="true"],textarea')).filter(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&s.display!=='none'&&!e.disabled&&!e.readOnly&&!e.parentElement?.closest('[contenteditable="true"]');});
     if(editors.length!==1)throw Error('ROLLBACK_COMPOSER_NOT_UNIQUE');const prose=editors[0],ps=Array.from(prose.querySelectorAll('p'));const text=norm(ps.length?ps.map(p=>p.innerText).join('\\n'):(prose.value??prose.innerText??''));
     if(text!==expected)throw Error('ROLLBACK_COMPOSER_CHANGED');
@@ -814,7 +797,7 @@ async function main() {
   }
 }
 
-module.exports = { validateDomain, guardPageExpression, sendSinglePhysicalClick };
+module.exports = { validateDomain, guardPageExpression, sendSinglePhysicalClick, verifyDedicatedProfile, readConversation };
 
 if (require.main === module) main().catch(async err => {
   console.log(JSON.stringify({
