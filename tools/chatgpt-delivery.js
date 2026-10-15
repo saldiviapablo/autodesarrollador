@@ -17,7 +17,7 @@ class Budget {
 class Trace {
   constructor(filename, id, clock=now) {this.filename=filename;this.id=id;this.clock=clock;if(fs.existsSync(filename)&&fs.lstatSync(filename).isSymbolicLink())throw Error('TRACE_PATH_DENIED');}
   emit(event, fields={}) {
-    const allowed=['prompt_sha256','conversation_id','user','assistant','streaming','composer_empty','confirmed','reason','phase','pid','send_method'];
+    const allowed=['prompt_sha256','conversation_id','user','assistant','streaming','composer_empty','confirmed','reason','phase','pid','send_method','non_send_probe','send_attempts','physical_actions','available'];
     const safe=Object.fromEntries(Object.entries(fields).filter(([k,v])=>allowed.includes(k)&&['string','number','boolean'].includes(typeof v)));
     const row={event,consultation_id:this.id,at:new Date().toISOString(),mono_ms:this.clock(),...safe};
     const fd=fs.openSync(this.filename,'a',0o600);try{fs.writeSync(fd,JSON.stringify(row)+'\n');fs.fsyncSync(fd);}finally{fs.closeSync(fd);}
