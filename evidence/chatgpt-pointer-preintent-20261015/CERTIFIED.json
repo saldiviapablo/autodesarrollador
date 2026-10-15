@@ -1,0 +1,52 @@
+{
+  "status": "PASS",
+  "at": "2026-10-15T06:47:04.300873+00:00",
+  "root_cause": "A9 mouseMoved pre-intent CDP acknowledgement timeout was treated as terminal rather than approved pre-intent actuator unavailability",
+  "primary": "COMPOSER_SCOPED_SUBMIT unchanged when pointer ready",
+  "fallback": "COMPOSER_ENTER_KEY only before intent, after fresh hash/focus/baseline validation",
+  "post_intent_fallback": false,
+  "pointer_cases": 12,
+  "composer_cases": 11,
+  "related_regression_suites": 10,
+  "live_pointer_acknowledged": false,
+  "live_pointer_sends": 0,
+  "live_pointer_ledger_reservations": 0,
+  "live_primary_to_fallback_exercised": false,
+  "deterministic_primary_to_fallback_exercised": true,
+  "live_bridge_cases": [
+    {
+      "consultation_id": "test-send-actuator-afef24e4095f4220a1b1a6814e1892d8",
+      "status": "COMPLETED",
+      "physical_sends": 1,
+      "logical_retry": "ALREADY_SENT",
+      "additional_sends": 0
+    },
+    {
+      "consultation_id": "test-send-actuator-419c60d29de14690bf27eb2fc4d00c12",
+      "status": "COMPLETED",
+      "physical_sends": 1,
+      "logical_retry": "ALREADY_SENT",
+      "additional_sends": 0
+    },
+    {
+      "consultation_id": "test-send-actuator-b4a316489b2748cda87ea50e0a3b3ced",
+      "status": "COMPLETED",
+      "physical_sends": 1,
+      "logical_retry": "ALREADY_SENT",
+      "additional_sends": 0
+    }
+  ],
+  "current_source_live_case": "test-send-actuator-b4a316489b2748cda87ea50e0a3b3ced",
+  "historical_files_unchanged": 5987,
+  "tracked_evidence_byte_exact_to_git": 142,
+  "automatic_reconciliation_states_unchanged": true,
+  "timeout_budgets_unchanged": true,
+  "dependencies": [],
+  "source_hashes": {
+    "tools/chatgpt-bridge.js": "3d2d379bb742da591db97389410e1b790d9f01fbb0e8cf4d4193f84743402cd9",
+    "tools/chatgpt-send-actuator.js": "0f2c64f46faf1e8b1f5d4cfbe82a7c0cbfc3dadaf6664d2fe8b2902ab21fd4aa",
+    "tools/chatgpt-pre-send.js": "48ebbb99b657916c75feb7eb883a77efd306b28abc5e325dd4c4c772ed6d29cb",
+    "tests/test-chatgpt-pointer-preflight.js": "aac2259822c63761db730d3cb6015397f9542b90193324adcf9a2f9d6bc2f1bc",
+    "tests/certify-chatgpt-pointer-live-nosend.js": "f08729daa48e9f68af29953a91d4ee8fcd7622a6e8271d17eb94f24593c342e8"
+  }
+}

@@ -10,7 +10,7 @@ const path = require('path');
 const { spawn, spawnSync } = require('child_process');
 const { ConsultationLedger, acquireBrowserLease, hash, normalize, reconcileObservation,hasIntent,interruptedState } = require('./chatgpt-ledger');
 const { Budget, Trace, budgets, deliver } = require('./chatgpt-delivery');
-const {inspectComposer,selectActuator,sendPhysicalEnter}=require('./chatgpt-send-actuator');
+const {inspectComposer,selectActuator,sendPhysicalEnter,probePointerMove,prepareSendActuator}=require('./chatgpt-send-actuator');
 const {prepareComposerText}=require('./chatgpt-composer-prepare');
 const {findNewChatControl,requestFreshChat}=require('./chatgpt-fresh-chat');
 const {recoverOwnedPreSendDraft,LEGACY_ID,requireEmptyComposer}=require('./chatgpt-pre-send');
@@ -676,18 +676,9 @@ async function main() {
 
       // Choose one actuator within the exact composer scope BEFORE intent.
       await sendCdp(ws,'Page.bringToFront');
-      let prepared;
-      let selected;
-      for(let stable=0;stable<2;stable++) {
-        prepared=await readActuator(ws,fullPrompt);
-        const current=await readConversation(ws);
-        if(current.user!==countsBefore.user||current.assistant!==countsBefore.assistant)throw Error('BASELINE_CHANGED_NO_SEND');
-        selected=selectActuator(ledger.read(consultationId),prepared);
-        if(stable===0){
-          if(selected.button)await sendCdp(ws,'Input.dispatchMouseEvent',{type:'mouseMoved',x:selected.button.x,y:selected.button.y,button:'none',buttons:0,pointerType:'mouse'});
-          await new Promise(r=>setTimeout(r,300));
-        }
-      }
+      const selected=await prepareSendActuator({readRecord:()=>ledger.read(consultationId),
+        readPrepared:()=>readActuator(ws,fullPrompt),readConversation:()=>readConversation(ws),
+        baseline:countsBefore,probePointer:button=>probePointerMove(ws,button,sendCdp),trace:activeTrace});
       const attemptCount=ledger.read(consultationId).send_attempts+1;
       const outcome=await deliver({ledger,id:consultationId,baseline:countsBefore,
         click:()=>selected.method==='COMPOSER_SCOPED_SUBMIT'?sendSinglePhysicalClick(ws,selected.button):sendPhysicalEnter(ws,sendCdp,activeTrace),

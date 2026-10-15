@@ -30,17 +30,47 @@ function inspectComposer(expectedText) {
   }):[];
   return {url:location.href,composer_found:true,composer_matches:matches.length,composer_dom_index:allEditors.indexOf(prose),composer:text(prose),editable:prose.isContentEditable||prose.tagName==='TEXTAREA',focused:document.activeElement===prose||prose.contains(document.activeElement),scope_found:!!scope,scope_kind:scopeKind,isStreaming:streaming,buttons,sendAvailable:buttons.filter(b=>b.visible&&!b.disabled&&b.hit).length===1};
 }
-function selectActuator(record,observation) {
+function selectActuator(record,observation,{pointerAvailable=true}={}) {
   const humanRetry=record?.delivery_state==='NOT_DELIVERED_CONFIRMED'&&record.human_retry_remaining===1&&record.send_attempts===1;
   if(!record||record.message_confirmed||(!humanRetry&&(record.send_attempts!==0||!['RESERVED','PREPARED'].includes(record.delivery_state)||record.history?.some(e=>e.to==='DELIVERY_INTENT'))))throw Error('ACTUATOR_PRIOR_INTENT_NO_SEND');
   if(conversationId(record.conversation_url)!==conversationId(observation.url))throw Error('ACTUATOR_CONVERSATION_MISMATCH');
   if(!observation.composer_found||observation.composer_matches!==1||!observation.editable||hash(normalize(observation.composer||''))!==record.prompt_sha256)throw Error('ACTUATOR_COMPOSER_HASH_MISMATCH');
   if(observation.isStreaming!==false)throw Error('ACTUATOR_STREAMING_DENIED');
   const candidates=observation.scope_found?(observation.buttons||[]).filter(b=>b.visible&&!b.disabled&&b.expectedSend&&b.hit&&b.width>0&&b.height>0&&Number.isFinite(b.x)&&Number.isFinite(b.y)):[];
-  if(candidates.length===1)return {method:'COMPOSER_SCOPED_SUBMIT',button:candidates[0]};
+  if(candidates.length===1&&pointerAvailable)return {method:'COMPOSER_SCOPED_SUBMIT',button:candidates[0]};
   if(humanRetry)throw Error('ACTUATOR_PRIOR_INTENT_NO_FALLBACK');
   if(observation.focused!==true)throw Error('ACTUATOR_ENTER_REQUIRES_FOCUS');
   return {method:'COMPOSER_ENTER_KEY'};
+}
+// A pointer readiness probe cannot submit: no button press/release is issued.
+// Its acknowledgement timeout may choose the approved pre-intent keyboard
+// fallback. Every other error remains fail-closed; deliver() never calls this.
+async function probePointerMove(ws,button,dispatch) {
+  try{
+    await dispatch(ws,'Input.dispatchMouseEvent',{type:'mouseMoved',x:button.x,y:button.y,button:'none',buttons:0,pointerType:'mouse'});
+    return true;
+  }catch(error){
+    if(error.message==='Timeout esperando respuesta CDP para Input.dispatchMouseEvent')return false;
+    throw error;
+  }
+}
+async function prepareSendActuator({readRecord,readPrepared,readConversation,baseline,probePointer,trace,sleep=ms=>new Promise(r=>setTimeout(r,ms))}) {
+  let selected,pointerAvailable=true,pointerProbed=false;
+  const checkBaseline=async()=>{const current=await readConversation();if(current.user!==baseline.user||current.assistant!==baseline.assistant||current.isStreaming)throw Error('BASELINE_CHANGED_NO_SEND');};
+  for(let stable=0;stable<2;stable++){
+    let prepared=await readPrepared();await checkBaseline();
+    selected=selectActuator(readRecord(),prepared,{pointerAvailable});
+    if(selected.button&&!pointerProbed){
+      const fields={non_send_probe:'mouseMoved',phase:'prepare',send_attempts:readRecord().send_attempts,physical_actions:0};
+      trace?.emit('POINTER_PROBE_START',fields);
+      pointerAvailable=await probePointer(selected.button);pointerProbed=true;
+      trace?.emit('POINTER_PROBE_END',{...fields,available:pointerAvailable});
+      prepared=await readPrepared();await checkBaseline();
+      selected=selectActuator(readRecord(),prepared,{pointerAvailable});
+    }
+    if(stable===0)await sleep(300);
+  }
+  return selected;
 }
 async function sendPhysicalEnter(ws,dispatch,trace) {
   trace?.emit('ENTER_KEYDOWN_START');
@@ -49,4 +79,4 @@ async function sendPhysicalEnter(ws,dispatch,trace) {
   await dispatch(ws,'Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13,nativeVirtualKeyCode:13});
   trace?.emit('ENTER_KEYUP_END');
 }
-module.exports={inspectComposer,selectActuator,sendPhysicalEnter};
+module.exports={inspectComposer,selectActuator,sendPhysicalEnter,probePointerMove,prepareSendActuator};

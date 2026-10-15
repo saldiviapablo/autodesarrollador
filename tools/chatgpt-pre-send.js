@@ -7,8 +7,8 @@ const LEGACY_SHA='449d9d63fff353617d1d5f0f54ce75cf61186f1e8f2251586a8455a119ce05
 function requireEmptyComposer(prose){if((prose.value??prose.innerText??'').trim())throw Error('UNICODE_ROUNDTRIP_COMPOSER_NOT_EMPTY');}
 function traceSafe(rows,id){
  if(!Array.isArray(rows)||!rows.some(r=>r.event==='BRIDGE_START')||rows.some(r=>r.consultation_id!==id))return false;
- const allowed=/^(BRIDGE_START|FAILURE|CLEANUP|PREPARED|SEND_METHOD_SELECTED|REQUEST_FRESH_CHAT|FRESH_CHAT_READY|NEW_CHAT_NAVIGATION_START|NEW_CHAT_NAVIGATION_END|OWNED_DRAFT_ROLLBACK|PRE_SEND_INTERRUPTED)$/;
- return rows.every(r=>allowed.test(r.event)&&!r.method&&!r.type);
+ const allowed=/^(BRIDGE_START|FAILURE|CLEANUP|PREPARED|SEND_METHOD_SELECTED|REQUEST_FRESH_CHAT|FRESH_CHAT_READY|NEW_CHAT_NAVIGATION_START|NEW_CHAT_NAVIGATION_END|OWNED_DRAFT_ROLLBACK|PRE_SEND_INTERRUPTED|POINTER_PROBE_START|POINTER_PROBE_END)$/;
+ return rows.every(r=>allowed.test(r.event)&&!r.method&&!r.type&&(!/^POINTER_PROBE_/.test(r.event)||(r.non_send_probe==='mouseMoved'&&r.phase==='prepare'&&r.send_attempts===0&&r.physical_actions===0)));
 }
 function baselineMatches(record,o){
  try{return o.profile_match===true&&o.composer_found===true&&o.composer_matches===1&&o.editable===true&&o.isStreaming===false&&Number.isSafeInteger(record.user_turns_before)&&record.user_turns_before>=0&&Number.isSafeInteger(record.assistant_turns_before)&&record.assistant_turns_before>=0&&o.user===record.user_turns_before&&o.assistant===record.assistant_turns_before&&conversationId(o.url)===conversationId(record.conversation_url);}catch{return false;}
