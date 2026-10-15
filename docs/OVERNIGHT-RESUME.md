@@ -1,18 +1,18 @@
 # Overnight continuation
 
-```json
+`json
 {
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
   "last_completed": "4H PASS",
-  "active_phase": "F26_AUDIT",
+  "active_phase": "F26_PREPARATION",
   "last_cause": "New endurance adapter launcher argument contract",
   "last_fix": "Budget mock component PASS after correcting invalid initial test fixture; product schema correctly denied999; no production control change",
   "last_commit": "34ee06bd71fc4712123757a9b022ebbff2e05b24",
-  "next_action": "Run F26 audit/global regression in new evidence; then safe F27 pilot/final human review and F28 real6–8h",
+  "next_action": "After selective preparation commit and clean Git: run tests/global-audit.py with Hermes Python once. Observe runtime/overnight/audit-active.json; do not duplicate.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T18:10:41.141557+00:00",
+  "updated_at": "2026-10-15T18:13:46.260939+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -50,8 +50,8 @@
   "last_completed_evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-4h-20261015-110202-059517",
   "historical_f24_consultation_id": "f24-a11-2d44843ee2c2460bbb643c927080e3f8",
   "stage_id": "4h-20261015-110202-059517",
-  "controller_pid": 27120,
-  "controller_birth": 1792072922.690486,
+  "controller_pid": null,
+  "controller_birth": null,
   "elapsed_seconds": 11247.233496700006,
   "completed_tasks": 20,
   "evidence": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\endurance-4h-20261015-110202-059517",
@@ -65,7 +65,10 @@
     "certification": "evidence/audit-budget-component-20261015-113719"
   }
 }
-```
+`
 
-Latest completed stage: 4H PASS: 14781.279s reales, 26 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-4h-20261015-110202-059517/.
-Native STATE remains authority. No push.
+F24 PASS28/28 ec96970; F25 PASS7772.089s81785b8; independent4H PASS14781.279s/26tasks bd822cf. No repeat. No active native model or run.
+
+Next: F26 via tests/global-audit.py after preparation commit, then independent close via logs/overnight/close-audit-stage.py. F26 not yet executed. Current source/criteria and plan: docs/F26-AUDIT-PLAN.md. Audit metadata PID/birth in runtime/overnight/audit-active.json.
+
+Prepared pilot files in logs/overnight/PREPARED-SOURCES.json:17 immutable acceptance tests,23 with comparison extension;13 controller tests PASS. No actualF27/F28. AfterF26 PASS promote/certify/commit pilot helpers before fresh realF27. Complete concrete pilot/report/cleanup before requesting the actual final human review required07 section30; never fabricate a receipt. F28 then requires real6–8h on copies of the reviewed pilot and a fresh final global audit/regression afterward. Final-report closure still to implement. No push, updates or production.
