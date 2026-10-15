@@ -35,12 +35,16 @@ try{
     $file=Join-Path $root ('runtime/chatgpt-consultations/'+$hash+'.json');$before=(Get-FileHash -LiteralPath $file).Hash
     $ledger=Get-Content -LiteralPath $file -Raw -Encoding UTF8|ConvertFrom-Json
     $x=$r.ResultObj
+    $expectedPromptSha=([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($question.Trim())))).Replace('-','').ToLowerInvariant()
+    $trace=@(Get-Content -LiteralPath (Join-Path $root ('runtime/chatgpt-consultations/'+$hash+'.trace.jsonl')) -Encoding UTF8|ForEach-Object {$_|ConvertFrom-Json})
+    $names=@($trace|ForEach-Object {$_.event})
+    if($x.prompt_sha256 -ne $expectedPromptSha -or $x.dom_sha256 -ne $expectedPromptSha -or -not $x.utf8_valid -or -not $x.source_text_equals_dom_text -or $names.IndexOf('PREPARED') -lt 0 -or $names.IndexOf('PREPARED') -ge $names.IndexOf('DELIVERY_INTENT') -or $names.IndexOf('SENT_CONFIRMED') -ge $names.IndexOf('RESPONSE_WAIT_START')){throw 'CONTROLLED_PREPARED_SHA_TRACE_PROOF_FAILED'}
     if(-not $x.fresh_chat_ready -or $x.user_turns_before -ne 0 -or $x.assistant_turns_before -ne 0 -or $x.physical_actions -ne 1 -or $x.user_turns_after -ne 1 -or $x.assistant_turns_after -ne 1 -or -not $x.composer_cleared -or $ledger.delivery_state -ne 'COMPLETED' -or -not $ledger.message_confirmed -or $ledger.send_attempts -ne 1 -or -not @($ledger.history|Where-Object {$_.to -eq 'SENT_CONFIRMED'}).Count){throw 'CONTROLLED_PROOF_FAILED_NO_RETRY'}
     $retry=& (Join-Path $root 'scripts/consultar-chatgpt.ps1') -Question $question -RawPrompt -Purpose test -ConsultationId $id -StatePath $state -TimeoutSeconds 15
     if($retry.Status -ne 'ALREADY_SENT' -or (Get-FileHash -LiteralPath $file).Hash -ne $before){throw 'CONTROLLED_IDEMPOTENCY_FAILED'}
     Get-ChildItem -LiteralPath (Split-Path $file) -Filter ($hash+'*')|ForEach-Object {Copy-Item -LiteralPath $_.FullName -Destination $e}
     $passed=$true
-    Write-RunnerJson (Join-Path $e 'RESULT.json') @{status='PASS';consultation_id=$id;send_method=$x.send_method;physical_actions=1;user_before=$x.user_turns_before;user_after=$x.user_turns_after;assistant_before=$x.assistant_turns_before;assistant_after=$x.assistant_turns_after;sent_confirmed=$true;response_captured=$true;delivery_state=$ledger.delivery_state;retry=$retry.Status;additional_actions=0;composer_empty=$x.composer_cleared}
+    Write-RunnerJson (Join-Path $e 'RESULT.json') @{status='PASS';consultation_id=$id;send_method=$x.send_method;physical_actions=1;prepared_before_intent=$true;prompt_sha256=$expectedPromptSha;utf8=$true;sent_before_response_wait=$true;user_before=$x.user_turns_before;user_after=$x.user_turns_after;assistant_before=$x.assistant_turns_before;assistant_after=$x.assistant_turns_after;sent_confirmed=$true;response_captured=$true;delivery_state=$ledger.delivery_state;retry=$retry.Status;additional_actions=0;composer_empty=$x.composer_cleared}
 }finally{
     $s=Get-Content -LiteralPath $state -Raw -Encoding UTF8|ConvertFrom-Json
     $s.status='ABORTED';$s.next_action='Controlled actuator test closed; no full Runner execution claimed'

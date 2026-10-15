@@ -1,0 +1,126 @@
+{
+  "status": "PASS",
+  "checks": {
+    "A": true,
+    "A_exactly_once": true,
+    "B": true,
+    "B_exactly_once": true,
+    "C": true,
+    "C_exactly_once": true,
+    "D": true,
+    "D_exactly_once": true,
+    "E": true,
+    "E_exactly_once": true,
+    "G": true,
+    "G_exactly_once": true,
+    "F": true,
+    "H": true,
+    "historical_diagnosis": true
+  },
+  "results": [
+    {
+      "case": "A",
+      "expected": [
+        "simple"
+      ],
+      "actual": [
+        "simple"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"args\": [\"simple\"]}\n",
+      "stderr": "STDERR áéíóú ñ € °\n",
+      "execution_count_delta": 1
+    },
+    {
+      "case": "B",
+      "expected": [
+        "simple"
+      ],
+      "actual": [
+        "simple"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"args\": [\"simple\"]}\n",
+      "stderr": "STDERR áéíóú ñ € °\n",
+      "execution_count_delta": 1
+    },
+    {
+      "case": "C",
+      "expected": [
+        "C:\\Users\\Pc\\AppData\\Local\\Temp\\da-launcher-3_n4gjty\\project with spaces"
+      ],
+      "actual": [
+        "C:\\Users\\Pc\\AppData\\Local\\Temp\\da-launcher-3_n4gjty\\project with spaces"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"args\": [\"C:\\\\Users\\\\Pc\\\\AppData\\\\Local\\\\Temp\\\\da-launcher-3_n4gjty\\\\project with spaces\"]}\n",
+      "stderr": "STDERR áéíóú ñ € °\n",
+      "execution_count_delta": 1
+    },
+    {
+      "case": "D",
+      "expected": [
+        "áéíóú ñ ¿? € °",
+        "second argument"
+      ],
+      "actual": [
+        "áéíóú ñ ¿? € °",
+        "second argument"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"args\": [\"áéíóú ñ ¿? € °\", \"second argument\"]}\n",
+      "stderr": "STDERR áéíóú ñ € °\n",
+      "execution_count_delta": 1
+    },
+    {
+      "case": "E",
+      "expected": [
+        "first",
+        "",
+        "third"
+      ],
+      "actual": [
+        "first",
+        "",
+        "third"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"args\": [\"first\", \"\", \"third\"]}\n",
+      "stderr": "STDERR áéíóú ñ € °\n",
+      "execution_count_delta": 1
+    },
+    {
+      "case": "G",
+      "expected": [
+        "exit-code"
+      ],
+      "actual": [
+        "exit-code"
+      ],
+      "exit_code": 37,
+      "stdout": "{\"args\": [\"exit-code\"]}\n",
+      "stderr": "STDERR áéíóú ñ € °\n",
+      "execution_count_delta": 1
+    }
+  ],
+  "dangerous_arguments_denied": [
+    "x & echo INJECTED",
+    "x | echo INJECTED",
+    "> injected.txt",
+    "< input",
+    "%COMSPEC%",
+    "!VARIABLE!",
+    "x^&echo INJECTED",
+    "\" & echo INJECTED",
+    "x\r\necho INJECTED",
+    "x\u0000tail",
+    "$(echo malicious)"
+  ],
+  "new_dependencies": [],
+  "native_runner_starts": 0,
+  "local_inferences": 0,
+  "external_write_reason": "Required case A needs a no-spaces path; infrastructure root contains spaces. New isolated temp files only, no existing files modified.",
+  "temporary_directory": "C:\\Users\\Pc\\AppData\\Local\\Temp\\da-launcher-3_n4gjty",
+  "adapter_sha256": "ed94cdafe38fbd8d2a9e5c2988d076080b57a82014ce6f6cc28994484af679f3",
+  "cleanup": "PASS"
+}
