@@ -18,6 +18,16 @@ handle=kernel.OpenProcess(0x0800,False,proc.pid);assert handle
 assert nt.NtSuspendProcess(handle)==0
 kernel.CloseHandle.argtypes=[ctypes.c_void_p];kernel.CloseHandle(handle)
 proc.wait(timeout=15)
+# Parent death precedes the independent Watchdog's state/report/lock teardown.
+# Keep this test owner alive until that bounded normal finalization completes;
+# exiting early would make the enclosing Job Object kill the Watchdog itself.
+finalization_deadline=time.monotonic()+15
+while time.monotonic()<finalization_deadline:
+ try:
+  terminal=json.loads((stale/'.autopilot/STATE.json').read_text(encoding='utf-8-sig'))['status']=='FAILED'
+  if terminal and (stale/'.autopilot/reports/watchdog-failure.json').exists() and not(stale/'.autopilot/LOCK.json').exists():break
+ except (OSError,ValueError):pass
+ time.sleep(.1)
 state=json.loads((stale/'.autopilot/STATE.json').read_text(encoding='utf-8-sig'));assert state['status']=='FAILED',state
 assert (stale/'.autopilot/reports/watchdog-failure.json').exists() and not(stale/'.autopilot/LOCK.json').exists()
 report={'status':'PASS','tests':{'T-WATCH-001':'PASS','T-WATCH-002':'PASS','T-WATCH-005':'PASS'},'heartbeat_independent_watchdog':True,'owned_parent_suspended_and_reaped':True,'restart_budget_limit':1,'restart_budget_observed':1,'terminal_after_budget_exhausted':'FAILED','projects':[str(p),str(stale)]}

@@ -1,0 +1,422 @@
+[
+  {
+    "schema_version": "1.0",
+    "seq": 1,
+    "event_id": "evt-6ad41966499a",
+    "timestamp": "2026-10-15T15:35:35.8456105-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "init-script",
+    "type": "RUN_INITIALIZED",
+    "payload": {
+      "objective": "Implement correct addition with verified tests",
+      "run_contract": "RUN-CONTRACT.yaml",
+      "status": "INITIALIZED",
+      "project_id": "7b-frontier-recovery-e64b2472"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 2,
+    "event_id": "evt-d44935aa99ce",
+    "timestamp": "2026-10-15T15:35:37.5002985-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "LOCK_METADATA_RECONCILED",
+    "payload": {
+      "kernel_mutex_acquired": true,
+      "previous": {
+        "note": "METADATA de observabilidad de run aut\u00f3nomo. NO es lock at\u00f3mico de SO. La exclusi\u00f3n mutua at\u00f3mica reside en el Runner.",
+        "run_id": "run-20261015-153535",
+        "owner_pid": 34148,
+        "started_at": "2026-10-15T15:35:35.8556246-03:00",
+        "project_root": "C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/7b-frontier-recovery-e64b2472"
+      }
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 3,
+    "event_id": "evt-585e510d8cfb",
+    "timestamp": "2026-10-15T15:35:37.8460507-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "RUN_STARTED",
+    "payload": {
+      "approval_digest": "e397b33d9c189db0d610f2509d015811d4568a13eac0bfc440bae897e8072478",
+      "backend": "probe",
+      "git_head": "87f6411fb48a3202c3f44c0604de7e2e20050512"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 4,
+    "event_id": "evt-a5bb493dc248",
+    "timestamp": "2026-10-15T15:35:37.9125650-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 35216,
+      "name": "watchdog",
+      "executable": "powershell.exe",
+      "start_ticks": 639276861378830613
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 5,
+    "event_id": "evt-d552f995dc0b",
+    "timestamp": "2026-10-15T15:35:38.2292906-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 34052,
+      "name": "supervisor",
+      "executable": "powershell.exe",
+      "start_ticks": 639276861382102948
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 6,
+    "event_id": "evt-28a8cdfd512b",
+    "timestamp": "2026-10-15T15:35:39.4971127-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "chatgpt-client",
+    "type": "CHATGPT_CONSULTED",
+    "payload": {
+      "purpose": "Revisi\u00f3n t\u00e9cnica y segunda opini\u00f3n arquitect\u00f3nica",
+      "queries_used": 1,
+      "consultation_id": "sandbox-recovery-budget",
+      "max_queries": 5
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 7,
+    "event_id": "evt-fe6a3391ec68",
+    "timestamp": "2026-10-15T15:35:40.5507777-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "checkpoint-manager",
+    "type": "CHECKPOINT_CREATED",
+    "payload": {
+      "manifest_files": 4,
+      "git_head": "87f6411",
+      "checkpoint_id": "chk-continuation-test",
+      "reason": "Owned crash boundary test",
+      "git_dirty": false
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 8,
+    "event_id": "evt-ad0296443b11",
+    "timestamp": "2026-10-15T15:35:41.5090912-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "watchdog",
+    "type": "PARENT_CRASH_RECOVERED",
+    "payload": {
+      "parent_pid": 27276,
+      "reason": "PARENT_PROCESS_LOST"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 9,
+    "event_id": "evt-9bcf191a2043",
+    "timestamp": "2026-10-15T15:35:41.6940484-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "checkpoint-manager",
+    "type": "CHECKPOINT_CREATED",
+    "payload": {
+      "manifest_files": 4,
+      "git_head": "87f6411",
+      "checkpoint_id": "chk-watchdog-20261015153541512",
+      "reason": "PARENT_PROCESS_LOST",
+      "git_dirty": false
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 10,
+    "event_id": "evt-fa71a2e536f4",
+    "timestamp": "2026-10-15T15:35:44.0406197-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "recovery-protocol",
+    "type": "RECOVERY_RECONCILED",
+    "payload": {
+      "details": [
+        "STATE.json corrupto o inv\u00e1lido contra schema (INVALID: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)).",
+        "Recuperado exitosamente desde checkpoint chk-watchdog-20261015153541512 \u00edntegro."
+      ],
+      "reconciled_git_files": [],
+      "tests_status": "NONE",
+      "recovered_from_backup": true,
+      "next_action": "Continuar ejecuci\u00f3n de tarea pendiente: Implement correct addition with verified tests",
+      "divergence_detected": false
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 11,
+    "event_id": "evt-a113c2408d64",
+    "timestamp": "2026-10-15T15:35:44.7360074-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "recovery-protocol",
+    "type": "RECOVERY_RECONCILED",
+    "payload": {
+      "details": [
+        "Ejecuci\u00f3n previa interrumpida detectada: status era RUNNING pero El proceso PID 35216 ya no existe en el sistema."
+      ],
+      "reconciled_git_files": [],
+      "tests_status": "NONE",
+      "recovered_from_backup": false,
+      "next_action": "Continuar ejecuci\u00f3n de tarea pendiente: Implement correct addition with verified tests",
+      "divergence_detected": false
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 12,
+    "event_id": "evt-0caeecc22030",
+    "timestamp": "2026-10-15T15:35:44.9249123-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "RUN_RECOVERED_FROM_DISK",
+    "payload": {
+      "status": "RECOVERED"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 13,
+    "event_id": "evt-092b4f80f34c",
+    "timestamp": "2026-10-15T15:35:45.1711794-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "RUN_STARTED",
+    "payload": {
+      "approval_digest": "e397b33d9c189db0d610f2509d015811d4568a13eac0bfc440bae897e8072478",
+      "backend": "probe",
+      "git_head": "87f6411fb48a3202c3f44c0604de7e2e20050512"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 14,
+    "event_id": "evt-ae7836281a45",
+    "timestamp": "2026-10-15T15:35:45.2271796-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 36680,
+      "name": "watchdog",
+      "executable": "powershell.exe",
+      "start_ticks": 639276861452004334
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 15,
+    "event_id": "evt-9f21e414b602",
+    "timestamp": "2026-10-15T15:35:45.5292288-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 9780,
+      "name": "supervisor",
+      "executable": "powershell.exe",
+      "start_ticks": 639276861455099260
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 16,
+    "event_id": "evt-67bb2476e777",
+    "timestamp": "2026-10-15T15:35:48.8367127-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "supervisor"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 17,
+    "event_id": "evt-8a74a053aabd",
+    "timestamp": "2026-10-15T15:35:48.8737126-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 8072,
+      "name": "worker",
+      "executable": "powershell.exe",
+      "start_ticks": 639276861488548551
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 18,
+    "event_id": "evt-744acf3fb285",
+    "timestamp": "2026-10-15T15:35:52.1589746-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "worker"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 19,
+    "event_id": "evt-6e4164d1e33a",
+    "timestamp": "2026-10-15T15:35:52.1919737-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 30700,
+      "name": "check-unit",
+      "executable": "C:/Python314/python.exe",
+      "start_ticks": 639276861521751305
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 20,
+    "event_id": "evt-158c620e17a9",
+    "timestamp": "2026-10-15T15:35:52.2179749-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "check-unit"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 21,
+    "event_id": "evt-8a8ba2c7f713",
+    "timestamp": "2026-10-15T15:35:52.2809730-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_STARTED",
+    "payload": {
+      "ownership": "OWNED_BY_RUN",
+      "pid": 37068,
+      "name": "reviewer",
+      "executable": "powershell.exe",
+      "start_ticks": 639276861522618417
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 22,
+    "event_id": "evt-e9a6b287e16b",
+    "timestamp": "2026-10-15T15:35:55.5722710-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "PROCESS_EXITED",
+    "payload": {
+      "exit_code": 0,
+      "name": "reviewer"
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 23,
+    "event_id": "evt-b3eeab9228b4",
+    "timestamp": "2026-10-15T15:35:56.3829558-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "COMPLETION_ASSESSED",
+    "payload": {
+      "status": "FAILED",
+      "gate": {
+        "status": "FAILED",
+        "checks": {
+          "state_schema_valid": true,
+          "native_live_backend": false,
+          "roles_success": true,
+          "independent_reviewer_accepted": false,
+          "run_id_consistent": true,
+          "tests_all_required": true,
+          "builds_all_required": true,
+          "linters_all_required": true,
+          "tests_exist": true,
+          "no_build_approved_or_passed": true,
+          "criteria_all_mapped_and_passed": true,
+          "pending_empty": true,
+          "failures_not_pending": true,
+          "state_tests_pass": true,
+          "immutable_test_calculator.py": true,
+          "artifact_calculator.py": true,
+          "diff_only_approved_files": true,
+          "relevant_diff_exists": false,
+          "state_git_head_consistent": true
+        },
+        "failed": [
+          "native_live_backend",
+          "independent_reviewer_accepted",
+          "relevant_diff_exists"
+        ],
+        "changed_files": [],
+        "run_id": "run-20261015-153535",
+        "source": "DETERMINISTIC_COMPLETION_GATE"
+      }
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 24,
+    "event_id": "evt-81bb21033620",
+    "timestamp": "2026-10-15T15:35:56.7295011-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "checkpoint-manager",
+    "type": "CHECKPOINT_CREATED",
+    "payload": {
+      "manifest_files": 4,
+      "git_head": "87f6411",
+      "checkpoint_id": "chk-runner-20261015153556584",
+      "reason": "Runner terminal FAILED",
+      "git_dirty": false
+    }
+  },
+  {
+    "schema_version": "1.0",
+    "seq": 25,
+    "event_id": "evt-ff340e7b033c",
+    "timestamp": "2026-10-15T15:35:57.0564424-03:00",
+    "run_id": "run-20261015-153535",
+    "actor": "runner",
+    "type": "RUN_FINISHED",
+    "payload": {
+      "cleanup": {
+        "job_closed": true,
+        "owned_survivors": [],
+        "run_mutex_released": true,
+        "run_lock_removed": true,
+        "inference_mutex": "FREE",
+        "external_model_preserved": false,
+        "errors": []
+      },
+      "status": "FAILED",
+      "reason": "COMPLETION_REJECTED: native_live_backend,independent_reviewer_accepted,relevant_diff_exists",
+      "technical": "SUCCESS"
+    }
+  }
+]

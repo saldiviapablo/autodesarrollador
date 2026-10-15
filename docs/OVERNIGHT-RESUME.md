@@ -10,9 +10,9 @@
   "last_cause": "New endurance adapter launcher argument contract",
   "last_fix": "STRICT_FORMAT_ONLY_JSON_COMPARISON_WITH_UNCHANGED_SECRET_SANITIZER",
   "last_commit": "34ee06bd71fc4712123757a9b022ebbff2e05b24",
-  "next_action": "After corrective commit run fresh complete tests/global-audit.py; three distinct historical audit adapter FAILs retained.",
+  "next_action": "After corrective commit clean Git run fresh full tests/global-audit.py. All original runtime/security/timing budgets unchanged.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T18:33:47.951164+00:00",
+  "updated_at": "2026-10-15T18:42:06.784095+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -30,7 +30,8 @@
     "AUDIT_EVIDENCE_SCANNER_JSON_SPACING_FALSE_POSITIVE",
     "F26_BRIDGE_INTEGRITY_PRE_SUITE_FIXTURE_MISSING",
     "AUDIT_PRIVATE_SYNTHETIC_CANARY_EXPORT_UNREDACTED",
-    "AUDIT_QWEN_PROBE_LOCALIZED_STDERR_DECODING"
+    "AUDIT_QWEN_PROBE_LOCALIZED_STDERR_DECODING",
+    "AUDIT_HEARTBEAT_TEST_READS_BEFORE_GUARDIAN_FINALIZATION"
   ],
   "fixes": [
     "REVIEWER_CONTRACT_CERTIFIED",
@@ -48,7 +49,8 @@
     "STRICT_FORMAT_ONLY_JSON_COMPARISON_WITH_UNCHANGED_SECRET_SANITIZER",
     "REVIEWED_BRIDGE_BOUND_FRESH_PRE_SUITE_FIXTURE_CERTIFIED",
     "APPROVED_WHOLE_FILE_EQUIVALENCE_RAW_PRIVATE_SANITIZED_EXPORT_CERTIFIED",
-    "PROBE_LOSSLESS_BYTE_STREAMS_STRICT_UTF8_JSON_UNCHANGED_ASSERTIONS"
+    "PROBE_LOSSLESS_BYTE_STREAMS_STRICT_UTF8_JSON_UNCHANGED_ASSERTIONS",
+    "BOUNDED_WATCHDOG_TERMINAL_REPORT_OBSERVATION_UNCHANGED_ASSERTIONS"
   ],
   "run_id": null,
   "harness_session_id": null,
@@ -68,11 +70,11 @@
   "native_status": "NOT_RUNNING",
   "tool_session_id": null,
   "last_failure": {
-    "signature": "AUDIT_QWEN_PROBE_LOCALIZED_STDERR_DECODING",
+    "signature": "AUDIT_HEARTBEAT_TEST_READS_BEFORE_GUARDIAN_FINALIZATION",
     "resolved": true,
-    "evidence": "evidence\\phase-26-audit-20261015-153013"
+    "evidence": "evidence\\phase-26-audit-20261015-153405"
   }
 }
 ```
 
-F24/F25/4H PASS unchanged. F26 last stopped in localized stderr decoding of the native CLI/mock endpoint transport probe despite wrapperSuccess=true. Probe now preserves both raw streams; strict UTF-8 JSON and all3 acceptance assertion ASTs unchanged. Isolated installedCLI transport and deterministic nonUTF8 stderr capture passed. No productive wrapper/security/model/config changed. Third historical F26 FAIL retained; fresh complete audit required. Prepared pilot observer additional legitimate Worker correction fixture reproduced false denial and14 controls nowPASS in logs only; promote after F26. No push.
+F24/F25/4H PASS unchanged. Fourth distinct F26 adapter/test failure preserved: heartbeat test read STATE immediately after suspended-parent exit, before guardian normal finalization, then its failing owner exit caused Job Object to close guardian. Added bounded observation of the same existing FAILED/report/unlocked assertions (all7 ASTs unchanged). Actual restart-budget and heartbeat fixture PASS under same owned wrapper33.977s, no productive Watchdog/budget changes. Fresh full F26 required. Prepared pilot14 controls PASS under logs only; promote after F26. No push.

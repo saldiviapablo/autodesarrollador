@@ -1,0 +1,60 @@
+﻿{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261015-153428",
+    "project_id":  "f26-checkpoint-56b8e1de",
+    "objective":  "Validar integridad criptográfica de checkpoints",
+    "status":  "RUNNING",
+    "created_at":  "2026-10-15T15:34:29.0390029-03:00",
+    "updated_at":  "2026-10-15T15:34:30.7671565-03:00",
+    "cycle":  0,
+    "max_cycles":  20,
+    "current_phase":  "ACTIVE_EXECUTION",
+    "current_task":  "Validar integridad criptográfica de checkpoints",
+    "completed_tasks":  [
+
+                        ],
+    "pending_tasks":  [
+                          "Validar integridad criptográfica de checkpoints"
+                      ],
+    "acceptance_criteria":  [
+                                "Verificar SHA-256 en checkpoint-manifest.json",
+                                "Detectar manipulaciones"
+                            ],
+    "current_delegation_id":  null,
+    "hermes_session_id":  null,
+    "qwen_session_id":  null,
+    "git":  {
+                "branch":  "master",
+                "head":  "22c9633",
+                "dirty":  true,
+                "changed_files":  [
+                                      ".autopilot/",
+                                      "QWEN.md"
+                                  ]
+            },
+    "tests":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null,
+                  "last_run_at":  null
+              },
+    "build":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null
+              },
+    "progress":  {
+                     "score":  0,
+                     "last_progress_at":  null,
+                     "no_progress_cycles":  0
+                 },
+    "failure":  {
+                    "last_signature":  null,
+                    "repeated_count":  0
+                },
+    "checkpoint":  {
+                       "last_id":  "chk-tampered-02",
+                       "last_created_at":  "2026-10-15T15:34:30.7671565-03:00"
+                   },
+    "next_action":  "Continuar ejecución de tarea pendiente: Validar integridad criptográfica de checkpoints"
+}

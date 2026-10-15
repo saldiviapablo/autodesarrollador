@@ -1,0 +1,61 @@
+﻿{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261015-153417",
+    "project_id":  "f26-continuity-eb56f98c",
+    "objective":  "Construir calculadora con operaciones básicas y tests unitarios",
+    "status":  "RUNNING",
+    "created_at":  "2026-10-15T15:34:17.5297088-03:00",
+    "updated_at":  "2026-10-15T15:34:25.9805290-03:00",
+    "cycle":  0,
+    "max_cycles":  20,
+    "current_phase":  "ACTIVE_EXECUTION",
+    "current_task":  "Construir calculadora con operaciones básicas y tests unitarios",
+    "completed_tasks":  [
+
+                        ],
+    "pending_tasks":  [
+                          "Construir calculadora con operaciones básicas y tests unitarios"
+                      ],
+    "acceptance_criteria":  [
+                                "add(a, b) retorna a + b",
+                                "test_calculator.py pasa con ExitCode 0"
+                            ],
+    "current_delegation_id":  null,
+    "hermes_session_id":  null,
+    "qwen_session_id":  null,
+    "git":  {
+                "branch":  "master",
+                "head":  "97952ab",
+                "dirty":  true,
+                "changed_files":  [
+                                      "calculator.py",
+                                      ".autopilot/",
+                                      "QWEN.md"
+                                  ]
+            },
+    "tests":  {
+                  "status":  "UNKNOWN",
+                  "last_command":  "python test_calculator.py",
+                  "last_exit_code":  null,
+                  "last_run_at":  null
+              },
+    "build":  {
+                  "status":  "NONE",
+                  "last_command":  null,
+                  "last_exit_code":  null
+              },
+    "progress":  {
+                     "score":  0,
+                     "last_progress_at":  null,
+                     "no_progress_cycles":  0
+                 },
+    "failure":  {
+                    "last_signature":  null,
+                    "repeated_count":  0
+                },
+    "checkpoint":  {
+                       "last_id":  "chk-fase11-reconcile",
+                       "last_created_at":  "2026-10-15T15:34:23.9179483-03:00"
+                   },
+    "next_action":  "Re-ejecutar pruebas unitarias para certificar estado técnico tras cambios"
+}
