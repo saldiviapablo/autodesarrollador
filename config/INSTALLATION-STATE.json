@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-15T00:17:39.177652+00:00",
+  "updated_at": "2026-10-15T01:25:16.062870+00:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -266,7 +266,24 @@
       "f24_pending_prompt_sha256": null,
       "classification": "HISTORICAL FAIL / MANDATORY_TEST_FAILED"
     },
-    "f24_web_context_delivered": "PASS"
+    "f24_web_context_delivered": "PASS",
+    "f24_attempt6_admission": {
+      "status": "FAIL_BEFORE_START",
+      "run_id": null,
+      "send_actuator": "PASS_DETERMINISTIC_LIVE_UNVALIDATED",
+      "live_ui_precheck": "PASS",
+      "controlled_real_send": "FAIL_PREEXISTING_COMPOSER_NO_SEND",
+      "test_consultation_id": "test-send-actuator-735b2b7cc7ad4173b62227a5d45a3f46",
+      "physical_actions": 0,
+      "harness_preflight": "FAIL_HEARTBEAT_STALE_RECOVERY_PROBE",
+      "retry_or_reconciliation": false,
+      "attempt6_started": false,
+      "attempt7_created": false,
+      "cleanup": "PASS",
+      "integrity": "PASS",
+      "report": "docs/F24-ATTEMPT-6-ADMISSION-STOP-REPORT.md",
+      "evidence": "evidence/f24-attempt6-preflight-20261014/"
+    }
   },
   "ready_for_real_pilot": false
 }

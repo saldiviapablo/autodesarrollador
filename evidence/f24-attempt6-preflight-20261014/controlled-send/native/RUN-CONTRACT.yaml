@@ -1,0 +1,23 @@
+schema_version: '1.0'
+run_id: run-20261014-221929
+project_id: test-send-actuator-735b2b7cc7ad4173b62227a5d45a3f46
+project_root: C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/test-send-actuator-735b2b7cc7ad4173b62227a5d45a3f46
+objective: One controlled ChatGPT send actuator test only; not F24 E2E
+acceptance_criteria:
+- single physical action and captured response; retry no resend
+autonomy_mode: unattended
+authorized: true
+authorized_at: '2026-10-14T22:19:29.7158809-03:00'
+created_at: '2026-10-14T22:19:29.7158809-03:00'
+time_budget_minutes: 5
+allowed_actions:
+- edit_file
+- run_test
+- git_commit_local
+forbidden_actions:
+- git_push
+- delete_root
+- modify_runner_guardrails
+test_commands: []
+build_commands: []
+security_policy_reference: config/security.yaml

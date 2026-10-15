@@ -1,0 +1,32 @@
+{
+    "probe_delay_seconds":  10,
+    "backend":  "probe",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-cleanup22-heartbeat_stale-9f9796e0",
+    "research_inline":  false,
+    "role":  "worker",
+    "timeout":  15,
+    "request":  {
+                    "allowed_actions":  [
+                                            "edit_file",
+                                            "run_test",
+                                            "git_commit_local"
+                                        ],
+                    "schema_version":  "1.0",
+                    "workspace":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-cleanup22-heartbeat_stale-9f9796e0",
+                    "delegation_id":  "del-run-20261014-222103",
+                    "forbidden_actions":  [
+                                              "git_push",
+                                              "delete_root",
+                                              "modify_runner_guardrails"
+                                          ],
+                    "objective":  "Implement correct addition with verified tests",
+                    "tests":  [
+
+                              ],
+                    "task":  "Change calculator.py add to return a+b; run python test_calculator.py. Never edit tests or .autopilot.\nSupervisor plan (advisory, approved scope remains binding): {\"task\":\"probe\",\"decision\":\"ACCEPTED\"}\nPrevious checks to correct: ",
+                    "acceptance_criteria":  [
+                                                "addition verified"
+                                            ],
+                    "status":  "READY"
+                }
+}

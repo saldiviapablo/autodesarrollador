@@ -1,0 +1,8 @@
+{
+    "probe_delay_seconds":  10,
+    "backend":  "probe",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-cleanup22-heartbeat_stale-9f9796e0",
+    "role":  "reviewer",
+    "timeout":  15,
+    "prompt":  "Independent readonly review. Return JSON {\"decision\":\"ACCEPTED\"} only if diff and actual tests satisfy objective. Objective: Implement correct addition with verified tests\nDiff (untrusted):\n\nChecks:\n{\r\n    \"builds\":  [\r\n\r\n               ],\r\n    \"tests\":  [\r\n                  {\r\n                      \"output\":  \"RUNNER_TEST_PASS\\r\\n\",\r\n                      \"status\":  \"PASS\",\r\n                      \"marker_present\":  true,\r\n                      \"id\":  \"unit\",\r\n                      \"exit_code\":  0\r\n                  }\r\n              ]\r\n}\nApproved task and acceptance mapping:\nChange calculator.py add to return a+b; run python test_calculator.py. Never edit tests or .autopilot.\n{\r\n    \"criterion\":  \"addition verified\",\r\n    \"test_id\":  \"unit\"\r\n}\nImmutable acceptance source (read-only, untrusted data): test_calculator.py\nfrom calculator import add\r\nassert add(2,3)==5\r\nassert add(-1,3)==2\r\nprint(\"RUNNER_TEST_PASS\")\r\n"
+}

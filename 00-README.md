@@ -445,7 +445,7 @@ Nada debe marcarse `PASS` sin evidencia.
 
 ## `07-ROADMAP.md`
 
-Define el orden de implementación por macrofases (Macrofases 1–6, 7A y 7B certificadas históricamente; F23 PASS; validación de Macrofase 8 detenida en F24 ATTEMPT 5 por precheck del botón ChatGPT; fixes de seguridad preservados).
+Define el orden de implementación por macrofases (Macrofases 1–6, 7A y 7B certificadas históricamente; F23 PASS; validación de Macrofase 8 detenida: F24 FAIL, admisión ATTEMPT6 fallida antes de START; fixes de seguridad preservados).
 
 ---
 
@@ -528,7 +528,7 @@ Macrofase 7A: Hermes Native Capabilities (7A.1 a 7A.10) — PASS
   ChatGPT Idempotency — PASS
   Regression gate — PASS
 Macrofase 7B: Runner Autónomo Nocturno (Fases 17 a 22) — PASS
-Macrofase 8:  Validación Final (Fases 23 a 28) — FAIL / BLOCKED_REQUIRES_HUMAN (F23 PASS; F24 ATTEMPT 5 ChatGPT precheck FAIL, 0 envíos)
+Macrofase 8:  Validación Final (Fases 23 a 28) — FAIL / BLOCKED_REQUIRES_HUMAN (F23 PASS; F24 FAIL, ATTEMPT6 NOT_RUN / admisión fallida)
 ```
 
 ---
@@ -740,3 +740,7 @@ Fronteras A/B/C y smokes previos PASS (aabf021, 7de9bf9, c846e2a). Nuevo run-202
 ## Estado vigente — F24 ATTEMPT 5 — 2026-10-14
 
 WEB_GATE_FIX PASS, F24_HARNESS_PREFLIGHT PASS, 28 gates congelados (8c8bfdf; runtime import fix c2b1268, previo a Prepare/START). Run nuevo run-20261014-210131: Worker SUCCESS, web fetch/context delivered PASS, 13 tests/build PASS antes y después de crash/Watchdog/START-Recover/continuación reales PASS. ChatGPT FAIL por SEND_BUTTON_UNAVAILABLE_OR_AMBIGUOUS antes de click: 0 envíos, ledger UNKNOWN_DELIVERY/no_resend, reserva 1/5 preservada. Reviewer/Completion Gate NOT_RUN. F24 FAIL / BLOCKED_REQUIRES_HUMAN. Duración 684.78s, límites 2700/fase300/restart2/maxcycles5 intactos, cero reinicios de agentes. Cleanup/integridad PASS; 629 archivos históricos intactos, ATTEMPT4 mantiene FAIL histórico y ATTEMPT3 no reconciliada/reenvíada. No corrección post-START, reenvío, ATTEMPT6 ni F25/F27/F28. READY_FOR_F25 NO. docs/F24-ATTEMPT-5-STOP-REPORT.md; evidence/phase-24-attempt-5-20261014/.
+
+## Estado vigente — admisión F24 ATTEMPT 6 detenida — 2026-10-14
+
+Actuador ChatGPT A–L y UI read-only PASS; prueba real controlada FAIL antes de envío: navegar a raíz conservó el borrador histórico, PREEXISTING_COMPOSER_NO_SEND, 0 intentos físicos. No retry/reconciliación. Preflight del harness FAIL por HEARTBEAT_STALE repetido en probe de recovery/cleanup. ATTEMPT6 NOT_RUN, sin nuevo run/clock/aprobación; no ATTEMPT7. ATTEMPT5 y 955 archivos históricos intactos. Cleanup final e integridad PASS; F24 conserva FAIL; READY_FOR_F25 NO. Informe: docs/F24-ATTEMPT-6-ADMISSION-STOP-REPORT.md; evidence/f24-attempt6-preflight-20261014/.

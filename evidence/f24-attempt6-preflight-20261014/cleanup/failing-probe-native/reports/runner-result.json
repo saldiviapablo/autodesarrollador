@@ -1,0 +1,159 @@
+{
+    "schema_version":  "1.0",
+    "run_id":  "run-20261014-222103",
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-cleanup22-heartbeat_stale-9f9796e0",
+    "objective":  "Implement correct addition with verified tests",
+    "duration_seconds":  41.9210831,
+    "status":  "FAILED",
+    "technical_status":  "INTERRUPTED",
+    "reason":  "HEARTBEAT_STALE",
+    "tasks_completed":  [
+
+                        ],
+    "pending_tasks":  [
+                          "Implement correct addition with verified tests"
+                      ],
+    "changed_files":  [
+
+                      ],
+    "commits":  [
+
+                ],
+    "tests":  [
+                  {
+                      "output":  "RUNNER_TEST_PASS\r\n",
+                      "status":  "PASS",
+                      "marker_present":  true,
+                      "id":  "unit",
+                      "exit_code":  0
+                  }
+              ],
+    "builds":  [
+
+               ],
+    "linters":  [
+
+                ],
+    "errors":  [
+                   "HEARTBEAT_STALE"
+               ],
+    "retries":  {
+                    "llama":  0,
+                    "supervisor":  0,
+                    "reviewer":  0,
+                    "worker":  0
+                },
+    "recoveries":  [
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  6,
+                           "event_id":  "evt-31a3276dffb3",
+                           "timestamp":  "2026-10-14T22:21:12.8270386-03:00",
+                           "run_id":  "run-20261014-222103",
+                           "actor":  "watchdog",
+                           "type":  "PARENT_CRASH_RECOVERED",
+                           "payload":  {
+                                           "parent_pid":  18448,
+                                           "reason":  "HEARTBEAT_STALE"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  10,
+                           "event_id":  "evt-2f60ccdc72d8",
+                           "timestamp":  "2026-10-14T22:21:18.2651459-03:00",
+                           "run_id":  "run-20261014-222103",
+                           "actor":  "runner",
+                           "type":  "RUN_RECOVERED_FROM_DISK",
+                           "payload":  {
+                                           "status":  "RECOVERED"
+                                       }
+                       },
+                       {
+                           "schema_version":  "1.0",
+                           "seq":  20,
+                           "event_id":  "evt-5f35b3a0c1ca",
+                           "timestamp":  "2026-10-14T22:21:49.3779920-03:00",
+                           "run_id":  "run-20261014-222103",
+                           "actor":  "watchdog",
+                           "type":  "PARENT_CRASH_RECOVERED",
+                           "payload":  {
+                                           "parent_pid":  28236,
+                                           "reason":  "HEARTBEAT_STALE"
+                                       }
+                       }
+                   ],
+    "web_queries":  [
+
+                    ],
+    "chatgpt_queries_used":  null,
+    "blocks":  [
+
+               ],
+    "completion_gate":  {
+                            "status":  "NOT_EVALUATED",
+                            "reason":  "HEARTBEAT_STALE"
+                        },
+    "cleanup":  {
+                    "guardian_exits_after_report":  true,
+                    "job_closed":  true,
+                    "inference_mutex":  "FREE",
+                    "parent_identity_verified":  true,
+                    "run_lock_removed":  true,
+                    "owned_survivors":  [
+
+                                        ]
+                },
+    "processes":  [
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  30916,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276240691202237
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  17380,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276240695914235
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  37876,
+                          "name":  "watchdog",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276240786605057
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  36172,
+                          "name":  "supervisor",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276240794462973
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  7208,
+                          "name":  "worker",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276240914975065
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  29464,
+                          "name":  "check-unit",
+                          "executable":  "C:/Python314/python.exe",
+                          "start_ticks":  639276241029523155
+                      },
+                      {
+                          "ownership":  "OWNED_BY_RUN",
+                          "pid":  35816,
+                          "name":  "reviewer",
+                          "executable":  "powershell.exe",
+                          "start_ticks":  639276241031625045
+                      }
+                  ],
+    "generated_at":  "2026-10-14T22:21:51.1374695-03:00"
+}

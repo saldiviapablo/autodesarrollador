@@ -1,4 +1,4 @@
-# One explicitly authorized real test consultation. Never resend/reconcile on failure.
+﻿# One explicitly authorized real test consultation. Never resend/reconcile on failure.
 $ErrorActionPreference='Stop';$env:PSModulePath=Join-Path $PSHOME 'Modules'
 $env:PYTHONUTF8='1';$env:PYTHONDONTWRITEBYTECODE='1';[Console]::OutputEncoding=[Text.Encoding]::UTF8
 $root=Split-Path -Parent $PSScriptRoot

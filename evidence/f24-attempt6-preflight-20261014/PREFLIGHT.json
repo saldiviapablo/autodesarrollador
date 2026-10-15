@@ -1,0 +1,84 @@
+{
+  "status": "FAIL",
+  "sealed": false,
+  "F24_HARNESS_PREFLIGHT": "FAIL",
+  "tests": {
+    "web": {
+      "status": "PASS",
+      "evidence": "web.stdout.txt"
+    },
+    "frozen-evaluator": {
+      "status": "PASS",
+      "evidence": "frozen-evaluator.stdout.txt"
+    },
+    "budget-cache": {
+      "status": "PASS",
+      "evidence": "budget-cache.stdout.txt"
+    },
+    "send-actuator": {
+      "status": "PASS",
+      "evidence": "send-actuator.stdout.txt"
+    },
+    "delivery": {
+      "status": "PASS",
+      "evidence": "delivery.stdout.txt"
+    },
+    "domain": {
+      "status": "PASS",
+      "evidence": "domain.stdout.txt"
+    },
+    "idempotency": {
+      "status": "PASS",
+      "evidence": "idempotency.stdout.txt"
+    },
+    "human": {
+      "status": "PASS",
+      "evidence": "human.stdout.txt"
+    },
+    "single-click": {
+      "status": "PASS",
+      "evidence": "single-click.stdout.txt"
+    },
+    "child-cleanup": {
+      "status": "PASS",
+      "evidence": "child-cleanup.stdout.txt"
+    },
+    "launcher": {
+      "status": "PASS",
+      "evidence": "launcher.stdout.txt"
+    },
+    "reviewer-transport": {
+      "status": "PASS",
+      "evidence": "reviewer-transport.stdout.txt"
+    },
+    "completion": {
+      "status": "PASS",
+      "evidence": "completion.stdout.txt"
+    },
+    "recovery": {
+      "status": "PASS",
+      "evidence": "recovery.stdout.txt"
+    },
+    "cleanup": {
+      "status": "FAIL",
+      "reason": "HEARTBEAT_STALE again in recovered stale-heartbeat probe",
+      "evidence": "cleanup.stderr.txt"
+    },
+    "syntax-lock": {
+      "status": "NOT_RUN"
+    },
+    "native-qwen-input": {
+      "status": "NOT_RUN"
+    },
+    "runtime-dependencies": {
+      "status": "PASS",
+      "evidence": "runtime-dependencies.json"
+    }
+  },
+  "TOTAL_GATES_FROZEN": 28,
+  "gates_sha256": "690949c59fbf278f1863a35f4b27b07f3ab3b99960420c939a628625fc526953",
+  "historical_files_preserved": 955,
+  "actual_messages_sent": 0,
+  "local_inferences": 0,
+  "attempt6_started": false
+}
