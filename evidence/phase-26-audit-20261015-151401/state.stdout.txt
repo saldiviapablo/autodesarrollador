@@ -1,0 +1,36 @@
+[2026-10-15 15:14:12.856] [INFO] ==============================================================================
+[2026-10-15 15:14:12.865] [INFO] INICIANDO VERIFICACION DE ESTADO PERSISTENTE .autopilot (FASE 10)
+[2026-10-15 15:14:12.872] [INFO] Sandbox:     C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\f26-state-08d89f99
+[2026-10-15 15:14:12.879] [INFO] EvidenceDir: C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\evidence\phase-26-audit-20261015-151401\state
+[2026-10-15 15:14:12.885] [INFO] ==============================================================================
+[2026-10-15 15:14:12.998] [INFO] [1/9] Test 1: Inicialización de Proyecto .autopilot...
+[2026-10-15 15:14:13.599] [OK]   [PASS] Test 1: Estructura Completa .autopilot Creada (Contract=True, State=True, Events=True, QWEN.md=True)
+[2026-10-15 15:14:13.609] [INFO] [2/9] Test 2: Validación de RUN-CONTRACT.yaml contra Schema...
+[2026-10-15 15:14:13.790] [OK]   [PASS] Test 2: Schema de RUN-CONTRACT.yaml Válido (Result=VALID_CONTRACT)
+[2026-10-15 15:14:13.792] [INFO] [3/9] Test 3: Validación de STATE.json contra Schema...
+[2026-10-15 15:14:13.956] [OK]   [PASS] Test 3: Schema de STATE.json Válido (Result=VALID)
+[2026-10-15 15:14:13.958] [INFO] [4/9] Test 4: Escritura Atómica y Respaldo STATE.previous.json...
+[2026-10-15 15:14:14.219] [OK]   [PASS] Test 4: Escritura Atómica y Respaldo Previous (Previous=INITIALIZED, Current=AUTHORIZED)
+[2026-10-15 15:14:14.221] [INFO] [5/9] Test 5: Transiciones de Estado (Válidas e Inválidas)...
+[2026-10-15 15:14:14.436] [OK]   [PASS] Test 5: Máquina de Estados (Transición Válida OK, Inválida Rechazada) (ValidTransition=True, InvalidRejected=True)
+[2026-10-15 15:14:14.438] [INFO] [6/9] Test 6: Derivación Automática de STATE.md...
+[2026-10-15 15:14:14.446] [OK]   [PASS] Test 6: Vista Humana STATE.md Derivada Correctamente (ContainsStatus=True, ContainsObjective=True)
+[2026-10-15 15:14:14.453] [INFO] [7/9] Test 7: Registro Append-Only de EVENTS.jsonl...
+[2026-10-15 15:14:14.480] [OK]   [PASS] Test 7: EVENTS.jsonl Append-Only y Monotónico (Seq1=2, Seq2=3)
+[2026-10-15 15:14:14.481] [INFO] [8/9] Test 8: Sanitización de Secretos y Credenciales...
+[2026-10-15 15:14:14.498] [OK]   [PASS] Test 8: Sanitización de Secretos ([REDACTED] Aplicado) (Leaked=False, RedactedPresent=True)
+[2026-10-15 15:14:14.499] [INFO] [9/9] Test 9: Checkpoints e Inmutabilidad...
+[2026-10-15 15:14:14.804] [OK]   [PASS] Test 9: Checkpoints Completos e Inmutables (Created=True, ImmutabilityEnforced=True)
+[2026-10-15 15:14:14.825] [INFO] ==============================================================================
+[2026-10-15 15:14:14.826] [INFO] RESUMEN DE PRUEBAS DE FASE 10 (ESTADO PERSISTENTE):
+[2026-10-15 15:14:14.839] [INFO]   [PASS] Test 1: Estructura Completa .autopilot Creada - Contract=True, State=True, Events=True, QWEN.md=True
+[2026-10-15 15:14:14.844] [INFO]   [PASS] Test 2: Schema de RUN-CONTRACT.yaml Válido - Result=VALID_CONTRACT
+[2026-10-15 15:14:14.852] [INFO]   [PASS] Test 3: Schema de STATE.json Válido - Result=VALID
+[2026-10-15 15:14:14.859] [INFO]   [PASS] Test 4: Escritura Atómica y Respaldo Previous - Previous=INITIALIZED, Current=AUTHORIZED
+[2026-10-15 15:14:14.868] [INFO]   [PASS] Test 5: Máquina de Estados (Transición Válida OK, Inválida Rechazada) - ValidTransition=True, InvalidRejected=True
+[2026-10-15 15:14:14.875] [INFO]   [PASS] Test 6: Vista Humana STATE.md Derivada Correctamente - ContainsStatus=True, ContainsObjective=True
+[2026-10-15 15:14:14.883] [INFO]   [PASS] Test 7: EVENTS.jsonl Append-Only y Monotónico - Seq1=2, Seq2=3
+[2026-10-15 15:14:14.890] [INFO]   [PASS] Test 8: Sanitización de Secretos ([REDACTED] Aplicado) - Leaked=False, RedactedPresent=True
+[2026-10-15 15:14:14.897] [INFO]   [PASS] Test 9: Checkpoints Completos e Inmutables - Created=True, ImmutabilityEnforced=True
+[2026-10-15 15:14:14.905] [INFO] ==============================================================================
+[2026-10-15 15:14:14.914] [OK] RESULTADO FINAL DE FASE 10: [PASS]

@@ -35,4 +35,12 @@ class Guards(unittest.TestCase):
   self.assertFalse(module.owns_fixture_metadata(R/'logs/7b-gate20-12abcdef/.autopilot',{'objective':'Implement correct addition with verified tests'},set()))
   self.assertFalse(module.owns_fixture_metadata(R/'sandbox',{},set()))
   self.assertFalse(module.owns_fixture_metadata(R/'sandbox/7b-gate20-12abcdef/other',{'objective':'Implement correct addition with verified tests'},set()))
+ def test_sandbox_reuse_requires_this_audits_declared_initialized_root(self):
+  case=R/'logs/overnight'/('audit-reuse-unit-'+uuid.uuid4().hex);(case/'sandbox').mkdir(parents=True);p=case/'sandbox/owned';p.mkdir();other=case/'sandbox/foreign';other.mkdir()
+  with patch.object(module,'R',case):
+   self.assertEqual(module.admit_sandbox_fixture(p,{p.resolve()},True),p.resolve())
+   with self.assertRaisesRegex(AssertionError,'ONLY_THIS_AUDITS_INITIALIZED_FIXTURE_MAY_BE_REUSED'):module.admit_sandbox_fixture(other,{p.resolve()},True)
+   with self.assertRaisesRegex(AssertionError,'FRESH_OWNED_SANDBOX_REQUIRED'):module.admit_sandbox_fixture(p,set())
+   with self.assertRaisesRegex(AssertionError,'FRESH_OWNED_SANDBOX_REQUIRED'):module.admit_sandbox_fixture(case/'outside',set())
+   self.assertEqual(module.admit_sandbox_fixture(case/'sandbox/fresh',set()),(case/'sandbox/fresh').resolve())
 if __name__=='__main__':unittest.main(verbosity=2)

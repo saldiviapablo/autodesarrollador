@@ -1,0 +1,27 @@
+﻿[2026-10-15 15:16:01.308] [INFO] ==============================================================================
+[2026-10-15 15:16:01.317] [INFO] INICIANDO VERIFICACION DE RECOVERY Y RECONCILIACION (FASE 11)
+[2026-10-15 15:16:01.325] [INFO] Sandbox:     C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\f26-continuity-cert-0a8ccd28
+[2026-10-15 15:16:01.332] [INFO] EvidenceDir: C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\evidence\audit-continuity-dependency-20261015-151557\recovery
+[2026-10-15 15:16:01.338] [INFO] ==============================================================================
+[2026-10-15 15:16:01.346] [INFO] [1/6] Test Crash A: Edit antes de STATE (Git > STATE)...
+[2026-10-15 15:16:02.539] [OK]   [PASS] Crash A: Detección de Git Diff no registrado y Reconciliación (DivergenceDetected=True, ChangedFilesContainsCalc=True)
+[2026-10-15 15:16:02.543] [INFO] [2/6] Test Crash B: Test en curso (RUNNING -> UNKNOWN)...
+[2026-10-15 15:16:03.425] [OK]   [PASS] Crash B: Test interrumpido reconciliado a UNKNOWN (Rerun planificado) (TestStatus=UNKNOWN, NextAction=Re-ejecutar pruebas unitarias para certificar estado técnico tras cambios)
+[2026-10-15 15:16:03.426] [INFO] [3/6] Test Crash C: STATE.json Corrupto (Fallback a Previous)...
+[2026-10-15 15:16:04.268] [OK]   [PASS] Crash C: STATE Corrupto Recuperado desde Previous Backup (RecoveredFromBackup=True, RunId=run-20261015-151558)
+[2026-10-15 15:16:04.270] [INFO] [4/6] Test Crash D: RUNNING sin proceso vivo (Stale Run)...
+[2026-10-15 15:16:04.763] [OK]   [PASS] Crash D: Detección de Incomplete Run y Transición a RECOVERING (Status=RECOVERING, StaleDetected=True)
+[2026-10-15 15:16:04.948] [INFO] [5/6] Test Checkpoint: Reconstrucción con Checkpoint...
+[2026-10-15 15:16:06.114] [OK]   [PASS] Checkpoint Recovery: Reconciliación con Checkpoint Existente (CheckpointId=chk-fase11-reconcile, Reconciled=True)
+[2026-10-15 15:16:06.116] [INFO] [6/6] Test Idempotencia: Doble ejecución sin degradación...
+[2026-10-15 15:16:07.517] [OK]   [PASS] Idempotencia: Ejecución Consecutiva no Degrada ni Duplica Tareas (TasksMatch=True, FilesMatch=True, StatusMatch=True)
+[2026-10-15 15:16:07.530] [INFO] ==============================================================================
+[2026-10-15 15:16:07.532] [INFO] RESUMEN DE PRUEBAS DE FASE 11 (RECOVERY Y RECONCILIACION):
+[2026-10-15 15:16:07.543] [INFO]   [PASS] Crash A: Detección de Git Diff no registrado y Reconciliación - DivergenceDetected=True, ChangedFilesContainsCalc=True
+[2026-10-15 15:16:07.547] [INFO]   [PASS] Crash B: Test interrumpido reconciliado a UNKNOWN (Rerun planificado) - TestStatus=UNKNOWN, NextAction=Re-ejecutar pruebas unitarias para certificar estado técnico tras cambios
+[2026-10-15 15:16:07.556] [INFO]   [PASS] Crash C: STATE Corrupto Recuperado desde Previous Backup - RecoveredFromBackup=True, RunId=run-20261015-151558
+[2026-10-15 15:16:07.565] [INFO]   [PASS] Crash D: Detección de Incomplete Run y Transición a RECOVERING - Status=RECOVERING, StaleDetected=True
+[2026-10-15 15:16:07.574] [INFO]   [PASS] Checkpoint Recovery: Reconciliación con Checkpoint Existente - CheckpointId=chk-fase11-reconcile, Reconciled=True
+[2026-10-15 15:16:07.582] [INFO]   [PASS] Idempotencia: Ejecución Consecutiva no Degrada ni Duplica Tareas - TasksMatch=True, FilesMatch=True, StatusMatch=True
+[2026-10-15 15:16:07.592] [INFO] ==============================================================================
+[2026-10-15 15:16:07.599] [OK] RESULTADO FINAL DE FASE 11: [PASS]

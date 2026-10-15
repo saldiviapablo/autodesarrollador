@@ -20,6 +20,13 @@ def owns_fixture_metadata(auto,state,declared):
  if state.get('objective')=='Implement correct addition with verified tests':return True
  return root.name.startswith('7b-prepare-') and state.get('objective')=='Explicit prepare generates run id'
 
+def admit_sandbox_fixture(destination,declared,reuse=False):
+ root=(R/'sandbox').resolve();destination=Path(destination).resolve()
+ assert root.is_relative_to(R.resolve()) and destination!=root and destination.is_relative_to(root),'FRESH_OWNED_SANDBOX_REQUIRED'
+ if reuse:assert destination in declared and destination.is_dir(),'ONLY_THIS_AUDITS_INITIALIZED_FIXTURE_MAY_BE_REUSED'
+ else:assert not destination.exists(),'FRESH_OWNED_SANDBOX_REQUIRED'
+ return destination
+
 def main():
  parser=argparse.ArgumentParser();parser.add_argument('--final',action='store_true');args=parser.parse_args()
  install=READ(R/'config/INSTALLATION-STATE.json');v=install['validation_8'];assert v.get('f25')==v.get('4h')=='PASS','ACTUAL_2H_AND_4H_REQUIRED'
@@ -85,17 +92,19 @@ def main():
   argv=[PY,str(Path(__file__).with_name('relocate-audit-test.py')),'--test',name,'--output',str(E/('relocated-'+name))]
   if directory:argv+=['--directory',directory]
   run('relocated-'+name,argv,timeout)
- def psfile(name,script,*args,timeout=120,marker=None):
+ def psfile(name,script,*args,timeout=120,marker=None,reuse_owned_sandbox=False):
   if '-SandboxDir' in args:
-   destination=Path(args[args.index('-SandboxDir')+1]).resolve();assert destination.is_relative_to((R/'sandbox').resolve()) and not destination.exists(),'FRESH_OWNED_SANDBOX_REQUIRED'
+   destination=admit_sandbox_fixture(args[args.index('-SandboxDir')+1],declared_fixture_roots,reuse_owned_sandbox)
    declared_fixture_roots.add(destination);write(E/'DECLARED-FIXTURE-ROOTS.json',sorted(map(str,declared_fixture_roots)))
   run(name,['powershell.exe','-NoProfile','-NonInteractive','-File',R/script,*args],timeout,marker)
  failure=None
  try:
   psfile('central-config','scripts/verify-config.ps1','-LogFile',str(E/'central-config.log.txt'))
+  continuity=R/'sandbox'/('f26-continuity-'+uuid.uuid4().hex[:8])
   for kind,script in [('state','test-fase10-state.ps1'),('recovery-memory','test-fase11-recovery.ps1'),('security','test-fase15-security.ps1')]:
    extra=['-LogFile',str(E/(kind+'.log.txt'))] if kind!='security' else []
-   psfile(kind,'tests/'+script,'-SandboxDir',str(R/'sandbox'/('f26-'+kind+'-'+uuid.uuid4().hex[:8])),'-EvidenceDir',str(E/kind),*extra,timeout=180)
+   destination=continuity if kind in ['state','recovery-memory'] else R/'sandbox'/('f26-security-'+uuid.uuid4().hex[:8])
+   psfile(kind,'tests/'+script,'-SandboxDir',str(destination),'-EvidenceDir',str(E/kind),*extra,timeout=180,reuse_owned_sandbox=kind=='recovery-memory')
   psfile('checkpoint-integrity','tests/test-checkpoint-integrity.ps1','-SandboxDir',str(R/'sandbox'/('f26-checkpoint-'+uuid.uuid4().hex[:8])))
   psfile('anti-loop-timeouts','tests/test-fase16-anti-loop.ps1','-EvidenceDir',str(E/'anti-loop'),timeout=180)
   psfile('inference-lock','tests/test-inference-lock.ps1','-EvidenceDir',str(E/'lock'),'-LogFile',str(E/'lock.log.txt'),timeout=180)
@@ -112,6 +121,7 @@ def main():
    exe=HP if name in ['test-endurance-controller.py','test-phase22.py','test-f24-runtime-dependencies.py'] else PY
    run(name,[exe,R/'tests'/name],180)
   run('audit-entry-guards',[HP,Path(__file__).with_name('test-audit-entry-guards.py')],60)
+  run('audit-secret-comparison',[HP,Path(__file__).with_name('test-audit-secret-scan.py')],60)
   if args.final:run('pilot-controller-controls',[HP,R/'tests/test-pilot-controllers.py'],60)
   for name,directory,timeout in [
    ('test-phase23-pathguard.py','evidence/phase-23-attempt-3',180),

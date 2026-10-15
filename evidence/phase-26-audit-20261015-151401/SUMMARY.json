@@ -1,0 +1,107 @@
+{
+  "status": "FAIL",
+  "failure": "recovery-memory: Set-Content : No se puede encontrar una parte de la ruta de acceso 'C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador \r\nautonomo\\sandbox\\f26-recovery-memory-42777f9f\\calculator.py'.\r\nEn C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-fase11-recovery.ps1: 78 Carácter: 33\r\n+ ... b): return a + b\" | Set-Content -LiteralPath $calcPath -Encoding UTF8\r\n+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : ObjectNotFound: (C:\\Users\\Pc\\Doc...f\\calculator.py:String) [Set-Content], DirectoryNotFo \r\n   undException\r\n    + FullyQualifiedErrorId : GetContentWriterDirectoryNotFoundError,Microsoft.PowerShell.Commands.SetContentCommand\r\n \r\n ",
+  "tests": {
+    "central-config": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 1.2457105,
+        "owned_identity": {
+          "controller_pid": 33200,
+          "pid": 11832,
+          "wrapper_pid": 34368,
+          "controller_birth_ticks": 639276848408796729,
+          "start_ticks": 639276848508029763,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 1.83836870000232,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\verify-config.ps1",
+        "-LogFile",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-151401\\central-config.log.txt"
+      ]
+    },
+    "state": {
+      "status": "PASS",
+      "process": {
+        "exit_code": 0,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "PASS",
+        "stream_cleanup": true,
+        "duration_seconds": 2.3915151999999997,
+        "owned_identity": {
+          "controller_pid": 33200,
+          "pid": 10492,
+          "wrapper_pid": 25444,
+          "controller_birth_ticks": 639276848408796729,
+          "start_ticks": 639276848525870156,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 2.9209875999949872,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-fase10-state.ps1",
+        "-SandboxDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f26-state-08d89f99",
+        "-EvidenceDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-151401\\state",
+        "-LogFile",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-151401\\state.log.txt"
+      ]
+    },
+    "recovery-memory": {
+      "status": "FAIL",
+      "process": {
+        "exit_code": 1,
+        "reason": "",
+        "owned_job_closed": true,
+        "owned_process_exited": true,
+        "status": "FAIL",
+        "stream_cleanup": true,
+        "duration_seconds": 0.39597699999999997,
+        "owned_identity": {
+          "controller_pid": 33200,
+          "pid": 26312,
+          "wrapper_pid": 22512,
+          "controller_birth_ticks": 639276848408796729,
+          "start_ticks": 639276848555141131,
+          "executable": "powershell.exe"
+        }
+      },
+      "duration_seconds": 0.9373870999988867,
+      "argv": [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\tests\\test-fase11-recovery.ps1",
+        "-SandboxDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\f26-recovery-memory-42777f9f",
+        "-EvidenceDir",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-151401\\recovery-memory",
+        "-LogFile",
+        "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-151401\\recovery-memory.log.txt"
+      ]
+    }
+  },
+  "historical_files": 5258,
+  "no_push": true,
+  "new_dependencies": []
+}
