@@ -1,0 +1,18 @@
+import json, pathlib, subprocess, sys, yaml
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+cfg = yaml.safe_load((ROOT / 'config/system.yaml').read_text(encoding='utf-8-sig'))
+locked = yaml.safe_load((ROOT / 'config/VERSIONS.lock').read_text(encoding='utf-8-sig'))
+
+def version(args):
+    p = subprocess.run(args, capture_output=True, text=True, timeout=15)
+    assert p.returncode == 0, (args, p.stderr)
+    return (p.stdout + p.stderr).strip()
+llama = version([cfg['llama']['executable'], '--version'])
+node = version([locked['runtimes']['node']['executable'], '--version'])
+native_python = version([cfg['document_extraction']['native_python'], '--version'])
+qwen_package = json.loads((pathlib.Path(cfg['qwen_code']['cli_entry']).parent / 'package.json').read_text())
+checks = {'llama_build': str(locked['inference']['llama_cpp']['build']) in llama, 'llama_commit': locked['inference']['llama_cpp']['commit'] in llama, 'python_main': sys.version.split()[0] == locked['runtimes']['python_main']['version'], 'node': node.lstrip('v') == locked['runtimes']['node']['version'], 'qwen_code': qwen_package['version'] == locked['autonomous_agents']['qwen_code']['version'], 'native_python_unchanged': native_python == 'Python 3.14.7'}
+result = {'status': 'PASS' if all(checks.values()) else 'FAIL', 'checks': checks, 'actual': {'llama': llama, 'node': node, 'python': sys.version.split()[0], 'native_python': native_python, 'qwen_code': qwen_package['version']}, 'installed_or_updated': False}
+__import__('pathlib').Path('C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-154228\\relocated-verify-regression-environment.py\\environment.json').write_text(json.dumps(result, indent=2) + '\n')
+print(json.dumps(result))
+assert all(checks.values())

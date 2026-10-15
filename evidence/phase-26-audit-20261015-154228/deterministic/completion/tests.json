@@ -1,0 +1,57 @@
+{
+  "status": "PASS",
+  "tests": {
+    "T-COMP-001": "PASS",
+    "T-COMP-002": "PASS",
+    "T-COMP-003": "PASS",
+    "T-COMP-004": "PASS",
+    "T-COMP-005": "PASS",
+    "T-COMP-006": "PASS",
+    "T-COMP-007": "PASS",
+    "T-COMP-008": "PASS",
+    "T-COMP-009": "PASS"
+  },
+  "false_positive_cases": {
+    "missing_build_evidence": [
+      "builds_all_required"
+    ],
+    "missing_linter_evidence": [
+      "linters_all_required"
+    ],
+    "agent_done_insufficient": [
+      "independent_reviewer_accepted"
+    ],
+    "mandatory_test_fail": [
+      "tests_all_required",
+      "criteria_all_mapped_and_passed"
+    ],
+    "exit_zero_no_marker": [
+      "tests_all_required"
+    ],
+    "pending_critical": [
+      "pending_empty"
+    ],
+    "spurious_diff": [
+      "diff_only_approved_files"
+    ],
+    "artifact_missing": [
+      "artifact_calculator.py"
+    ],
+    "criterion_unmapped": [
+      "criteria_all_mapped_and_passed"
+    ],
+    "stale_evidence": [
+      "run_id_consistent"
+    ],
+    "immutable_test_changed": [
+      "immutable_test_calculator.py",
+      "diff_only_approved_files"
+    ],
+    "unresolved_failure": [
+      "failures_not_pending"
+    ]
+  },
+  "positive_case": "PASS",
+  "unit_fixture_only": true,
+  "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\7b-gate20-a55e4066"
+}

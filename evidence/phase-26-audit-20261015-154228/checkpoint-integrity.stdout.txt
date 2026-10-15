@@ -1,0 +1,15 @@
+==============================================================================
+INICIANDO TEST DE INTEGRIDAD CRIPTOGRAFICA DE CHECKPOINTS
+Sandbox: C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\sandbox\f26-checkpoint-3f5068ed
+==============================================================================
+[1/4] Creando Checkpoint 1 íntegro...
+  [PASS] Test 1: Checkpoint 1 generado con manifiesto y hashes válidos (Todos los artefactos verificados contra SHA-256 de checkpoint-manifest.json (4 archivos))
+[2/4] Verificando reconciliación de Checkpoint 1 válido...
+  [PASS] Test 2: Checkpoint 1 verificado y aceptado por recover-autopilot.ps1
+[3/4] Creando Checkpoint 2 y simulando manipulación indebida...
+  [PASS] Test 3: Alteración de archivo detectada como CHECKPOINT_INTEGRITY_FAILED (Discrepancia de tamaño en state.json: esperado 2252, real 2277)
+[4/4] Verificando rechazo estricto de Checkpoint 2 alterado en recover-autopilot.ps1...
+  [PASS] Test 4: recover-autopilot.ps1 rechazó explícitamente el checkpoint manipulado
+==============================================================================
+TEST DE INTEGRIDAD CRIPTOGRAFICA: TODOS LOS TESTS APROBADOS [PASS]
+==============================================================================

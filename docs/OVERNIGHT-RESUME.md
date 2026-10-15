@@ -5,14 +5,14 @@
   "schema_version": "1.0",
   "kind": "MAINTENANCE_ORCHESTRATION_NOT_RUN_STATE",
   "authorization": "2026-10-15 overnight user attachment 6bd9a034-9a1e-4e7e-b13b-7d840198a9f4",
-  "last_completed": "4H PASS",
-  "active_phase": "F26_AUDIT",
+  "last_completed": "F26 PASS",
+  "active_phase": "F27_PREPARATION",
   "last_cause": "New endurance adapter launcher argument contract",
   "last_fix": "STRICT_FORMAT_ONLY_JSON_COMPARISON_WITH_UNCHANGED_SECRET_SANITIZER",
-  "last_commit": "34ee06bd71fc4712123757a9b022ebbff2e05b24",
-  "next_action": "After corrective commit clean Git run fresh full tests/global-audit.py. All original runtime/security/timing budgets unchanged.",
+  "last_commit": "c8cbbd2873896f028a3b1bc8feb7d7cde2331f44",
+  "next_action": "Certify/promote prepared local disposable pilot helpers; clean local commit then real F27. Obtain actual final human review only after technical completion; no F28 before it.",
   "run_pointer": null,
-  "updated_at": "2026-10-15T18:42:06.784095+00:00",
+  "updated_at": "2026-10-15T18:49:43.769161+00:00",
   "no_push": true,
   "new_failures": [
     "REVIEWER_INSTRUCTION_DATA_BOUNDARY",
@@ -77,4 +77,6 @@
 }
 ```
 
-F24/F25/4H PASS unchanged. Fourth distinct F26 adapter/test failure preserved: heartbeat test read STATE immediately after suspended-parent exit, before guardian normal finalization, then its failing owner exit caused Job Object to close guardian. Added bounded observation of the same existing FAILED/report/unlocked assertions (all7 ASTs unchanged). Actual restart-budget and heartbeat fixture PASS under same owned wrapper33.977s, no productive Watchdog/budget changes. Fresh full F26 required. Prepared pilot14 controls PASS under logs only; promote after F26. No push.
+F26 PASS: 51 regression suites, 299 audit checks, 259 source hashes and 6119 historical evidence files verified. Actual F24/2h/4h evidence binds native roles, recovery, bridge and cleanup.
+
+F27 helpers prepared under logs/overnight (pilot_workload.py, pilot-controller.py, night-pilot-workload.py, night-pilot-controller.py, test-pilot-controllers.py). Technical pilot is not human review. Roadmap07 section30 requires actual final human review; preserve all historical FAILs. No push.

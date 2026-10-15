@@ -98,7 +98,7 @@ Parámetros validados:
 - **Macrofase 6 (Web, ChatGPT, Seguridad y Anti-Loop - Fases 13 a 16):** **PASS**
 - **Macrofase 7A (Hermes Native Capabilities - Subfases 7A.1 a 7A.10):** **PASS** (`7A.1 — Memoria Persistente + Skills`: **PASS**; `7A.2 — MCP + Plugins`: **PASS**; `7A.3 — Document Extraction`: **PASS**; `7A.4 — Native Browser`: **PASS**; `7A.5 — Bot Mode + Subagentes`: **PASS**; `7A.6 — Git Worktrees`: **PASS**; `7A.7 — Cron + No-Agent Jobs`: **PASS**; `7A.8 — Native Dashboard`: **PASS**; `7A.9 — Gateway`: **PASS**; `7A.10 — Controlled Auto-update`: **PASS**; `ChatGPT Idempotency`: **PASS**; `regression gate`: **PASS**). Preflight correctivo aprobado en commit `f133bab`.
 - **Macrofase 7B (Runner Autónomo Nocturno - Fases 17 a 22):** **PASS**
-- **Macrofase 8 (Validación Final - Fases23 a28):** **IN_PROGRESS**; F23/F24 PASS; 4H PASS; fases posteriores pendientes
+- **Macrofase 8 (Validación Final - Fases23 a28):** **IN_PROGRESS**; F23/F24/F25/4H/F26 PASS; F27/F28 pendientes
 
 ---
 
@@ -211,3 +211,7 @@ F25 PASS: 7772.089s reales, 13 tareas completas, recuperación real, cero interv
 ## Estado vigente — 4H — 2026-10-15T18:10:41.141557+00:00
 
 4H PASS: 14781.279s reales, 26 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-4h-20261015-110202-059517/. docs/4H-REPORT-4h-20261015-110202-059517.md
+
+## Estado vigente — F26 — 2026-10-15T18:49:43.769161+00:00
+
+F26 PASS: 51 regression suites, 299 audit checks, 259 source hashes and 6119 historical evidence files verified. Actual F24/2h/4h evidence binds native roles, recovery, bridge and cleanup. docs/F26-REPORT-phase-26-audit-20261015-154228.md

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-15T18:10:41.141557+00:00",
+  "updated_at": "2026-10-15T18:49:43.769161+00:00",
   "inventory": "PASS",
   "backup": "PASS",
   "llama": "PASS",
@@ -69,25 +69,25 @@
   },
   "regression_gate_7b": "PASS",
   "e2e_7b": "PASS",
-  "ready_for_8": false,
+  "ready_for_8": true,
   "e2e_scope": "F24 ATTEMPT11 PASS28/28; 4H real duration PASS; historical FAILs retained",
   "phases_8": {
     "23": "PASS",
     "24": "PASS",
     "25": "PASS",
-    "26": "NOT_RUN",
+    "26": "PASS",
     "27": "NOT_RUN",
     "28": "NOT_RUN"
   },
   "validation_8": {
     "status": "IN_PROGRESS",
-    "test": "F24_ATTEMPT_11_NATIVE_E2E",
+    "test": "F26_CURRENT_SYSTEM_AUDIT",
     "preflight": "PASS",
     "historical_7b_approval": "PASS (limited to tests executed at that closure)",
-    "current_security_revalidation": "PATHGUARD_FIX_SMOKE_PASS",
+    "current_security_revalidation": "PASS_F26_FULL_AUDIT",
     "checkpoint_4h": "PASS",
-    "regression_gate_final": "NOT_RUN / PREVIOUS_GATE_FAILED",
-    "ready_for_real_pilot": false,
+    "regression_gate_final": "PASS_AT_F26; final audit after F28 still required",
+    "ready_for_real_pilot": true,
     "prepare_zero_write_on_deny": "PASS",
     "historical_attempt_1": "FAIL / SECURITY_REGRESSION; unchanged evidence/phase-23/",
     "attempt_2_evidence": "evidence/phase-23-attempt-2/",
@@ -672,7 +672,10 @@
       "llama_max_working_set_mib": 23123.1796875
     },
     "4h_cleanup": "PASS",
-    "4h_integrity": "PASS"
+    "4h_integrity": "PASS",
+    "f26": "PASS",
+    "f26_evidence": "evidence/phase-26-audit-20261015-154228",
+    "f26_report": "docs/F26-REPORT-phase-26-audit-20261015-154228.md"
   },
-  "ready_for_real_pilot": false
+  "ready_for_real_pilot": true
 }

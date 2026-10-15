@@ -65,7 +65,7 @@
 | **Fase 23** | Sandbox integral | **PASS** | Reviewer real ACCEPTED, Completion Gate PASS; histórico preservado. evidence/hermes-prompt-transport-20261014/. |
 | **Fase 24** | End-to-End corto | **PASS** | ATTEMPT11 run-20261015-044359; docs/F24-ATTEMPT-11-REPORT.md; evidence/phase-24-attempt-11-20261015/ |
 | **Fase 25** | Prueba2h | **PASS** | docs/F25-REPORT-f25-20261015-050751-1239ed.md; evidence/endurance-f25-20261015-050751-1239ed/ |
-| **Fase 26** | Auditoría integral | **NOT_RUN** | Revisión global de robustez previa a despliegue con proyectos reales. |
+| **Fase 26** | Auditoría integral | **PASS** | docs/F26-REPORT-phase-26-audit-20261015-154228.md; evidence/phase-26-audit-20261015-154228/ |
 | **Fase 27** | Piloto con proyecto real | **NOT_RUN** | Validación sobre proyecto real secundario respaldado en rama dedicada. |
 | **Fase 28** | Prueba nocturna 6-8 horas | **NOT_RUN** | Prueba definitiva de autonomía prolongada desatendida. |
 
@@ -221,3 +221,7 @@ F25 PASS: 7772.089s reales, 13 tareas completas, recuperación real, cero interv
 ## Estado vigente — 4H — 2026-10-15T18:10:41.141557+00:00
 
 4H PASS: 14781.279s reales, 26 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-4h-20261015-110202-059517/. docs/4H-REPORT-4h-20261015-110202-059517.md
+
+## Estado vigente — F26 — 2026-10-15T18:49:43.769161+00:00
+
+F26 PASS: 51 regression suites, 299 audit checks, 259 source hashes and 6119 historical evidence files verified. Actual F24/2h/4h evidence binds native roles, recovery, bridge and cleanup. docs/F26-REPORT-phase-26-audit-20261015-154228.md

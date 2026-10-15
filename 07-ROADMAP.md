@@ -27,7 +27,7 @@ Principio:
 | **Macrofase 6** | Web, ChatGPT, Seguridad y Anti-Loop | Fases 13 a 16 | **PASS** |
 | **Macrofase 7A**| Hermes Native Capabilities | 7A.1–7A.10 PASS; ChatGPT Idempotency PASS; regression gate PASS | **PASS** |
 | **Macrofase 7B**| Runner Autónomo Nocturno | Fases 17 a 22 | **PASS** |
-| **Macrofase 8** | Validación Final | F23/F24 PASS; 4H PASS; fases posteriores pendientes | **IN_PROGRESS** |
+| **Macrofase 8** | Validación Final | F23/F24/F25/4H/F26 PASS; F27/F28 pendientes | **IN_PROGRESS** |
 
 Cada fase debe producir:
 
@@ -1458,3 +1458,7 @@ F25 PASS: 7772.089s reales, 13 tareas completas, recuperación real, cero interv
 ## Estado vigente — 4H — 2026-10-15T18:10:41.141557+00:00
 
 4H PASS: 14781.279s reales, 26 tareas completas, recuperación real, cero intervención humana tras START, todos los Reviewer/Completion/checkpoints PASS. Recursos/continuidad/cleanup/integridad PASS. Evidencia: evidence/endurance-4h-20261015-110202-059517/. docs/4H-REPORT-4h-20261015-110202-059517.md
+
+## Estado vigente — F26 — 2026-10-15T18:49:43.769161+00:00
+
+F26 PASS: 51 regression suites, 299 audit checks, 259 source hashes and 6119 historical evidence files verified. Actual F24/2h/4h evidence binds native roles, recovery, bridge and cleanup. docs/F26-REPORT-phase-26-audit-20261015-154228.md

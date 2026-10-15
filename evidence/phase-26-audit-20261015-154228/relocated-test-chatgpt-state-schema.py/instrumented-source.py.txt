@@ -1,0 +1,22 @@
+import copy, json, pathlib, subprocess, jsonschema
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+schema = json.loads((ROOT / 'schemas/autopilot-state.schema.json').read_text(encoding='utf-8-sig'))
+old = json.loads(subprocess.check_output(['git', 'show', '597431b:schemas/autopilot-state.schema.json'], cwd=ROOT))
+without = copy.deepcopy(schema)
+without['properties'].pop('chatgpt')
+assert without == old, 'Existing state constraints changed'
+sample = json.loads((ROOT / 'sandbox/phase7a9-gateway/.autopilot/STATE.json').read_text(encoding='utf-8-sig'))
+jsonschema.validate(sample, schema)
+sample['chatgpt'] = {'queries_used': 1, 'max_queries': 1}
+jsonschema.validate(sample, schema)
+denials = []
+for counter in [{'queries_used': 6, 'max_queries': 5}, {'queries_used': 0, 'max_queries': 6}, {'queries_used': -1, 'max_queries': 5}, {'queries_used': 1.5, 'max_queries': 5}, {'queries_used': 0, 'max_queries': 5, 'bypass': True}, {'max_queries': 5}]:
+    sample['chatgpt'] = counter
+    try:
+        jsonschema.validate(sample, schema)
+        raise AssertionError('Invalid quota admitted')
+    except jsonschema.ValidationError:
+        denials.append(counter)
+result = {'status': 'PASS', 'backward_compatible': True, 'existing_constraints_unchanged': True, 'invalid_counters_denied': len(denials), 'max_policy_ceiling': 5, 'run_contract_schema_unchanged': True}
+__import__('pathlib').Path('C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-154228\\relocated-test-chatgpt-state-schema.py\\state-schema.json').write_text(json.dumps(result, indent=2) + '\n')
+print(json.dumps(result))

@@ -1,0 +1,32 @@
+import importlib.util, json, pathlib, subprocess, time
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+spec = importlib.util.spec_from_file_location('fixtures', ROOT / 'tests/runner-fixtures.py')
+f = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(f)
+e = __import__('pathlib').Path('C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\phase-26-audit-20261015-154228\\relocated-test-phase19.py\\phase-19')
+e.mkdir(exist_ok=True)
+p = f.project('stop19', delay=20, global_timeout=90)
+f.approve(p)
+start_line = 'cmd.exe /d /s /c ""' + str(ROOT / 'INICIAR-DESARROLLADOR-AUTONOMO.bat') + '" "' + str(p) + '""'
+proc = subprocess.Popen(start_line, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+deadline = time.monotonic() + 20
+while not (p / '.autopilot/WATCHDOG.json').exists() and time.monotonic() < deadline:
+    time.sleep(0.1)
+if not (p / '.autopilot/WATCHDOG.json').exists():
+    out, err = proc.communicate(timeout=5)
+    (e / 'attempt-start.stderr.txt').write_text(err)
+    raise AssertionError((out, err))
+stop_line = 'cmd.exe /d /s /c ""' + str(ROOT / 'DETENER-DESARROLLADOR-AUTONOMO.bat') + '" "' + str(p) + '""'
+stop = subprocess.run(stop_line, capture_output=True, text=True, timeout=20)
+assert stop.returncode == 0, stop.stderr
+out, err = proc.communicate(timeout=30)
+state = json.loads((p / '.autopilot/STATE.json').read_text(encoding='utf-8-sig'))
+report = json.loads((p / '.autopilot/reports/runner-result.json').read_text(encoding='utf-8-sig'))
+assert state['status'] == 'ABORTED' and report['reason'] == 'STOP_REQUESTED', report
+assert not (p / '.autopilot/LOCK.json').exists() and (p / '.autopilot/checkpoints').exists()
+u = f.project('unattended19')
+blocked = f.powershell('runner/launch.ps1', '-ProjectRoot', u, '-Unattended')
+assert blocked.returncode == 2 and 'BLOCKED_REQUIRES_HUMAN' in blocked.stdout
+result = {'status': 'PASS', 'test_id': 'T-STOP-001', 'bat_only_controlled_scripts': True, 'stop_file_created': True, 'terminal': 'ABORTED', 'state_and_checkpoint_saved': True, 'locks_released': True, 'launcher_killed_no_processes': True, 'unattended_no_indefinite_prompt': 'PASS', 'projects': [str(p), str(u)]}
+(e / 'tests.json').write_text(json.dumps(result, indent=2) + '\n')
+print(json.dumps(result))
