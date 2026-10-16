@@ -79,6 +79,18 @@ def decode(text,objective=None):
         if text.startswith('```'+language+'\n') and text.endswith('\n```'):
             text=text[len(language)+4:-4];break
     def normalized(value):
+        if objective is not None and isinstance(value,dict) and isinstance(value.get('plan'),dict):
+            # Lower this exact explicit brief command, never infer a build
+            # exemption or execute anything during read-only planning.
+            if re.search(r'(?<![\w.-])npm[ \t]+run[ \t]+build(?![\w:.-])',objective):
+                plan=dict(value['plan']);builds=list(plan.get('builds',[]))
+                if not any(c.get('argv')==['npm','run','build'] for c in builds):
+                    ids={c['id'] for c in plan.get('tests',[])+builds+plan.get('linters',[])}
+                    name='npm-build'
+                    while name in ids:name+='-explicit'
+                    builds.append({'id':name,'argv':['npm','run','build'],'marker':'build','timeout_seconds':60})
+                plan['builds']=builds;plan.pop('no_build_reason',None)
+                value=dict(value,plan=plan)
         if isinstance(value,dict) and isinstance(value.get('overview'),dict):
             view=value['overview']
             research=value.get('plan',{}).get('research')
@@ -136,7 +148,10 @@ def prompt(shape,objective,context):
         'Existing tests stay immutable with their supplied SHA256; never overwrite them. For new seeds use 64-zero placeholder hashes; host computes SHA256. '
         'allowed_files lists exact Worker outputs, never tests, QWEN.md, .git, .autopilot or history. Tests/build argv only python/node/npm/dotnet. '
         'Keep phase_timeout_seconds=300, global_timeout_seconds=2700, max_cycles=5, restart_budget=2. Backend live. '
-        'Use builds or an explicit no_build_reason. When web research is explicitly required, include one relevant public HTTPS official source in plan.research.url '
+        'Preserve every explicit build command from the brief in plan.builds (id, argv, marker, timeout_seconds). '
+        'For npm run build use argv=["npm","run","build"] and marker="build"; include package.json in Worker outputs if it must be created. '
+        'Only when the project truly has no build, supply an explicit justified no_build_reason; never invent an exemption or omit the build gate. '
+        'When web research is explicitly required, include one relevant public HTTPS official source in plan.research.url '
         'and concise descriptions ONLY in overview.research_requirements. plan.research permits ONLY url and optional diagnose_before_fetch; '
         'NEVER put research_requirements inside plan or plan.research. This schedules research for AFTER approval, not now. Existing runtime web guards remain authoritative. Do NOT fetch anything now. '
         'Otherwise omit plan.research. Host derives web/chatgpt/git/completion policies from the canonical plan; do NOT generate policy fields in overview. '

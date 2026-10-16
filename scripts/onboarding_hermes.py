@@ -15,6 +15,8 @@ def run(request,agent_class):
         'required':['objective_summary','tasks','research_requirements','restrictions'],'additionalProperties':False}
     plan_schema=json.loads((Path(__file__).resolve().parents[1]/'schemas/runner-plan.schema.json').read_text(encoding='utf-8-sig'))
     definitions=plan_schema.pop('definitions');plan_schema.pop('$schema',None)
+    plan_schema['anyOf']=[{'required':['builds'],'properties':{'builds':{'minItems':1}}},
+                          {'required':['no_build_reason'],'properties':{'no_build_reason':{'minLength':1}}}]
     schema={'type':'object','properties':{'plan':plan_schema,'seed_files':{'type':'object','additionalProperties':{'type':'string'}},'overview':view},'required':['plan','seed_files','overview'],'additionalProperties':False,'definitions':definitions}
     overrides={'response_format':{'type':'json_schema','json_schema':{'name':'onboarding_plan','strict':True,'schema':schema}},
                'extra_body':{'chat_template_kwargs':{'enable_thinking':False}}}
