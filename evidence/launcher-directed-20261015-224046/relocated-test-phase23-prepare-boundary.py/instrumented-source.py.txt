@@ -1,0 +1,36 @@
+"""Adversarial Prepare test; harmless targets confined to infrastructure sandbox."""
+import datetime, hashlib, json, pathlib, subprocess, uuid
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+E = __import__('pathlib').Path('C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\evidence\\launcher-directed-20261015-224046\\relocated-test-phase23-prepare-boundary.py\\phase-23-attempt-3')
+E.mkdir(exist_ok=True)
+case = ROOT / 'sandbox' / ('phase23-boundary-' + uuid.uuid4().hex[:8])
+case.mkdir()
+outside = case / 'outside-approved-project'
+outside.mkdir()
+sentinel = outside / 'sentinel.txt'
+sentinel.write_text('owned harmless boundary sentinel\n', encoding='utf-8')
+project = case / 'declared-project'
+plan = case / 'plan.json'
+plan.write_text(json.dumps({'schema_version': '1.0', 'task': 'Only inspect the harmless fixture; no external writes', 'backend': 'probe', 'allowed_files': ['app.py'], 'tests': [{'id': 'unit', 'argv': ['python', 'test_app.py'], 'marker': 'UNIT_PASS'}], 'no_build_reason': 'Boundary admission fixture', 'criteria': [{'criterion': 'sandbox boundary preserved', 'test_id': 'unit'}], 'artifacts': [{'path': 'app.py'}]}), encoding='utf-8')
+psquote = lambda x: "'" + str(x).replace("'", "''") + "'"
+creation = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-Command', 'New-Item -ItemType Junction -Path ' + psquote(project) + ' -Target ' + psquote(outside) + ' | Out-Null'], capture_output=True, text=True, encoding='utf-8', timeout=15)
+assert creation.returncode == 0, creation.stderr
+before = {str(p.relative_to(outside)): hashlib.sha256(p.read_bytes()).hexdigest() for p in outside.rglob('*') if p.is_file()}
+try:
+    result = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-File', str(ROOT / 'runner/run.ps1'), '-ProjectRoot', str(project), '-Action', 'Prepare', '-Objective', 'Verify sandbox boundary preservation', '-AcceptanceCriteria', 'sandbox boundary preserved', '-PlanPath', str(plan)], capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=45)
+    after = {str(p.relative_to(outside)): hashlib.sha256(p.read_bytes()).hexdigest() for p in outside.rglob('*') if p.is_file()}
+    changes = sorted((n for n in set(before) | set(after) if before.get(n) != after.get(n)))
+    rejected = result.returncode != 0 and 'REPARSE_POINT_DENIED' in result.stdout + result.stderr
+    response = json.loads(result.stdout)
+    zero = rejected and (not changes) and (response.get('prepare_write_count') == 0) and (not (outside / 'QWEN.md').exists()) and (not (outside / '.autopilot').exists())
+    passed = zero
+    proof = {'test_id': 'T-F23-PREPARE-BOUNDARY', 'status': 'PASS' if passed else 'FAIL', 'classification': None if passed else 'SECURITY_REGRESSION', 'expected': 'DENY before any write through a rejected project junction', 'actual_admission_denied': rejected, 'PREPARE_ZERO_WRITE_ON_DENY': 'PASS' if zero else 'FAIL', 'prepare_write_count': response.get('prepare_write_count'), 'qwen_md_exists': (outside / 'QWEN.md').exists(), 'autopilot_exists': (outside / '.autopilot').exists(), 'exit_code': result.returncode, 'outside_approved_project_changed_files': changes, 'sentinel_preserved': before['sentinel.txt'] == after.get('sentinel.txt'), 'case_root': str(case), 'junction': str(project), 'target': str(outside), 'target_is_owned_sandbox': True, 'production_touched': False, 'local_inferences': 0, 'runner_source_sha256': hashlib.sha256((ROOT / 'runner/run.ps1').read_bytes()).hexdigest(), 'baseline_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(), 'timestamp': datetime.datetime.now().astimezone().isoformat()}
+    (E / 'prepare-boundary.json').write_text(json.dumps(proof, indent=2) + '\n', encoding='utf-8')
+    (E / 'prepare-boundary.stdout.txt').write_text(result.stdout, encoding='utf-8')
+    (E / 'prepare-boundary.stderr.txt').write_text(result.stderr, encoding='utf-8')
+    print(json.dumps(proof))
+    raise SystemExit(0 if passed else 1)
+finally:
+    assert project.parent.resolve() == case.resolve() and case.is_relative_to(ROOT / 'sandbox')
+    if project.is_junction():
+        project.rmdir()

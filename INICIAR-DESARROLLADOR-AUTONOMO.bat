@@ -1,8 +1,6 @@
 @echo off
-setlocal
-if "%~1"=="" (
-  echo Uso: INICIAR-DESARROLLADOR-AUTONOMO.bat PROJECT_ROOT
-  exit /b 2
-)
-powershell.exe -NoProfile -File "%~dp0runner\launch.ps1" -ProjectRoot "%~1"
-exit /b %errorlevel%
+setlocal DisableDelayedExpansion
+powershell.exe -NoProfile -STA -File "%~dp0scripts\project-launcher.ps1" -ProjectRoot "%~1"
+set "LAUNCHER_EXIT=%errorlevel%"
+if not "%LAUNCHER_EXIT%"=="0" pause
+exit /b %LAUNCHER_EXIT%

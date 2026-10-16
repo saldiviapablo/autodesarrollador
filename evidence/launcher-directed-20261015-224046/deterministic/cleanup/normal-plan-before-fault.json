@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "task": "Change calculator.py add to return a+b; run python test_calculator.py. Never edit tests or .autopilot.",
+  "backend": "probe",
+  "allowed_files": [
+    "calculator.py"
+  ],
+  "tests": [
+    {
+      "id": "unit",
+      "argv": [
+        "python",
+        "test_calculator.py"
+      ],
+      "marker": "RUNNER_TEST_PASS"
+    }
+  ],
+  "builds": [],
+  "no_build_reason": "Python fixture has no separate compilation step",
+  "criteria": [
+    {
+      "criterion": "addition verified",
+      "test_id": "unit"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "calculator.py",
+      "min_bytes": 10
+    }
+  ],
+  "immutable_files": [
+    {
+      "path": "test_calculator.py",
+      "sha256": "2f2c273b366fd985f7976c3824c9b5df0b765619b6a0aacecd8f8f084bef8458"
+    }
+  ],
+  "phase_timeout_seconds": 15,
+  "global_timeout_seconds": 90,
+  "probe_delay_seconds": 10
+}

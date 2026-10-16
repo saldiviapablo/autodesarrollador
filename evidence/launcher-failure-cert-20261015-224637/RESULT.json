@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "checks": {
+    "git_error_observed": true,
+    "error_terminal_state": true,
+    "error_lock_released": true,
+    "error_report_exists": true,
+    "error_checkpoint_exists": true,
+    "no_worker_started": true,
+    "baseline_unchanged": true,
+    "canonical_contract_not_approved_on_git_failure": true,
+    "cleanup_report_pass": true,
+    "stream_valid": true,
+    "stream_wrong_session": true,
+    "stream_missing_init": true,
+    "stream_duplicate_result": true,
+    "stream_tool_call": true,
+    "stream_nested_tool": true,
+    "stream_empty_result": true,
+    "stream_historical_native_format": true,
+    "historical_source_unchanged": true
+  },
+  "details": {
+    "failure_response": {
+      "cleanup": "PASS",
+      "status": "DENY",
+      "reason": "ONBOARDING_DENIED: GIT_OPERATION_FAILED:commit"
+    },
+    "stream": [
+      {
+        "pass": true,
+        "name": "valid",
+        "session_id": "owned-session"
+      },
+      {
+        "pass": true,
+        "name": "wrong_session",
+        "session_id": null
+      },
+      {
+        "pass": true,
+        "name": "missing_init",
+        "session_id": null
+      },
+      {
+        "pass": true,
+        "name": "duplicate_result",
+        "session_id": null
+      },
+      {
+        "pass": true,
+        "name": "tool_call",
+        "session_id": null
+      },
+      {
+        "pass": true,
+        "name": "nested_tool",
+        "session_id": null
+      },
+      {
+        "pass": true,
+        "name": "empty_result",
+        "session_id": null
+      },
+      {
+        "pass": true,
+        "name": "historical_native_format",
+        "session_id": "20261015_165408_361ead"
+      }
+    ],
+    "historical_sha256": "4ef8e6e3aa2f8648510b019d625ad61da3e5f3422602823d1fbd0e7b951fd4d0",
+    "project": "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\launcher-failure-bef7db91\\git-failure",
+    "scope": "Synthetic approval fixtures only; no inference, Start, GUI control or prior phase execution"
+  }
+}

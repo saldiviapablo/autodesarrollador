@@ -796,3 +796,8 @@ F27=PASS / REAL PILOT PASS tras aceptación explícita del resultado corregido y
 ## Cierre final bajo roadmap revisado — 2026-10-15T21:55:16.796550+00:00
 
 PROJECT_STATUS=COMPLETE; todos los gates restantes PASS; F28 original WAIVED_BY_USER/NOT_EXECUTED, nunca PASS. docs/PROJECT-FINAL-REPORT.md
+
+
+## Iniciador único para proyectos — mejora post-v1
+
+La guía está en [Cómo usar Desarrollador Autónomo](docs/COMO-USAR-DESARROLLADOR-AUTONOMO.md). Estado de esta mejora: IN_PROGRESS; pruebas CLI aprobadas, certificación manual final pendiente. El cierre certificado de v1 bajo el roadmap revisado conserva su estado.

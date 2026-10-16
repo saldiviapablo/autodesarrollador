@@ -1,0 +1,50 @@
+{
+  "status": "PASS",
+  "classification": "TEST_ADAPTER_FIELD_CORRECTION",
+  "original_audit": "evidence\\launcher-integrity-20261015-225453\\RESULT.json",
+  "original_sha256": "8c40d9927a99457f233df6e651297094998c62fc457bed897bf7de74f64f3d76",
+  "reason": "INSTALLATION-STATE has no scalar validation_8.f24; use actual F24 ATTEMPT11 summary and native COMPLETED/integrity fields. Existing passing physical measurements reused; no repeat of the six component hashes.",
+  "checks": {
+    "physical_inference_mutex_free": true,
+    "frozen_runtime_and_guards_unchanged": true,
+    "six_protected_components": true,
+    "v1_historical_evidence_unchanged": true,
+    "frozen_model_configuration": true,
+    "ports_free": true,
+    "directed_test_processes_exited": true,
+    "v1_phases_still_pass": true,
+    "physical_run_mutex_released": true
+  },
+  "measured_integrity": {
+    "protected": {
+      "C:\\AI\\llama.cpp\\llama-server.exe": {
+        "expected": "c741d245d827a0a3d3896f5f9b0039b3bb282dc9fc9840aa7cd7d072ddd86a39",
+        "actual": "c741d245d827a0a3d3896f5f9b0039b3bb282dc9fc9840aa7cd7d072ddd86a39"
+      },
+      "C:\\Users\\Pc\\.cache\\huggingface\\hub\\models--ggml-org--Qwen3.6-35B-A3B-GGUF\\snapshots\\baec3ebee244827cda0f4557eafa8b28f7545fa6\\Qwen3.6-35B-A3B-Q4_K_M.gguf": {
+        "expected": "671e47e0ec53c665d048b98c3ecbfd5236b5ca9c3e02ed19fc8f81f7b85140c7",
+        "actual": "671e47e0ec53c665d048b98c3ecbfd5236b5ca9c3e02ed19fc8f81f7b85140c7"
+      },
+      "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\hermes-pre-tool-hook.py": {
+        "expected": "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+        "actual": "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c"
+      },
+      "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\scripts\\mcp-sandbox-server.py": {
+        "expected": "ab4c23e4c68dde352c63fbac9bef53dbdb747a411d52fb949d996413b20807c3",
+        "actual": "ab4c23e4c68dde352c63fbac9bef53dbdb747a411d52fb949d996413b20807c3"
+      },
+      "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\config\\plugins\\desarrollador-autonomo-health\\__init__.py": {
+        "expected": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+        "actual": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e"
+      },
+      "C:\\Users\\Pc\\AppData\\Local\\hermes\\profiles\\desarrollador-autonomo\\plugins\\desarrollador-autonomo-health\\__init__.py": {
+        "expected": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e",
+        "actual": "88516ba97a93fdc30a4eda9dfa72f3316d8e586ea2f664c5827ac10885de011e"
+      }
+    },
+    "historical_files": 6814,
+    "historical_changes": [],
+    "survivors": []
+  },
+  "original_evidence_unchanged": true
+}

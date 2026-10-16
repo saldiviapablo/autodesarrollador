@@ -249,3 +249,8 @@ F27=PASS / REAL PILOT PASS tras aceptación explícita del resultado corregido y
 ## Cierre final bajo roadmap revisado — 2026-10-15T21:55:16.796550+00:00
 
 PROJECT_STATUS=COMPLETE; todos los gates restantes PASS; F28 original WAIVED_BY_USER/NOT_EXECUTED, nunca PASS. docs/PROJECT-FINAL-REPORT.md
+
+
+## Mejora post-v1: iniciador para múltiples proyectos — 20261015-225852
+
+IN_PROGRESS / FINAL_MANUAL_GUI_PENDING. Prepare y aprobación única antes de escrituras, dos proyectos aislados, historial, UTF-8, planner Hermes real de solo lectura y regresión dirigida PASS. La certificación final de GUI y arranque/parada reales queda pendiente de interacción humana. Sin Computer Use desde la prohibición, sin repetir F24/F25/4H/F26/F27, sin F28 ni push. evidence\launcher-usability-checkpoint-20261015-225852; docs/COMO-USAR-DESARROLLADOR-AUTONOMO.md.

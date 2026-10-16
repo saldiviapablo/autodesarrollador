@@ -1,0 +1,21 @@
+[2026-10-15 22:43:16.651] [INFO] ==============================================================================
+[2026-10-15 22:43:16.661] [INFO] INICIANDO VERIFICACION DE INFERENCE LOCK / SERIALIZACION (FASE 7)
+[2026-10-15 22:43:16.668] [INFO] EvidenceDir: C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\evidence\launcher-directed-20261015-224046\lock
+[2026-10-15 22:43:16.676] [INFO] LogFile:     C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\evidence\launcher-directed-20261015-224046\lock.log.txt
+[2026-10-15 22:43:16.683] [INFO] ==============================================================================
+[2026-10-15 22:43:16.690] [INFO] [1/4] Test 1: Exclusion Mutua Concurrente entre Procesos Windows...
+[2026-10-15 22:43:21.374] [OK]   [PASS] Test 1: Exclusion Mutua Concurrente (A libero a los 1792115000161 ms, B adquirio a los 1792115000267 ms (Gap: 106 ms). Cero solapamiento.)
+[2026-10-15 22:43:21.388] [INFO] [2/4] Test 2: Crash Recovery tras terminacion abrupta de proceso...
+[2026-10-15 22:43:22.883] [OK]   [PASS] Test 2: Crash Recovery sin intervencion manual (Survivor adquirio lock correctamente (WasAbandoned=False, Duracion=1.99 ms))
+[2026-10-15 22:43:22.905] [INFO] [3/4] Test 3: Manejo de Lock Timeout...
+[2026-10-15 22:43:25.836] [OK]   [PASS] Test 3: Lock Timeout Controlado (Status=LOCK_TIMEOUT, Duracion=2123.98 ms)
+[2026-10-15 22:43:25.838] [INFO] [4/4] Test 4: Verificacion de Metadata Observable en runtime/locks/...
+[2026-10-15 22:43:25.925] [OK]   [PASS] Test 4: Metadata Observable Valida (LockFile=True, Owner=ObservableInspector, Status=ACQUIRED)
+[2026-10-15 22:43:25.946] [INFO] ==============================================================================
+[2026-10-15 22:43:25.947] [INFO] RESUMEN DE PRUEBAS DE FASE 7 (INFERENCE LOCK):
+[2026-10-15 22:43:25.958] [INFO]   [PASS] Test 1: Exclusion Mutua Concurrente - A libero a los 1792115000161 ms, B adquirio a los 1792115000267 ms (Gap: 106 ms). Cero solapamiento.
+[2026-10-15 22:43:25.964] [INFO]   [PASS] Test 2: Crash Recovery sin intervencion manual - Survivor adquirio lock correctamente (WasAbandoned=False, Duracion=1.99 ms)
+[2026-10-15 22:43:25.971] [INFO]   [PASS] Test 3: Lock Timeout Controlado - Status=LOCK_TIMEOUT, Duracion=2123.98 ms
+[2026-10-15 22:43:25.979] [INFO]   [PASS] Test 4: Metadata Observable Valida - LockFile=True, Owner=ObservableInspector, Status=ACQUIRED
+[2026-10-15 22:43:25.987] [INFO] ==============================================================================
+[2026-10-15 22:43:25.995] [OK] RESULTADO FINAL DE FASE 7: [PASS]

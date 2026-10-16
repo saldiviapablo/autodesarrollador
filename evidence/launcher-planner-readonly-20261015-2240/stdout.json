@@ -1,0 +1,159 @@
+{
+    "status":  "PASS",
+    "proposal":  {
+                     "plan":  {
+                                  "schema_version":  "1.0",
+                                  "backend":  "live",
+                                  "task":  "Módulo Python add y README con caracteres especiales",
+                                  "allowed_files":  [
+                                                        "module.py",
+                                                        "README.md"
+                                                    ],
+                                  "tests":  [
+                                                {
+                                                    "id":  "acceptance",
+                                                    "argv":  [
+                                                                 "python",
+                                                                 "test_acceptance.py"
+                                                             ],
+                                                    "marker":  "ACCEPTANCE_PASS",
+                                                    "timeout_seconds":  60
+                                                }
+                                            ],
+                                  "builds":  [
+                                                 {
+                                                     "id":  "build",
+                                                     "argv":  [
+                                                                  "python",
+                                                                  "build_check.py"
+                                                              ],
+                                                     "marker":  "BUILD_PASS",
+                                                     "timeout_seconds":  60
+                                                 }
+                                             ],
+                                  "criteria":  [
+                                                   {
+                                                       "criterion":  "Verificar que add(2,3)=5, add(-2,3)=1, add(0,0)=0 y que README.md contiene la línea exacta de caracteres especiales.",
+                                                       "test_id":  "acceptance"
+                                                   }
+                                               ],
+                                  "artifacts":  [
+                                                    {
+                                                        "path":  "module.py",
+                                                        "min_bytes":  1
+                                                    },
+                                                    {
+                                                        "path":  "README.md",
+                                                        "min_bytes":  1
+                                                    }
+                                                ],
+                                  "immutable_files":  [
+                                                          {
+                                                              "path":  "test_acceptance.py",
+                                                              "sha256":  "ba9a7e50cd71fc214f83b12bef86a4fa069ddac0115788bda7fb4c01d7ea918f"
+                                                          },
+                                                          {
+                                                              "path":  "build_check.py",
+                                                              "sha256":  "8a9de716d329f5223d88f1856d402be9c45207d68733a667b8caa8ae2210be7f"
+                                                          }
+                                                      ],
+                                  "phase_timeout_seconds":  300,
+                                  "global_timeout_seconds":  2700,
+                                  "max_cycles":  5,
+                                  "restart_budget":  2
+                              },
+                     "seed_files":  {
+                                        "test_acceptance.py":  "import sys, os\nsys.path.insert(0, \u0027.\u0027)\nimport module\nok = True\ntry:\n    assert module.add(2, 3) == 5\n    assert module.add(-2, 3) == 1\n    assert module.add(0, 0) == 0\nexcept AssertionError:\n    ok = False\nreadme = \u0027README.md\u0027\nif not os.path.isfile(readme):\n    ok = False\nelse:\n    with open(readme, \u0027r\u0027, encoding=\u0027utf-8\u0027) as f:\n        if \u0027áéíóú ñ ¿? € ° \"comillas\"\u0027 not in f.read():\n            ok = False\nif ok:\n    print(\u0027ACCEPTANCE_PASS\u0027)\n    sys.exit(0)\nelse:\n    print(\u0027ACCEPTANCE_FAIL\u0027)\n    sys.exit(1)\n",
+                                        "build_check.py":  "import sys, py_compile\ntry:\n    py_compile.compile(\u0027module.py\u0027, doraise=True)\n    print(\u0027BUILD_PASS\u0027)\n    sys.exit(0)\nexcept Exception as e:\n    print(f\u0027BUILD_FAIL: {e}\u0027)\n    sys.exit(1)\n"
+                                    }
+                 },
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\launcher-live-A á ñ",
+    "objective":  "Crear un módulo Python pequeño en esta carpeta sandbox.\nEn module.py implementar add(a,b), que devuelve la suma de dos números, incluidos cero y negativos.\nComprobar add(2,3)=5, add(-2,3)=1 y add(0,0)=0.\nCrear README.md con instrucciones breves y la línea exacta: áéíóú ñ ¿? € ° \"comillas\".\nUsar sólo la biblioteca estándar, sin red ni dependencias.\nDefinir pruebas de aceptación inmutables para los casos indicados y verificar la compilación Python.\nNo modificar infraestructura, no consultar ChatGPT y no hacer push.",
+    "project_snapshot":  {
+
+                         },
+    "policy_hashes":  {
+                          "config/security.yaml":  "68e0941a63ec53c67429a296d7db4722a29267a8aee5432086e4639ac8f0ec7f",
+                          "config/system.yaml":  "9434854d904f51ff9aeb786b0c73d276c54c5d511fbba373e67ab9858a8bca78",
+                          "config/VERSIONS.lock":  "81ca3683e16cc09625ea0000a46fee8d0a2caffdf5b33019a208dfed73b4dab4",
+                          "runner/agent-step.ps1":  "9e70c6186016c14e74d23f54ff80276c622326265a234a5c67790baeb54aa2f7",
+                          "runner/chatgpt-step.ps1":  "197b9c1f2b9fa0de40a2bb837297279f42b314288f74e19173bbdc1a7bb464f2",
+                          "runner/cleanup.ps1":  "85cedfbbc7b1d56ea09b278a1e6d31aafe26aff7dbfdc3075eb8d459f7bfac7d",
+                          "runner/completion-gate.ps1":  "b93cb42184b62d1d767b9410d37fcff2740b50f46312f85736bc1cb60af69d95",
+                          "runner/completion.py":  "5f9dd8bbe2a40c31e73ab6df8fb81e9080aadf47f0b7f7b45232decbbea37623",
+                          "runner/contract.py":  "854f7b062f2bfac564a1946e3c297b8d50057f5f1733e2f8b8c8cd9c0d5f6736",
+                          "runner/core.ps1":  "87487152fdd5ca523c017357788f1fc70ae656f406d97f6032628219c960b497",
+                          "runner/launch.ps1":  "2401c33036bc93412d344e630296672eb098d3b8ba82555d9c5b074d60d0d291",
+                          "runner/plan-objective.ps1":  "e4cd4340ddfb0f4c0263e8f740915632f56a6a8282e5ccfc6fc0cd984338a652",
+                          "runner/prepare-apply.ps1":  "86721843a4818e9ffc71422f497a48e33f4092a5ec5af3a4fab9f94059104eca",
+                          "runner/prepare.py":  "f08433d27192358027c2ef24686cb35f5ecd9c3037ed843e7ffbdfb83fe7ae45",
+                          "runner/report.ps1":  "5613bce99642891988b6a5f23b034a9e1ec9a3b7aeb9c9b23a4869685ab249b7",
+                          "runner/research-handoff.py":  "63fa3ebb9d9adee3227eccbcf48f6ed622e63213a39ab30c9b6da72ac4f5189d",
+                          "runner/research-step.ps1":  "ea11af756b1e5c0144e3427ad95999d08779ad88ec3e49db782a4b8871e2fe16",
+                          "runner/reviewer_contract.py":  "b797787448d72e23a6730b50885e81655d65e70f7dbb861957c076374adec9f2",
+                          "runner/run.ps1":  "ee4b542deacfb321119aa6fa03d19b7ce47d08dfbe7d4274cce2c42d4a8de5c1",
+                          "runner/stop.ps1":  "c7407bb00d88d5ebb63822bd215542e0cd2df2a653705a042c154f2b3fbdee6d",
+                          "runner/watchdog-monitor.ps1":  "b45ccb3151e7caa021f6dbcb0f4a95e37411e56ea4ab3ddd8f701c85d4bcf0f1",
+                          "schemas/autopilot-state.schema.json":  "146ca6b7baf94bfdc3d7cfefba9fce5cb2315256202cf8a86bf43c22ee182dde",
+                          "schemas/run-contract.schema.json":  "a13d5ddb80fa9c1c53e15e9f43e746b1b6d6d200fb2823012bf1ff9ab00359a1",
+                          "schemas/runner-plan.schema.json":  "11ff6d8925a2a41b4d18b607ad8e304f8efc0d31ace6c73d9fd2bae0cd3c4216",
+                          "scripts/canonical_path.py":  "1999ececa75fac713656584fa1802c10ea34fcbc26611626b8da48968362c686",
+                          "scripts/hermes-pre-tool-hook.py":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+                          "scripts/inference-lock.ps1":  "3990343f762a26c6e7ed090e64b3c3b0c2b719cd4e611f0c490cebc633928717",
+                          "scripts/init-autopilot-project.ps1":  "6e9dee4bcdd3ad08b51f8774d0e8cad0d204dfb26cdf8a1d45a93394ffb91e1c",
+                          "scripts/invoke-delegation.ps1":  "ccef6734f232b5bd7cf3430807898ce7b6fadc6b183ceb9aa189321c180d7151",
+                          "scripts/invoke-hermes-role.ps1":  "e4f8ede0eff79fe746e03d438cf0501a677fa094296fe4d20dca635ba9e8a213",
+                          "scripts/invoke-hermes.ps1":  "a5ac89ea1a37d216ce838a762ff6cc140d5a365fbefe959c3248b88dc929139b",
+                          "scripts/invoke-qwen-code.ps1":  "acdab343d994adc18dd9b369ad86f448d918ccd123c6886c92fbc56c659f6e29",
+                          "scripts/project-launcher-action.ps1":  "1a34995fd9d8770cd591e0d4e25cd414f7a8e81681f3a7e069713e7c1a2d0223",
+                          "scripts/project-launcher-common.ps1":  "7849c9dc90b2a1441dbf9b1e1ec856bba3bc8fa085dacc3072999b642c0c6b67",
+                          "scripts/project_launcher_ui.py":  "112db43f635d249540f33f77e7574fa47e3235fee4486aef6d6aee926069c3f9",
+                          "scripts/project_onboarding.py":  "99e57043ee267c32c55f8f266f7cdab42e079fa7dbe78dd3732764b4867ab21b",
+                          "scripts/security-guard.ps1":  "df18149ae6dee48ad09f9851ca0ce4e3d6f64c068946c94ca137e98f18f6f0e2",
+                          "scripts/state-manager.ps1":  "c862bdd2c7c7cf9d1ea8ca7d2b257519a6618e1a19ed1ae6b71c1f2a088da11f",
+                          "templates/QWEN.md.template":  "c6395ccd4482f0940b2d3ffa858649ce87df7e95161790dff27492f1b5f4b0a5"
+                      },
+    "binding":  "3e2f40b6ad0ae547e00e9e7c6c02eb58087fa21d38994b1c7360263d538501f6",
+    "planner":  {
+                    "model_arguments":  [
+                                            "-m",
+                                            "C:\\Users\\Pc\\.cache\\huggingface\\hub\\models--ggml-org--Qwen3.6-35B-A3B-GGUF\\snapshots\\baec3ebee244827cda0f4557eafa8b28f7545fa6\\Qwen3.6-35B-A3B-Q4_K_M.gguf",
+                                            "--alias",
+                                            "qwen36",
+                                            "--host",
+                                            "127.0.0.1",
+                                            "--port",
+                                            "8080",
+                                            "--ctx-size",
+                                            "65536",
+                                            "--parallel",
+                                            "1",
+                                            "--cpu-moe",
+                                            "--n-gpu-layers",
+                                            "99",
+                                            "--flash-attn",
+                                            "on",
+                                            "--cache-type-k",
+                                            "q8_0",
+                                            "--cache-type-v",
+                                            "q8_0",
+                                            "--jinja"
+                                        ],
+                    "inference_lock":  "production wrapper",
+                    "model_pid":  16552,
+                    "hook":  "PASS",
+                    "session_id":  null,
+                    "role":  "Hermes Supervisor",
+                    "model_start_ticks":  639277114548329607,
+                    "project_snapshot_unchanged":  true,
+                    "duration":  155.41,
+                    "tools":  0,
+                    "readonly":  true
+                },
+    "cleanup":  {
+                    "model_exited":  true,
+                    "physical_run_mutex_released":  true,
+                    "model_diagnostic":  "0.03.194.437 W srv          init: chat template supports preserving reasoning, it is enabled by default (may use more tokens, disable via --no-reasoning-preserve)\n0.10.484.868 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0\n0.22.739.884 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   2048, progress = 0.30, t =  12.25 s / 167.12 tokens per second\n0.28.495.726 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   4096, progress = 0.60, t =  18.01 s / 227.42 tokens per second\n0.34.092.427 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   6107, progress = 0.89, t =  23.61 s / 258.69 tokens per second\n0.35.350.025 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   6368, progress = 0.93, t =  24.87 s / 256.10 tokens per second\n0.36.839.386 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   6880, progress = 1.00, t =  26.35 s / 261.06 tokens per second\n2.38.442.783 I slot print_timing: id  0 | task 0 | prompt eval time =   26448.14 ms /  6884 tokens (    3.84 ms per token,   260.28 tokens per second)\n2.38.442.789 I slot print_timing: id  0 | task 0 |        eval time =  121508.16 ms /  4557 tokens (   26.67 ms per token,    37.50 tokens per second)\n2.38.442.790 I slot print_timing: id  0 | task 0 |       total time =  147956.30 ms / 11441 tokens\n2.38.443.210 I slot      release: id  0 | task 0 | stop processing: n_tokens = 11440, truncated = 0\n2.38.670.497 I slot launch_slot_: id  0 | task 4563 | processing task, is_child = 0",
+                    "owned_job_closed_on_process_exit":  true
+                }
+}
