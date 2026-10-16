@@ -800,4 +800,4 @@ PROJECT_STATUS=COMPLETE; todos los gates restantes PASS; F28 original WAIVED_BY_
 
 ## Iniciador único para proyectos — mejora post-v1
 
-La guía está en [Cómo usar Desarrollador Autónomo](docs/COMO-USAR-DESARROLLADOR-AUTONOMO.md). Estado de esta mejora: IN_PROGRESS; pruebas CLI aprobadas, certificación manual final pendiente. El cierre certificado de v1 bajo el roadmap revisado conserva su estado.
+La guía está en [Cómo usar Desarrollador Autónomo](docs/COMO-USAR-DESARROLLADOR-AUTONOMO.md). Estado de esta mejora: PASS. Selector y aprobación humana, Prepare, continuación del mismo run, Supervisor, Qwen real, parada segura y cleanup certificados en sandboxes. Informe: [Certificación del iniciador](docs/LAUNCHER-FINAL-REPORT.md). El smoke se detuvo intencionalmente como ABORTED; no representa un objetivo COMPLETED. El cierre certificado de v1 bajo el roadmap revisado conserva su estado.

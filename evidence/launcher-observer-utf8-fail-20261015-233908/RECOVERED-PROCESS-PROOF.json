@@ -1,0 +1,15 @@
+{
+  "kind": "RECOVERY_OF_OBSERVER_ONLY",
+  "timestamp": "2026-10-16T02:38:01.999446+00:00",
+  "run_id": "run-20261015-231741",
+  "actual_qwen_nodes": [
+    {
+      "pid": 18868,
+      "start_ticks": 639277150457527995,
+      "worker_pid": 33316,
+      "command_line": "\"C:\\Program Files\\nodejs\\node.exe\" C:\\Users\\Pc\\AppData\\Roaming\\npm\\node_modules\\@qwen-code\\qwen-code\\cli-entry.js -m qwen36 --auth-type openai --openai-base-url http://127.0.0.1:8080/v1 --openai-api-key local-not-required --approval-mode yolo -o json --max-wall-time 300s \"OBJETIVO GENERAL: Crear un módulo Python pequeño en esta carpeta sandbox.\nEn module.py implementar add(a,b), que devuelve la suma de dos números, incluidos cero y negativos.\nComprobar add(2,3)=5, add(-2,3)=1 y add(0,0)=0.\nCrear README.md con instrucciones breves y la línea exacta: áéíóú ñ ¿? € ° \\\"comillas\\\".\nUsar sólo la biblioteca estándar, sin red ni dependencias.\nDefinir pruebas de aceptación inmutables para los casos indicados y verificar la compilación Python.\nNo modificar infraestructura, no consultar ChatGPT y no hacer push.\nTAREA ESPECIFICA: Módulo Python add y README con caracteres especiales\nSupervisor plan (advisory, approved scope remains binding): ```json\n{\\\"task\\\": \\\"Módulo Python add y README con caracteres especiales\\\"}\n```\nPrevious checks to correct: \nCRITERIOS DE ACEPTACION:\n- Verificar que add(2,3)=5, add(-2,3)=1, add(0,0)=0 y que README.md contiene la línea exacta de caracteres especiales.\nACCIONES PROHIBIDAS (ESTRICTO):\n- git_push\n- delete_root\n- modify_runner_guardrails\nINSTRUCCIONES DE EJECUCION: Inspecciona los archivos relevantes en el proyecto, identifica la causa raiz del fallo, modifica el codigo para corregirlo, ejecuta las pruebas unitarias y confirma que pasen.\""
+    }
+  ],
+  "supervisor_success": true,
+  "gui_actions": 0
+}

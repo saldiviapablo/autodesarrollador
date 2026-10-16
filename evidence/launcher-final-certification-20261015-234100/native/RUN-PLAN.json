@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "backend": "live",
+  "task": "Módulo Python add y README con caracteres especiales",
+  "allowed_files": [
+    "module.py",
+    "README.md"
+  ],
+  "tests": [
+    {
+      "id": "acceptance",
+      "argv": [
+        "python",
+        "test_acceptance.py"
+      ],
+      "marker": "ACCEPTANCE_PASS",
+      "timeout_seconds": 60
+    }
+  ],
+  "builds": [
+    {
+      "id": "build",
+      "argv": [
+        "python",
+        "build_check.py"
+      ],
+      "marker": "BUILD_PASS",
+      "timeout_seconds": 60
+    }
+  ],
+  "criteria": [
+    {
+      "criterion": "Verificar que add(2,3)=5, add(-2,3)=1, add(0,0)=0 y que README.md contiene la línea exacta de caracteres especiales.",
+      "test_id": "acceptance"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "module.py",
+      "min_bytes": 1
+    },
+    {
+      "path": "README.md",
+      "min_bytes": 1
+    }
+  ],
+  "immutable_files": [
+    {
+      "path": "test_acceptance.py",
+      "sha256": "ba9a7e50cd71fc214f83b12bef86a4fa069ddac0115788bda7fb4c01d7ea918f"
+    },
+    {
+      "path": "build_check.py",
+      "sha256": "8a9de716d329f5223d88f1856d402be9c45207d68733a667b8caa8ae2210be7f"
+    }
+  ],
+  "phase_timeout_seconds": 300,
+  "global_timeout_seconds": 2700,
+  "max_cycles": 5,
+  "restart_budget": 2
+}

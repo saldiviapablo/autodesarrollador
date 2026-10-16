@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checks": {
+    "real_windows_cim_utf8_roundtrip": true,
+    "owned_process_exit_code_zero": true,
+    "kernel_process_handle_signaled": true
+  },
+  "process": {
+    "pid": 12512,
+    "start_ticks": 639277153316390124,
+    "exit_code": 0
+  },
+  "prior_certificate_preserved": "OBSERVER-CERTIFICATION.json",
+  "prior_false_negative": "Windows permits querying the birth of an exited process while its Popen process handle is held. Process exit is now checked through the signaled kernel handle and actual exit code.",
+  "gui_actions": 0,
+  "inferences": 0
+}

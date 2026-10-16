@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "scope": "Post-v1 manual project selection, UTF-8 brief, human plan approval, canonical Prepare, native Start/Continue, Supervisor, real Qwen CLI and controlled Stop/cleanup",
+  "checks": {
+    "supervisor_success": true,
+    "physical_qwen_cli_started": true,
+    "controlled_stop": true,
+    "terminal_state_matches_report": true,
+    "intentional_stop_reason": true,
+    "cleanup_native": true,
+    "no_project_lock": true,
+    "own_processes_exited": true,
+    "same_run_id": true,
+    "same_original_clock": true,
+    "same_contract_and_plan": true,
+    "restart_counters_unchanged": true,
+    "one_human_approval": true,
+    "approved_before_prepare": true,
+    "approved_policy_source_unchanged": true,
+    "original_brief_utf8": true,
+    "existing_project_no_second_prepare": true,
+    "immutable_acceptance_tests_unchanged": true,
+    "sandbox_B_untouched": true,
+    "no_consultation_requested": true
+  },
+  "native_objective_status": "ABORTED",
+  "objective_completed": false,
+  "completion_gate": "NOT_EVALUATED: intentionally stopped startup smoke; unchanged native Completion Gate covered by directed regression",
+  "duration_original_clock_seconds": 1221.7293888,
+  "continuation_active_seconds": 91.542471,
+  "preserved_observer_failures": [
+    "evidence/launcher-manual-smoke-fail-20261015-232458",
+    "evidence/launcher-observer-utf8-fail-20261015-233908"
+  ],
+  "gui_automation_actions": 0,
+  "additional_inferences_for_certification": 0,
+  "old_phases_repeated": [],
+  "F28": "WAIVED_BY_USER / NOT_EXECUTED",
+  "push": false
+}

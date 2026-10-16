@@ -2,18 +2,21 @@
 
 El mismo iniciador sirve para todos tus proyectos. No lo copies dentro de ellos.
 
-1. **Buscá el iniciador** en `C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\INICIAR-DESARROLLADOR-AUTONOMO.bat`.
-2. **Abrilo con doble clic.** Se abre una ventana y el selector de carpetas de Windows.
-3. **Elegí la carpeta de tu proyecto** y pulsá **Seleccionar carpeta**. Puede estar en otra carpeta o unidad local. Cancelar sale sin preparar un proyecto.
-4. **Para un proyecto nuevo**, elegí una carpeta vacía o un repositorio Git propio. El sistema prepara su memoria y contrato dentro de esa carpeta. No elijas la carpeta de infraestructura.
-5. **Pegá el objetivo** en el cuadro grande. Podés usar varios párrafos, tildes y otros caracteres. Explicá qué resultado necesitás y qué condiciones tiene que cumplir. No incluyas contraseñas ni claves.
-6. **También podés abrir un brief** con **Abrir .md o .txt**. El archivo debe estar guardado como UTF-8. Podés revisar y editar el texto antes de continuar.
-7. **Pulsá Continuar.** Hermes prepara un plan en modo de solo lectura. Todavía no trabaja el Worker. Aparecen el objetivo, las pruebas, los archivos permitidos, los límites y las políticas. Revisalos y elegí **Sí, iniciar este proyecto** o **No, cancelar**. Sólo después de aprobar se ejecuta Prepare: genera el contrato y verifica que coincide con lo revisado antes de iniciar el Runner. Hay una sola aprobación para ese plan concreto.
-8. **Mirá el progreso** en la ventana: proyecto, ejecución, estado, tarea, último evento, tiempo, reinicios y salud del modelo. La planificación y la carga del modelo pueden tardar unos minutos.
-9. **Para detener**, abrí `DETENER-DESARROLLADOR-AUTONOMO.bat` desde la misma carpeta de infraestructura. No hace falta escribir una ruta para una ejecución iniciada desde esta interfaz. Esperá el resultado final: el Runner guarda estado, checkpoint y reporte, cierra sus procesos y libera sus locks. Cerrar la ventana de progreso también solicita una parada segura.
-10. **Para volver al mismo proyecto**, abrí el iniciador y elegí esa carpeta. Verás el último estado, tarea, checkpoint y pendientes. **Continuar proyecto** conserva el tiempo y los contadores del run; no renueva una ejecución vencida. **Nuevo objetivo** conserva la preparación anterior en `.autopilot-history/<run_id>/` y crea otra ejecución cuando el estado anterior permite hacerlo.
-11. **Para cambiar de proyecto**, cerrá la ejecución actual y volvé a abrir el mismo iniciador. Elegí la otra carpeta. Cada proyecto tiene su propio Git, memoria, estado y reportes. La inferencia local sigue siendo de una sola ejecución por vez.
-12. **Buscá los resultados** en `.autopilot/reports/` dentro del proyecto. La ventana final muestra esa ubicación y permanece abierta hasta que la cierres. El historial archivado conserva los reportes anteriores.
+## PARA USARLO HACÉ ESTO
+
+1. **Abrí con doble clic** `C:\Users\Pc\Documents\Proyectos Tech\Desarrollador autonomo\INICIAR-DESARROLLADOR-AUTONOMO.bat`.
+2. **Elegí la carpeta del proyecto** y pulsá **Seleccionar carpeta**. Para empezar algo nuevo, usá una carpeta vacía o un repositorio propio. Cancelar sale sin preparar nada.
+3. **Escribí qué querés conseguir** y pulsá **Continuar**. Podés escribir varios párrafos o usar **Abrir .md o .txt** para cargar un archivo UTF-8. Indicá también qué condiciones debe cumplir el resultado; no incluyas contraseñas ni claves.
+4. **Revisá el plan que prepara Hermes** y, si estás de acuerdo, pulsá **Sí, iniciar este proyecto**. Hay una sola aprobación. El proyecto empieza a prepararse y el Worker queda autorizado sólo después de ese paso.
+5. **Seguí el avance en la ventana y esperá el resultado.** La ventana final muestra dónde están los reportes y queda abierta hasta que pulses **Cerrar**. La planificación y la carga del modelo pueden tardar unos minutos.
+
+**Para detener:** abrí `DETENER-DESARROLLADOR-AUTONOMO.bat` desde la misma carpeta del iniciador y esperá el resultado final. También podés cerrar la ventana de progreso para solicitar una parada segura. Se guardan el estado, el checkpoint y el reporte; se cierran los procesos propios y se liberan los locks.
+
+**Para continuar un proyecto:** abrí el mismo iniciador, seleccioná su carpeta y elegí **Continuar proyecto**. Conserva el reloj y los contadores; no renueva una ejecución vencida. **Nuevo objetivo** archiva la preparación anterior en `.autopilot-history/<run_id>/` y pide revisar otro plan cuando el estado anterior lo permite.
+
+**Para cambiar de proyecto:** terminá o detené la ejecución actual, cerrá la ventana y volvé a abrir el mismo iniciador. Elegí la otra carpeta. Cada proyecto conserva su propio Git, memoria, estado, historial y reportes; la inferencia local sigue serializada.
+
+Los reportes quedan en `.autopilot/reports/` dentro de la carpeta elegida. Hermes prepara el plan en modo de solo lectura. Después de aprobar, Prepare genera el contrato y comprueba que coincide con el alcance revisado antes de iniciar el Runner.
 
 También podés iniciar con una ruta entre comillas:
 

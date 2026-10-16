@@ -17,6 +17,20 @@ def new_run_events(events,baseline_seq):
     first=next((i for i,e in enumerate(fresh) if e['type']=='RUN_STARTED'),None)
     return [] if first is None else fresh[first:]
 
+def cim_process_rows():
+    # Windows PowerShell otherwise emits its OEM code page to redirected pipes.
+    code="[Console]::OutputEncoding=New-Object Text.UTF8Encoding($false);Get-CimInstance Win32_Process | Where-Object {$_.Name -in @('node.exe','powershell.exe')} | Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json -Depth 3 -Compress"
+    raw=subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-Command',code],capture_output=True,env=ui.ENV,timeout=10)
+    if raw.returncode:raise ValueError('CIM_PROCESS_SNAPSHOT_FAILED')
+    rows=json.loads(raw.stdout.decode('utf-8-sig'))
+    return rows if isinstance(rows,list) else [rows] if rows else []
+
+def stop_on_observer_error(p,expected_run_id):
+    state=data.read(p/'.autopilot/STATE.json')
+    if state['run_id']!=expected_run_id:raise ValueError('FOREIGN_RUN_PRESERVED')
+    if state['status'] in data.TERMINAL:return {'status':'ALREADY_TERMINAL','run_id':expected_run_id}
+    return ui.active_stop(p)
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--project',required=True);parser.add_argument('--evidence',required=True);a=parser.parse_args()
     p=data.project(a.project);p.relative_to(R/'sandbox');assert p.name.startswith('launcher-live-'),'DISPOSABLE_LAUNCHER_SANDBOX_ONLY'
@@ -60,9 +74,7 @@ def main():
                 if ui.birth(record['pid'])==record['start_ticks']:
                     # A bounded read-only CIM snapshot proves the actual Qwen
                     # CLI descendant exists, beyond merely starting agent-step.
-                    code="Get-CimInstance Win32_Process | Where-Object {$_.Name -in @('node.exe','powershell.exe')} | Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json -Depth 3 -Compress"
-                    raw=subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-Command',code],capture_output=True,env=ui.ENV,timeout=10)
-                    rows=json.loads(raw.stdout.decode('utf-8-sig'));rows=rows if isinstance(rows,list) else [rows]
+                    rows=cim_process_rows()
                     parents={int(x['ProcessId']):int(x['ParentProcessId']) for x in rows}
                     for row in rows:
                         if 'cli-entry.js' not in (row.get('CommandLine') or ''):continue
@@ -93,7 +105,14 @@ def main():
                 'checkpoint_present':bool(list((p/'.autopilot/checkpoints').iterdir()))}
         result.update(status='PASS' if all(checks.values()) else 'FAIL',checks=checks,qwen=node,run_duration_seconds=report['duration_seconds'],cleanup=cleanup)
         save('RUNNER-RESULT.json',report)
-    except Exception as exc:result.update(status='FAIL',reason=str(exc))
+    except Exception as exc:
+        result.update(status='FAIL',reason=str(exc))
+        if run_start is not None:
+            try:
+                failure_stop=stop_on_observer_error(p,run_id)
+                save('FAILURE-STOP.json',failure_stop)
+                result['failure_stop']=failure_stop
+            except Exception as stop_error:result['failure_stop_error']=str(stop_error)
     result.update(finished_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),initial_project_snapshot=before)
     save('RESULT.json',result);save('STATE.json',result)
     print(json.dumps({'status':result['status'],'evidence':str(E),'reason':result.get('reason')},ensure_ascii=False),flush=True)

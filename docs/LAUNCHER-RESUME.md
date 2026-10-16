@@ -24,3 +24,11 @@ FAIL preservado: `evidence/launcher-manual-smoke-fail-20261015-232458/`. La prue
 No se modificaron contrato, plan, reloj, contadores, Runner ni código objetivo. La falta de respuesta del Supervisor antes de la parada no demuestra que hubiese completado dentro de sus 300s. Eso sigue pendiente de prueba real.
 
 Leer `runtime/project-launcher/MANUAL-RESUME.json` para la identidad exacta del nuevo observador CLI. Espera el siguiente RUN_STARTED; no controla GUI ni aprueba. Acción humana: cerrar Resultado: ABORTED, abrir el iniciador fijo, seleccionar la MISMA carpeta A y pulsar Continuar proyecto. No Nuevo objetivo. Antes de continuar comprobar que queda tiempo en el reloj original; si venció, detenerse sin renovarlo. No repetir la planificación ni pedir otra aprobación del mismo contrato.
+
+## Estado final — 2026-10-15 23:45
+
+La mejora está certificada PASS. Los párrafos anteriores conservan la secuencia histórica y sus pendientes ya resueltos; no reanudar el sandbox. Informe vigente: `docs/LAUNCHER-FINAL-REPORT.md`. Evidencia final: `evidence/launcher-final-certification-20261015-234100/` e `evidence/launcher-integrity-20261015-234108/`.
+
+El usuario continuó realmente el proyecto preparado. Supervisor terminó exit 0 y se verificó el Node Qwen CLI real (PID 18868, descendiente del Worker 33316). El observador falló al decodificar la salida OEM de PowerShell; se preservó ese FAIL. Se recuperó la prueba por CLI con salida UTF-8 explícita y se solicitó STOP productivo al mismo run, sin reiniciar nada. Cleanup PASS, run ABORTED/STOP_REQUESTED, objetivo no completado. El lector corregido y el stop de emergencia del observador pasan 13 tests más CIM UTF-8 real. No repetir la GUI ni la inferencia.
+
+Reloj, contrato, plan y contadores originales conservados; una sola aprobación humana. Integridad final PASS; locks y puertos libres. La ventana Resultado puede permanecer abierta para que el usuario la cierre. No hay ninguna acción humana bloqueante pendiente para esta mejora. F24/F25/4H/F26/F27 no se repitieron, F28 no se ejecutó, no push.
