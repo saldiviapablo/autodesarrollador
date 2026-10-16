@@ -7,6 +7,16 @@ R=pathlib.Path(__file__).resolve().parents[1];sys.path.insert(0,str(R/'scripts')
 import project_launcher_ui as ui
 import project_onboarding as data
 
+def smoke_window(info,model_start_seconds):
+    """Observe approved phase startup without extending the run's real clock."""
+    phase=info['admission']['plan'].get('phase_timeout_seconds',180)
+    return max(0,min(float(info['remaining_seconds']),phase+model_start_seconds+90))
+
+def new_run_events(events,baseline_seq):
+    fresh=[e for e in events if e['seq']>baseline_seq]
+    first=next((i for i,e in enumerate(fresh) if e['type']=='RUN_STARTED'),None)
+    return [] if first is None else fresh[first:]
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--project',required=True);parser.add_argument('--evidence',required=True);a=parser.parse_args()
     p=data.project(a.project);p.relative_to(R/'sandbox');assert p.name.startswith('launcher-live-'),'DISPOSABLE_LAUNCHER_SANDBOX_ONLY'
@@ -16,23 +26,31 @@ def main():
     start=time.monotonic();run_start=None;run_id=None;supervisor=False;node=None;stop=None
     state_path=p/'.autopilot/STATE.json';event_path=p/'.autopilot/EVENTS.jsonl'
     before=data.snapshot(p)
+    baseline_events=[json.loads(line) for line in event_path.read_text(encoding='utf-8-sig').splitlines() if line.strip()] if event_path.exists() else []
+    baseline_seq=max((e['seq'] for e in baseline_events),default=0)
+    cfg=data.contract.yaml.safe_load((R/'config/system.yaml').read_text(encoding='utf-8-sig'))
     result={'kind':'GUI_TEST_OBSERVER_NOT_RUNNER_STATE','status':'WAITING_FOR_HUMAN_GUI','project':str(p),'observer_pid':os.getpid(),'observer_birth_ticks':ui.birth(os.getpid()),
-            'gui_control_actions':0,'approval_actions':0,'human_wait_limit_seconds':1800,'native_smoke_limit_seconds':240,
+            'gui_control_actions':0,'approval_actions':0,'human_wait_limit_seconds':1800,'baseline_event_seq':baseline_seq,
+            'runtime_budget_changes':0,
             'started_at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
     def save(name,value):
         (E/name).write_text(data.secret.sanitize_text(json.dumps(value,ensure_ascii=False,indent=2))[0],encoding='utf-8')
     save('STATE.json',result)
     try:
-        while time.monotonic()-start<1800:
+        while True:
+            if run_start is None and time.monotonic()-start>=1800:raise ValueError('HUMAN_GUI_NOT_STARTED_WITHIN_OBSERVER_WINDOW')
             try:
                 s=data.read(state_path)
                 events=[json.loads(line) for line in event_path.read_text(encoding='utf-8-sig').splitlines() if line.strip()]
             except (OSError,ValueError):time.sleep(1);continue
-            if not any(e['type']=='RUN_STARTED' for e in events):time.sleep(1);continue
+            events=new_run_events(events,baseline_seq)
+            if not events:time.sleep(1);continue
             if run_start is None:
                 run_start=time.monotonic();run_id=s['run_id'];grant=data.read(p/'.autopilot/evidence/ONBOARDING-APPROVAL.json')
                 assert grant['method']=='HUMAN_PLAN_REVIEW' and grant['decision']=='APPROVE'
-                result.update(status='OBSERVING_NATIVE_RUN',run_id=run_id,human_approval=grant)
+                window=smoke_window(data.inspect(p),cfg['runner']['llama_start_timeout_seconds'])
+                assert window>0,'APPROVED_RUN_CLOCK_EXPIRED'
+                result.update(status='OBSERVING_NATIVE_RUN',run_id=run_id,human_approval=grant,native_smoke_limit_seconds=window)
                 save('STATE.json',result)
             assert s['run_id']==run_id,'RUN_CHANGED_NO_AUTOMATIC_CONTINUATION'
             supervisor=any(e['type']=='PROCESS_EXITED' and e['payload'].get('name')=='supervisor' and e['payload'].get('exit_code')==0 for e in events)
@@ -53,7 +71,7 @@ def main():
                             seen.add(parent);parent=parents[parent]
                             if parent==record['pid']:node={'pid':row['ProcessId'],'start_ticks':ui.birth(row['ProcessId']),'worker_record':record};break
                         if node:break
-            if node or time.monotonic()-run_start>240:
+            if node or time.monotonic()-run_start>window:
                 stop=ui.active_stop(p);save('STOP.json',stop);break
             if s['status'] in data.TERMINAL:raise ValueError('RUN_TERMINATED_BEFORE_SMOKE_STOP:'+s['status'])
             time.sleep(1)

@@ -254,3 +254,7 @@ PROJECT_STATUS=COMPLETE; todos los gates restantes PASS; F28 original WAIVED_BY_
 ## Mejora post-v1: iniciador para múltiples proyectos — 20261015-225852
 
 IN_PROGRESS / FINAL_MANUAL_GUI_PENDING. Prepare y aprobación única antes de escrituras, dos proyectos aislados, historial, UTF-8, planner Hermes real de solo lectura y regresión dirigida PASS. La certificación final de GUI y arranque/parada reales queda pendiente de interacción humana. Sin Computer Use desde la prohibición, sin repetir F24/F25/4H/F26/F27, sin F28 ni push. evidence\launcher-usability-checkpoint-20261015-225852; docs/COMO-USAR-DESARROLLADOR-AUTONOMO.md.
+
+### Continuación del smoke manual — 2026-10-15 23:26
+
+IN_PROGRESS / NATIVE_CONTINUATION_PENDING. Selector, brief UTF-8, revisión/aprobación humana única y Prepare canónico observados realmente. Run run-20261015-231741 ABORTED por el corte de 240s del observador, antes del límite de fase aprobado de 300s; cleanup PASS. FAIL preservado en evidence/launcher-manual-smoke-fail-20261015-232458. Sólo observador corregido y certificado con 8 controles PASS; regresión dirigida final 19/19 PASS. Supervisor completo y Worker real siguen pendientes; no declarar la mejora PASS. Continuar el mismo run por GUI conserva reloj, contrato y presupuestos. docs/LAUNCHER-RESUME.md.

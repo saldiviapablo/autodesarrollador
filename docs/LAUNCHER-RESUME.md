@@ -14,3 +14,13 @@ Cuando se abra un diálogo, pedir acción humana clara y esperar. La prueba pued
 Proyecto existente, .md/.txt, cancelación, aislamiento e historial ya tienen pruebas de controller/Prepare; sólo un chequeo visual manual por flujo que lo necesite. Mantener cada FAIL previo. Tras completar: consolidar informe, actualizar estado y guía, commit local y Git limpio.
 
 Checkpoint: evidence\launcher-usability-checkpoint-20261015-225852
+
+## Continuación manual pendiente — 2026-10-15 23:26
+
+El usuario seleccionó sandbox A, cargó el brief y la GUI registró HUMAN_PLAN_REVIEW a las 23:17:39. Prepare PASS; run `run-20261015-231741` empezó a las 23:17:45 con llama health PASS. El observador solicitó STOP a los 240 segundos antes de que terminara Supervisor; Qwen no llegó a iniciarse. Run ABORTED/STOP_REQUESTED, checkpoint y cleanup PASS. No certificar todavía el smoke Supervisor/Worker.
+
+FAIL preservado: `evidence/launcher-manual-smoke-fail-20261015-232458/`. La prueba tenía un corte de 240s incompatible con una fase aprobada de 300s más el arranque del modelo. Sólo se corrigió el observador: ventana finita derivada de fase y arranque, limitada al tiempo restante real; al continuar exige un RUN_STARTED nuevo y descarta eventos anteriores. Ocho controles aislados PASS: `evidence/launcher-observer-cert-20261015-232545/`. Regresión final de controller 19/19 PASS: `evidence/launcher-final-regression-20261015-232045/`.
+
+No se modificaron contrato, plan, reloj, contadores, Runner ni código objetivo. La falta de respuesta del Supervisor antes de la parada no demuestra que hubiese completado dentro de sus 300s. Eso sigue pendiente de prueba real.
+
+Leer `runtime/project-launcher/MANUAL-RESUME.json` para la identidad exacta del nuevo observador CLI. Espera el siguiente RUN_STARTED; no controla GUI ni aprueba. Acción humana: cerrar Resultado: ABORTED, abrir el iniciador fijo, seleccionar la MISMA carpeta A y pulsar Continuar proyecto. No Nuevo objetivo. Antes de continuar comprobar que queda tiempo en el reloj original; si venció, detenerse sin renovarlo. No repetir la planificación ni pedir otra aprobación del mismo contrato.

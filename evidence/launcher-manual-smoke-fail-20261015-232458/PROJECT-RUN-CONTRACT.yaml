@@ -1,0 +1,39 @@
+schema_version: '1.0'
+run_id: run-20261015-231741
+project_id: launcher-live-A á ñ
+project_root: C:/Users/Pc/Documents/Proyectos Tech/Desarrollador autonomo/sandbox/launcher-live-A
+  á ñ
+objective: 'Crear un módulo Python pequeño en esta carpeta sandbox.
+
+  En module.py implementar add(a,b), que devuelve la suma de dos números, incluidos
+  cero y negativos.
+
+  Comprobar add(2,3)=5, add(-2,3)=1 y add(0,0)=0.
+
+  Crear README.md con instrucciones breves y la línea exacta: áéíóú ñ ¿? € ° "comillas".
+
+  Usar sólo la biblioteca estándar, sin red ni dependencias.
+
+  Definir pruebas de aceptación inmutables para los casos indicados y verificar la
+  compilación Python.
+
+  No modificar infraestructura, no consultar ChatGPT y no hacer push.'
+acceptance_criteria:
+- Verificar que add(2,3)=5, add(-2,3)=1, add(0,0)=0 y que README.md contiene la línea
+  exacta de caracteres especiales.
+autonomy_mode: unattended
+authorized: true
+authorized_at: '2026-10-15T23:17:42.810899-03:00'
+created_at: '2026-10-15T23:17:41.0821336-03:00'
+time_budget_minutes: 120
+allowed_actions:
+- edit_file
+- run_test
+- git_commit_local
+forbidden_actions:
+- git_push
+- delete_root
+- modify_runner_guardrails
+test_commands: []
+build_commands: []
+security_policy_reference: config/security.yaml
