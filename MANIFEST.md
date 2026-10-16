@@ -227,3 +227,7 @@ F27=PASS / REAL PILOT PASS tras aceptación explícita del resultado corregido y
 ## Cierre final bajo roadmap revisado — 2026-10-15T21:55:16.796550+00:00
 
 PROJECT_STATUS=COMPLETE; todos los gates restantes PASS; F28 original WAIVED_BY_USER/NOT_EXECUTED, nunca PASS. docs/PROJECT-FINAL-REPORT.md
+
+## Corrección post-v1 del onboarding largo — 2026-10-16
+
+PASS. Referencia: docs/ONBOARDING-LONG-OBJECTIVE-FIX.md. Política del planner: config/onboarding-planner.json. Generación nativa estructurada sólo en preflight: scripts/onboarding_hermes.py y scripts/onboarding-hermes.ps1. Validación compacta: scripts/onboarding_planner.py. Prepare conserva initializer, doble revalidación, guards y presupuestos; cambia transporte a stdin UTF-8. Evidencias de certificación e integridad en el informe. No modifica el cierre de v1 ni ejecuta F28.

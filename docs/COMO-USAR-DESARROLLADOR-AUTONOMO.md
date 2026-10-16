@@ -27,3 +27,7 @@ INICIAR-DESARROLLADOR-AUTONOMO.bat "D:\Proyectos\Mi proyecto"
 Esto evita el selector y abre directamente el proyecto indicado. Un estado **COMPLETED** significa que pasó el Completion Gate; una parada solicitada termina como **ABORTED**. Los errores y bloqueos quedan visibles en la ventana y no significan que el objetivo esté completado.
 
 La interfaz usa PowerShell y la biblioteca gráfica que ya trae Python. No requiere una cuenta cloud, una instalación gráfica adicional ni cambios de Windows. No hace push ni despliegues.
+
+Los objetivos largos se conservan completos como fuente privada en `runtime/project-launcher/planner-sources/` de la infraestructura. Hermes genera un plan compacto, sin volver a escribir todo el brief. Después de aprobar también queda una copia exacta en `.autopilot/evidence/ONBOARDING-OBJECTIVE.md` del proyecto. El plan muestra el resumen, pruebas y políticas antes de autorizar al Worker.
+
+Si tenías abierta una ventana con el bloqueo anterior, cerrala y abrí nuevamente el iniciador para cargar la versión corregida. Podés volver a elegir la carpeta y cargar el mismo brief; no se inicia el Worker sin revisar y aprobar el nuevo plan. Cuando el plan pide investigación debe identificar una URL pública HTTPS concreta; si hay varias fuentes posibles y no puede resolverlas, se bloquea para que el plan pueda corregirse antes de aprobar.

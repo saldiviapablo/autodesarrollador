@@ -1,0 +1,16 @@
+{
+    "status":  "DENY",
+    "reason":  "PREFLIGHT_SUPERVISOR_FAILED",
+    "diagnostic":  {
+                       "hermes_duration":  6.91,
+                       "response_characters":  787,
+                       "hermes_timed_out":  false,
+                       "hermes_exit":  1
+                   },
+    "cleanup":  {
+                    "model_exited":  true,
+                    "physical_run_mutex_released":  true,
+                    "model_diagnostic":  "0.03.901.244 W srv          init: chat template supports preserving reasoning, it is enabled by default (may use more tokens, disable via --no-reasoning-preserve)\n0.11.244.980 E common_sampler_init: error initializing grammar sampler for grammar:\n0.11.245.947 E srv    send_error: task id = 0, error: Failed to initialize samplers: Unexpected empty grammar stack after accepting piece: \u003c|im_start|\u003e (248045)\n0.11.245.957 E srv  process_sing: failed to launch slot with task, id_task = 0",
+                    "owned_job_closed_on_process_exit":  true
+                }
+}

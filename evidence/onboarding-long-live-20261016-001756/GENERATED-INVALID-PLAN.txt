@@ -1,0 +1,144 @@
+{
+"plan": {
+"schema_version": "1.0",
+"backend": "live",
+"task": "Landing accesible Estudio Horizonte (HTML/CSS/JS sin dependencias)",
+"allowed_files": [
+"index.html",
+"styles.css",
+"script.js",
+"README.md"
+],
+"tests": [
+{
+"id": "acceptance",
+"argv": [
+"node",
+"test_acceptance.js"
+],
+"marker": "ACCEPTANCE_PASS",
+"timeout_seconds": 60
+}
+],
+"builds": [
+{
+"id": "build",
+"argv": [
+"node",
+"build_check.js"
+],
+"marker": "BUILD_PASS",
+"timeout_seconds": 60
+}
+],
+"criteria": [
+{
+"criterion": "El documento HTML es válido, tiene lang=es y meta viewport correcto (SEO técnico)",
+"test_id": "acceptance"
+},
+{
+"criterion": "El hero contiene exactamente el h1 'Explorá con calma' y el CTA 'Ver planes' apuntando a #planes",
+"test_id": "acceptance"
+},
+{
+"criterion": "La navegación incluye enlaces a #beneficios, #planes, #preguntas, #contacto y 'Saltar al contenido'; no existen rutas rotas internas",
+"test_id": "acceptance"
+},
+{
+"criterion": "La sección #beneficios contiene tres ítems con títulos y descripciones, sin promesas médicas ni datos comerciales inventados",
+"test_id": "acceptance"
+},
+{
+"criterion": "La sección #planes muestra tres propuestas distinguibles con precios claramente marcados como ejemplo e CTAs hacia #contacto; no simula pagos",
+"test_id": "acceptance"
+},
+{
+"criterion": "La sección #preguntas tiene al menos tres items usando detalles/summary (semántica accesible) sin depender solo de hover",
+"test_id": "acceptance"
+},
+{
+"criterion": "El formulario de #contacto tiene campos name, email y message con labels asociados; validación local de vacío y formato; muestra confirmación sin hacer requests de red",
+"test_id": "acceptance"
+},
+{
+"criterion": "Cumple accesibilidad básica: landmarks ARIA, orden de foco lógico, sin tabindex positivo, sin trampas de foco y sin ocultar contenido requerido",
+"test_id": "acceptance"
+},
+{
+"criterion": "El diseño es responsive (375px, 768px, 1440px), usa tipografía del sistema, paleta de alto contraste fondo claro/azul y respeta prefers-reduced-motion",
+"test_id": "acceptance"
+},
+{
+"criterion": "No existen referencias a fuentes remotas, trackers, scripts de terceros ni dependencias de Node en la entrega final",
+"test_id": "acceptance"
+},
+{
+"criterion": "El README explica apertura local, comandos de test/build y limitaciones del formulario, incluyendo los caracteres áéíóú ñ ¿? € ° \"comillas\"",
+"test_id": "acceptance"
+},
+{
+"criterion": "El JavaScript tiene sintaxis válida y las referencias a elementos del DOM existen (build check)",
+"test_id": "build"
+}
+],
+"artifacts": [
+{
+"path": "index.html",
+"min_bytes": 1
+},
+{
+"path": "styles.css",
+"min_bytes": 1
+},
+{
+"path": "script.js",
+"min_bytes": 1
+},
+{
+"path": "README.md",
+"min_bytes": 1
+}
+],
+"immutable_files": [
+{
+"path": "test_acceptance.js",
+"sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+},
+{
+"path": "build_check.js",
+"sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}
+],
+"phase_timeout_seconds": 300,
+"global_timeout_seconds": 2700,
+"max_cycles": 5,
+"restart_budget": 2
+},
+"seed_files": {
+"test_acceptance.js": "'use strict';\nconst fs = require('fs');\nconst path = require('path');\n\n// --- Helpers ---\nconst ROOT = __dirname;\nconst read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');\n\nconst PASS='***';\n\n// --- Verificaciones ---\n\n// 1. Existencia y tamaños\nconst files = ['index.html', 'styles.css', 'script.js', 'README.md'];\nfiles.forEach(f => {\n  const s = fs.statSync(path.join(ROOT, f));\n  if (s.size < 1) throw new Error(`Archivo ${f} vacío o inexistente`);\n});\n\n// 2. SEO Técnico & Estructura\nconst html = read('index.html');\nif (!html.includes('lang=\"es\"')) throw new Error('Falta lang=es');\nif (!html.includes('<meta name=\"viewport\"')) throw new Error('Falta meta viewport');\nif (!html.includes('<meta name=\"description\"')) throw new Error('Falta meta description');\nif (html.includes('tracker') || html.includes('analytics') || html.includes('facebook.com/trk')) throw new Error('Se detectaron trackers');\nif (html.includes('google-analytics') || html.includes('gtag.js')) throw new Error('Se detectó Google Analytics');\n\n// 3. Hero\nif (!html.includes('Explorá con calma')) throw new Error('Falta el título exacto del Hero');\nif (!html.includes('Ver planes')) throw new Error('Falta el CTA Ver planes');\nconst heroLink = html.match(/<a[^>]*href=\"#planes\"[^>]*>Ver planes<\\/a>/i);\nif (!heroLink) throw new Error('El CTA Ver planes no apunta a #planes');\n\n// 4. Navegación y Saltar al contenido\nconst anchors = html.match(/href=\"#[^"]*\"/g) || [];\nconst targets = ['#beneficios', '#planes', '#preguntas', '#contacto'];\ntargets.forEach(t => {\n  if (!anchors.find(a => a.includes(t))) throw new Error(`Falta enlace interno a ${t}`);\n});\nif (!html.includes('Saltar al contenido')) throw new Error('Falta enlace Saltar al contenido');\n\n// 5. Beneficios\nif (html.split('beneficios').length < 4) throw new Error('Sección beneficios parece incompleta (esperado >=3 ítems + título)');\nif (html.toLowerCase().includes('cura') && html.toLowerCase().includes('médic') && html.toLowerCase().includes('promesa')) {\n   // Check specifically for medical claims if 'cura' appears near 'medic'\n   if (html.match(/cura.*médic/i) || html.match(/médic.*cura/i)) throw new Error('No se permiten promesas médicas');\n}\n\n// 6. Planes\nif (html.split('planes').length < 4) throw new Error('Sección planes parece incompleta (esperado >=3 ítems + título)');\nif (!html.toLowerCase().includes('ejemplo') && !html.toLowerCase().includes('ilustrativo')) throw new Error('Los precios no están marcados como ejemplo/ilustrativo');\nif (html.includes('pay') || html.includes('payment') || html.includes('checkout')) throw new Error('No se permite simular pagos reales');\n\n// 7. Preguntas\nconst detailsCount = (html.match(/<details/g) || []).length;\nconst summaryCount = (html.match(/<summary/g) || []).length;\nif (detailsCount < 3) throw new Error('Faltan al menos 3 preguntas (details/summary)');\n\n// 8. Formulario y Accesibilidad\nconst hasForm = html.includes('<form') || html.includes('id=\"contacto\"') && html.includes('input');\nconst inputs = ['name', 'email', 'message'];\ninputs.forEach(inp => {\n  // Check for associated label\n  const labelRegex = new RegExp(`<label[^>]*for=\"${inp}\"`, 'i');\n  const inputRegex = new RegExp(`<input[^>]*id=\"${inp}\"`, 'i');\n  const textareaRegex = new RegExp(`<textarea[^>]*id=\"${inp}\"`, 'i');\n  if (!labelRegex.test(html)) throw new Error(`Falta label asociado al campo ${inp}`);\n  if (!inputRegex.test(html) && !textareaRegex.test(html)) throw new Error(`Falta campo ${inp}`);\n});\nif (!html.includes('aria-label') && !html.includes('aria-labelledby')) {\n    // Optional: check for aria-label if no labels found, but labels are preferred\n}\nif (html.includes('tabindex=\"')) throw new Error('No se permite tabindex positivo');\n\n// 9. Responsive & Diseño\nconst css = read('styles.css');\nif (css.includes('@import') || css.includes('font-face') && css.includes('http')) throw new Error('Se detectaron fuentes remotas');\nif (html.includes('fonts.googleapis.com') || html.includes('cdn.jsdelivr.net')) throw new Error('Se detectaron dependencias externas');\nif (html.includes('font-family') && !html.toLowerCase().includes('sans-serif') && !html.toLowerCase().includes('system')) {\n   // Check if specific web fonts are forced without system fallback\n   // Basic check: no remote font links\n}\n// Check prefers-reduced-motion\nif (!css.includes('prefers-reduced-motion')) throw new Error('Falta media query prefers-reduced-motion');\n\n// 10. README\nconst readme = read('README.md');\nconst chars = 'áéíóú ñ ¿? € ° \"';\nchars.split('').forEach(c => {\n  if (!readme.includes(c)) throw new Error(`README falta carácter: ${c}`);\n});\n\n// 11. JS Validity (Basic)\nconst js = read('script.js');\ntry {\n  new Function(js);\n} catch (e) {\n  throw new Error(`Error de sintaxis en script.js: ${e.message}`);\n}\n\n// 12. Network checks in JS\nif (js.includes('fetch(') || js.includes('XMLHttpRequest') || js.includes('axios') || js.includes('jQuery')) {\n  throw new Error('Se detectaron llamadas de red en el JS');\n}\n\nconsole.log(PASS);\n",
+"build_check.js": "'use strict';\nconst fs = require('fs');\nconst path = require('path');\n\nconst ROOT = __dirname;\nconst read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');\n\nconst PASS='***';\n\n// 1. Sintaxis JS\nconst js = read('script.js');\ntry {\n  new Function(js);\n} catch (e) {\n  throw new Error(`Sintaxis JS inválida: ${e.message}`);\n}\n\n// 2. Referencias DOM\nconst html = read('index.html');\nconst ids = html.match(/id=\"([^\"]+)\"/g) || [];\nconst idList = ids.map(i => i.match(/id=\"([^\"]+)\"/)[1]);\n\n// Check script references\nconst jsFunctions = js.match(/document\\.(getElementById|querySelector|querySelectorAll|getElementsByClassName|getElementsByName)\\(['"`](.*?)['"`]/g) || [];\njsFunctions.forEach(ref => {\n  const match = ref.match(/['"`](.*?)['"`]/);\n  if (match) {\n    const val = match[1];\n    if (ref.includes('getElementById') && !idList.includes(val)) {\n      // Check if it's a class or other selector\n      if (!ref.includes('getElementById')) {\n         // Allow if not strict ID lookup\n      } else {\n         throw new Error(`Referencia ID '${val}' no encontrada en HTML`);\n      }\n    }\n  }\n});\n\n// 3. CSS basic syntax (no obvious errors)\nconst css = read('styles.css');\nconst openBraces = (css.match(/{/g) || []).length;\nconst closeBraces = (css.match(/}/g) || []).length;\nif (openBraces !== closeBraces) {\n  throw new Error(`Desbalance de llaves CSS: ${openBraces} abiertas, ${closeBraces} cerradas`);\n}\n\nconsole.log(PASS);\n"
+},
+"overview": {
+"objective_summary": "Implementar landing HTML5/CSS3/JS para 'Estudio Horizonte' (marcA ficticia de excursiones). Landing accesible, responsive, sin dependencias externas ni datos reales. Incluye formulario local sin red, validación y cumplimiento WCAG básico.",
+"tasks": [
+"Generar index.html con estructura semántica, landmarks, SEO, hero, navegación, beneficios, planes, preguntas y formulario de contacto.",
+"Generar styles.css con diseño responsive (375/768/1440px), alto contraste, tipografía del sistema y soporte prefers-reduced-motion.",
+"Generar script.js con validación local del formulario, manejo de accesibilidad (details/summary) y cero llamadas de red.",
+"Generar README.md con instrucciones de uso, limitaciones y caracteres especiales (áéíóú ñ ¿? € ° \"comillas\").",
+"Ejecutar test_acceptance.js y build_check.js para garantizar cumplimiento de criterios y sintaxis."
+],
+"research_requirements": [
+"Verificar especificaciones W3C para detalles/summary y validación HTML5 en https://developer.mozilla.org/en-US/docs/Web/Accessibility"
+],
+"web_policy": "governed_https",
+"chatgpt_policy": "disabled",
+"git_policy": "local_only_no_push",
+"restrictions": [
+"Solo editar archivos autorizados dentro del sandbox. No instalar paquetes. No hacer llamadas de red desde el producto. Sin infraestructura ni credenciales."
+],
+"completion_policy": "native_gate_all_criteria_tests_build_artifacts_diff_state_reviewer_no_pending"
+},
+"research": {
+"url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility"
+}
+}

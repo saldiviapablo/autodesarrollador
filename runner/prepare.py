@@ -77,7 +77,7 @@ def execute(request, *, initialize=None):
         if admission(request)!=info:raise ValueError('PREPARE_ADMISSION_CHANGED')
         payload=base64.b64encode(json.dumps({'request':request,'binding':info},ensure_ascii=False).encode()).decode()
         if initialize is None:
-            result=subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-File',str(ROOT/'runner/prepare-apply.ps1'),'-EncodedRequest',payload],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=90)
+            result=subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-File',str(ROOT/'runner/prepare-apply.ps1'),'-ReadRequestFromStdin'],input=payload,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=90)
         else:result=initialize(payload)
         # Child revalidates before touching the initializer and emits an APPLY marker.
         started='PREPARE_APPLY_STARTED' in result.stdout
@@ -108,8 +108,10 @@ def execute(request, *, initialize=None):
             'prepare_write_count':None if started else 0,'cleanup':recovery or 'NO_WRITES'}
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--request',required=True);ap.add_argument('--validate-only',action='store_true');a=ap.parse_args()
-    payload=json.loads(base64.b64decode(a.request).decode('utf-8'))
+    ap=argparse.ArgumentParser();source=ap.add_mutually_exclusive_group(required=True);source.add_argument('--request');source.add_argument('--request-stdin',action='store_true');ap.add_argument('--validate-only',action='store_true');a=ap.parse_args()
+    encoded=sys.stdin.buffer.read(2*1024*1024+1).decode('utf-8-sig',errors='strict').strip() if a.request_stdin else a.request
+    if len(encoded)>2*1024*1024:raise ValueError('PREPARE_REQUEST_SIZE_EXCEEDED')
+    payload=json.loads(base64.b64decode(encoded,validate=True).decode('utf-8'))
     if a.validate_only:
         info=admission(payload['request'])
         # JSON roundtrip turns identity tuples into lists.

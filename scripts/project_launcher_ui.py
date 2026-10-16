@@ -118,6 +118,8 @@ def plan_review_text(bound):
           "COMPLETION: objetivo + criterios + tests + build + artefactos + diff permitido + pendientes vacíos + STATE + Reviewer independiente.\n\n"
           "El Worker todavía no está autorizado. Si aprobás, Prepare generará el contrato y se comprobará que coincide con este plan antes de iniciar.\n\n"
           "PLAN COMPLETO:\n"+json.dumps(p,indent=2,ensure_ascii=False))
+    if 'overview' in bound['proposal']:
+        text+='\n\nRESUMEN Y POLÍTICAS DEL PLAN:\n'+json.dumps(bound['proposal']['overview'],indent=2,ensure_ascii=False)
     for pin in p.get('immutable_files',[]):
         content=bound['proposal']['seed_files'].get(pin['path'])
         if content is None:content=(Path(bound['project'])/pin['path']).read_text(encoding='utf-8-sig')

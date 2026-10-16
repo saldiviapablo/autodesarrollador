@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0",
+  "backend": "live",
+  "task": "approved task",
+  "allowed_files": [
+    "index.html",
+    "styles.css",
+    "script.js",
+    "README.md"
+  ],
+  "tests": [
+    {
+      "id": "acceptance",
+      "argv": [
+        "node",
+        "test_acceptance.js"
+      ],
+      "marker": "ACCEPTANCE_PASS",
+      "timeout_seconds": 60
+    }
+  ],
+  "builds": [
+    {
+      "id": "build",
+      "argv": [
+        "node",
+        "build_check.js"
+      ],
+      "marker": "BUILD_PASS",
+      "timeout_seconds": 60
+    }
+  ],
+  "criteria": [
+    {
+      "criterion": "El documento HTML contiene h1 único con texto 'Explorá con calma' y enlace CTA 'Ver planes' apuntando a #planes.",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "La navegación interna incluye enlaces a #beneficios, #planes, #preguntas y #contacto, además de un enlace 'Saltar al contenido' hacia el main.",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "La sección de beneficios presenta tres items con títulos y descripciones breves sin promesas médicas ni cifras inventadas.",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "La sección #planes contiene tres propuestas distinguibles con precios claramente marcados como 'ejemplo' y CTAs hacia #contacto.",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "La sección #preguntas tiene al menos tres elementos accesibles (details/summary o botones con aria-expanded) funcionales.",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "El formulario de contacto tiene campos name, email, message con labels asociados, validación local de formato/vacío y muestra confirmación sin red.",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "El documento HTML es válido, semántico, usa lang='es', tiene title, meta description y viewport correcto.",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "El CSS respeta prefers-reduced-motion, usa tipografía del sistema, paleta de alto contraste y es responsive para 375px, 768px y 1440px sin desbordamientos.",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "El JavaScript validación del formulario es funcional y accesible por teclado, sin traps de foco ni tabindex positivos.",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "El README explica apertura local, comandos de prueba y limitaciones, incluyendo los caracteres especiales áéíóú ñ ¿? € ° \"comillas\".",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "El JavaScript no contiene llamadas de red ni dependencias externas instaladas.",
+      "test_id": "acceptance"
+    },
+    {
+      "criterion": "La sintaxis de JS y las referencias a archivos locales son correctas.",
+      "test_id": "build"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "index.html",
+      "min_bytes": 100
+    },
+    {
+      "path": "styles.css",
+      "min_bytes": 100
+    },
+    {
+      "path": "script.js",
+      "min_bytes": 100
+    },
+    {
+      "path": "README.md",
+      "min_bytes": 100
+    }
+  ],
+  "immutable_files": [
+    {
+      "path": "test_acceptance.js",
+      "sha256": "b1c1ab45c06eb0b1cb37031ef1daf35f88a46f11dde54ef2ab3a58a0b9a5f6f5"
+    },
+    {
+      "path": "build_check.js",
+      "sha256": "4155fc62b9a781dec105bde1ca83a74aabdbfa095b8d9a23ce24b043d326f79a"
+    }
+  ],
+  "phase_timeout_seconds": 300,
+  "global_timeout_seconds": 2700,
+  "max_cycles": 5,
+  "restart_budget": 2,
+  "research": {
+    "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility"
+  }
+}

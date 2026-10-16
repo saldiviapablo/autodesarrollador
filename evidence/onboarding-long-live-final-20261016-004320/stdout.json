@@ -1,0 +1,253 @@
+{
+    "status":  "PASS",
+    "proposal":  {
+                     "plan":  {
+                                  "schema_version":  "1.0",
+                                  "backend":  "live",
+                                  "task":  "approved task",
+                                  "allowed_files":  [
+                                                        "index.html",
+                                                        "styles.css",
+                                                        "script.js",
+                                                        "README.md"
+                                                    ],
+                                  "tests":  [
+                                                {
+                                                    "id":  "acceptance",
+                                                    "argv":  [
+                                                                 "node",
+                                                                 "test_acceptance.js"
+                                                             ],
+                                                    "marker":  "ACCEPTANCE_PASS",
+                                                    "timeout_seconds":  60
+                                                }
+                                            ],
+                                  "builds":  [
+                                                 {
+                                                     "id":  "build",
+                                                     "argv":  [
+                                                                  "node",
+                                                                  "build_check.js"
+                                                              ],
+                                                     "marker":  "BUILD_PASS",
+                                                     "timeout_seconds":  60
+                                                 }
+                                             ],
+                                  "criteria":  [
+                                                   {
+                                                       "criterion":  "El documento HTML contiene h1 único con texto \u0027Explorá con calma\u0027 y enlace CTA \u0027Ver planes\u0027 apuntando a #planes.",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "La navegación interna incluye enlaces a #beneficios, #planes, #preguntas y #contacto, además de un enlace \u0027Saltar al contenido\u0027 hacia el main.",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "La sección de beneficios presenta tres items con títulos y descripciones breves sin promesas médicas ni cifras inventadas.",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "La sección #planes contiene tres propuestas distinguibles con precios claramente marcados como \u0027ejemplo\u0027 y CTAs hacia #contacto.",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "La sección #preguntas tiene al menos tres elementos accesibles (details/summary o botones con aria-expanded) funcionales.",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "El formulario de contacto tiene campos name, email, message con labels asociados, validación local de formato/vacío y muestra confirmación sin red.",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "El documento HTML es válido, semántico, usa lang=\u0027es\u0027, tiene title, meta description y viewport correcto.",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "El CSS respeta prefers-reduced-motion, usa tipografía del sistema, paleta de alto contraste y es responsive para 375px, 768px y 1440px sin desbordamientos.",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "El JavaScript validación del formulario es funcional y accesible por teclado, sin traps de foco ni tabindex positivos.",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "El README explica apertura local, comandos de prueba y limitaciones, incluyendo los caracteres especiales áéíóú ñ ¿? € ° \"comillas\".",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "El JavaScript no contiene llamadas de red ni dependencias externas instaladas.",
+                                                       "test_id":  "acceptance"
+                                                   },
+                                                   {
+                                                       "criterion":  "La sintaxis de JS y las referencias a archivos locales son correctas.",
+                                                       "test_id":  "build"
+                                                   }
+                                               ],
+                                  "artifacts":  [
+                                                    {
+                                                        "path":  "index.html",
+                                                        "min_bytes":  100
+                                                    },
+                                                    {
+                                                        "path":  "styles.css",
+                                                        "min_bytes":  100
+                                                    },
+                                                    {
+                                                        "path":  "script.js",
+                                                        "min_bytes":  100
+                                                    },
+                                                    {
+                                                        "path":  "README.md",
+                                                        "min_bytes":  100
+                                                    }
+                                                ],
+                                  "immutable_files":  [
+                                                          {
+                                                              "path":  "test_acceptance.js",
+                                                              "sha256":  "b1c1ab45c06eb0b1cb37031ef1daf35f88a46f11dde54ef2ab3a58a0b9a5f6f5"
+                                                          },
+                                                          {
+                                                              "path":  "build_check.js",
+                                                              "sha256":  "4155fc62b9a781dec105bde1ca83a74aabdbfa095b8d9a23ce24b043d326f79a"
+                                                          }
+                                                      ],
+                                  "phase_timeout_seconds":  300,
+                                  "global_timeout_seconds":  2700,
+                                  "max_cycles":  5,
+                                  "restart_budget":  2
+                              },
+                     "seed_files":  {
+                                        "test_acceptance.js":  "const fs = require(\u0027fs\u0027);\nconst path = require(\u0027path\u0027);\n\nconst files = [\u0027index.html\u0027, \u0027styles.css\u0027, \u0027script.js\u0027, \u0027README.md\u0027];\nlet pass = true;\nconst results = [];\n\n// 1. Check files exist\nfor (const f of files) {\n  if (!fs.existsSync(f)) {\n    results.push(`FAIL: ${f} missing`);\n    pass = false;\n  }\n}\n\nif (pass) {\n  const html = fs.readFileSync(\u0027index.html\u0027, \u0027utf8\u0027);\n  \n  // 2. Hero text\n  if (!html.includes(\u0027Explorá con calma\u0027)) {\n    results.push(\u0027FAIL: Hero text missing\u0027);\n    pass = false;\n  }\n  \n  // 3. CTA link\n  if (!html.includes(\u0027Ver planes\u0027) || !html.includes(\u0027#planes\u0027)) {\n    results.push(\u0027FAIL: CTA Ver planes #planes missing\u0027);\n    pass = false;\n  }\n\n  // 4. Nav links\n  const navLinks = [\u0027#beneficios\u0027, \u0027#planes\u0027, \u0027#preguntas\u0027, \u0027#contacto\u0027];\n  for (const link of navLinks) {\n    if (!html.includes(link)) {\n      results.push(`FAIL: Nav link ${link} missing`);\n      pass = false;\n    }\n  }\n  if (!html.includes(\u0027Saltar al contenido\u0027)) {\n    results.push(\u0027FAIL: Skip to content link missing\u0027);\n    pass = false;\n  }\n\n  // 5. Benefits section\n  if (!html.includes(\u0027#beneficios\u0027) || !html.includes(\u0027beneficios\u0027)) {\n    results.push(\u0027FAIL: Benefits section structure issue\u0027);\n    pass = false;\n  }\n\n  // 6. Plans section\n  if (!html.includes(\u0027#planes\u0027)) {\n    results.push(\u0027FAIL: Plans section missing\u0027);\n    pass = false;\n  }\n  if (!html.includes(\u0027ejemplo\u0027)) {\n    results.push(\u0027FAIL: Plans example price marker missing\u0027);\n    pass = false;\n  }\n\n  // 7. FAQ section\n  if (!html.includes(\u0027#preguntas\u0027)) {\n    results.push(\u0027FAIL: FAQ section missing\u0027);\n    pass = false;\n  }\n  if (!html.includes(\u0027\u003cdetails\u0027) \u0026\u0026 !html.includes(\u0027aria-expanded\u0027)) {\n    results.push(\u0027FAIL: FAQ accessible structure missing\u0027);\n    pass = false;\n  }\n\n  // 8. Form validation\n  if (!html.includes(\u0027\u003cform\u0027) || !html.includes(\u0027name\u0027) || !html.includes(\u0027email\u0027) || !html.includes(\u0027message\u0027)) {\n    results.push(\u0027FAIL: Contact form fields missing\u0027);\n    pass = false;\n  }\n  if (!html.includes(\u0027label\u0027) \u0026\u0026 !html.includes(\u0027aria-label\u0027)) {\n    results.push(\u0027FAIL: Form labels missing\u0027);\n    pass = false;\n  }\n\n  // 9. SEO\n  if (!html.includes(\u0027\u003ctitle\u0027) || !html.includes(\u0027meta name=\"description\"\u0027) || !html.includes(\u0027viewport\u0027)) {\n    results.push(\u0027FAIL: SEO meta tags missing\u0027);\n    pass = false;\n  }\n  if (!html.includes(\u0027lang=\"es\"\u0027)) {\n    results.push(\u0027FAIL: HTML lang es missing\u0027);\n    pass = false;\n  }\n\n  // 10. CSS checks\n  const css = fs.readFileSync(\u0027styles.css\u0027, \u0027utf8\u0027);\n  if (!css.includes(\u0027prefers-reduced-motion\u0027)) {\n    results.push(\u0027FAIL: prefers-reduced-motion media query missing\u0027);\n    pass = false;\n  }\n  if (!css.includes(\u0027@media\u0027) || !css.includes(\u0027768px\u0027) || !css.includes(\u00271440px\u0027)) {\n    results.push(\u0027FAIL: Responsive breakpoints missing\u0027);\n    pass = false;\n  }\n\n  // 11. README checks\n  const readme = fs.readFileSync(\u0027README.md\u0027, \u0027utf8\u0027);\n  const specialChars = \u0027áéíóú ñ ¿? € ° \"comillas\"\u0027;\n  for (const char of specialChars.split(\u0027 \u0027)) {\n    if (!readme.includes(char)) {\n      results.push(`FAIL: README missing character: ${char}`);\n      pass = false;\n    }\n  }\n\n  // 12. JS checks\n  const js = fs.readFileSync(\u0027script.js\u0027, \u0027utf8\u0027);\n  if (js.includes(\u0027fetch(\u0027) || js.includes(\u0027XMLHttpRequest\u0027)) {\n    results.push(\u0027FAIL: Network calls found in JS\u0027);\n    pass = false;\n  }\n  if (js.includes(\u0027console.log(\u0027) === false \u0026\u0026 js.includes(\u0027function\u0027) === false \u0026\u0026 js.includes(\u0027addEventListener\u0027) === false) {\n     // Basic functionality check, not exhaustive\n  }\n}\n\nif (pass) {\n  console.log(\u0027ACCEPTANCE_PASS\u0027);\n} else {\n  console.error(\u0027ACCEPTANCE_FAIL\u0027);\n  results.forEach(r =\u003e console.error(r));\n  process.exit(1);\n}",
+                                        "build_check.js":  "const fs = require(\u0027fs\u0027);\nconst path = require(\u0027path\u0027);\n\n// Verify syntax of script.js using Node\u0027s built-in parser\ntry {\n  const jsContent = fs.readFileSync(\u0027script.js\u0027, \u0027utf8\u0027);\n  new Function(jsContent); // Basic syntax check\n} catch (e) {\n  console.error(`FAIL: script.js syntax error: ${e.message}`);\n  process.exit(1);\n}\n\n// Verify HTML structure is valid enough for basic parsing\ntry {\n  const htmlContent = fs.readFileSync(\u0027index.html\u0027, \u0027utf8\u0027);\n  if (!htmlContent.includes(\u0027\u003chtml\u0027) || !htmlContent.includes(\u0027\u003c/html\u003e\u0027)) {\n    throw new Error(\u0027HTML structure incomplete\u0027);\n  }\n} catch (e) {\n  console.error(`FAIL: index.html structure error: ${e.message}`);\n  process.exit(1);\n}\n\n// Verify CSS file is readable and non-empty\ntry {\n  const cssContent = fs.readFileSync(\u0027styles.css\u0027, \u0027utf8\u0027);\n  if (cssContent.length === 0) {\n    throw new Error(\u0027styles.css is empty\u0027);\n  }\n} catch (e) {\n  console.error(`FAIL: styles.css error: ${e.message}`);\n  process.exit(1);\n}\n\nconsole.log(\u0027BUILD_PASS\u0027);\n"
+                                    },
+                     "overview":  {
+                                      "objective_summary":  "Landing HTML/CSS/JS sin dependencias para Estudio Horizonte, accesible, responsive y verificable localmente sin red.",
+                                      "tasks":  [
+                                                    "Implementar index.html con estructura semántica, SEO, navegación interna y formularios accesibles.",
+                                                    "Implementar styles.css con paleta alto contraste, tipografía sistema y responsive (375/768/1440px).",
+                                                    "Implementar script.js para validación de formulario local sin red ni persistencia.",
+                                                    "Redactar README.md con instrucciones, comandos y caracteres especiales."
+                                                ],
+                                      "research_requirements":  [
+                                                                    "Consultar MDN sobre landmarks ARIA y atributos de formularios accesibles."
+                                                                ],
+                                      "restrictions":  [
+                                                           "Sólo el workspace aprobado; sin producción ni cambios de infraestructura"
+                                                       ],
+                                      "web_policy":  "none",
+                                      "chatgpt_policy":  "disabled",
+                                      "git_policy":  "local_only_no_push",
+                                      "completion_policy":  "native_gate_all_criteria_tests_build_artifacts_diff_state_reviewer_no_pending"
+                                  }
+                 },
+    "project":  "C:\\Users\\Pc\\Documents\\Proyectos Tech\\Desarrollador autonomo\\sandbox\\onboarding-long-UX á ñ 20261016-001756",
+    "objective":  "# Criterios principales\n1. Identidad: Crear la landing de Estudio Horizonte, marca ficticia de excursiones. Jerarquía clara, títulos en español, sin inventar testimonios ni datos comerciales reales.\n2. Stack: HTML5 semántico, CSS3 y JavaScript sin dependencias. Entregar index.html, styles.css, script.js y README.md. Node ya instalado ejecuta verificadores; no instalar paquetes.\n3. Hero: Un único h1, resumen y CTA Ver planes que enlaza #planes. Usar el texto exacto: Explorá con calma. No reproducir este brief dentro de los archivos.\n4. Navegación: Header con enlaces internos #beneficios, #planes, #preguntas y #contacto. Deben existir destinos únicos y un enlace Saltar al contenido hacia el main.\n5. Beneficios: Tres beneficios con títulos y descripciones breves que expliquen el servicio sin promesas médicas ni cifras inventadas. Usar listas y encabezados con jerarquía correcta.\n6. Planes: Sección #planes con tres propuestas distinguibles, precio ilustrativo claramente marcado como ejemplo y CTA que llega al contacto. Nunca simular un pago real.\n7. Preguntas: Al menos tres preguntas. Usar details/summary accesibles o botones con aria-expanded coherente; no depender sólo del hover ni del color.\n8. Contacto: Formulario local con name, email y message, labels asociados y validación de vacío y formato. Tras envío válido mostrar confirmación local; cero requests de red y sin persistir datos.\n9. Diseño visual: Paleta de alto contraste, fondo claro, acento azul y espaciado consistente. Evitar texto sobre fondos de contraste dudoso. Tipografía del sistema, sin fuentes remotas.\n10. Responsive: CSS para 375px, 768px y 1440px, sin ancho fijo que desborde. Grillas flexibles, targets cómodos y párrafos legibles; no esconder contenido requerido en móvil.\n11. Teclado: Todos los enlaces y controles utilizables mediante teclado; foco visible y orden natural. Sin tabindex positivo, sin trampas de foco y sin controles falsos hechos con div.\n12. Accesibilidad: Documento lang=es, landmarks, alternativas de texto cuando hay imágenes, nombres accesibles y mensajes del formulario vinculados a los campos. No anular outline sin reemplazo.\n13. Movimiento: Respetar prefers-reduced-motion y evitar autoplay, parallax obligatorio o animaciones que impidan leer. Ninguna interacción esencial debe depender de movimiento.\n14. SEO: Title descriptivo y meta description propia, viewport correcto y HTML válido. No añadir trackers, scripts de terceros, cookies publicitarias ni secretos.\n15. Investigación web: Planificar consulta de documentación oficial pública en https://developer.mozilla.org/en-US/docs/Web/Accessibility antes de implementar. No navegar durante el planner. Usar el mecanismo gobernado existente después de aprobación.\n16. Pruebas: Definir pruebas inmutables Node sustantivas: landmarks y enlaces/destinos, copy del hero, campos/labels, comportamiento de validación local y opciones responsive/reduced-motion. Ningún PASS incondicional ni sólo existencia de archivos.\n17. Build: Verificación independiente de sintaxis JavaScript y referencias locales; sin deploy. Marcador explícito BUILD_PASS sólo tras checks exitosos. Todo comando debe terminar dentro de 60 segundos.\n18. README: Explicar apertura local, comandos de test/build y limitaciones del formulario de demostración. Incluir exactamente: áéíóú ñ ¿? € ° \"comillas\". No copiar este brief.\n19. Seguridad: Sólo editar outputs aprobados dentro de este sandbox; no infraestructura, credenciales, producción ni push. Los verificadores y criterios permanecen inmutables. No ChatGPT ni llamadas de red desde el producto.\n20. Cierre: Tests/build, artefactos, diff autorizado, estado, pendientes vacíos y Reviewer deben pasar el Completion Gate nativo. Mantener los presupuestos existentes, sin reinicios extra.\n# Brief UX/UI sintético — Horizonte\nObjetivo: implementar una landing accesible y verificable en un sandbox descartable.\n\n## 1. Identidad\nCrear la landing de Estudio Horizonte, marca ficticia de excursiones. Jerarquía clara, títulos en español, sin inventar testimonios ni datos comerciales reales.\n\nRevisión 1.1: Crear la landing de Estudio Horizonte, marca ficticia de excursiones. Jerarquía clara, títulos en español, sin inventar testimonios ni datos comerciales reales.\n\nRevisión 1.2: Crear la landing de Estudio Horizonte, marca ficticia de excursiones. Jerarquía clara, títulos en español, sin inventar testimonios ni datos comerciales reales.\n\nRevisión 1.3: Crear la landing de Estudio Horizonte, marca ficticia de excursiones. Jerarquía clara, títulos en español, sin inventar testimonios ni datos comerciales reales.\n\nRevisión 1.4: Crear la landing de Estudio Horizonte, marca ficticia de excursiones. Jerarquía clara, títulos en español, sin inventar testimonios ni datos comerciales reales.\n\nRevisión 1.5: Crear la landing de Estudio Horizonte, marca ficticia de excursiones. Jerarquía clara, títulos en español, sin inventar testimonios ni datos comerciales reales.\n\nRevisión 1.6: Crear la landing de Estudio Horizonte, marca ficticia de excursiones. Jerarquía clara, títulos en español, sin inventar testimonios ni datos comerciales reales.\n\nRevisión 1.7: Crear la landing de Estudio Horizonte, marca ficticia de excursiones. Jerarquía clara, títulos en español, sin inventar testimonios ni datos comerciales reales.\n\n\n## 2. Stack\nHTML5 semántico, CSS3 y JavaScript sin dependencias. Entregar index.html, styles.css, script.js y README.md. Node ya instalado ejecuta verificadores; no instalar paquetes.\n\nRevisión 2.1: HTML5 semántico, CSS3 y JavaScript sin dependencias. Entregar index.html, styles.css, script.js y README.md. Node ya instalado ejecuta verificadores; no instalar paquetes.\n\nRevisión 2.2: HTML5 semántico, CSS3 y JavaScript sin dependencias. Entregar index.html, styles.css, script.js y README.md. Node ya instalado ejecuta verificadores; no instalar paquetes.\n\nRevisión 2.3: HTML5 semántico, CSS3 y JavaScript sin dependencias. Entregar index.html, styles.css, script.js y README.md. Node ya instalado ejecuta verificadores; no instalar paquetes.\n\nRevisión 2.4: HTML5 semántico, CSS3 y JavaScript sin dependencias. Entregar index.html, styles.css, script.js y README.md. Node ya instalado ejecuta verificadores; no instalar paquetes.\n\nRevisión 2.5: HTML5 semántico, CSS3 y JavaScript sin dependencias. Entregar index.html, styles.css, script.js y README.md. Node ya instalado ejecuta verificadores; no instalar paquetes.\n\nRevisión 2.6: HTML5 semántico, CSS3 y JavaScript sin dependencias. Entregar index.html, styles.css, script.js y README.md. Node ya instalado ejecuta verificadores; no instalar paquetes.\n\nRevisión 2.7: HTML5 semántico, CSS3 y JavaScript sin dependencias. Entregar index.html, styles.css, script.js y README.md. Node ya instalado ejecuta verificadores; no instalar paquetes.\n\n\n## 3. Hero\nUn único h1, resumen y CTA Ver planes que enlaza #planes. Usar el texto exacto: Explorá con calma. No reproducir este brief dentro de los archivos.\n\nRevisión 3.1: Un único h1, resumen y CTA Ver planes que enlaza #planes. Usar el texto exacto: Explorá con calma. No reproducir este brief dentro de los archivos.\n\nRevisión 3.2: Un único h1, resumen y CTA Ver planes que enlaza #planes. Usar el texto exacto: Explorá con calma. No reproducir este brief dentro de los archivos.\n\nRevisión 3.3: Un único h1, resumen y CTA Ver planes que enlaza #planes. Usar el texto exacto: Explorá con calma. No reproducir este brief dentro de los archivos.\n\nRevisión 3.4: Un único h1, resumen y CTA Ver planes que enlaza #planes. Usar el texto exacto: Explorá con calma. No reproducir este brief dentro de los archivos.\n\nRevisión 3.5: Un único h1, resumen y CTA Ver planes que enlaza #planes. Usar el texto exacto: Explorá con calma. No reproducir este brief dentro de los archivos.\n\nRevisión 3.6: Un único h1, resumen y CTA Ver planes que enlaza #planes. Usar el texto exacto: Explorá con calma. No reproducir este brief dentro de los archivos.\n\nRevisión 3.7: Un único h1, resumen y CTA Ver planes que enlaza #planes. Usar el texto exacto: Explorá con calma. No reproducir este brief dentro de los archivos.\n\n\n## 4. Navegación\nHeader con enlaces internos #beneficios, #planes, #preguntas y #contacto. Deben existir destinos únicos y un enlace Saltar al contenido hacia el main.\n\nRevisión 4.1: Header con enlaces internos #beneficios, #planes, #preguntas y #contacto. Deben existir destinos únicos y un enlace Saltar al contenido hacia el main.\n\nRevisión 4.2: Header con enlaces internos #beneficios, #planes, #preguntas y #contacto. Deben existir destinos únicos y un enlace Saltar al contenido hacia el main.\n\nRevisión 4.3: Header con enlaces internos #beneficios, #planes, #preguntas y #contacto. Deben existir destinos únicos y un enlace Saltar al contenido hacia el main.\n\nRevisión 4.4: Header con enlaces internos #beneficios, #planes, #preguntas y #contacto. Deben existir destinos únicos y un enlace Saltar al contenido hacia el main.\n\nRevisión 4.5: Header con enlaces internos #beneficios, #planes, #preguntas y #contacto. Deben existir destinos únicos y un enlace Saltar al contenido hacia el main.\n\nRevisión 4.6: Header con enlaces internos #beneficios, #planes, #preguntas y #contacto. Deben existir destinos únicos y un enlace Saltar al contenido hacia el main.\n\nRevisión 4.7: Header con enlaces internos #beneficios, #planes, #preguntas y #contacto. Deben existir destinos únicos y un enlace Saltar al contenido hacia el main.\n\n\n## 5. Beneficios\nTres beneficios con títulos y descripciones breves que expliquen el servicio sin promesas médicas ni cifras inventadas. Usar listas y encabezados con jerarquía correcta.\n\nRevisión 5.1: Tres beneficios con títulos y descripciones breves que expliquen el servicio sin promesas médicas ni cifras inventadas. Usar listas y encabezados con jerarquía correcta.\n\nRevisión 5.2: Tres beneficios con títulos y descripciones breves que expliquen el servicio sin promesas médicas ni cifras inventadas. Usar listas y encabezados con jerarquía correcta.\n\nRevisión 5.3: Tres beneficios con títulos y descripciones breves que expliquen el servicio sin promesas médicas ni cifras inventadas. Usar listas y encabezados con jerarquía correcta.\n\nRevisión 5.4: Tres beneficios con títulos y descripciones breves que expliquen el servicio sin promesas médicas ni cifras inventadas. Usar listas y encabezados con jerarquía correcta.\n\nRevisión 5.5: Tres beneficios con títulos y descripciones breves que expliquen el servicio sin promesas médicas ni cifras inventadas. Usar listas y encabezados con jerarquía correcta.\n\nRevisión 5.6: Tres beneficios con títulos y descripciones breves que expliquen el servicio sin promesas médicas ni cifras inventadas. Usar listas y encabezados con jerarquía correcta.\n\nRevisión 5.7: Tres beneficios con títulos y descripciones breves que expliquen el servicio sin promesas médicas ni cifras inventadas. Usar listas y encabezados con jerarquía correcta.\n\n\n## 6. Planes\nSección #planes con tres propuestas distinguibles, precio ilustrativo claramente marcado como ejemplo y CTA que llega al contacto. Nunca simular un pago real.\n\nRevisión 6.1: Sección #planes con tres propuestas distinguibles, precio ilustrativo claramente marcado como ejemplo y CTA que llega al contacto. Nunca simular un pago real.\n\nRevisión 6.2: Sección #planes con tres propuestas distinguibles, precio ilustrativo claramente marcado como ejemplo y CTA que llega al contacto. Nunca simular un pago real.\n\nRevisión 6.3: Sección #planes con tres propuestas distinguibles, precio ilustrativo claramente marcado como ejemplo y CTA que llega al contacto. Nunca simular un pago real.\n\nRevisión 6.4: Sección #planes con tres propuestas distinguibles, precio ilustrativo claramente marcado como ejemplo y CTA que llega al contacto. Nunca simular un pago real.\n\nRevisión 6.5: Sección #planes con tres propuestas distinguibles, precio ilustrativo claramente marcado como ejemplo y CTA que llega al contacto. Nunca simular un pago real.\n\nRevisión 6.6: Sección #planes con tres propuestas distinguibles, precio ilustrativo claramente marcado como ejemplo y CTA que llega al contacto. Nunca simular un pago real.\n\nRevisión 6.7: Sección #planes con tres propuestas distinguibles, precio ilustrativo claramente marcado como ejemplo y CTA que llega al contacto. Nunca simular un pago real.\n\n\n## 7. Preguntas\nAl menos tres preguntas. Usar details/summary accesibles o botones con aria-expanded coherente; no depender sólo del hover ni del color.\n\nRevisión 7.1: Al menos tres preguntas. Usar details/summary accesibles o botones con aria-expanded coherente; no depender sólo del hover ni del color.\n\nRevisión 7.2: Al menos tres preguntas. Usar details/summary accesibles o botones con aria-expanded coherente; no depender sólo del hover ni del color.\n\nRevisión 7.3: Al menos tres preguntas. Usar details/summary accesibles o botones con aria-expanded coherente; no depender sólo del hover ni del color.\n\nRevisión 7.4: Al menos tres preguntas. Usar details/summary accesibles o botones con aria-expanded coherente; no depender sólo del hover ni del color.\n\nRevisión 7.5: Al menos tres preguntas. Usar details/summary accesibles o botones con aria-expanded coherente; no depender sólo del hover ni del color.\n\nRevisión 7.6: Al menos tres preguntas. Usar details/summary accesibles o botones con aria-expanded coherente; no depender sólo del hover ni del color.\n\nRevisión 7.7: Al menos tres preguntas. Usar details/summary accesibles o botones con aria-expanded coherente; no depender sólo del hover ni del color.\n\n\n## 8. Contacto\nFormulario local con name, email y message, labels asociados y validación de vacío y formato. Tras envío válido mostrar confirmación local; cero requests de red y sin persistir datos.\n\nRevisión 8.1: Formulario local con name, email y message, labels asociados y validación de vacío y formato. Tras envío válido mostrar confirmación local; cero requests de red y sin persistir datos.\n\nRevisión 8.2: Formulario local con name, email y message, labels asociados y validación de vacío y formato. Tras envío válido mostrar confirmación local; cero requests de red y sin persistir datos.\n\nRevisión 8.3: Formulario local con name, email y message, labels asociados y validación de vacío y formato. Tras envío válido mostrar confirmación local; cero requests de red y sin persistir datos.\n\nRevisión 8.4: Formulario local con name, email y message, labels asociados y validación de vacío y formato. Tras envío válido mostrar confirmación local; cero requests de red y sin persistir datos.\n\nRevisión 8.5: Formulario local con name, email y message, labels asociados y validación de vacío y formato. Tras envío válido mostrar confirmación local; cero requests de red y sin persistir datos.\n\nRevisión 8.6: Formulario local con name, email y message, labels asociados y validación de vacío y formato. Tras envío válido mostrar confirmación local; cero requests de red y sin persistir datos.\n\nRevisión 8.7: Formulario local con name, email y message, labels asociados y validación de vacío y formato. Tras envío válido mostrar confirmación local; cero requests de red y sin persistir datos.\n\n\n## 9. Diseño visual\nPaleta de alto contraste, fondo claro, acento azul y espaciado consistente. Evitar texto sobre fondos de contraste dudoso. Tipografía del sistema, sin fuentes remotas.\n\nRevisión 9.1: Paleta de alto contraste, fondo claro, acento azul y espaciado consistente. Evitar texto sobre fondos de contraste dudoso. Tipografía del sistema, sin fuentes remotas.\n\nRevisión 9.2: Paleta de alto contraste, fondo claro, acento azul y espaciado consistente. Evitar texto sobre fondos de contraste dudoso. Tipografía del sistema, sin fuentes remotas.\n\nRevisión 9.3: Paleta de alto contraste, fondo claro, acento azul y espaciado consistente. Evitar texto sobre fondos de contraste dudoso. Tipografía del sistema, sin fuentes remotas.\n\nRevisión 9.4: Paleta de alto contraste, fondo claro, acento azul y espaciado consistente. Evitar texto sobre fondos de contraste dudoso. Tipografía del sistema, sin fuentes remotas.\n\nRevisión 9.5: Paleta de alto contraste, fondo claro, acento azul y espaciado consistente. Evitar texto sobre fondos de contraste dudoso. Tipografía del sistema, sin fuentes remotas.\n\nRevisión 9.6: Paleta de alto contraste, fondo claro, acento azul y espaciado consistente. Evitar texto sobre fondos de contraste dudoso. Tipografía del sistema, sin fuentes remotas.\n\nRevisión 9.7: Paleta de alto contraste, fondo claro, acento azul y espaciado consistente. Evitar texto sobre fondos de contraste dudoso. Tipografía del sistema, sin fuentes remotas.\n\n\n## 10. Responsive\nCSS para 375px, 768px y 1440px, sin ancho fijo que desborde. Grillas flexibles, targets cómodos y párrafos legibles; no esconder contenido requerido en móvil.\n\nRevisión 10.1: CSS para 375px, 768px y 1440px, sin ancho fijo que desborde. Grillas flexibles, targets cómodos y párrafos legibles; no esconder contenido requerido en móvil.\n\nRevisión 10.2: CSS para 375px, 768px y 1440px, sin ancho fijo que desborde. Grillas flexibles, targets cómodos y párrafos legibles; no esconder contenido requerido en móvil.\n\nRevisión 10.3: CSS para 375px, 768px y 1440px, sin ancho fijo que desborde. Grillas flexibles, targets cómodos y párrafos legibles; no esconder contenido requerido en móvil.\n\nRevisión 10.4: CSS para 375px, 768px y 1440px, sin ancho fijo que desborde. Grillas flexibles, targets cómodos y párrafos legibles; no esconder contenido requerido en móvil.\n\nRevisión 10.5: CSS para 375px, 768px y 1440px, sin ancho fijo que desborde. Grillas flexibles, targets cómodos y párrafos legibles; no esconder contenido requerido en móvil.\n\n",
+    "project_snapshot":  {
+
+                         },
+    "policy_hashes":  {
+                          "config/onboarding-planner.json":  "2e174f8bfd167aacacfa52ec477aae7b863e129306feb4405cadff3c7f6a2a84",
+                          "config/security.yaml":  "68e0941a63ec53c67429a296d7db4722a29267a8aee5432086e4639ac8f0ec7f",
+                          "config/system.yaml":  "9434854d904f51ff9aeb786b0c73d276c54c5d511fbba373e67ab9858a8bca78",
+                          "config/VERSIONS.lock":  "81ca3683e16cc09625ea0000a46fee8d0a2caffdf5b33019a208dfed73b4dab4",
+                          "runner/agent-step.ps1":  "9e70c6186016c14e74d23f54ff80276c622326265a234a5c67790baeb54aa2f7",
+                          "runner/chatgpt-step.ps1":  "197b9c1f2b9fa0de40a2bb837297279f42b314288f74e19173bbdc1a7bb464f2",
+                          "runner/cleanup.ps1":  "85cedfbbc7b1d56ea09b278a1e6d31aafe26aff7dbfdc3075eb8d459f7bfac7d",
+                          "runner/completion-gate.ps1":  "b93cb42184b62d1d767b9410d37fcff2740b50f46312f85736bc1cb60af69d95",
+                          "runner/completion.py":  "5f9dd8bbe2a40c31e73ab6df8fb81e9080aadf47f0b7f7b45232decbbea37623",
+                          "runner/contract.py":  "854f7b062f2bfac564a1946e3c297b8d50057f5f1733e2f8b8c8cd9c0d5f6736",
+                          "runner/core.ps1":  "87487152fdd5ca523c017357788f1fc70ae656f406d97f6032628219c960b497",
+                          "runner/launch.ps1":  "2401c33036bc93412d344e630296672eb098d3b8ba82555d9c5b074d60d0d291",
+                          "runner/plan-objective.ps1":  "edf90663fd88f6828717ecb339f2354eec8c440c84d3dd3b685dd87a1401474a",
+                          "runner/prepare-apply.ps1":  "86721843a4818e9ffc71422f497a48e33f4092a5ec5af3a4fab9f94059104eca",
+                          "runner/prepare.py":  "f08433d27192358027c2ef24686cb35f5ecd9c3037ed843e7ffbdfb83fe7ae45",
+                          "runner/report.ps1":  "5613bce99642891988b6a5f23b034a9e1ec9a3b7aeb9c9b23a4869685ab249b7",
+                          "runner/research-handoff.py":  "63fa3ebb9d9adee3227eccbcf48f6ed622e63213a39ab30c9b6da72ac4f5189d",
+                          "runner/research-step.ps1":  "ea11af756b1e5c0144e3427ad95999d08779ad88ec3e49db782a4b8871e2fe16",
+                          "runner/reviewer_contract.py":  "b797787448d72e23a6730b50885e81655d65e70f7dbb861957c076374adec9f2",
+                          "runner/run.ps1":  "ee4b542deacfb321119aa6fa03d19b7ce47d08dfbe7d4274cce2c42d4a8de5c1",
+                          "runner/stop.ps1":  "c7407bb00d88d5ebb63822bd215542e0cd2df2a653705a042c154f2b3fbdee6d",
+                          "runner/watchdog-monitor.ps1":  "b45ccb3151e7caa021f6dbcb0f4a95e37411e56ea4ab3ddd8f701c85d4bcf0f1",
+                          "schemas/autopilot-state.schema.json":  "146ca6b7baf94bfdc3d7cfefba9fce5cb2315256202cf8a86bf43c22ee182dde",
+                          "schemas/run-contract.schema.json":  "a13d5ddb80fa9c1c53e15e9f43e746b1b6d6d200fb2823012bf1ff9ab00359a1",
+                          "schemas/runner-plan.schema.json":  "11ff6d8925a2a41b4d18b607ad8e304f8efc0d31ace6c73d9fd2bae0cd3c4216",
+                          "scripts/canonical_path.py":  "1999ececa75fac713656584fa1802c10ea34fcbc26611626b8da48968362c686",
+                          "scripts/hermes-pre-tool-hook.py":  "49a28be99803169841c82b99e48573d966fe26e5a348228417cc94ad46a7573c",
+                          "scripts/inference-lock.ps1":  "3990343f762a26c6e7ed090e64b3c3b0c2b719cd4e611f0c490cebc633928717",
+                          "scripts/init-autopilot-project.ps1":  "6e9dee4bcdd3ad08b51f8774d0e8cad0d204dfb26cdf8a1d45a93394ffb91e1c",
+                          "scripts/invoke-delegation.ps1":  "ccef6734f232b5bd7cf3430807898ce7b6fadc6b183ceb9aa189321c180d7151",
+                          "scripts/invoke-hermes-role.ps1":  "e4f8ede0eff79fe746e03d438cf0501a677fa094296fe4d20dca635ba9e8a213",
+                          "scripts/invoke-hermes.ps1":  "a5ac89ea1a37d216ce838a762ff6cc140d5a365fbefe959c3248b88dc929139b",
+                          "scripts/invoke-qwen-code.ps1":  "acdab343d994adc18dd9b369ad86f448d918ccd123c6886c92fbc56c659f6e29",
+                          "scripts/onboarding-hermes.ps1":  "ac3b11024fa5d174f7fc23d024dde11ddb84219d5e4bd414197488607330576b",
+                          "scripts/onboarding_hermes.py":  "3e7bebfb1f0c3ad3f556dc115aa8199e2d0cc63b6bf167a625d4e726418501d4",
+                          "scripts/onboarding_planner.py":  "de019dbf410441fc8d5ce84e25196eb62f6252510c5917d217b2395dd2c77faa",
+                          "scripts/project-launcher-action.ps1":  "edd4b9e4bee0766653bbb459ca67e478149f0ee289aeaf06274e772fef135e9a",
+                          "scripts/project-launcher-common.ps1":  "7b71ee9c22b6540d9fc3418e84eb223277e08ce0ce8ded2dbcbf10e7b6c2acf4",
+                          "scripts/project_launcher_ui.py":  "ef56d300693dfd18daf280c9d4371a63bda4417c5dba34b383ba0e66f8c4932e",
+                          "scripts/project_onboarding.py":  "5a40678fbf2048a39e2064a6fd8c919e0ef3fb5797a555efc61e493d2c64483b",
+                          "scripts/security-guard.ps1":  "df18149ae6dee48ad09f9851ca0ce4e3d6f64c068946c94ca137e98f18f6f0e2",
+                          "scripts/state-manager.ps1":  "c862bdd2c7c7cf9d1ea8ca7d2b257519a6618e1a19ed1ae6b71c1f2a088da11f",
+                          "templates/QWEN.md.template":  "c6395ccd4482f0940b2d3ffa858649ce87df7e95161790dff27492f1b5f4b0a5"
+                      },
+    "binding":  "cb137c7c374dc1fe6e1e7704cae2d31c1a5c98846a2607f9803df4a45c5d1688",
+    "planner":  {
+                    "model_start_ticks":  639277190021641711,
+                    "session_id":  "onboarding-c1f662710fc849fabb1e5c6fd584c36a",
+                    "plan_utf8_bytes":  8583,
+                    "readonly":  true,
+                    "model_arguments":  [
+                                            "-m",
+                                            "C:\\Users\\Pc\\.cache\\huggingface\\hub\\models--ggml-org--Qwen3.6-35B-A3B-GGUF\\snapshots\\baec3ebee244827cda0f4557eafa8b28f7545fa6\\Qwen3.6-35B-A3B-Q4_K_M.gguf",
+                                            "--alias",
+                                            "qwen36",
+                                            "--host",
+                                            "127.0.0.1",
+                                            "--port",
+                                            "8080",
+                                            "--ctx-size",
+                                            "65536",
+                                            "--parallel",
+                                            "1",
+                                            "--cpu-moe",
+                                            "--n-gpu-layers",
+                                            "99",
+                                            "--flash-attn",
+                                            "on",
+                                            "--cache-type-k",
+                                            "q8_0",
+                                            "--cache-type-v",
+                                            "q8_0",
+                                            "--jinja",
+                                            "--n-predict",
+                                            "4096",
+                                            "--chat-template-kwargs",
+                                            "{\"enable_thinking\":false}"
+                                        ],
+                    "inference_lock":  "production wrapper",
+                    "tools":  0,
+                    "hook":  "PASS",
+                    "objective_utf8_bytes":  17946,
+                    "duration":  109.54925899999999,
+                    "project_snapshot_unchanged":  true,
+                    "role":  "Hermes Supervisor",
+                    "policy":  {
+                                   "timeout_seconds":  180,
+                                   "max_output_tokens":  4096,
+                                   "enable_thinking":  false,
+                                   "wire_format":  "json",
+                                   "max_plan_bytes":  16384,
+                                   "max_seed_bytes":  8192,
+                                   "max_tasks":  8,
+                                   "max_criteria":  16
+                               },
+                    "objective_sha256":  "d19eef103c7ef22cbb7eb9039c03d8c6dfd03d14ca1fff26a2b3781027d026f6",
+                    "model_pid":  17192
+                },
+    "cleanup":  {
+                    "model_exited":  true,
+                    "physical_run_mutex_released":  true,
+                    "model_diagnostic":  "0.03.599.051 W srv          init: chat template supports preserving reasoning, it is enabled by default (may use more tokens, disable via --no-reasoning-preserve)\n0.09.670.762 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0\n0.20.606.448 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   1002, progress = 0.16, t =  10.94 s / 91.63 tokens per second\n0.28.280.561 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   3050, progress = 0.47, t =  18.61 s / 163.89 tokens per second\n0.35.055.105 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   5098, progress = 0.79, t =  25.38 s / 200.83 tokens per second\n0.37.988.518 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   5941, progress = 0.92, t =  28.32 s / 209.80 tokens per second\n0.39.512.167 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   6453, progress = 1.00, t =  29.84 s / 216.24 tokens per second\n1.53.075.177 I slot print_timing: id  0 | task 0 | prompt eval time =   29959.81 ms /  6457 tokens (    4.64 ms per token,   215.52 tokens per second)\n1.53.075.181 I slot print_timing: id  0 | task 0 |        eval time =   73444.25 ms /  2648 tokens (   27.75 ms per token,    36.04 tokens per second)\n1.53.075.183 I slot print_timing: id  0 | task 0 |       total time =  103404.05 ms /  9105 tokens\n1.53.075.598 I slot      release: id  0 | task 0 | stop processing: n_tokens = 9104, truncated = 0",
+                    "owned_job_closed_on_process_exit":  true
+                }
+}

@@ -12,7 +12,7 @@ if($Action -eq 'Prepare'){
         if(-not $prepareHeld){@{status='DENY';phase='PREPARE_PRE_ADMISSION';reason='RUN_ALREADY_ACTIVE';prepare_write_count=0}|ConvertTo-Json;exit 2}
         $request=@{project=$ProjectRoot;objective=$Objective;criteria=@($AcceptanceCriteria);plan=$PlanPath;workspace=$WorkspaceRoot}|ConvertTo-Json -Depth 8 -Compress
         $encoded=[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($request))
-        & C:/Python314/python.exe (Join-Path $PSScriptRoot 'prepare.py') --request $encoded
+        $encoded | & C:/Python314/python.exe (Join-Path $PSScriptRoot 'prepare.py') --request-stdin
         exit $LASTEXITCODE
     } finally {
         if($prepareHeld){$prepareMutex.ReleaseMutex()};$prepareMutex.Dispose()

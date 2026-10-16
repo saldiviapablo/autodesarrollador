@@ -5,12 +5,14 @@ $ErrorActionPreference='Stop';$env:PSModulePath=Join-Path $PSHOME 'Modules'
 [Console]::OutputEncoding=[Text.Encoding]::UTF8;[Console]::InputEncoding=[Text.Encoding]::UTF8
 . (Join-Path $PSScriptRoot '../scripts/project-launcher-common.ps1')
 . (Join-Path $PSScriptRoot '../scripts/windows-process-job.ps1')
+. (Join-Path $PSScriptRoot '../scripts/onboarding-hermes.ps1')
 $request=[Console]::In.ReadToEnd()|ConvertFrom-Json
 $mutex=New-Object Threading.Mutex($false,'Local\DesarrolladorAutonomo_RunMutex');$held=$false;$job=$null;$model=$null;$result=$null;$payload=$null;$code=0
 try{
     try{$held=$mutex.WaitOne(0)}catch [Threading.AbandonedMutexException]{$held=$true}
     if(-not $held){throw 'RUN_ALREADY_ACTIVE'}
     $context=Invoke-OnboardingData @{action='planner_context';project=$request.project;objective=$request.objective}
+    $policy=$context.planner_policy
     $cfg=((& C:/Python314/python.exe (Join-Path $script:LauncherRoot 'scripts/mcp-sandbox-server.py') --dump-yaml-json (Join-Path $script:LauncherRoot 'config/system.yaml')) -join "`n")|ConvertFrom-Json
     $l=$cfg.llama
     if($l.alias -ne 'qwen36' -or $l.host -ne '127.0.0.1' -or $l.port -ne 8080 -or $l.ctx_size -ne 65536 -or $l.parallel -ne 1){throw 'FROZEN_MODEL_PARAMETERS_CHANGED'}
@@ -18,6 +20,9 @@ try{
     $job=New-Object DaOwnedProcessJob
     $job.Assign([Diagnostics.Process]::GetCurrentProcess().Handle)
     $arguments=@('-m',$l.model,'--alias',$l.alias,'--host',$l.host,'--port',[string]$l.port,'--ctx-size',[string]$l.ctx_size,'--parallel',[string]$l.parallel,'--cpu-moe','--n-gpu-layers',[string]$l.n_gpu_layers,'--flash-attn','on','--cache-type-k',$l.cache_type_k,'--cache-type-v',$l.cache_type_v,'--jinja')
+    # Only this short-lived preflight model gets output/thinking caps. The
+    # normal Runner, role profiles, Worker and their budgets are unchanged.
+    $arguments+=@('--n-predict',[string]$policy.max_output_tokens,'--chat-template-kwargs',(@{enable_thinking=$policy.enable_thinking}|ConvertTo-Json -Compress))
     $model=Start-LauncherChild $l.executable $arguments
     $deadline=[datetimeoffset]::Now.AddSeconds($cfg.runner.llama_start_timeout_seconds);$ready=$false
     while([datetimeoffset]::Now -lt $deadline){
@@ -26,19 +31,20 @@ try{
         Start-Sleep -Milliseconds 250
     }
     if(-not $ready){throw 'PREFLIGHT_MODEL_HEALTH_TIMEOUT'}
-    $result=& (Join-Path $script:LauncherRoot 'scripts/invoke-hermes-role.ps1') -Role supervisor -Prompt $context.prompt -WorkingDir $request.project -TimeoutSeconds 180
+    $result=Invoke-OnboardingHermes $context $request $cfg
     if(-not $result.Success){throw 'PREFLIGHT_SUPERVISOR_FAILED'}
     $parsed=Read-LauncherPlannerStream $result.Stdout
     $session=$parsed.session_id
-    $proposal=$parsed.text|ConvertFrom-Json
-    $bound=Invoke-OnboardingData @{action='proposal';project=$request.project;objective=$request.objective;proposal=$proposal}
+    $bound=Invoke-OnboardingData @{action='planner_proposal';project=$request.project;objective=$request.objective;text=$parsed.text}
     # Compare the read-only input snapshot to the proposal binding before Prepare.
     if(($context.snapshot|ConvertTo-Json -Depth 10 -Compress) -cne ($bound.project_snapshot|ConvertTo-Json -Depth 10 -Compress)){throw 'PROJECT_CHANGED_DURING_PLANNING'}
-    $bound|Add-Member -NotePropertyName planner -NotePropertyValue @{role='Hermes Supervisor';session_id=$session;readonly=$true;tools=0;duration=$result.Duration;inference_lock='production wrapper';hook=$result.HookIntegrity;model_pid=$model.process.Id;model_start_ticks=$model.process.StartTime.ToUniversalTime().Ticks;model_arguments=$arguments;project_snapshot_unchanged=$true}
+    $bound|Add-Member -NotePropertyName planner -NotePropertyValue @{role='Hermes Supervisor';session_id=$session;readonly=$true;tools=0;duration=$result.Duration;inference_lock='production wrapper';hook=$result.HookIntegrity;model_pid=$model.process.Id;model_start_ticks=$model.process.StartTime.ToUniversalTime().Ticks;model_arguments=$arguments;project_snapshot_unchanged=$true;policy=$policy;plan_utf8_bytes=[Text.Encoding]::UTF8.GetByteCount($parsed.text);objective_sha256=$context.objective_sha256;objective_utf8_bytes=$context.objective_utf8_bytes}
     $payload=$bound
+    $bound.planner['source_path']=$context.source_path
+    $bound.planner['audit_path']=$result.AuditPath
 }catch{
     $code=2
-    $payload=[pscustomobject]@{status='DENY';reason=$_.Exception.Message;diagnostic=@{hermes_timed_out=$result.TimedOut;hermes_exit=$result.ExitCode;hermes_duration=$result.Duration;response_characters=$result.Stdout.Length}}
+    $payload=[pscustomobject]@{status='DENY';reason=$_.Exception.Message;diagnostic=@{hermes_timed_out=$result.TimedOut;hermes_exit=$result.ExitCode;hermes_duration=$result.Duration;response_characters=$result.Stdout.Length;source_path=$context.source_path;audit_path=$result.AuditPath}}
 }finally{
     $exited=$true;$modelDiagnostic=''
     if($model){
