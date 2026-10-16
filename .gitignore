@@ -17,6 +17,19 @@ logs/
 *.key
 *.pem
 *.token
+.netrc
+_netrc
+.npmrc
+.pypirc
+id_rsa
+id_ed25519
+*.p12
+*.pfx
+*.jks
+*.kdbx
+credentials.json
+token.json
+cookies*.json
 
 # Python & entornos virtuales
 __pycache__/
@@ -57,6 +70,25 @@ $RECYCLE.BIN/
 sandbox/
 runtime/
 data/
+
+# Publicación: modelos, perfiles/sesiones y temporales siempre locales.
+*.gguf
+*.ggml
+.cache/
+Cookies
+Login Data
+Web Data
+Local State
+Session Storage/
+Sessions/
+*.tmp
+*.temp
+*.bak
+
+# Exclusiones explícitas adicionales para la revisión de publicación.
+/runtime/project-launcher/planner-sources/
+/runtime/project-launcher/planner-results/
+/data/browser/HERMES-CHATGPT/
 
 # Política de Evidence:
 # Se versionan reportes, transcripciones y evidencias en formato texto (.md, .json, .txt).
