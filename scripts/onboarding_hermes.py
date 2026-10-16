@@ -4,6 +4,7 @@ Launched by the official installation bootstrap, under the existing process
 job, profile/hook/plugin guards and cross-process inference lease.
 """
 import contextlib,json,os,sys,time,uuid
+from pathlib import Path
 
 def run(request,agent_class):
     if request['base_url']!='http://127.0.0.1:8080/v1' or request['model']!='qwen36':raise ValueError('PLANNER_LOCAL_ROUTE_REQUIRED')
@@ -12,7 +13,9 @@ def run(request,agent_class):
     view={'type':'object','properties':{'objective_summary':{'type':'string','minLength':1,'maxLength':360},
         'tasks':dict(strings(policy['max_tasks']),minItems=1),'research_requirements':strings(6),'restrictions':strings(8)},
         'required':['objective_summary','tasks','research_requirements','restrictions'],'additionalProperties':False}
-    schema={'type':'object','properties':{'plan':{'type':'object'},'seed_files':{'type':'object','additionalProperties':{'type':'string'}},'overview':view},'required':['plan','seed_files','overview'],'additionalProperties':False}
+    plan_schema=json.loads((Path(__file__).resolve().parents[1]/'schemas/runner-plan.schema.json').read_text(encoding='utf-8-sig'))
+    definitions=plan_schema.pop('definitions');plan_schema.pop('$schema',None)
+    schema={'type':'object','properties':{'plan':plan_schema,'seed_files':{'type':'object','additionalProperties':{'type':'string'}},'overview':view},'required':['plan','seed_files','overview'],'additionalProperties':False,'definitions':definitions}
     overrides={'response_format':{'type':'json_schema','json_schema':{'name':'onboarding_plan','strict':True,'schema':schema}},
                'extra_body':{'chat_template_kwargs':{'enable_thinking':False}}}
     start=time.monotonic()
