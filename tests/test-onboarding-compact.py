@@ -74,10 +74,13 @@ class Compact(unittest.TestCase):
         self.v['overview']['research_requirements']=['Consultar documentación oficial']
         result=compact.decode(json.dumps(self.v),'Investigar https://developer.mozilla.org/en-US/docs/Web/Accessibility antes de implementar')
         self.assertEqual(result['plan']['research']['url'],'https://developer.mozilla.org/en-US/docs/Web/Accessibility');self.assertEqual(result['overview']['web_policy'],'governed_https')
-    def test_ambiguous_research_not_guessed(self):
+    def test_multisource_research_lowers_to_query(self):
         for key in ('web_policy','chatgpt_policy','git_policy','completion_policy'):del self.v['overview'][key]
         self.v['overview']['research_requirements']=['Investigar']
-        with self.assertRaisesRegex(ValueError,'AMBIGUOUS'):compact.decode(json.dumps(self.v),'https://example.com https://other.example.com')
+        result=compact.decode(json.dumps(self.v),'https://example.com https://other.example.com')
+        self.assertEqual(result['plan']['research']['query'],'Investigar')
+        self.assertEqual(result['plan']['research']['domains'],['example.com','other.example.com'])
+        self.assertEqual(result['overview']['web_policy'],'governed_https')
     def test_no_prepare_before_approval(self):
         bound=data.bind_proposal(self.p,'Implementar suma',self.v)
         with patch.dict(os.environ,{'DA_LAUNCHER_MUTEX_HELD':'1'}):
