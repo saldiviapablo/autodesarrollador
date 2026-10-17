@@ -91,6 +91,8 @@ try{
     $p.prompt+="`nPrevious deterministic feedback: "+$feedback
     $supervisor=Invoke-RunnerAgent 'supervisor' $p
     $request=@{schema_version='1.0';delegation_id=('del-'+$script:RunId);objective=$script:Admission.contract.objective;workspace=$script:Admission.project;task=$script:Admission.plan.task;acceptance_criteria=@($script:Admission.contract.acceptance_criteria);allowed_actions=@($script:Admission.contract.allowed_actions);forbidden_actions=@($script:Admission.contract.forbidden_actions);tests=@($script:Admission.contract.test_commands);status='READY'}
+    $scopeHint=@{allowed_files=@($script:Admission.plan.allowed_files);write_scope=@($script:Admission.plan.write_scope)}|ConvertTo-Json -Compress
+    $request.task+="`nApproved write scope: "+$scopeHint+"`nDo not modify files outside that scope or immutable acceptance files."
     $request.task+="`nSupervisor plan (advisory, approved scope remains binding): "+$supervisor.text+"`nPrevious checks to correct: "+$feedback
     if($script:Admission.plan.research){
         $webPath=Join-Path $script:Auto 'evidence/WEB.json'
