@@ -3,6 +3,7 @@ import argparse,hashlib,json,pathlib,sys,datetime,yaml,jsonschema
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
 from canonical_path import resolve_path
+import write_scope
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def check_path(p):
     return pathlib.Path(resolve_path(p,reject_reparse=True,reject_traversal=True)['physical'])
@@ -20,12 +21,15 @@ def project_path(project, *, allow_missing=False, workspace=None):
 
 def validate_plan(p,plan,criteria):
     jsonschema.validate(plan,json.loads((ROOT/'schemas/runner-plan.schema.json').read_text(encoding='utf-8-sig')))
+    write_scope.validate_plan_scope(plan)
     if plan.get('backend','live')=='probe' and not p.is_relative_to(ROOT/'sandbox'):raise ValueError('PROBE_ONLY_IN_SANDBOX')
     if plan.get('sandbox_crash_boundary') and not p.is_relative_to(ROOT/'sandbox'):raise ValueError('CRASH_BOUNDARY_ONLY_IN_SANDBOX')
     for name in plan['allowed_files']+[a['path'] for a in plan['artifacts']]+[a['path'] for a in plan.get('immutable_files',[])]:
         relative=pathlib.Path(name)
         if relative.is_absolute() or relative.drive or '..' in relative.parts or name.startswith(('.autopilot','runner/','config/security')):raise ValueError('PLAN_PATH_DENIED')
         check_path(p/relative).relative_to(p)
+    exact=set(plan['allowed_files'])
+    if any(pin['path'] in exact for pin in plan.get('immutable_files',[])):raise ValueError('IMMUTABLE_FILE_IN_WORKER_ALLOWLIST')
     if set(c['criterion'] for c in plan['criteria'])!=set(criteria):raise ValueError('CRITERIA_NOT_FULLY_MAPPED')
     commands=plan['tests']+plan.get('builds',[])+plan.get('linters',[])
     ids=[c['id'] for c in commands]
