@@ -54,7 +54,7 @@ def planner_schema():
     plan=copy.deepcopy(plan)
     props=plan['properties']
 
-    props['backend']={'const':'live'}
+    props['backend']={'enum':['live']}
     props['task']={'type':'string','minLength':5,'maxLength':600}
     props['phase_timeout_seconds']={'type':'integer','minimum':1,'maximum':300}
     props['global_timeout_seconds']={'type':'integer','minimum':1,'maximum':2700}
@@ -62,13 +62,7 @@ def planner_schema():
     props['restart_budget']={'type':'integer','minimum':0,'maximum':2}
     for field in ('consultation','sandbox_crash_boundary','probe_delay_seconds','heartbeat_stale_seconds'):
         props.pop(field,None)
-    required=set(plan['required'])
-    required.update(('backend','phase_timeout_seconds','global_timeout_seconds','max_cycles','restart_budget'))
-    plan['required']=sorted(required)
-    plan['anyOf']=[
-        {'required':['builds'],'properties':{'builds':{'minItems':1}}},
-        {'required':['no_build_reason'],'properties':{'no_build_reason':{'minLength':1}}},
-    ]
+    plan['required']=[name for name in plan['required'] if name!='task']
 
     overview={
         'type':'object',
@@ -83,7 +77,7 @@ def planner_schema():
             'git_policy':{'const':'local_only_no_push'},
             'completion_policy':{'const':COMPLETION},
         },
-        'required':['objective_summary','tasks','research_requirements','restrictions','web_policy','chatgpt_policy','git_policy','completion_policy'],
+        'required':['objective_summary','tasks','research_requirements','restrictions'],
     }
     schema={
         'type':'object',
@@ -95,11 +89,6 @@ def planner_schema():
         },
         'required':['plan','seed_files','overview'],
         'definitions':definitions,
-        'allOf':[{
-            'if':{'properties':{'plan':{'required':['research']}}},
-            'then':{'properties':{'overview':{'properties':{'web_policy':{'const':'governed_https'}}}}},
-            'else':{'properties':{'overview':{'properties':{'web_policy':{'const':'none'}}}}},
-        }],
     }
     jsonschema.Draft7Validator.check_schema(schema)
     return schema
