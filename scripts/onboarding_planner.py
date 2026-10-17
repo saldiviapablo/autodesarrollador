@@ -232,17 +232,18 @@ def prompt(shape,objective,context):
     limits=policy()
     shape=copy.deepcopy(shape)
     plan=shape.setdefault('plan',{})
-    plan.update(HOST_PLAN_FIELDS)
+    for field in ('task','backend','phase_timeout_seconds','global_timeout_seconds','max_cycles','restart_budget',
+                  'consultation','sandbox_crash_boundary','probe_delay_seconds','heartbeat_stale_seconds'):
+        plan.pop(field,None)
     shape['overview']={'objective_summary':'Resumen de hasta 360 caracteres, NO copiar el brief',
         'tasks':['tarea compacta'],'research_requirements':[],
-        'restrictions':['Sólo el workspace aprobado; sin producción ni cambios de infraestructura'],
-        'web_policy':'none','chatgpt_policy':'disabled','git_policy':'local_only_no_push','completion_policy':COMPLETION}
+        'restrictions':['Sólo el workspace aprobado; sin producción ni cambios de infraestructura']}
     return ('Read-only Hermes onboarding planner. No tools or execution. Return ONLY one compact JSON object, no Markdown fences, reasoning, commentary or brief rewrite. '
         'The native API constrains response_format with the SAME schema used by post-generation validation. '
         f'Hard limits: JSON UTF-8 <= {limits["max_plan_bytes"]} bytes; seed source combined <= {limits["max_seed_bytes"]} bytes; '
         f'<= {limits["max_tasks"]} tasks and <= {limits["max_criteria"]} concise mapped acceptance criteria. Aim for 4-8 KB. '
         'The complete objective is retained byte-exact by the host and later given to the Worker; do NOT repeat it. '
-        'Host-owned fields MUST use the exact values shown in the envelope (task/backend/budgets/policies); they are overwritten deterministically after parsing. '
+        'Do not emit execution fields owned by the host; the host compiles them deterministically after parsing. '
         'Group related requirements into concise Spanish criteria without discarding required behavior. '
         'Use this exact envelope and native Runner shape, adapting paths/checks to the requested stack:\n'+json.dumps(shape,separators=(',',':'))+'\n'
         'seed_files contains ONLY new immutable substantive acceptance/build verifier code, not implementation. '
