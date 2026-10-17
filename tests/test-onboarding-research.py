@@ -26,10 +26,10 @@ class Research(unittest.TestCase):
         result=self.decode();self.assertEqual(planner.decode(json.dumps(result)),result)
     def test_unknown_research_field_still_denied(self):
         self.value['plan']['research']['arbitrary']=True
-        with self.assertRaises(jsonschema.ValidationError):self.canonical(self.decode())
+        with self.assertRaisesRegex(ValueError,'PLANNER_SCHEMA_INVALID'):self.decode()
     def test_unknown_plan_field_still_denied(self):
         self.value['plan']['research_requirements']=[]
-        with self.assertRaises(jsonschema.ValidationError):self.canonical(self.decode())
+        with self.assertRaisesRegex(ValueError,'PLANNER_SCHEMA_INVALID'):self.decode()
     def test_nonstring_variant_denied(self):
         self.value['plan']['research']['research_requirements']={'url':'https://example.com'}
         with self.assertRaisesRegex(ValueError,'LIST_BOUND'):self.decode()
