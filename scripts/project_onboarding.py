@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'runner'))
 import contract
 import prepare
+import write_scope
 
 spec = importlib.util.spec_from_file_location('onboarding_secret', ROOT / 'scripts/hermes-pre-tool-hook.py')
 secret = importlib.util.module_from_spec(spec)
@@ -223,7 +224,7 @@ def validate_proposal(p, objective, proposal):
     for name, content in seeds.items():
         path = contract.check_path(p / name)
         path.relative_to(p)
-        if name not in pins or name in plan['allowed_files'] or path.exists():
+        if name not in pins or name in plan['allowed_files'] or write_scope.scope_matches(name,plan.get('write_scope',[])) or path.exists():
             raise ValueError('ONLY_NEW_IMMUTABLE_ACCEPTANCE_FILES_MAY_BE_SEEDED')
         if hashlib.sha256(content.encode('utf-8')).hexdigest() != pins[name]:
             raise ValueError('SEED_HASH_MISMATCH')
@@ -471,6 +472,7 @@ def main(r):
         # bridge/crash/probe option, to keep a cold-start preflight bounded.
         shape={'plan':{'schema_version':'1.0','backend':'live','task':'approved task',
             'allowed_files':['product.py','README.md'],
+            'write_scope':['src/**'],
             'tests':[{'id':'acceptance','argv':['python','test_acceptance.py'],'marker':'ACCEPTANCE_PASS','timeout_seconds':60}],
             'builds':[{'id':'build','argv':['python','build_check.py'],'marker':'BUILD_PASS','timeout_seconds':60}],
             'criteria':[{'criterion':'specific acceptance criterion','test_id':'acceptance'}],
