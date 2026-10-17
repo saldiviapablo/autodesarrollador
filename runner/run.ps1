@@ -106,9 +106,19 @@ try{
                 if(@($initial|Where-Object{$_.status -eq 'FAIL'}).Count -eq 0){throw 'EXPECTED_INITIAL_TEST_FAILURE_MISSING'}
                 Runner-Event 'WORKER_DIAGNOSIS_CONFIRMED' @{initial_failure=$true;source_unchanged=$true}
             }
-            $web=Invoke-RunnerManaged 'web-research' 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'research-step.ps1'),'-ProjectRoot',$script:Admission.project,'-Url',$script:Admission.plan.research.url) 35
+            $researchArgs=@('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'research-step.ps1'),'-ProjectRoot',$script:Admission.project)
+            if($script:Admission.plan.research.url){
+                $researchArgs+=@('-Url',[string]$script:Admission.plan.research.url)
+            }elseif($script:Admission.plan.research.query){
+                $researchArgs+=@('-Query',[string]$script:Admission.plan.research.query)
+                $maxResults=5;if($script:Admission.plan.research.max_results){$maxResults=[int]$script:Admission.plan.research.max_results}
+                $researchArgs+=@('-MaxResults',[string]$maxResults)
+                $domainsJson='[]';if($script:Admission.plan.research.domains){$domainsJson=@($script:Admission.plan.research.domains)|ConvertTo-Json -Compress}
+                $researchArgs+=@('-DomainsJson',$domainsJson)
+            }else{throw 'RESEARCH_MODE_INVALID'}
+            $web=Invoke-RunnerManaged 'web-research' 'powershell.exe' $researchArgs 35
             if($web.exit_code -ne 0){throw 'REQUIRED_WEB_FETCH_FAILED'}
-            Runner-Event 'WEB_FETCHED' @{source='official_web_wrapper'}
+            Runner-Event 'WEB_FETCHED' @{source='official_web_wrapper';mode=$(if($script:Admission.plan.research.url){'url'}else{'query'})}
         }
         $handoffRaw=& C:/Python314/python.exe (Join-Path $PSScriptRoot 'research-handoff.py') provide --project $script:Admission.project
         if($LASTEXITCODE -ne 0){throw 'RESEARCH_HANDOFF_FAILED'}
