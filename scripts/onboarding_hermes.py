@@ -4,17 +4,12 @@ Launched by the official installation bootstrap, under the existing process
 job, profile/hook/plugin guards and cross-process inference lease.
 """
 import contextlib,json,os,sys,time,uuid
-from pathlib import Path
-# runpy.run_path() does not guarantee this script directory is on sys.path.
-# The real Hermes bootstrap starts from the infrastructure root, so make the
-# sibling planner contract import explicit before reading stdin.
-sys.path.insert(0,str(Path(__file__).resolve().parent))
-import onboarding_planner as planner_contract
 
 def run(request,agent_class):
     if request['base_url']!='http://127.0.0.1:8080/v1' or request['model']!='qwen36':raise ValueError('PLANNER_LOCAL_ROUTE_REQUIRED')
     policy=request['policy'];session='onboarding-'+uuid.uuid4().hex
-    schema=planner_contract.planner_schema()
+    schema=request.get('schema')
+    if not isinstance(schema,dict) or schema.get('type')!='object':raise ValueError('PLANNER_SCHEMA_REQUIRED')
     overrides={'response_format':{'type':'json_schema','json_schema':{'name':'onboarding_plan','strict':True,'schema':schema}},
                'extra_body':{'chat_template_kwargs':{'enable_thinking':False}}}
     start=time.monotonic()
