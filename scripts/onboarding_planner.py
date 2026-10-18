@@ -173,6 +173,12 @@ def _normalize(value,objective=None):
         plan.update(HOST_PLAN_FIELDS)
         for field in ('consultation','sandbox_crash_boundary','probe_delay_seconds','heartbeat_stale_seconds'):
             plan.pop(field,None)
+        # Acceptance/verifier seeds are host-owned immutable inputs. A model may
+        # redundantly list one as a Worker output; compile that contradiction
+        # away before canonical admission rather than weakening immutability.
+        immutable_paths={item.get('path') for item in plan.get('immutable_files',[]) if isinstance(item,dict)}
+        immutable_paths.update(value.get('seed_files',{}).keys())
+        plan['allowed_files']=[name for name in plan.get('allowed_files',[]) if name not in immutable_paths]
 
     if objective is not None and re.search(r'(?<![\w.-])npm[ \t]+run[ \t]+build(?![\w:.-])',objective):
         builds=list(plan.get('builds',[]))
@@ -248,7 +254,7 @@ def prompt(shape,objective,context):
         'Use this exact envelope and native Runner shape, adapting paths/checks to the requested stack:\n'+json.dumps(shape,separators=(',',':'))+'\n'
         'seed_files contains ONLY new immutable substantive acceptance/build verifier code, not implementation. '
         'Tests must verify behavior and edge cases, not unconditional PASS or file existence only; explicit success markers. '
-        'Existing tests stay immutable with their supplied SHA256; never overwrite them. For new seeds use 64-zero placeholder hashes; host computes SHA256. '
+        'Existing tests stay immutable with their supplied SHA256; never overwrite them. For new seeds use 64-zero placeholder hashes; host computes SHA256. Never list seed_files or immutable_files paths in allowed_files. '
         'allowed_files lists stable exact Worker outputs. For greenfield projects that may create many files, add narrowly bounded write_scope entries such as "src/**", "public/**", "vite.config.*" or "tsconfig*.json". '
         'Never use broad "*" or "**"; never include tests, QWEN.md, .git, .autopilot, history, runner or config/security in Worker scope. '
         'Tests/build argv only python/node/npm/dotnet. Preserve every explicit build command from the brief in plan.builds. '
