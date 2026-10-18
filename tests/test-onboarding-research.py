@@ -54,7 +54,7 @@ class Research(unittest.TestCase):
                 Research.generated=kw['request_overrides']['response_format']['json_schema']['schema']
             def run_conversation(self,prompt):return {'completed':True,'final_response':'{}'}
             def close(self):pass
-        native.run({'model':'qwen36','base_url':'http://127.0.0.1:8080/v1','policy':planner.policy(),
+        native.run({'model':'qwen36','base_url':'http://127.0.0.1:8080/v1','policy':planner.policy(),'schema':planner.planner_schema(),
                     'disabled_toolsets':['all'],'project':str(ROOT/'sandbox'),'prompt':'mock only'},Fake)
         schema=self.generated;jsonschema.Draft7Validator.check_schema(schema)
         self.assertFalse(schema['additionalProperties'])
