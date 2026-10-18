@@ -103,6 +103,14 @@ class StructuralOnboarding(unittest.TestCase):
         self.assertFalse(write_scope.allowed_change('QWEN.md',plan))
         self.assertFalse(write_scope.allowed_change('test_acceptance.js',plan))
 
+    def test_immutable_path_overrides_matching_write_scope(self):
+        plan=base_value()['plan']
+        plan['write_scope'].append('tests/**')
+        plan['immutable_files']=[{'path':'tests/acceptance.js','sha256':'0'*64}]
+        write_scope.validate_plan_scope(plan)
+        self.assertFalse(write_scope.allowed_change('tests/acceptance.js',plan))
+        self.assertTrue(write_scope.allowed_change('tests/helper.js',plan))
+
     def test_broad_or_reserved_write_scope_denied(self):
         for pattern in ('*','**','*/**','../src/**','.autopilot/**','runner/**'):
             with self.subTest(pattern=pattern):
