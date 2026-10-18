@@ -257,43 +257,7 @@ def _normalize(value,objective=None):
         if not isinstance(description,str) or not description.strip() or len(description)>180:
             raise ValueError('COMPACT_PLANNER_LIST_BOUND')
     
-    if objective is not None:
-        # Host-owned closure of expected files in a greenfield React/Vite
-        # project. Completion compares all changed names, including generated
-        # build outputs, against this write scope.
-        if re.search(r'\bReact\b', objective, re.I) and re.search(r'\bVite\b', objective, re.I):
-            output_files=('package.json','package-lock.json','.gitignore','README.md','index.html')
-            scopes=('src/**','public/**','docs/**','dist/**')
-            exact=list(plan.get('allowed_files',[]))
-            protected={item.get('path') for item in plan.get('immutable_files',[]) if isinstance(item,dict)}
-            protected.update(value.get('seed_files',{}))
-            for name in output_files:
-                if name not in exact and name not in protected:
-                    exact.append(name)
-            plan['allowed_files']=exact
-            scope=list(plan.get('write_scope',[]))
-            for item in scopes:
-                if item not in scope:scope.append(item)
-            plan['write_scope']=scope
-        for check in plan.get('builds',[]):
-            if isinstance(check,dict) and check.get('argv')==['npm','run','build']:
-                # npm run build normally echoes its script name "build";
-                # it does NOT emit arbitrary model-invented BUILD_PASS.
-                check['marker']='build'
-        if 'docs/research.md' in objective and plan.get('research'):
-            artifacts=plan.get('artifacts',[])
-            if not any(isinstance(item,dict) and item.get('path')=='docs/research.md' for item in artifacts):
-                artifacts.append({'path':'docs/research.md','min_bytes':100})
-            plan['artifacts']=artifacts
-        research=plan.get('research')
-        if isinstance(research,dict) and research.get('query') and research.get('domains'):
-            # The user requested open discovery. Model-chosen "preferred"
-            # domains are not source restrictions unless the brief says so.
-            declared=objective.casefold()
-            if not any(isinstance(d,str) and d.casefold() in declared for d in research['domains']):
-                research.pop('domains',None)
-
-    requirements=list(view.get('research_requirements') or [])
+        requirements=list(view.get('research_requirements') or [])
         if description not in requirements:requirements.append(description)
         view['research_requirements']=requirements
         if not research:plan.pop('research',None)
@@ -335,6 +299,43 @@ def _normalize(value,objective=None):
                 if host and host not in domains:domains.append(host)
             if domains:research['domains']=domains[:8]
         plan['research']=research
+
+    if objective is not None:
+        # Host-owned closure of expected files in a greenfield React/Vite
+        # project. Completion compares all changed names, including generated
+        # build outputs, against this write scope.
+        if re.search(r'\bReact\b', objective, re.I) and re.search(r'\bVite\b', objective, re.I):
+            output_files=('package.json','package-lock.json','.gitignore','README.md','index.html')
+            scopes=('src/**','public/**','docs/**','dist/**')
+            exact=list(plan.get('allowed_files',[]))
+            protected={item.get('path') for item in plan.get('immutable_files',[]) if isinstance(item,dict)}
+            protected.update(value.get('seed_files',{}))
+            for name in output_files:
+                if name not in exact and name not in protected:
+                    exact.append(name)
+            plan['allowed_files']=exact
+            scope=list(plan.get('write_scope',[]))
+            for item in scopes:
+                if item not in scope:scope.append(item)
+            plan['write_scope']=scope
+        for check in plan.get('builds',[]):
+            if isinstance(check,dict) and check.get('argv')==['npm','run','build']:
+                # npm run build normally echoes its script name "build";
+                # it does NOT emit arbitrary model-invented BUILD_PASS.
+                check['marker']='build'
+        if 'docs/research.md' in objective and plan.get('research'):
+            artifacts=plan.get('artifacts',[])
+            if not any(isinstance(item,dict) and item.get('path')=='docs/research.md' for item in artifacts):
+                artifacts.append({'path':'docs/research.md','min_bytes':100})
+            plan['artifacts']=artifacts
+        research=plan.get('research')
+        if isinstance(research,dict) and research.get('query') and research.get('domains'):
+            # The user requested open discovery. Model-chosen "preferred"
+            # domains are not source restrictions unless the brief says so.
+            declared=objective.casefold()
+            if not any(isinstance(d,str) and d.casefold() in declared for d in research['domains']):
+                research.pop('domains',None)
+
 
     view['web_policy']='governed_https' if plan.get('research') else 'none'
     view['chatgpt_policy']='disabled'
