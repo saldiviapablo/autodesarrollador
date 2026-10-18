@@ -117,7 +117,7 @@ def policy_hashes():
     """Bind the human plan review to the actual preparer, policies and launch code."""
     paths=list((ROOT/'runner').glob('*.py'))+list((ROOT/'runner').glob('*.ps1'))
     paths += [ROOT/n for n in ['config/system.yaml','config/security.yaml','config/VERSIONS.lock',
-        'config/onboarding-planner.json','scripts/onboarding_planner.py','scripts/onboarding_hermes.py','scripts/onboarding-hermes.ps1',
+        'config/onboarding-planner.json','scripts/onboarding_planner.py','scripts/onboarding_hermes.py','scripts/onboarding-hermes.ps1','scripts/onboarding-repair.ps1',
         'schemas/run-contract.schema.json','schemas/runner-plan.schema.json','schemas/autopilot-state.schema.json',
         'scripts/init-autopilot-project.ps1','scripts/state-manager.ps1','scripts/canonical_path.py',
         'scripts/security-guard.ps1','scripts/inference-lock.ps1','scripts/hermes-pre-tool-hook.py',
