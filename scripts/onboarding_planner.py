@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 COMPLETION='native_gate_all_criteria_tests_build_artifacts_diff_state_reviewer_no_pending'
 HOST_TASK='Implementar el objetivo aprobado y satisfacer todos los criterios de aceptación.'
 ONBOARDING_EXECUTABLES=('python','node','npm','dotnet')
-EXECUTABLE_ALIASES={'python.exe':'python','python3':'python','node.exe':'node','npm.cmd':'npm','npm.exe':'npm','dotnet.exe':'dotnet'}
+EXECUTABLE_ALIASES={'python.exe':'python','python3':'python','python3.exe':'python','py':'python','node.exe':'node','npm.cmd':'npm','npm.exe':'npm','dotnet.exe':'dotnet'}
 HOST_PLAN_FIELDS={
     'backend':'live',
     'task':HOST_TASK,
@@ -269,6 +269,7 @@ def prompt(shape,objective,context):
     shape['overview']={'objective_summary':'Resumen de hasta 360 caracteres, NO copiar el brief',
         'tasks':['tarea compacta'],'research_requirements':[],
         'restrictions':['Sólo el workspace aprobado; sin producción ni cambios de infraestructura']}
+    executables=', '.join(ONBOARDING_EXECUTABLES)
     return ('Read-only Hermes onboarding planner. No tools or execution. Return ONLY one compact JSON object, no Markdown fences, reasoning, commentary or brief rewrite. '
         'The native API constrains response_format with the SAME schema used by post-generation validation. '
         f'Hard limits: JSON UTF-8 <= {limits["max_plan_bytes"]} bytes; seed source combined <= {limits["max_seed_bytes"]} bytes; '
@@ -282,7 +283,7 @@ def prompt(shape,objective,context):
         'Existing tests stay immutable with their supplied SHA256; never overwrite them. For new seeds use 64-zero placeholder hashes; host computes SHA256. Never list seed_files or immutable_files paths in allowed_files. '
         'allowed_files lists stable exact Worker outputs. For greenfield projects that may create many files, add narrowly bounded write_scope entries such as "src/**", "public/**", "vite.config.*" or "tsconfig*.json". '
         'Never use broad "*" or "**"; never include tests, QWEN.md, .git, .autopilot, history, runner or config/security in Worker scope. '
-        'Tests/build argv[0] is schema-constrained to python, node, npm or dotnet. Do not use npx, shell, powershell, cmd, bash, curl or other executables. Preserve every explicit build command from the brief in plan.builds. '
+        f'Tests/build argv[0] is schema-constrained to: {executables}. Do not use npx, shell, powershell, cmd, bash, curl or other executables. Preserve every explicit build command from the brief in plan.builds. '
         'For npm run build use argv=["npm","run","build"] and marker="build"; include package.json in Worker scope if it must be created. '
         'Only when the project truly has no build, supply a justified no_build_reason. '
         'For required web research: use plan.research.url when one concrete public HTTPS source is explicitly appropriate; otherwise use plan.research.query for open or multi-source research. '
