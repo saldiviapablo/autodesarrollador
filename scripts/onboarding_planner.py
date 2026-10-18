@@ -233,6 +233,44 @@ def _compile_check_commands(plan, seeds, objective):
             command['argv']=argv
 
 
+
+def _validate_model_seed_checks(plan, seeds, objective):
+    """Reject demonstrably broken model-authored acceptance checks.
+
+    This is a necessary preflight sanity check, not a claim of full semantic
+    coverage; runtime testing and independent review remain mandatory.
+    Only direct Python/Node seeded checks can be inspected statically.
+    """
+    if objective is None:
+        return
+    criteria=plan.get('criteria', [])
+    for check in plan.get('tests', []):
+        if not isinstance(check,dict):
+            continue
+        argv=check.get('argv', [])
+        if not isinstance(argv,list) or len(argv)!=2 or argv[0] not in ('python','node'):
+            continue
+        filename=argv[1]
+        source=seeds.get(filename)
+        if not isinstance(source,str):
+            continue
+        marker=check.get('marker')
+        if not isinstance(marker,str) or marker not in source:
+            raise ValueError('PLANNER_TEST_MARKER_MISSING:'+str(check.get('id','unknown')))
+        mapped=[c.get('criterion','') for c in criteria
+                if isinstance(c,dict) and c.get('test_id')==check.get('id')]
+        # A check that *only* shells out to the build cannot be represented as
+        # verification of unrelated frontend content and accessibility claims.
+        if any(not re.search(r'build|compil|constru|typescript',s,re.I) for s in mapped):
+            is_build_wrapper=bool(NPM_BUILD_RE.search(source))
+            has_nonbuild_assertion=bool(re.search(
+                r'\b(assert|expect|readFileSync|existsSync|statSync|readdirSync|'
+                r'querySelector|page\.|getByRole|fetch)\b', source))
+            if is_build_wrapper and not has_nonbuild_assertion:
+                raise ValueError('PLANNER_BUILD_ONLY_ACCEPTANCE:'+str(check.get('id','unknown')))
+
+
+
 def _normalize(value,objective=None):
     if not isinstance(value,dict) or not isinstance(value.get('plan'),dict) or not isinstance(value.get('overview'),dict):
         return validate(value)
@@ -240,6 +278,7 @@ def _normalize(value,objective=None):
     plan=value['plan'];view=value['overview']
 
     _compile_check_commands(plan, value.get('seed_files',{}), objective)
+    _validate_model_seed_checks(plan, value.get('seed_files',{}), objective)
     # Model-authored immutable Python tests are executed as Python by the Runner.
     # Reject a source-language mismatch BEFORE human approval; never claim a
     # passing acceptance test based on source that cannot even be parsed.
@@ -385,6 +424,7 @@ def prompt(shape,objective,context):
         'seed_files must contain executable SOURCE in the language matching the file suffix: .py needs Python source, .js/.cjs/.mjs needs JavaScript source, NEVER shell commands such as node -e inside a .py file. '
         'seed_files contains ONLY new immutable substantive acceptance/build verifier code, not implementation. '
         'Tests must verify behavior and edge cases, not unconditional PASS or file existence only; explicit success markers. '
+        'For every seeded test run directly by python/node, the source MUST actually emit the EXACT test marker; do not point an acceptance test at a build-only wrapper. Coverage of content, navigation, sources, and accessibility requires real assertions, not merely npm run build. '
         'Existing tests stay immutable with their supplied SHA256; never overwrite them. For new seeds use 64-zero placeholder hashes; host computes SHA256. Never list seed_files or immutable_files paths in allowed_files. '
         'allowed_files lists stable exact Worker outputs. For greenfield projects that may create many files, add narrowly bounded write_scope entries such as "src/**", "public/**", "vite.config.*" or "tsconfig*.json". '
         'Never use broad "*" or "**"; never include tests, QWEN.md, .git, .autopilot, history, runner or config/security in Worker scope. '
