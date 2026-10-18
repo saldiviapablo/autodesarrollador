@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - fix/planner-command-wire-recovery
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 jobs:
   onboarding-regression:
@@ -18,6 +20,8 @@ jobs:
           python-version: '3.12'
       - name: Dependencies
         run: python -m pip install jsonschema PyYAML
+      - name: Create test sandbox
+        run: python -c "from pathlib import Path; Path('sandbox').mkdir(exist_ok=True)"
       - name: Verify Python syntax
         run: python -m compileall -q scripts runner tests
       - name: Structural planner
