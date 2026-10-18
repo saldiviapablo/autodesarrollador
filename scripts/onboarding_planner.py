@@ -203,7 +203,7 @@ def _compile_check_commands(plan, seeds, objective):
             raw=command.get('argv')
             if isinstance(raw, str) or (isinstance(raw,list) and len(raw)==1 and isinstance(raw[0],str) and ' ' in raw[0]):
                 wire=raw if isinstance(raw,str) else raw[0]
-                if any(c in wire for c in ('\\n','\\r','|',';','&','>','<',chr(96))):
+                if any(c in wire for c in (chr(10),chr(13),'|',';','&','>','<',chr(96))):
                     raise ValueError('PLANNER_CHECK_SHELL_OPERATOR_DENIED')
                 try:
                     argv=shlex.split(wire,posix=True)
@@ -218,7 +218,7 @@ def _compile_check_commands(plan, seeds, objective):
                 if argv[0]=='npx' and len(argv)>=2:
                     argv=['npm','exec','--',*argv[1:]]
             if len(argv)<2:
-                if group=='builds' and argv==['npm'] and objective and re.search(r'(?<![\\w.-])npm[ \\t]+run[ \\t]+build(?![\\w:.-])',objective):
+                if group=='builds' and argv==['npm'] and objective and re.search(r'(?<![\w.-])npm[ \t]+run[ \t]+build(?![\w:.-])',objective):
                     argv=['npm','run','build']
                 elif group=='tests':
                     argv=_check_seed_command(command, seeds)
