@@ -75,6 +75,14 @@ if ($FetchTop) {
     $pyArgs.Add("--fetch-top")
 }
 
+$effectiveTimeout = $TimeoutSeconds + 5
+if ($ProcessTimeoutSeconds -gt 0) {
+    if ($ProcessTimeoutSeconds -gt 180 -or $ProcessTimeoutSeconds -lt $TimeoutSeconds) {
+        throw "INVALID_RESEARCH_PROCESS_TIMEOUT"
+    }
+    $effectiveTimeout = $ProcessTimeoutSeconds
+}
+
 # Ejecutar proceso Python con captura
 $pInfo = New-Object System.Diagnostics.ProcessStartInfo
 $pInfo.FileName = $pythonExe
@@ -92,13 +100,6 @@ $proc = [System.Diagnostics.Process]::Start($pInfo)
 $stdoutTask = $proc.StandardOutput.ReadToEndAsync()
 $stderrTask = $proc.StandardError.ReadToEndAsync()
 
-$effectiveTimeout = $TimeoutSeconds + 5
-if ($ProcessTimeoutSeconds -gt 0) {
-    if ($ProcessTimeoutSeconds -gt 180 -or $ProcessTimeoutSeconds -lt $TimeoutSeconds) {
-        throw "INVALID_RESEARCH_PROCESS_TIMEOUT"
-    }
-    $effectiveTimeout = $ProcessTimeoutSeconds
-}
 $procExited = $proc.WaitForExit($effectiveTimeout * 1000)
 if (-not $procExited) {
     try { $proc.Kill() } catch {}
