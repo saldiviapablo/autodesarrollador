@@ -1,7 +1,5 @@
 # Bounded, read-only repair of model-authored onboarding proposals.
 # This is NOT authorization to execute checks or modify a project.
-Set-StrictMode -Version 2.0
-
 function Test-OnboardingRepairableReason([string]$Reason) {
     if(-not $Reason.StartsWith('ONBOARDING_DENIED: ',[StringComparison]::Ordinal)){return $false}
     $code=($Reason.Substring('ONBOARDING_DENIED: '.Length) -split ':',2)[0].Trim()
