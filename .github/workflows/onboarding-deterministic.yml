@@ -1,0 +1,32 @@
+name: Onboarding deterministic regression
+on:
+  push:
+    branches:
+      - fix/planner-command-wire-recovery
+  workflow_dispatch:
+jobs:
+  onboarding-regression:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Dependencies
+        run: python -m pip install jsonschema PyYAML
+      - name: Verify Python syntax
+        run: python -m compileall -q scripts runner tests
+      - name: Structural planner
+        run: python tests/test-onboarding-structural-fix.py
+      - name: Compact planner
+        run: python tests/test-onboarding-compact.py
+      - name: Research planner
+        run: python tests/test-onboarding-research.py
+      - name: Build planner
+        run: python tests/test-onboarding-build.py
+      - name: Command wire recovery
+        run: python tests/test-onboarding-command-wire.py
