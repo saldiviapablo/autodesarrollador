@@ -20,8 +20,12 @@ class Research(unittest.TestCase):
         self.assertIn(before['plan']['research']['research_requirements'],result['overview']['research_requirements'])
         self.assertEqual(self.value,before)
         self.assertEqual(result['seed_files'],before['seed_files'])
+        expected=copy.deepcopy(before['plan'])
+        for group in ('tests','builds','linters'):
+            for command in expected.get(group,[]):
+                if command['argv'][0]=='npx':command['argv']=['npm','exec','--',*command['argv'][1:]]
         self.assertEqual({k:v for k,v in result['plan'].items() if k!='research'},
-                         {k:v for k,v in before['plan'].items() if k!='research'})
+                         {k:v for k,v in expected.items() if k!='research'})
     def test_normalization_idempotent(self):
         result=self.decode();self.assertEqual(planner.decode(json.dumps(result)),result)
     def test_unknown_research_field_still_denied(self):
@@ -61,7 +65,9 @@ class Research(unittest.TestCase):
         self.assertFalse(schema['properties']['plan']['additionalProperties'])
         self.assertEqual(schema['properties']['plan']['properties']['research'],SCHEMA['properties']['research'])
         validator=jsonschema.Draft7Validator(schema)
-        with self.assertRaisesRegex(jsonschema.ValidationError,'research_requirements.*unexpected'):validator.validate(self.value)
+        errors=list(validator.iter_errors(self.value))
+        self.assertTrue(any(e.validator=='additionalProperties' and list(e.path)==['plan','research']
+                            and 'research_requirements' in e.message for e in errors))
         fixed=self.decode();fixed['overview']={k:v for k,v in fixed['overview'].items() if k in self.value['overview']}
         validator.validate(fixed)
 

@@ -60,6 +60,30 @@ class StructuralOnboarding(unittest.TestCase):
         self.assertEqual(result['plan']['task'],planner.HOST_TASK)
         self.assertLessEqual(len(result['plan']['task']),600)
 
+    def test_planner_schema_constrains_check_executable_at_argv_zero(self):
+        argv=planner.planner_schema()['definitions']['command']['properties']['argv']
+        self.assertEqual(argv['items'][0]['enum'],list(planner.ONBOARDING_EXECUTABLES))
+        self.assertEqual(argv['additionalItems'],{'type':'string'})
+
+    def test_unsupported_check_executable_rejected_by_shared_schema(self):
+        value=base_value()
+        value['plan']['tests'][0]['argv']=['powershell','-File','test.ps1']
+        with self.assertRaisesRegex(ValueError,'CHECK_EXECUTABLE_NOT_ADMITTED'):
+            planner.validate(value)
+
+    def test_npx_is_compiled_to_governed_npm_exec(self):
+        value=base_value()
+        value['plan']['tests'][0]['argv']=['npx','vitest','run']
+        result=planner.decode(json.dumps(value),'Crear landing y ejecutar npm run build')
+        self.assertEqual(result['plan']['tests'][0]['argv'],['npm','exec','--','vitest','run'])
+        planner.validate(result)
+
+    def test_windows_executable_alias_is_normalized(self):
+        value=base_value()
+        value['plan']['tests'][0]['argv']=['node.exe','test_acceptance.js']
+        result=planner.decode(json.dumps(value),'Crear landing y ejecutar npm run build')
+        self.assertEqual(result['plan']['tests'][0]['argv'][0],'node')
+
     def test_explicit_build_is_preserved(self):
         value=base_value();value['plan'].pop('builds');value['plan']['no_build_reason']='placeholder'
         result=planner.decode(json.dumps(value),'Ejecutar npm run build antes de cerrar')

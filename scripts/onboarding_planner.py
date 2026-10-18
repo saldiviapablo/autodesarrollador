@@ -10,6 +10,7 @@ import jsonschema
 import yaml
 
 ROOT=Path(__file__).resolve().parents[1]
+ONBOARDING_EXECUTABLES=('python','node','npm','dotnet')
 COMPLETION='native_gate_all_criteria_tests_build_artifacts_diff_state_reviewer_no_pending'
 HOST_TASK='Implementar el objetivo aprobado y satisfacer todos los criterios de aceptación.'
 HOST_PLAN_FIELDS={
@@ -50,6 +51,9 @@ def planner_schema():
     limits=policy()
     plan=strict_json((ROOT/'schemas/runner-plan.schema.json').read_text(encoding='utf-8-sig'))
     definitions=copy.deepcopy(plan.pop('definitions'))
+    argv=definitions['command']['properties']['argv']
+    argv['items']=[{'type':'string','enum':list(ONBOARDING_EXECUTABLES)}]
+    argv['additionalItems']={'type':'string'}
     plan.pop('$schema',None)
     plan=copy.deepcopy(plan)
     props=plan['properties']
@@ -96,6 +100,9 @@ def planner_schema():
 
 def _schema_failure(error):
     path='/'.join(str(v) for v in error.absolute_path)
+    parts=list(error.absolute_path)
+    if len(parts)==5 and parts[0]=='plan' and parts[1] in ('tests','builds','linters') and parts[3]=='argv' and parts[4]==0:
+        return 'CHECK_EXECUTABLE_NOT_ADMITTED'
     if path.startswith('overview/objective_summary'):return 'PLANNER_SUMMARY_BOUND'
     if path.startswith(('overview/tasks','overview/research_requirements','overview/restrictions','plan/allowed_files','plan/write_scope')):
         return 'COMPACT_PLANNER_LIST_BOUND'
@@ -158,6 +165,18 @@ def _normalize(value,objective=None):
         return validate(value)
     value=copy.deepcopy(value)
     plan=value['plan'];view=value['overview']
+
+    aliases={'python.exe':'python','python3':'python','python3.exe':'python','py':'python',
+             'node.exe':'node','npm.cmd':'npm','npm.exe':'npm','dotnet.exe':'dotnet'}
+    for group in ('tests','builds','linters'):
+        for command in plan.get(group,[]):
+            args=command.get('argv') if isinstance(command,dict) else None
+            if not isinstance(args,list) or not args or not isinstance(args[0],str):continue
+            executable=args[0].lower()
+            if executable=='npx':
+                command['argv']=['npm','exec','--',*args[1:]]
+            elif executable in aliases:
+                command['argv']=[aliases[executable],*args[1:]]
 
     research=plan.get('research')
     if isinstance(research,dict) and 'research_requirements' in research:
@@ -257,7 +276,8 @@ def prompt(shape,objective,context):
         'Existing tests stay immutable with their supplied SHA256; never overwrite them. For new seeds use 64-zero placeholder hashes; host computes SHA256. Never list seed_files or immutable_files paths in allowed_files. '
         'allowed_files lists stable exact Worker outputs. For greenfield projects that may create many files, add narrowly bounded write_scope entries such as "src/**", "public/**", "vite.config.*" or "tsconfig*.json". '
         'Never use broad "*" or "**"; never include tests, QWEN.md, .git, .autopilot, history, runner or config/security in Worker scope. '
-        'Tests/build argv only python/node/npm/dotnet. Preserve every explicit build command from the brief in plan.builds. '
+        'Every tests/builds/linters argv[0] must be one of '+', '.join(ONBOARDING_EXECUTABLES)+'. '
+        'For external JS tools use npm exec -- TOOL ARGS, never npx or a shell. Preserve every explicit build command from the brief in plan.builds. '
         'For npm run build use argv=["npm","run","build"] and marker="build"; include package.json in Worker scope if it must be created. '
         'Only when the project truly has no build, supply a justified no_build_reason. '
         'For required web research: use plan.research.url when one concrete public HTTPS source is explicitly appropriate; otherwise use plan.research.query for open or multi-source research. '

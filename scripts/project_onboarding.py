@@ -239,7 +239,7 @@ def validate_proposal(p, objective, proposal):
         if Path(name).parts[0].casefold() in {'.git', '.autopilot-history'} or name == 'QWEN.md':
             raise ValueError('METADATA_NOT_WORKER_OUTPUT')
     for command in plan['tests'] + plan.get('builds', []) + plan.get('linters', []):
-        if command['argv'][0] not in {'python', 'node', 'npm', 'dotnet'}:
+        if command['argv'][0] not in compact_planner.ONBOARDING_EXECUTABLES:
             raise ValueError('CHECK_EXECUTABLE_NOT_ADMITTED')
     return criteria
 
