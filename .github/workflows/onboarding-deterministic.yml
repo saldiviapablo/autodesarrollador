@@ -29,5 +29,4 @@ jobs:
       - name: Command wire recovery
         run: python tests/test-onboarding-command-wire.py
       - name: Portable compact planner
-        run: |
-          python tests/test-onboarding-compact.py Compact.test_compact_roundtrip Compact.test_multisource_research_lowers_to_query Compact.test_native_request_caps_and_schema Compact.test_web_policy_matches_plan Compact.test_yaml_duplicate_denied Compact.test_yaml_alias_denied
+        run: python tests/ci-portable-compact.py
