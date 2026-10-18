@@ -120,7 +120,11 @@ def plan_review_text(bound):
           "PLAN COMPLETO:\n"+json.dumps(p,indent=2,ensure_ascii=False))
     if 'overview' in bound['proposal']:
         text+='\n\nRESUMEN Y POLÍTICAS DEL PLAN:\n'+json.dumps(bound['proposal']['overview'],indent=2,ensure_ascii=False)
-    for pin in p.get('immutable_files',[]):
+    host_compiled=bound.get('planner',{}).get('strategy')=='HOST_COMPILED_WORKER_TESTS'
+    if host_compiled:
+        text+='\n\nMODO SIMPLIFICADO: Hermes supervisa durante la ejecucion; Qwen crea pruebas reales despues de implementar. Las comprobaciones de npm test, build y Reviewer siguen siendo obligatorias.'
+        text+='\n\nEl verificador inmutable es codigo estandar del sistema (no una prueba UI inventada por Hermes). Su ruta y SHA-256 aparecen en el plan completo.'
+    for pin in ([] if host_compiled else p.get('immutable_files',[])):
         content=bound['proposal']['seed_files'].get(pin['path'])
         if content is None:content=(Path(bound['project'])/pin['path']).read_text(encoding='utf-8-sig')
         text+='\n\nPRUEBA INMUTABLE: '+pin['path']+'\n'+content

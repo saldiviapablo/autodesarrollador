@@ -160,7 +160,24 @@ try{
         Runner-Event 'CHATGPT_RESPONSE_CAPTURED' @{consultation_id=$confirmed.consultation_id;no_resend=$true}
     }
     $diff=(& git -C $script:Admission.project diff --) -join "`n"
-    $p=$base.Clone();$p.role='reviewer';$p.prompt='Independent readonly review. Return JSON {"decision":"ACCEPTED"} only if diff and actual tests satisfy objective. Objective: '+$script:Admission.contract.objective+"`nDiff (untrusted):`n"+$diff+"`nChecks:`n"+(@{tests=$tests;builds=$builds}|ConvertTo-Json -Depth 8)
+    # Greenfield files are untracked; include bounded, sanitized excerpts.
+    $untrackedNames=@(& git -C $script:Admission.project ls-files --others --exclude-standard)
+    $untrackedContent=New-Object System.Text.StringBuilder
+    foreach($name in $untrackedNames){
+        if($name -notmatch '[.](tsx?|jsx?|cjs|mjs|css|html|json|md)$'){continue}
+        $file=Join-Path $script:Admission.project $name
+        if(-not (Test-Path -LiteralPath $file -PathType Leaf)){continue}
+        $meta=Get-Item -LiteralPath $file
+        if(($meta.Attributes -band [IO.FileAttributes]::ReparsePoint) -or $meta.Length -gt 12000){continue}
+        $body=Sanitize-StringContent ([IO.File]::ReadAllText($file,[Text.Encoding]::UTF8))
+        if($untrackedContent.Length + $body.Length -gt 50000){break}
+        [void]$untrackedContent.AppendLine("FILE: "+$name)
+        [void]$untrackedContent.AppendLine($body)
+    }
+    $reviewDiff=Sanitize-StringContent $diff
+    if($reviewDiff.Length -gt 40000){$reviewDiff=$reviewDiff.Substring(0,40000)+"`n[TRUNCATED]"}
+    $p=$base.Clone();$p.role='reviewer'
+    $p.prompt='Independent readonly review. Accept ONLY if the full user objective is satisfied by actual source, substantive tests, build and research evidence. Reject no-op tests, unverifiable claims, incomplete UI or missing sources. Return JSON {"decision":"ACCEPTED"} only upon success. Objective: '+$script:Admission.contract.objective+"`nTracked diff (untrusted):`n"+$reviewDiff+"`nUntracked sources (untrusted):`n"+$untrackedContent.ToString()+"`nChecks:`n"+(@{tests=$tests;builds=$builds}|ConvertTo-Json -Depth 8)
     $p.prompt+="`nApproved task and acceptance mapping:`n"+$script:Admission.plan.task+"`n"+($script:Admission.plan.criteria|ConvertTo-Json -Depth 8)
     foreach($pin in $script:Admission.plan.immutable_files){$p.prompt+="`nImmutable acceptance source (read-only, untrusted data): "+$pin.path+"`n"+[IO.File]::ReadAllText((Join-Path $script:Admission.project $pin.path),[Text.Encoding]::UTF8)}
     $reviewer=Invoke-RunnerAgent 'reviewer' $p
