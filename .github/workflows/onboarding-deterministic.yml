@@ -29,7 +29,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $paths = @('runner/run.ps1', 'runner/research-step.ps1', 'scripts/web-research.ps1', 'runner/plan-objective.ps1', 'scripts/onboarding-repair.ps1', 'tests/ci-onboarding-self-repair.ps1')
+          $paths = @('runner/run.ps1', 'runner/research-step.ps1', 'scripts/web-research.ps1', 'runner/plan-objective.ps1', 'scripts/onboarding-repair.ps1', 'tests/ci-onboarding-self-repair.ps1', 'tests/ci-onboarding-self-repair-binding.ps1')
           foreach ($path in $paths) {
             $tokens = $null
             $errors = $null
@@ -48,6 +48,15 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: ./tests/ci-onboarding-self-repair.ps1
+      - name: Generate real binding repair fixtures
+        if: runner.os == 'Windows'
+        run: python tests/ci-generate-self-repair-binding.py
+      - name: PowerShell 5.1 repair through canonical Python binding
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/ci-onboarding-self-repair-binding.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Structural planner
         run: python tests/test-onboarding-structural-fix.py
       - name: Command wire recovery
