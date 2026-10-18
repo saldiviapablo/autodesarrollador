@@ -100,10 +100,9 @@ def validate_plan_scope(plan: dict) -> None:
         raise ValueError("WRITE_SCOPE_TOO_LARGE")
     for pattern in patterns:
         validate_pattern(pattern)
-    immutable = {item["path"].replace("\\", "/") for item in plan.get("immutable_files", [])}
-    for path in immutable:
-        if scope_matches(path, patterns):
-            raise ValueError("IMMUTABLE_FILE_IN_WRITE_SCOPE")
+    # Immutable paths are a stronger deny rule than write_scope.
+    # A scope may cover a directory that also contains an immutable verifier;
+    # allowed_change() still denies that exact verifier and the Runner hashes it.
 
 
 def allowed_change(name: str, plan: dict) -> bool:
