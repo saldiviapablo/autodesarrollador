@@ -6,6 +6,7 @@ $ErrorActionPreference='Stop';$env:PSModulePath=Join-Path $PSHOME 'Modules'
 . (Join-Path $PSScriptRoot '../scripts/project-launcher-common.ps1')
 . (Join-Path $PSScriptRoot '../scripts/windows-process-job.ps1')
 . (Join-Path $PSScriptRoot '../scripts/onboarding-hermes.ps1')
+. (Join-Path $PSScriptRoot '../scripts/onboarding-repair.ps1')
 $request=[Console]::In.ReadToEnd()|ConvertFrom-Json
 $mutex=New-Object Threading.Mutex($false,'Local\DesarrolladorAutonomo_RunMutex');$held=$false;$job=$null;$model=$null;$result=$null;$payload=$null;$code=0
 try{
@@ -31,14 +32,14 @@ try{
         Start-Sleep -Milliseconds 250
     }
     if(-not $ready){throw 'PREFLIGHT_MODEL_HEALTH_TIMEOUT'}
-    $result=Invoke-OnboardingHermes $context $request $cfg
-    if(-not $result.Success){throw 'PREFLIGHT_SUPERVISOR_FAILED'}
-    $parsed=Read-LauncherPlannerStream $result.Stdout
+    $planned=Invoke-OnboardingPlannerWithRepair $context $request $cfg
+    $result=$planned.native
+    $parsed=$planned.parsed
     $session=$parsed.session_id
-    $bound=Invoke-OnboardingData @{action='planner_proposal';project=$request.project;objective=$request.objective;text=$parsed.text}
+    $bound=$planned.bound
     # Compare the read-only input snapshot to the proposal binding before Prepare.
     if(($context.snapshot|ConvertTo-Json -Depth 10 -Compress) -cne ($bound.project_snapshot|ConvertTo-Json -Depth 10 -Compress)){throw 'PROJECT_CHANGED_DURING_PLANNING'}
-    $bound|Add-Member -NotePropertyName planner -NotePropertyValue @{role='Hermes Supervisor';session_id=$session;readonly=$true;tools=0;duration=$result.Duration;inference_lock='production wrapper';hook=$result.HookIntegrity;model_pid=$model.process.Id;model_start_ticks=$model.process.StartTime.ToUniversalTime().Ticks;model_arguments=$arguments;project_snapshot_unchanged=$true;policy=$policy;plan_utf8_bytes=[Text.Encoding]::UTF8.GetByteCount($parsed.text);objective_sha256=$context.objective_sha256;objective_utf8_bytes=$context.objective_utf8_bytes}
+    $bound|Add-Member -NotePropertyName planner -NotePropertyValue @{role='Hermes Supervisor';session_id=$session;readonly=$true;tools=0;duration=$result.Duration;inference_lock='production wrapper';hook=$result.HookIntegrity;model_pid=$model.process.Id;model_start_ticks=$model.process.StartTime.ToUniversalTime().Ticks;model_arguments=$arguments;project_snapshot_unchanged=$true;planning_attempts=$planned.attempts;self_repaired=$planned.repaired;policy=$policy;plan_utf8_bytes=[Text.Encoding]::UTF8.GetByteCount($parsed.text);objective_sha256=$context.objective_sha256;objective_utf8_bytes=$context.objective_utf8_bytes}
     $payload=$bound
     $bound.planner['source_path']=$context.source_path
     $bound.planner['audit_path']=$result.AuditPath
