@@ -12,6 +12,7 @@ import yaml
 
 ROOT=Path(__file__).resolve().parents[1]
 ONBOARDING_EXECUTABLES=('python','node','npm','dotnet')
+NPM_BUILD_RE=re.compile(r'(?<![\w.-])npm[ \t]+run[ \t]+build(?![\w:-])',re.IGNORECASE)
 COMPLETION='native_gate_all_criteria_tests_build_artifacts_diff_state_reviewer_no_pending'
 HOST_TASK='Implementar el objetivo aprobado y satisfacer todos los criterios de aceptación.'
 HOST_PLAN_FIELDS={
@@ -218,7 +219,7 @@ def _compile_check_commands(plan, seeds, objective):
                 if argv[0]=='npx' and len(argv)>=2:
                     argv=['npm','exec','--',*argv[1:]]
             if len(argv)<2:
-                if group=='builds' and argv==['npm'] and objective and re.search(r'(?<![\w.-])npm[ \t]+run[ \t]+build(?![\w:.-])',objective):
+                if group=='builds' and argv==['npm'] and objective and NPM_BUILD_RE.search(objective):
                     argv=['npm','run','build']
                 elif group=='tests':
                     argv=_check_seed_command(command, seeds)
@@ -260,7 +261,7 @@ def _normalize(value,objective=None):
         immutable_paths.update(value.get('seed_files',{}).keys())
         plan['allowed_files']=[name for name in plan.get('allowed_files',[]) if name not in immutable_paths]
 
-    if objective is not None and re.search(r'(?<![\w.-])npm[ \t]+run[ \t]+build(?![\w:.-])',objective):
+    if objective is not None and NPM_BUILD_RE.search(objective):
         builds=list(plan.get('builds',[]))
         if not any(c.get('argv')==['npm','run','build'] for c in builds if isinstance(c,dict)):
             ids={c.get('id') for c in plan.get('tests',[])+builds+plan.get('linters',[]) if isinstance(c,dict)}
