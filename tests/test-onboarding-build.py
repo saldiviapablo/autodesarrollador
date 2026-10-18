@@ -65,7 +65,7 @@ class Build(unittest.TestCase):
         self.assertEqual(list(self.project.iterdir()),[])
     def test_generation_schema_and_compiler_split_build_responsibility(self):
         fake=compact.Compact().fake()
-        native.run({'model':'qwen36','base_url':'http://127.0.0.1:8080/v1','policy':planner.policy(),
+        native.run({'model':'qwen36','base_url':'http://127.0.0.1:8080/v1','policy':planner.policy(),'schema':planner.planner_schema(),
                     'disabled_toolsets':['all'],'project':str(self.project),'prompt':'mock only'},fake)
         schema=fake.last.kw['request_overrides']['response_format']['json_schema']['schema']
         validator=jsonschema.Draft7Validator(schema);jsonschema.Draft7Validator.check_schema(schema)
