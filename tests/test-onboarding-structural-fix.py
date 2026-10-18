@@ -3,6 +3,7 @@ import copy
 import json
 import pathlib
 import sys
+import subprocess
 import unittest
 
 import jsonschema
@@ -100,6 +101,11 @@ class StructuralOnboarding(unittest.TestCase):
             with self.subTest(pattern=pattern):
                 with self.assertRaises(ValueError):
                     write_scope.validate_pattern(pattern)
+
+    def test_real_runpy_bootstrap_can_import_shared_planner(self):
+        code="import runpy; runpy.run_path(r'scripts/onboarding_hermes.py', run_name='bootstrap_test')"
+        result=subprocess.run([sys.executable,'-I','-c',code],cwd=ROOT,capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,result.stdout+'\n'+result.stderr)
 
     def test_native_uses_exact_shared_schema(self):
         captured={}
