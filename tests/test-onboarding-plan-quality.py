@@ -37,6 +37,42 @@ class PlanQuality(unittest.TestCase):
     def compile(self):
         return planner.decode(json.dumps(self.value),OBJECTIVE)
 
+    def test_exact_user_plan_non_global_match_always_fails_and_is_denied(self):
+        self.value['plan']['tests'][0]['argv']=['node','test_acceptance.js']
+        self.value['plan']['tests'][0]['marker']='ACCEPTANCE_PASS'
+        self.value['seed_files']={
+            'test_acceptance.js':"""const fs = require('fs');
+if (fs.existsSync('src/App.tsx')) {
+  const content=fs.readFileSync('src/App.tsx','utf8');
+  if ((content.match(/capítulo|avance|breakthrough/i) || []).length < 5) {
+    console.error('Missing 5 Breakthroughs Content');
+    process.exit(1);
+  }
+}
+console.log('ACCEPTANCE_PASS');"""
+        }
+        self.value['plan']['immutable_files']=[{'path':'test_acceptance.js','sha256':'0'*64}]
+        with self.assertRaisesRegex(ValueError,'PLANNER_IMPOSSIBLE_JS_MATCH_COUNT:acceptance'):
+            self.compile()
+
+    def test_global_match_not_rejected(self):
+        self.value['plan']['tests'][0]['argv']=['node','test_acceptance.js']
+        self.value['plan']['tests'][0]['marker']='ACCEPTANCE_PASS'
+        self.value['seed_files']={
+            'test_acceptance.js':"""const fs=require('fs');
+const content=fs.readFileSync('src/App.tsx','utf8');
+if ((content.match(/capítulo|avance|breakthrough/gi) || []).length < 5) process.exit(1);
+console.log('ACCEPTANCE_PASS');"""
+        }
+        self.value['plan']['immutable_files']=[{'path':'test_acceptance.js','sha256':'0'*64}]
+        self.assertEqual(self.compile()['plan']['tests'][0]['marker'],'ACCEPTANCE_PASS')
+
+    def test_tailwind_config_root_can_be_created_when_verifier_requires_it(self):
+        compiled=self.compile()['plan']
+        self.assertTrue(write_scope.allowed_change('tailwind.config.ts',compiled))
+        self.assertTrue(write_scope.allowed_change('postcss.config.js',compiled))
+        self.assertFalse(write_scope.allowed_change('.autopilot/STATE.json',compiled))
+
     def test_real_approval_mismatched_acceptance_marker_denied(self):
         self.value['plan']['tests'][0]['argv']=['node','build_check.js']
         self.value['plan']['tests'][0]['marker']='ACCEPTANCE_PASS'
