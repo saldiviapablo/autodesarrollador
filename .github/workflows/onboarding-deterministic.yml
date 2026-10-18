@@ -59,6 +59,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Structural planner
         run: python tests/test-onboarding-structural-fix.py
+      - name: Approval plan quality replay
+        run: python tests/test-onboarding-plan-quality.py
       - name: Command wire recovery
         run: python tests/test-onboarding-command-wire.py
       - name: Windows canonical proposal and binding smoke
