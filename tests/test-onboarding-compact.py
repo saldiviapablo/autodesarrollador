@@ -104,7 +104,7 @@ class Compact(unittest.TestCase):
         with self.assertRaises(compact.yaml.YAMLError):compact.decode('plan: !!python/object:builtins.object {}')
     def test_multiple_yaml_documents_denied(self):
         with self.assertRaises(compact.yaml.YAMLError):compact.decode('plan: {}\n---\nplan: {}')
-    def native_request(self):return {'base_url':'http://127.0.0.1:8080/v1','model':'qwen36','project':str(self.p),'policy':compact.policy(),'disabled_toolsets':['terminal','file','web'],'prompt':'Synthetic no-op unit fixture'}
+    def native_request(self):return {'base_url':'http://127.0.0.1:8080/v1','model':'qwen36','project':str(self.p),'policy':compact.policy(),'schema':compact.planner_schema(),'disabled_toolsets':['terminal','file','web'],'prompt':'Synthetic no-op unit fixture'}
     def fake(self,tools=None,response=None):
         class Fake:
             last=None
