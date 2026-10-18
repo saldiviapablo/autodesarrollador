@@ -37,6 +37,35 @@ class PlanQuality(unittest.TestCase):
     def compile(self):
         return planner.decode(json.dumps(self.value),OBJECTIVE)
 
+    def test_real_approval_mismatched_acceptance_marker_denied(self):
+        self.value['plan']['tests'][0]['argv']=['node','build_check.js']
+        self.value['plan']['tests'][0]['marker']='ACCEPTANCE_PASS'
+        self.value['seed_files']={
+            'build_check.js':"const {execSync}=require('child_process'); execSync('npm run build'); console.log('BUILD_PASS');"
+        }
+        self.value['plan']['immutable_files']=[{'path':'build_check.js','sha256':'0'*64}]
+        with self.assertRaisesRegex(ValueError,'PLANNER_TEST_MARKER_MISSING:acceptance'):
+            self.compile()
+
+    def test_build_only_test_cannot_prove_unrelated_criteria(self):
+        self.value['plan']['tests'][0]['argv']=['node','build_check.js']
+        self.value['plan']['tests'][0]['marker']='ACCEPTANCE_PASS'
+        self.value['seed_files']={
+            'build_check.js':"const {execSync}=require('child_process'); execSync('npm run build'); console.log('ACCEPTANCE_PASS');"
+        }
+        self.value['plan']['immutable_files']=[{'path':'build_check.js','sha256':'0'*64}]
+        with self.assertRaisesRegex(ValueError,'PLANNER_BUILD_ONLY_ACCEPTANCE:acceptance'):
+            self.compile()
+
+    def test_substantive_seeded_js_acceptance_does_not_trigger_false_rejection(self):
+        self.value['plan']['tests'][0]['argv']=['node','test_acceptance.js']
+        self.value['plan']['tests'][0]['marker']='ACCEPTANCE_PASS'
+        self.value['seed_files']={
+            'test_acceptance.js':"const assert=require('node:assert/strict'); const fs=require('fs'); const s=fs.readFileSync('src/App.tsx','utf8'); assert(s.includes('01')); console.log('ACCEPTANCE_PASS');"
+        }
+        self.value['plan']['immutable_files']=[{'path':'test_acceptance.js','sha256':'0'*64}]
+        self.assertEqual(self.compile()['plan']['tests'][0]['argv'],['node','test_acceptance.js'])
+
     def test_failing_real_world_node_in_py_rejected(self):
         self.value['plan']['tests'][0]['argv']=['python','test_acceptance.py']
         self.value['seed_files']={'test_acceptance.py':'''node -e "const fs = require('fs'); console.log('ACCEPTANCE_PASS')"'''}
