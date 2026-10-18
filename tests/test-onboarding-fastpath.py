@@ -57,7 +57,7 @@ class HostCompiledOnboarding(unittest.TestCase):
 
     def test_reusing_existing_immutable_host_verifier(self):
         with tempfile.TemporaryDirectory() as d:
-            (Path(d)/'__autonomy_verify.cjs').write_text(host.VERIFIER_SOURCE,encoding='utf-8')
+            (Path(d)/'__autonomy_verify.cjs').write_bytes(host.VERIFIER_SOURCE.encode('utf-8'))
             value=self.make(d)
             self.assertEqual(value['seed_files'],{})
             self.assertEqual(value['plan']['immutable_files'][0]['path'],'__autonomy_verify.cjs')
