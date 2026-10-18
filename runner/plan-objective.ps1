@@ -13,6 +13,20 @@ try{
     try{$held=$mutex.WaitOne(0)}catch [Threading.AbandonedMutexException]{$held=$true}
     if(-not $held){throw 'RUN_ALREADY_ACTIVE'}
     $context=Invoke-OnboardingData @{action='planner_context';project=$request.project;objective=$request.objective}
+    # For recognized React/Vite projects, bind a deterministic execution boundary.
+    # Hermes still plans at runtime. No speculative UI tests or inference before
+    # the single human approval. Other stacks keep the certified legacy planner.
+    $fast=Invoke-OnboardingData @{action='fast_proposal';project=$request.project;objective=$request.objective}
+    if($fast.status -eq 'PASS'){
+        $payload=$fast.bound
+        if(($context.snapshot|ConvertTo-Json -Depth 10 -Compress) -cne ($payload.project_snapshot|ConvertTo-Json -Depth 10 -Compress)){throw 'PROJECT_CHANGED_DURING_PLANNING'}
+        $payload|Add-Member -NotePropertyName planner -NotePropertyValue @{
+            role='Hermes Supervisor at runtime';strategy='HOST_COMPILED_WORKER_TESTS';
+            readonly=$true;tools=0;planning_attempts=0;self_repaired=$false;
+            objective_sha256=$context.objective_sha256;source_path=$context.source_path;
+            project_snapshot_unchanged=$true
+        }
+    }else{
     $policy=$context.planner_policy
     $cfg=((& C:/Python314/python.exe (Join-Path $script:LauncherRoot 'scripts/mcp-sandbox-server.py') --dump-yaml-json (Join-Path $script:LauncherRoot 'config/system.yaml')) -join "`n")|ConvertFrom-Json
     $l=$cfg.llama
@@ -43,6 +57,7 @@ try{
     $payload=$bound
     $bound.planner['source_path']=$context.source_path
     $bound.planner['audit_path']=$result.AuditPath
+    }
 }catch{
     $code=2
     $payload=[pscustomobject]@{status='DENY';reason=$_.Exception.Message;diagnostic=@{hermes_timed_out=$result.TimedOut;hermes_exit=$result.ExitCode;hermes_duration=$result.Duration;response_characters=$result.Stdout.Length;source_path=$context.source_path;audit_path=$result.AuditPath}}
