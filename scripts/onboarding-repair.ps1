@@ -15,7 +15,9 @@ function Test-OnboardingRepairableReason([string]$Reason) {
         'BUILD_OR_EXPLICIT_NO_BUILD_REASON_REQUIRED',
         'IMMUTABLE_FILE_IN_WORKER_ALLOWLIST',
         'PLANNER_SEED_SOURCE_REQUIRED',
-        'PLANNER_IMMUTABLE_PYTHON_SYNTAX_INVALID'
+        'PLANNER_IMMUTABLE_PYTHON_SYNTAX_INVALID',
+        'PLANNER_TEST_MARKER_MISSING',
+        'PLANNER_BUILD_ONLY_ACCEPTANCE'
     )
 }
 
@@ -39,7 +41,7 @@ Every tests/builds/linters argv must be an ARRAY of at least TWO nonempty string
 The first element must be python/node/npm/dotnet, and remaining args must invoke
 an ACTUAL test or build script. A test cannot be only ["npm"], ["node"] or [].
 Each test_id must match an actual tests entry. Each new acceptance test requires
-substantive EXECUTABLE source in seed_files and an immutable_files pin to the same path. A .py file MUST contain valid Python source, not a node -e shell one-liner. A .js file must contain JavaScript source. Tests must meaningfully verify the promised criteria, not merely look for 01 and 05.
+substantive EXECUTABLE source in seed_files and an immutable_files pin to the same path. A .py file MUST contain valid Python source, not a node -e shell one-liner. A .js file must contain JavaScript source. Tests must meaningfully verify the promised criteria, not merely look for 01 and 05. Every directly invoked seeded acceptance test must emit the exact declared marker; do not use a build-only test as proof of chapters, sources, navigation or accessibility.
 Avoid fictitious commands; if tests refer to seed_files, use the correct exact path. For Vite builds, npm run build does not emit BUILD_PASS: use marker build. Include docs/research.md, dist/** and package-lock.json as approved outputs where relevant.
 Build explicitly requested with npm run build must use ["npm","run","build"].
 NEVER weaken policies, approval rules, allowed paths or acceptance requirements.
