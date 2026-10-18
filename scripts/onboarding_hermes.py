@@ -4,6 +4,11 @@ Launched by the official installation bootstrap, under the existing process
 job, profile/hook/plugin guards and cross-process inference lease.
 """
 import contextlib,json,os,sys,time,uuid
+from pathlib import Path
+# runpy.run_path() does not guarantee this script directory is on sys.path.
+# The real Hermes bootstrap starts from the infrastructure root, so make the
+# sibling planner contract import explicit before reading stdin.
+sys.path.insert(0,str(Path(__file__).resolve().parent))
 import onboarding_planner as planner_contract
 
 def run(request,agent_class):
