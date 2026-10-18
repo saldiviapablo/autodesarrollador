@@ -29,7 +29,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $paths = @('runner/run.ps1', 'runner/research-step.ps1', 'scripts/web-research.ps1')
+          $paths = @('runner/run.ps1', 'runner/research-step.ps1', 'scripts/web-research.ps1', 'runner/plan-objective.ps1', 'scripts/onboarding-repair.ps1', 'tests/ci-onboarding-self-repair.ps1')
           foreach ($path in $paths) {
             $tokens = $null
             $errors = $null
@@ -38,6 +38,16 @@ jobs:
             ) | Out-Null
             if ($errors.Count -gt 0) { throw "PowerShell parse failed: $path : $errors" }
           }
+      - name: Windows PowerShell 5.1 self-repair integration
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/ci-onboarding-self-repair.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: PowerShell 7 self-repair integration
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./tests/ci-onboarding-self-repair.ps1
       - name: Structural planner
         run: python tests/test-onboarding-structural-fix.py
       - name: Command wire recovery
