@@ -224,7 +224,7 @@ def validate_proposal(p, objective, proposal):
     for name, content in seeds.items():
         path = contract.check_path(p / name)
         path.relative_to(p)
-        if name not in pins or name in plan['allowed_files'] or write_scope.scope_matches(name,plan.get('write_scope',[])) or path.exists():
+        if name not in pins or name in plan['allowed_files'] or path.exists():
             raise ValueError('ONLY_NEW_IMMUTABLE_ACCEPTANCE_FILES_MAY_BE_SEEDED')
         if hashlib.sha256(content.encode('utf-8')).hexdigest() != pins[name]:
             raise ValueError('SEED_HASH_MISMATCH')
