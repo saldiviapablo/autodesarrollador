@@ -120,6 +120,7 @@ class StructuralOnboarding(unittest.TestCase):
             'base_url':'http://127.0.0.1:8080/v1',
             'model':'qwen36',
             'policy':planner.policy(),
+            'schema':planner.planner_schema(),
             'disabled_toolsets':['terminal','file','web'],
             'project':str(ROOT),
             'prompt':'fixture',
