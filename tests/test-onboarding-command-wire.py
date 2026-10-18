@@ -63,7 +63,7 @@ class CommandWire(unittest.TestCase):
 
     def test_ambiguous_seeds_fail_closed(self):
         self.value['plan']['tests'][0]['argv']=['npm']
-        self.value['seed_files']['other_test.js']='console.log("OTHER")'
+        self.value['seed_files']['another_acceptance.js']='console.log("OTHER")'
         with self.assertRaisesRegex(ValueError,'PLANNER_CHECK_COMMAND_AMBIGUOUS'):
             self.compile()
 
