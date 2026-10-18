@@ -37,4 +37,16 @@ assert bound['proposal']['plan']['tests'][0]['argv']==['node','test_acceptance.j
 adapter.validate_binding(bound)
 assert list(p.iterdir())==[], 'onboarding preflight made a project write'
 print('SIMULATED_BINDING_PASS; WITHOUT_APPROVAL; WORKER_STARTS=0; WEB_FETCHES=0')
+# Exercise the actual launcher binding entrypoint with host-compiled React/Vite.
+# No Hermes, no Qwen, no approval, no project write.
+fast=adapter.main({'action':'fast_proposal','project':str(p),'objective':brief})
+assert fast['status']=='PASS'
+host_bound=fast['bound']
+adapter.validate_binding(host_bound)
+assert host_bound['proposal']['plan']['tests'][0]['argv']==['npm','run','test']
+assert host_bound['proposal']['plan']['tests'][1]['argv'][0]=='node'
+assert host_bound['proposal']['plan']['research']['query']
+assert len(host_bound['proposal']['seed_files'])==1
+assert list(p.iterdir())==[], 'host-compiled onboarding wrote project before approval'
+print('HOST_BINDING_PASS; NO_HERMES_PREFLIGHT; WORKER_STARTS=0; PROJECT_WRITES=0')
 p.rmdir()
