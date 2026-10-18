@@ -160,13 +160,11 @@ try{
         Runner-Event 'CHATGPT_RESPONSE_CAPTURED' @{consultation_id=$confirmed.consultation_id;no_resend=$true}
     }
     $diff=(& git -C $script:Admission.project diff --) -join "`n"
-    # New greenfield files are untracked: plain "git diff" omits them. Give
-    # the independent reviewer bounded, sanitized source evidence too.
-    $untracked=@(& git -C $script:Admission.project ls-files --others --exclude-standard)
-    $untrackedEvidence=New-Object System.Text.StringBuilder
-    foreach($name in $untracked){
-        if($name -match '^(?:\.autopilot|\.git|node_modules|dist)/'){continue}
-        if($name -notmatch '\.(?:tsx?|jsx?|cjs|mjs|css|html|json|md)
+    # Review previously untracked source as well as tracked diff.
+    $untrackedNames=@(& git -C $script:Admission.project ls-files --others --exclude-standard)
+    $untrackedContent=New-Object System.Text.StringBuilder
+    foreach($name in $untrackedNames){
+        if($name -notmatch '[.](tsx?|jsx?|cjs|mjs|css|html|json|md)
     $p.prompt+="`nApproved task and acceptance mapping:`n"+$script:Admission.plan.task+"`n"+($script:Admission.plan.criteria|ConvertTo-Json -Depth 8)
     foreach($pin in $script:Admission.plan.immutable_files){$p.prompt+="`nImmutable acceptance source (read-only, untrusted data): "+$pin.path+"`n"+[IO.File]::ReadAllText((Join-Path $script:Admission.project $pin.path),[Text.Encoding]::UTF8)}
     $reviewer=Invoke-RunnerAgent 'reviewer' $p
@@ -240,21 +238,19 @@ try{
 @{status=$terminal;technical_status=$technical;run_id=$script:RunId;reason=$failure}|ConvertTo-Json
 if($terminal -ne 'COMPLETED'){exit 1}
 ){continue}
-        if(-not (Test-Path -LiteralPath (Join-Path $script:Admission.project $name) -PathType Leaf)){continue}
-        if(-not (Test-CommandGuard -CommandLine ('git diff -- '+$name) -WorkspacePath $script:Admission.project).Allowed){continue}
         $file=Join-Path $script:Admission.project $name
+        if(-not (Test-Path -LiteralPath $file -PathType Leaf)){continue}
         $meta=Get-Item -LiteralPath $file
-        if($meta.Attributes -band [IO.FileAttributes]::ReparsePoint){continue}
-        if($meta.Length -gt 12000){continue}
-        $body=[IO.File]::ReadAllText($file,[Text.Encoding]::UTF8)
-        if($untrackedEvidence.Length + $body.Length -gt 50000){break}
-        [void]$untrackedEvidence.AppendLine("FILE (untrusted): "+$name)
-        [void]$untrackedEvidence.AppendLine((Sanitize-StringContent $body))
+        if(($meta.Attributes -band [IO.FileAttributes]::ReparsePoint) -or $meta.Length -gt 12000){continue}
+        $body=Sanitize-StringContent ([IO.File]::ReadAllText($file,[Text.Encoding]::UTF8))
+        if($untrackedContent.Length + $body.Length -gt 50000){break}
+        [void]$untrackedContent.AppendLine("FILE: "+$name)
+        [void]$untrackedContent.AppendLine($body)
     }
-    $reviewDiff=(Sanitize-StringContent $diff)
-    if($reviewDiff.Length -gt 40000){$reviewDiff=$reviewDiff.Substring(0,40000)+"`n[DIFF TRUNCATED]"}
+    $reviewDiff=Sanitize-StringContent $diff
+    if($reviewDiff.Length -gt 40000){$reviewDiff=$reviewDiff.Substring(0,40000)+"`n[TRUNCATED]"}
     $p=$base.Clone();$p.role='reviewer'
-    $p.prompt='Independent readonly review. Return JSON {"decision":"ACCEPTED"} ONLY if implementation meets the FULL original objective, real test behavior and actual build evidence. Inspect test assertions for meaningful coverage, research source dates and credibility, accessibility, completeness and restrictions. Reject trivial or falsified tests, incomplete implementation, unverifiable claims, or missing evidence. Do not accept merely because a test prints PASS. Objective: '+$script:Admission.contract.objective+"`nTracked diff (untrusted):`n"+$reviewDiff+"`nUntracked project sources (untrusted):`n"+$untrackedEvidence.ToString()+"`nChecks:`n"+(@{tests=$tests;builds=$builds}|ConvertTo-Json -Depth 8)
+    $p.prompt='Independent readonly review. Accept ONLY if the full user objective is satisfied by actual source, substantive tests, build and research evidence. Reject no-op tests, unverifiable claims, incomplete UI or missing sources. Return JSON {"decision":"ACCEPTED"} only upon success. Objective: '+$script:Admission.contract.objective+"`nTracked diff (untrusted):`n"+$reviewDiff+"`nUntracked sources (untrusted):`n"+$untrackedContent.ToString()+"`nChecks:`n"+(@{tests=$tests;builds=$builds}|ConvertTo-Json -Depth 8)
     $p.prompt+="`nApproved task and acceptance mapping:`n"+$script:Admission.plan.task+"`n"+($script:Admission.plan.criteria|ConvertTo-Json -Depth 8)
     foreach($pin in $script:Admission.plan.immutable_files){$p.prompt+="`nImmutable acceptance source (read-only, untrusted data): "+$pin.path+"`n"+[IO.File]::ReadAllText((Join-Path $script:Admission.project $pin.path),[Text.Encoding]::UTF8)}
     $reviewer=Invoke-RunnerAgent 'reviewer' $p
