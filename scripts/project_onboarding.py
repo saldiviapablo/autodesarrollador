@@ -14,6 +14,7 @@ import sys
 import uuid
 import re
 import onboarding_planner as compact_planner
+import onboarding_fastpath
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'runner'))
@@ -117,7 +118,7 @@ def policy_hashes():
     """Bind the human plan review to the actual preparer, policies and launch code."""
     paths=list((ROOT/'runner').glob('*.py'))+list((ROOT/'runner').glob('*.ps1'))
     paths += [ROOT/n for n in ['config/system.yaml','config/security.yaml','config/VERSIONS.lock',
-        'config/onboarding-planner.json','scripts/onboarding_planner.py','scripts/onboarding_hermes.py','scripts/onboarding-hermes.ps1','scripts/onboarding-repair.ps1',
+        'config/onboarding-planner.json','scripts/onboarding_planner.py','scripts/onboarding_fastpath.py','scripts/onboarding_hermes.py','scripts/onboarding-hermes.ps1','scripts/onboarding-repair.ps1',
         'schemas/run-contract.schema.json','schemas/runner-plan.schema.json','schemas/autopilot-state.schema.json',
         'scripts/init-autopilot-project.ps1','scripts/state-manager.ps1','scripts/canonical_path.py',
         'scripts/security-guard.ps1','scripts/inference-lock.ps1','scripts/hermes-pre-tool-hook.py',
@@ -489,6 +490,13 @@ def main(r):
         if f.suffix.lower() not in {'.md', '.txt'} or f.stat().st_size > 200000:
             raise ValueError('BRIEF_MD_TXT_UTF8_MAX_200KB_REQUIRED')
         return {'status': 'PASS', 'text': safe_text(f.read_bytes().decode('utf-8-sig', errors='strict'))}
+    if action == 'fast_proposal':
+        p=project(r['project'])
+        objective=safe_text(r['objective'])
+        if not onboarding_fastpath.supports(objective):
+            return {'status':'UNSUPPORTED'}
+        proposed=onboarding_fastpath.compile_proposal(objective,p)
+        return {'status':'PASS','bound':bind_proposal(str(p),objective,proposed)}
     if action == 'proposal': return bind_proposal(r['project'], r['objective'], r['proposal'])
     if action == 'planner_proposal': return bind_proposal(r['project'],r['objective'],compact_planner.decode(r['text'],r['objective']))
     if action == 'approve_plan': return approve_plan(r)
