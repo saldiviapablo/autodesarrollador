@@ -14,6 +14,7 @@ first=json.loads(json.dumps(base))
 first["plan"]["tests"][0]["argv"]=["npm"]
 first["seed_files"]={"notes.md":"Example"}
 second=base
+second['overview']['research_requirements']=['Investigar avances de IA de 2026 en fuentes oficiales y reputadas.']
 root=ROOT/"sandbox"/"ci-self-repair-binding"
 root.mkdir(parents=True,exist_ok=True)
 (root/"first.json").write_text(json.dumps(first,ensure_ascii=False),encoding="utf-8")
