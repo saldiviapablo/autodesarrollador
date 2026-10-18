@@ -250,7 +250,7 @@ def _normalize(value,objective=None):
         # Host-owned closure of expected files in a greenfield React/Vite
         # project. Completion compares all changed names, including generated
         # build outputs, against this write scope.
-        if re.search(r'\\bReact\\b', objective, re.I) and re.search(r'\\bVite\\b', objective, re.I):
+        if re.search(r'\bReact\b', objective, re.I) and re.search(r'\bVite\b', objective, re.I):
             output_files=('package.json','package-lock.json','.gitignore','README.md','index.html')
             scopes=('src/**','public/**','docs/**','dist/**')
             exact=list(plan.get('allowed_files',[]))
