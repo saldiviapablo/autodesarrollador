@@ -66,6 +66,13 @@ class StructuralOnboarding(unittest.TestCase):
         self.assertIn(['npm','run','build'],[item['argv'] for item in result['plan']['builds']])
         self.assertNotIn('no_build_reason',result['plan'])
 
+    def test_immutable_seed_is_compiled_out_of_worker_allowlist(self):
+        value=base_value()
+        value['plan']['allowed_files'].append('test_acceptance.js')
+        result=planner.decode(json.dumps(value),'Crear landing local con npm run build')
+        self.assertNotIn('test_acceptance.js',result['plan']['allowed_files'])
+        self.assertIn('test_acceptance.js',result['seed_files'])
+
     def test_open_research_becomes_query_not_ambiguous(self):
         value=base_value()
         value['overview']['research_requirements']=['Investigar cinco avances de IA de 2026 en múltiples fuentes oficiales.']
