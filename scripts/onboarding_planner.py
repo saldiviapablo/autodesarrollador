@@ -234,6 +234,15 @@ def _compile_check_commands(plan, seeds, objective):
 
 
 
+# JavaScript String.match(non-global regex) returns zero or one match.
+# Tests requiring >=2 matches from that expression are impossible.
+_IMPOSSIBLE_JS_MATCH_COUNT=re.compile(
+    r'\.match\(\s*/(?:\\.|[^/])+/([a-z]*)\s*\)\s*\|\|\s*\[\s*\]'
+    r'\s*\)\s*\.length\s*<\s*([2-9]\d*)',
+    re.I
+)
+
+
 def _validate_model_seed_checks(plan, seeds, objective):
     """Reject demonstrably broken model-authored acceptance checks.
 
@@ -254,6 +263,10 @@ def _validate_model_seed_checks(plan, seeds, objective):
         source=seeds.get(filename)
         if not isinstance(source,str):
             continue
+        if filename.lower().endswith(('.js','.cjs','.mjs')):
+            for flags, minimum in _IMPOSSIBLE_JS_MATCH_COUNT.findall(source):
+                if 'g' not in flags.lower() and int(minimum)>1:
+                    raise ValueError('PLANNER_IMPOSSIBLE_JS_MATCH_COUNT:'+str(check.get('id','unknown')))
         marker=check.get('marker')
         if not isinstance(marker,str) or marker not in source:
             raise ValueError('PLANNER_TEST_MARKER_MISSING:'+str(check.get('id','unknown')))
@@ -344,7 +357,9 @@ def _normalize(value,objective=None):
         # project. Completion compares all changed names, including generated
         # build outputs, against this write scope.
         if re.search(r'\bReact\b', objective, re.I) and re.search(r'\bVite\b', objective, re.I):
-            output_files=('package.json','package-lock.json','.gitignore','README.md','index.html')
+            output_files=('package.json','package-lock.json','.gitignore','README.md','index.html',
+                          'tailwind.config.ts','tailwind.config.js','postcss.config.js','postcss.config.cjs',
+                          'tsconfig.app.json','tsconfig.node.json')
             scopes=('src/**','public/**','docs/**','dist/**')
             exact=list(plan.get('allowed_files',[]))
             protected={item.get('path') for item in plan.get('immutable_files',[]) if isinstance(item,dict)}
@@ -425,6 +440,7 @@ def prompt(shape,objective,context):
         'seed_files contains ONLY new immutable substantive acceptance/build verifier code, not implementation. '
         'Tests must verify behavior and edge cases, not unconditional PASS or file existence only; explicit success markers. '
         'For every seeded test run directly by python/node, the source MUST actually emit the EXACT test marker; do not point an acceptance test at a build-only wrapper. Coverage of content, navigation, sources, and accessibility requires real assertions, not merely npm run build. '
+        'In JavaScript String.match(/regex/i) WITHOUT the g flag yields at most ONE match: never compare its length to 5 for five chapters; use /regex/gi or explicit chapter assertions. Authorize any Tailwind config file a required test expects; Tailwind v4 may not need a config. '
         'Existing tests stay immutable with their supplied SHA256; never overwrite them. For new seeds use 64-zero placeholder hashes; host computes SHA256. Never list seed_files or immutable_files paths in allowed_files. '
         'allowed_files lists stable exact Worker outputs. For greenfield projects that may create many files, add narrowly bounded write_scope entries such as "src/**", "public/**", "vite.config.*" or "tsconfig*.json". '
         'Never use broad "*" or "**"; never include tests, QWEN.md, .git, .autopilot, history, runner or config/security in Worker scope. '
