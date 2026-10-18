@@ -12,7 +12,7 @@ import yaml
 
 ROOT=Path(__file__).resolve().parents[1]
 ONBOARDING_EXECUTABLES=('python','node','npm','dotnet')
-NPM_BUILD_RE=re.compile(r'(?<![\w.-])npm[ \t]+run[ \t]+build(?![\w:-])',re.IGNORECASE)
+NPM_BUILD_RE=re.compile(r'(?<![\w.-])npm[ \t]+run[ \t]+build(?![\w:-]|\.[A-Za-z0-9])',re.IGNORECASE)
 COMPLETION='native_gate_all_criteria_tests_build_artifacts_diff_state_reviewer_no_pending'
 HOST_TASK='Implementar el objetivo aprobado y satisfacer todos los criterios de aceptación.'
 HOST_PLAN_FIELDS={
