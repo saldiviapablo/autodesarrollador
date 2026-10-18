@@ -41,5 +41,8 @@ jobs:
         run: python tests/test-onboarding-structural-fix.py
       - name: Command wire recovery
         run: python tests/test-onboarding-command-wire.py
+      - name: Windows canonical proposal and binding smoke
+        if: runner.os == 'Windows'
+        run: python tests/ci-windows-onboarding-binding.py
       - name: Portable compact planner
         run: python tests/ci-portable-compact.py
