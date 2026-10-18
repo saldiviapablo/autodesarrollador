@@ -481,7 +481,8 @@ def main(r):
             'phase_timeout_seconds':300,'global_timeout_seconds':2700,'max_cycles':5,'restart_budget':2},
             'seed_files':{'test_acceptance.py':'acceptance test source','build_check.py':'build verifier source'}}
         prompt=compact_planner.prompt(shape,objective,context)
-        return {'status':'PASS','prompt':prompt,'snapshot':snapshot(p),'read_only':True,'planner_policy':compact_planner.policy(),'source_path':str(source_path),
+        return {'status':'PASS','prompt':prompt,'snapshot':snapshot(p),'read_only':True,'planner_policy':compact_planner.policy(),
+                'planner_schema':compact_planner.planner_schema(),'source_path':str(source_path),
                 'objective_sha256':hashlib.sha256(objective.encode('utf-8')).hexdigest(),'objective_utf8_bytes':len(objective.encode('utf-8'))}
     if action == 'brief':
         f = contract.check_path(r['path'])
