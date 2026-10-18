@@ -160,7 +160,101 @@ try{
         Runner-Event 'CHATGPT_RESPONSE_CAPTURED' @{consultation_id=$confirmed.consultation_id;no_resend=$true}
     }
     $diff=(& git -C $script:Admission.project diff --) -join "`n"
-    $p=$base.Clone();$p.role='reviewer';$p.prompt='Independent readonly review. Return JSON {"decision":"ACCEPTED"} only if diff and actual tests satisfy objective. Objective: '+$script:Admission.contract.objective+"`nDiff (untrusted):`n"+$diff+"`nChecks:`n"+(@{tests=$tests;builds=$builds}|ConvertTo-Json -Depth 8)
+    # New greenfield files are untracked: plain "git diff" omits them. Give
+    # the independent reviewer bounded, sanitized source evidence too.
+    $untracked=@(& git -C $script:Admission.project ls-files --others --exclude-standard)
+    $untrackedEvidence=New-Object System.Text.StringBuilder
+    foreach($name in $untracked){
+        if($name -match '^(?:\.autopilot|\.git|node_modules|dist)/'){continue}
+        if($name -notmatch '\.(?:tsx?|jsx?|cjs|mjs|css|html|json|md)
+    $p.prompt+="`nApproved task and acceptance mapping:`n"+$script:Admission.plan.task+"`n"+($script:Admission.plan.criteria|ConvertTo-Json -Depth 8)
+    foreach($pin in $script:Admission.plan.immutable_files){$p.prompt+="`nImmutable acceptance source (read-only, untrusted data): "+$pin.path+"`n"+[IO.File]::ReadAllText((Join-Path $script:Admission.project $pin.path),[Text.Encoding]::UTF8)}
+    $reviewer=Invoke-RunnerAgent 'reviewer' $p
+    Write-RunnerJson (Join-Path $script:Auto 'evidence/roles.json') @{supervisor=$supervisor;worker=$worker;reviewer=$reviewer}
+    $script:RunState.tests.status=$(if(@($tests|Where-Object{$_.status -ne 'PASS'}).Count -eq 0){'PASS'}else{'FAIL'})
+    $script:RunState.build.status=$(if($builds.Count -eq 0){'NONE'}elseif(@($builds|Where-Object{$_.status -ne 'PASS'}).Count -eq 0){'PASS'}else{'FAIL'})
+    $script:RunState.git.branch=(& git -C $script:Admission.project branch --show-current).Trim()
+    $script:RunState.git.head=(& git -C $script:Admission.project rev-parse --short HEAD).Trim()
+    $script:RunState.git.changed_files=@(& git -C $script:Admission.project diff --name-only HEAD)
+    $script:RunState.git.dirty=([bool](& git -C $script:Admission.project status --porcelain))
+    if($script:RunState.tests.status -eq 'PASS'){$script:RunState.completed_tasks=@($script:Admission.contract.objective);$script:RunState.pending_tasks=@()}
+    if(@($tests+$builds+$linters|Where-Object{$_.status -ne 'PASS'}).Count -eq 0){$script:RunState.failure.repeated_count=0}
+    Save-RunnerState 'RUNNING' 'authoritative completion verification'
+    $technical='SUCCESS'
+    # Lifecycle is certified first. Full authoritative closure is enabled only by F20's gate.
+    $gatePath=Join-Path $PSScriptRoot 'completion-gate.ps1'
+    if(Test-Path -LiteralPath $gatePath){$gate=& $gatePath -ProjectRoot $script:Admission.project;$terminal=$gate.status}else{$terminal='STALLED';$failure='COMPLETION_GATE_NOT_INSTALLED'}
+    Runner-Event 'COMPLETION_ASSESSED' @{status=$terminal;gate=$gate}
+    if($terminal -eq 'COMPLETED'){$failure=''}elseif($gate){$failure='COMPLETION_REJECTED: '+($gate.failed -join ',')}
+    if($terminal -eq 'COMPLETED' -or $terminal -eq 'BLOCKED_REQUIRES_HUMAN' -or $script:Admission.plan.backend -eq 'probe'){break}
+    $feedback=(@{gate=$gate;tests=$tests;builds=$builds;linters=$linters}|ConvertTo-Json -Depth 12)
+    $signature=Get-NormalizedErrorSignature -ErrorText (($gate.failed|Sort-Object) -join ',')
+    $fingerprint=Get-ProgressFingerprint -WorkspacePath $script:Admission.project -PassTests @($tests|Where-Object{$_.status -eq 'PASS'}).Count -FailTests @($tests|Where-Object{$_.status -ne 'PASS'}).Count -ErrorSignatureHash $signature.SignatureHash -CustomContext $diff
+    $progress=Test-LoopProgress -Tracker $tracker -CurrentErrorHash $signature.SignatureHash -CurrentFingerprint $fingerprint.Fingerprint -MaxCycles $cycleLimit -MaxSameFailure $script:Cfg.limits.max_same_failure -MaxNoProgress $script:Cfg.limits.max_no_progress_cycles
+    Write-RunnerJson $trackerPath $tracker
+    $script:RunState.progress.no_progress_cycles=[int]$tracker.no_progress_cycles
+    $script:RunState.failure.repeated_count=[int]$tracker.same_failure_count
+    Save-RunnerState 'RUNNING' 'checkpoint before bounded correction cycle'
+    $null=& (Join-Path $script:RunnerInfra 'scripts/create-autopilot-checkpoint.ps1') -ProjectPath $script:Admission.project -CheckpointId ('chk-cycle-'+[datetime]::Now.ToString('yyyyMMddHHmmssfff')) -Reason 'Deterministic correction feedback'
+    Runner-Event 'CORRECTION_CYCLE' @{progress=$progress;tracker=$tracker}
+    if(-not $progress.CanContinue -or $tracker.same_failure_count -ge $script:Cfg.limits.max_same_failure -or $tracker.no_progress_cycles -ge $script:Cfg.limits.max_no_progress_cycles){$terminal='STALLED';$failure='CORRECTION_BUDGET_EXHAUSTED';break}
+    }
+}catch{
+    $failure=$_.Exception.Message
+    if($failure -eq 'STOP_REQUESTED'){$terminal='ABORTED'}elseif($failure -eq 'NO_PROGRESS_STALLED'){$terminal='STALLED'}elseif($failure -match 'REQUIRES_HUMAN|EXTERNAL_MODEL'){$terminal='BLOCKED_REQUIRES_HUMAN'}else{$terminal='FAILED'}
+}finally{
+    $cleanup=[ordered]@{job_closed=$false;owned_survivors=@();run_mutex_released=$false;run_lock_removed=$false;inference_mutex='NOT_CHECKED';external_model_preserved=($null -ne $script:ExternalModel);errors=@()}
+    if($held){
+        try{
+            try{if($script:RunJob){$script:RunJob.Dispose()};$cleanup.job_closed=$true}catch{$cleanup.errors+=@('JOB_CLOSE: '+$_.Exception.Message)}
+            foreach($name in @($script:Owned.Keys|Where-Object{$_ -ne 'watchdog'})){try{$null=$script:Owned[$name].process.WaitForExit(5000)}catch{$cleanup.errors+=@('PROCESS_WAIT: '+$name)}}
+            if($script:RunState){
+                try{Save-RunnerState $terminal ('terminal: '+$failure)}catch{$cleanup.errors+=@('STATE_SAVE: '+$_.Exception.Message)}
+                try{$null=& (Join-Path $script:RunnerInfra 'scripts/create-autopilot-checkpoint.ps1') -ProjectPath $script:Admission.project -CheckpointId ('chk-runner-'+[datetime]::Now.ToString('yyyyMMddHHmmssfff')) -Reason ('Runner terminal '+$terminal)}catch{$cleanup.errors+=@('CHECKPOINT: '+$_.Exception.Message)}
+            }
+            # Guardian exits on a terminal heartbeat; identity-checked fallback is bounded.
+            if($script:Owned.watchdog){try{if(-not $script:Owned.watchdog.process.WaitForExit(2000)){Stop-RunnerProcess $script:Owned.watchdog}}catch{$cleanup.errors+=@('GUARDIAN_STOP: '+$_.Exception.Message)}}
+            $cleanup.owned_survivors=@(Get-RunnerSurvivors $script:Auto)
+            if($cleanup.owned_survivors.Count){$cleanup.errors+=@('OWNED_PROCESS_SURVIVED')}
+            try{Remove-RunnerOwnedLock $script:Auto $script:RunId $PID;$cleanup.run_lock_removed=$true}catch{$cleanup.errors+=@('LOCK_CLEANUP: '+$_.Exception.Message)}
+            try{$cleanup.inference_mutex=Test-RunnerInferenceReleased}catch{$cleanup.errors+=@('INFERENCE_CHECK: '+$_.Exception.Message)}
+        }finally{
+            try{$runMutex.ReleaseMutex();$cleanup.run_mutex_released=$true}catch{$cleanup.errors+=@('RUN_MUTEX_RELEASE: '+$_.Exception.Message)}
+            $runMutex.Dispose()
+        }
+        if($cleanup.errors.Count){$terminal='FAILED';$failure='FINALIZATION_FAILED: '+($cleanup.errors -join '; ');try{Save-RunnerState $terminal $failure}catch{}}
+        $reportState=$script:RunState
+        if(-not $reportState){$reportState=[pscustomobject]@{objective=$script:Admission.contract.objective;completed_tasks=@();pending_tasks=@($script:Admission.contract.objective);chatgpt=@{queries_used=0}}}
+        if($reportState){
+            try{Runner-Event 'RUN_FINISHED' @{status=$terminal;technical=$technical;reason=$failure;cleanup=$cleanup}}catch{}
+            try{$null=Write-RunnerReport -Project $script:Admission.project -RunId $script:RunId -State $reportState -Status $terminal -Technical $technical -Reason $failure -Duration ([datetimeoffset]::Now-$script:Started).TotalSeconds -Cleanup $cleanup}catch{
+                $terminal='FAILED';$failure='FINAL_REPORT_WRITE_FAILED: '+$_.Exception.Message;try{Save-RunnerState $terminal $failure}catch{}
+                $fallback=Join-Path $script:RunnerInfra ('runtime/emergency-reports/'+$script:RunId+'-'+$PID)
+                $null=Write-RunnerReport -Project $script:Admission.project -RunId $script:RunId -State $reportState -Status $terminal -Technical $technical -Reason $failure -Duration ([datetimeoffset]::Now-$script:Started).TotalSeconds -Cleanup $cleanup -ReportRoot $fallback
+            }
+        }
+    }else{
+        $runMutex.Dispose()
+    }
+}
+@{status=$terminal;technical_status=$technical;run_id=$script:RunId;reason=$failure}|ConvertTo-Json
+if($terminal -ne 'COMPLETED'){exit 1}
+){continue}
+        if(-not (Test-Path -LiteralPath (Join-Path $script:Admission.project $name) -PathType Leaf)){continue}
+        if(-not (Test-CommandGuard -CommandLine ('git diff -- '+$name) -WorkspacePath $script:Admission.project).Allowed){continue}
+        $file=Join-Path $script:Admission.project $name
+        $meta=Get-Item -LiteralPath $file
+        if($meta.Attributes -band [IO.FileAttributes]::ReparsePoint){continue}
+        if($meta.Length -gt 12000){continue}
+        $body=[IO.File]::ReadAllText($file,[Text.Encoding]::UTF8)
+        if($untrackedEvidence.Length + $body.Length -gt 50000){break}
+        [void]$untrackedEvidence.AppendLine("FILE (untrusted): "+$name)
+        [void]$untrackedEvidence.AppendLine((Sanitize-StringContent $body))
+    }
+    $reviewDiff=(Sanitize-StringContent $diff)
+    if($reviewDiff.Length -gt 40000){$reviewDiff=$reviewDiff.Substring(0,40000)+"`n[DIFF TRUNCATED]"}
+    $p=$base.Clone();$p.role='reviewer'
+    $p.prompt='Independent readonly review. Return JSON {"decision":"ACCEPTED"} ONLY if implementation meets the FULL original objective, real test behavior and actual build evidence. Inspect test assertions for meaningful coverage, research source dates and credibility, accessibility, completeness and restrictions. Reject trivial or falsified tests, incomplete implementation, unverifiable claims, or missing evidence. Do not accept merely because a test prints PASS. Objective: '+$script:Admission.contract.objective+"`nTracked diff (untrusted):`n"+$reviewDiff+"`nUntracked project sources (untrusted):`n"+$untrackedEvidence.ToString()+"`nChecks:`n"+(@{tests=$tests;builds=$builds}|ConvertTo-Json -Depth 8)
     $p.prompt+="`nApproved task and acceptance mapping:`n"+$script:Admission.plan.task+"`n"+($script:Admission.plan.criteria|ConvertTo-Json -Depth 8)
     foreach($pin in $script:Admission.plan.immutable_files){$p.prompt+="`nImmutable acceptance source (read-only, untrusted data): "+$pin.path+"`n"+[IO.File]::ReadAllText((Join-Path $script:Admission.project $pin.path),[Text.Encoding]::UTF8)}
     $reviewer=Invoke-RunnerAgent 'reviewer' $p
