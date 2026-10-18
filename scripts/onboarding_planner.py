@@ -3,6 +3,7 @@ import copy
 import ipaddress
 import json
 import re
+import shlex
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -160,23 +161,83 @@ def _research_query(requirements):
     return text
 
 
+def _check_seed_command(command, seeds):
+    """Fallback only when there is exactly one semantically identifiable seeded verifier.
+
+    Never infer an arbitrary command or make a non-verifier file executable.
+    """
+    if not isinstance(command, dict):
+        raise ValueError('PLANNER_CHECK_COMMAND_INVALID')
+    label=str(command.get('id', '')).casefold().replace('_', '-')
+    candidates=[]
+    for filename in sorted(seeds):
+        suffix=Path(filename).suffix.lower()
+        if suffix not in ('.py', '.js', '.cjs', '.mjs'):
+            continue
+        stem=Path(filename).stem.casefold().replace('_', '-')
+        score=1 if label and (label in stem or stem in label) else 0
+        candidates.append((score, filename, 'python' if suffix=='.py' else 'node'))
+    if not candidates:
+        raise ValueError('PLANNER_CHECK_COMMAND_INCOMPLETE')
+    best=max(item[0] for item in candidates)
+    matches=[item for item in candidates if item[0]==best]
+    if len(matches)!=1:
+        raise ValueError('PLANNER_CHECK_COMMAND_AMBIGUOUS')
+    _, filename, executable=matches[0]
+    return [executable,filename]
+
+
+def _compile_check_commands(plan, seeds, objective):
+    """Compile model command text to safe argv without executing a shell.
+
+    Handles unambiguous wire-format mistakes (e.g. ['npm run build'],
+    ['node'], or 'node check.js') while rejecting ambiguous or unsafe
+    commands fail-closed. The canonical command schema remains strict.
+    """
+    aliases={'python.exe':'python','python3':'python','python3.exe':'python','py':'python',
+             'node.exe':'node','npm.cmd':'npm','npm.exe':'npm','dotnet.exe':'dotnet'}
+    for group in ('tests','builds','linters'):
+        for command in plan.get(group, []) or []:
+            if not isinstance(command, dict):
+                raise ValueError('PLANNER_CHECK_COMMAND_INVALID')
+            raw=command.get('argv')
+            if isinstance(raw, str) or (isinstance(raw,list) and len(raw)==1 and isinstance(raw[0],str) and ' ' in raw[0]):
+                wire=raw if isinstance(raw,str) else raw[0]
+                if any(c in wire for c in ('\\n','\\r','|',';','&','>','<',chr(96))):
+                    raise ValueError('PLANNER_CHECK_SHELL_OPERATOR_DENIED')
+                try:
+                    argv=shlex.split(wire,posix=True)
+                except ValueError:
+                    raise ValueError('PLANNER_CHECK_ARGV_INVALID') from None
+            elif isinstance(raw,list) and all(isinstance(item,str) for item in raw):
+                argv=list(raw)
+            else:
+                raise ValueError('PLANNER_CHECK_ARGV_INVALID')
+            if argv:
+                argv[0]=aliases.get(argv[0].lower(),argv[0].lower())
+                if argv[0]=='npx' and len(argv)>=2:
+                    argv=['npm','exec','--',*argv[1:]]
+            if len(argv)<2:
+                if group=='builds' and argv==['npm'] and objective and re.search(r'(?<![\\w.-])npm[ \\t]+run[ \\t]+build(?![\\w:.-])',objective):
+                    argv=['npm','run','build']
+                elif group=='tests':
+                    argv=_check_seed_command(command, seeds)
+                else:
+                    raise ValueError('PLANNER_CHECK_COMMAND_INCOMPLETE')
+            if argv[0] not in ONBOARDING_EXECUTABLES:
+                raise ValueError('CHECK_EXECUTABLE_NOT_ADMITTED')
+            if any(not isinstance(s,str) or not s for s in argv):
+                raise ValueError('PLANNER_CHECK_ARGV_INVALID')
+            command['argv']=argv
+
+
 def _normalize(value,objective=None):
     if not isinstance(value,dict) or not isinstance(value.get('plan'),dict) or not isinstance(value.get('overview'),dict):
         return validate(value)
     value=copy.deepcopy(value)
     plan=value['plan'];view=value['overview']
 
-    aliases={'python.exe':'python','python3':'python','python3.exe':'python','py':'python',
-             'node.exe':'node','npm.cmd':'npm','npm.exe':'npm','dotnet.exe':'dotnet'}
-    for group in ('tests','builds','linters'):
-        for command in plan.get(group,[]):
-            args=command.get('argv') if isinstance(command,dict) else None
-            if not isinstance(args,list) or not args or not isinstance(args[0],str):continue
-            executable=args[0].lower()
-            if executable=='npx':
-                command['argv']=['npm','exec','--',*args[1:]]
-            elif executable in aliases:
-                command['argv']=[aliases[executable],*args[1:]]
+    _compile_check_commands(plan, value.get('seed_files',{}), objective)
 
     research=plan.get('research')
     if isinstance(research,dict) and 'research_requirements' in research:
@@ -276,7 +337,7 @@ def prompt(shape,objective,context):
         'Existing tests stay immutable with their supplied SHA256; never overwrite them. For new seeds use 64-zero placeholder hashes; host computes SHA256. Never list seed_files or immutable_files paths in allowed_files. '
         'allowed_files lists stable exact Worker outputs. For greenfield projects that may create many files, add narrowly bounded write_scope entries such as "src/**", "public/**", "vite.config.*" or "tsconfig*.json". '
         'Never use broad "*" or "**"; never include tests, QWEN.md, .git, .autopilot, history, runner or config/security in Worker scope. '
-        'Every tests/builds/linters argv[0] must be one of '+', '.join(ONBOARDING_EXECUTABLES)+'. '
+        'Every tests/builds/linters command must have argv as a list with at least TWO non-empty strings. The first argv element must be one of '+', '.join(ONBOARDING_EXECUTABLES)+'. '
         'For external JS tools use npm exec -- TOOL ARGS, never npx or a shell. Preserve every explicit build command from the brief in plan.builds. '
         'For npm run build use argv=["npm","run","build"] and marker="build"; include package.json in Worker scope if it must be created. '
         'Only when the project truly has no build, supply a justified no_build_reason. '
