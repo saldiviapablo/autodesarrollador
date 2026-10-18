@@ -1,4 +1,5 @@
 """Compact onboarding planner with one explicit generated-plan contract."""
+import ast
 import copy
 import ipaddress
 import json
@@ -239,6 +240,16 @@ def _normalize(value,objective=None):
     plan=value['plan'];view=value['overview']
 
     _compile_check_commands(plan, value.get('seed_files',{}), objective)
+    # Model-authored immutable Python tests are executed as Python by the Runner.
+    # Reject a source-language mismatch BEFORE human approval; never claim a
+    # passing acceptance test based on source that cannot even be parsed.
+    if objective is not None:
+        for source_name, source in value.get('seed_files',{}).items():
+            if source_name.lower().endswith('.py') and isinstance(source,str):
+                try:
+                    ast.parse(source, filename=source_name)
+                except SyntaxError:
+                    raise ValueError('PLANNER_IMMUTABLE_PYTHON_SYNTAX_INVALID:'+source_name) from None
 
     research=plan.get('research')
     if isinstance(research,dict) and 'research_requirements' in research:
@@ -269,6 +280,11 @@ def _normalize(value,objective=None):
                 # npm run build normally echoes its script name "build";
                 # it does NOT emit arbitrary model-invented BUILD_PASS.
                 check['marker']='build'
+        if 'docs/research.md' in objective and plan.get('research'):
+            artifacts=plan.get('artifacts',[])
+            if not any(isinstance(item,dict) and item.get('path')=='docs/research.md' for item in artifacts):
+                artifacts.append({'path':'docs/research.md','min_bytes':100})
+            plan['artifacts']=artifacts
         research=plan.get('research')
         if isinstance(research,dict) and research.get('query') and research.get('domains'):
             # The user requested open discovery. Model-chosen "preferred"
