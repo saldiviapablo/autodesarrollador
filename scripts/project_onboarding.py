@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'runner'))
 import contract
 import prepare
+import write_scope
 
 spec = importlib.util.spec_from_file_location('onboarding_secret', ROOT / 'scripts/hermes-pre-tool-hook.py')
 secret = importlib.util.module_from_spec(spec)
@@ -471,6 +472,7 @@ def main(r):
         # bridge/crash/probe option, to keep a cold-start preflight bounded.
         shape={'plan':{'schema_version':'1.0','backend':'live','task':'approved task',
             'allowed_files':['product.py','README.md'],
+            'write_scope':['src/**'],
             'tests':[{'id':'acceptance','argv':['python','test_acceptance.py'],'marker':'ACCEPTANCE_PASS','timeout_seconds':60}],
             'builds':[{'id':'build','argv':['python','build_check.py'],'marker':'BUILD_PASS','timeout_seconds':60}],
             'criteria':[{'criterion':'specific acceptance criterion','test_id':'acceptance'}],
@@ -479,7 +481,8 @@ def main(r):
             'phase_timeout_seconds':300,'global_timeout_seconds':2700,'max_cycles':5,'restart_budget':2},
             'seed_files':{'test_acceptance.py':'acceptance test source','build_check.py':'build verifier source'}}
         prompt=compact_planner.prompt(shape,objective,context)
-        return {'status':'PASS','prompt':prompt,'snapshot':snapshot(p),'read_only':True,'planner_policy':compact_planner.policy(),'source_path':str(source_path),
+        return {'status':'PASS','prompt':prompt,'snapshot':snapshot(p),'read_only':True,'planner_policy':compact_planner.policy(),
+                'planner_schema':compact_planner.planner_schema(),'source_path':str(source_path),
                 'objective_sha256':hashlib.sha256(objective.encode('utf-8')).hexdigest(),'objective_utf8_bytes':len(objective.encode('utf-8'))}
     if action == 'brief':
         f = contract.check_path(r['path'])

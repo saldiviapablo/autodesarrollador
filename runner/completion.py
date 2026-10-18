@@ -2,6 +2,7 @@
 import argparse,hashlib,json,pathlib,re,subprocess,sys,jsonschema
 sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
 from reviewer_contract import parse_decision
+import write_scope
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 def evaluate(project):
     p=pathlib.Path(project).resolve();auto=p/'.autopilot'
@@ -49,7 +50,7 @@ def evaluate(project):
     changed=subprocess.check_output(['git','-C',str(p),'diff','--name-only','HEAD'],text=True).splitlines()
     changed+=subprocess.check_output(['git','-C',str(p),'ls-files','--others','--exclude-standard'],text=True).splitlines()
     changed=[n for n in changed if not n.startswith('.autopilot/')]
-    checks['diff_only_approved_files']=all(n in plan['allowed_files'] for n in changed)
+    checks['diff_only_approved_files']=all(write_scope.allowed_change(n,plan) for n in changed)
     checks['relevant_diff_exists']=bool(changed)
     head=subprocess.check_output(['git','-C',str(p),'rev-parse','--short','HEAD'],text=True).strip()
     checks['state_git_head_consistent']=state['git']['head']==head

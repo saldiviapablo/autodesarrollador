@@ -26,10 +26,10 @@ class Research(unittest.TestCase):
         result=self.decode();self.assertEqual(planner.decode(json.dumps(result)),result)
     def test_unknown_research_field_still_denied(self):
         self.value['plan']['research']['arbitrary']=True
-        with self.assertRaises(jsonschema.ValidationError):self.canonical(self.decode())
+        with self.assertRaisesRegex(ValueError,'PLANNER_SCHEMA_INVALID'):self.decode()
     def test_unknown_plan_field_still_denied(self):
         self.value['plan']['research_requirements']=[]
-        with self.assertRaises(jsonschema.ValidationError):self.canonical(self.decode())
+        with self.assertRaisesRegex(ValueError,'PLANNER_SCHEMA_INVALID'):self.decode()
     def test_nonstring_variant_denied(self):
         self.value['plan']['research']['research_requirements']={'url':'https://example.com'}
         with self.assertRaisesRegex(ValueError,'LIST_BOUND'):self.decode()
@@ -54,7 +54,7 @@ class Research(unittest.TestCase):
                 Research.generated=kw['request_overrides']['response_format']['json_schema']['schema']
             def run_conversation(self,prompt):return {'completed':True,'final_response':'{}'}
             def close(self):pass
-        native.run({'model':'qwen36','base_url':'http://127.0.0.1:8080/v1','policy':planner.policy(),
+        native.run({'model':'qwen36','base_url':'http://127.0.0.1:8080/v1','policy':planner.policy(),'schema':planner.planner_schema(),
                     'disabled_toolsets':['all'],'project':str(ROOT/'sandbox'),'prompt':'mock only'},Fake)
         schema=self.generated;jsonschema.Draft7Validator.check_schema(schema)
         self.assertFalse(schema['additionalProperties'])

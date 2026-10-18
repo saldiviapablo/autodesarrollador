@@ -16,7 +16,7 @@ function Invoke-OnboardingHermes($Context,$Request,$Cfg){
         if($command.Count -lt 4 -or -not $command[3].EndsWith($entry)){throw 'UNRECOGNIZED_NATIVE_HERMES_BOOTSTRAP'}
         $path=(Join-Path $root 'scripts/onboarding_hermes.py')|ConvertTo-Json -Compress
         $command[3]=$command[3].Substring(0,$command[3].Length-$entry.Length)+"runpy.run_path($path,run_name='__main__')"
-        $payload=@{project=$Request.project;prompt=$Context.prompt;policy=$Context.planner_policy;profile_home=$runtime.profile_home;disabled_toolsets=$runtime.disabled_toolsets;model=$Cfg.llama.alias;base_url=('http://'+$Cfg.llama.host+':'+$Cfg.llama.port+'/v1')}
+        $payload=@{project=$Request.project;prompt=$Context.prompt;policy=$Context.planner_policy;schema=$Context.planner_schema;profile_home=$runtime.profile_home;disabled_toolsets=$runtime.disabled_toolsets;model=$Cfg.llama.alias;base_url=('http://'+$Cfg.llama.host+':'+$Cfg.llama.port+'/v1')}
         $child=Start-LauncherChild $command[0] @($command[1..3]) ($payload|ConvertTo-Json -Depth 50 -Compress)
         if(-not $child.process.WaitForExit($Context.planner_policy.timeout_seconds*1000)){$child.process.Kill();throw 'PREFLIGHT_SUPERVISOR_TIMEOUT'}
         $value=$child.stdout.Result|ConvertFrom-Json

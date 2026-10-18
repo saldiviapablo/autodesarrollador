@@ -91,6 +91,8 @@ try{
     $p.prompt+="`nPrevious deterministic feedback: "+$feedback
     $supervisor=Invoke-RunnerAgent 'supervisor' $p
     $request=@{schema_version='1.0';delegation_id=('del-'+$script:RunId);objective=$script:Admission.contract.objective;workspace=$script:Admission.project;task=$script:Admission.plan.task;acceptance_criteria=@($script:Admission.contract.acceptance_criteria);allowed_actions=@($script:Admission.contract.allowed_actions);forbidden_actions=@($script:Admission.contract.forbidden_actions);tests=@($script:Admission.contract.test_commands);status='READY'}
+    $scopeHint=@{allowed_files=@($script:Admission.plan.allowed_files);write_scope=@($script:Admission.plan.write_scope)}|ConvertTo-Json -Compress
+    $request.task+="`nApproved write scope: "+$scopeHint+"`nDo not modify files outside that scope or immutable acceptance files."
     $request.task+="`nSupervisor plan (advisory, approved scope remains binding): "+$supervisor.text+"`nPrevious checks to correct: "+$feedback
     if($script:Admission.plan.research){
         $webPath=Join-Path $script:Auto 'evidence/WEB.json'
@@ -106,9 +108,19 @@ try{
                 if(@($initial|Where-Object{$_.status -eq 'FAIL'}).Count -eq 0){throw 'EXPECTED_INITIAL_TEST_FAILURE_MISSING'}
                 Runner-Event 'WORKER_DIAGNOSIS_CONFIRMED' @{initial_failure=$true;source_unchanged=$true}
             }
-            $web=Invoke-RunnerManaged 'web-research' 'powershell.exe' @('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'research-step.ps1'),'-ProjectRoot',$script:Admission.project,'-Url',$script:Admission.plan.research.url) 35
+            $researchArgs=@('-NoProfile','-NonInteractive','-File',(Join-Path $PSScriptRoot 'research-step.ps1'),'-ProjectRoot',$script:Admission.project)
+            if($script:Admission.plan.research.url){
+                $researchArgs+=@('-Url',[string]$script:Admission.plan.research.url)
+            }elseif($script:Admission.plan.research.query){
+                $researchArgs+=@('-Query',[string]$script:Admission.plan.research.query)
+                $maxResults=5;if($script:Admission.plan.research.max_results){$maxResults=[int]$script:Admission.plan.research.max_results}
+                $researchArgs+=@('-MaxResults',[string]$maxResults)
+                $domainsJson='[]';if($script:Admission.plan.research.domains){$domainsJson=@($script:Admission.plan.research.domains)|ConvertTo-Json -Compress}
+                $researchArgs+=@('-DomainsJson',$domainsJson)
+            }else{throw 'RESEARCH_MODE_INVALID'}
+            $web=Invoke-RunnerManaged 'web-research' 'powershell.exe' $researchArgs 35
             if($web.exit_code -ne 0){throw 'REQUIRED_WEB_FETCH_FAILED'}
-            Runner-Event 'WEB_FETCHED' @{source='official_web_wrapper'}
+            Runner-Event 'WEB_FETCHED' @{source='official_web_wrapper';mode=$(if($script:Admission.plan.research.url){'url'}else{'query'})}
         }
         $handoffRaw=& C:/Python314/python.exe (Join-Path $PSScriptRoot 'research-handoff.py') provide --project $script:Admission.project
         if($LASTEXITCODE -ne 0){throw 'RESEARCH_HANDOFF_FAILED'}

@@ -11,6 +11,7 @@ import os
 import json
 import re
 import argparse
+import concurrent.futures
 from datetime import datetime, timezone
 import urllib.parse
 import urllib.request
@@ -319,16 +320,27 @@ def main():
         # Limitar número de resultados
         sources = sources[:args.max_results]
         
-        # Si se solicitó fetch-top, enriquecer el primer resultado oficial descargando su HTML
+        # For governed query research, turn search hits into real fetched evidence.
+        # Fetch in parallel so several sources still fit inside the runner timeout.
         if args.fetch_top and sources:
-            top_source = sources[0]
-            if top_source.get("url", "").startswith("http"):
-                detailed = fetch_single_url(top_source["url"], timeout=args.timeout)
-                if detailed.get("content"):
-                    top_source["content"] = detailed["content"]
-                    top_source["title"] = detailed["title"] or top_source["title"]
-                    top_source["summary"] = detailed["summary"] or top_source["summary"]
-                    top_source["source_type"] = detailed["source_type"] or top_source["source_type"]
+            targets = [s for s in sources if s.get("url", "").startswith("https://")][:args.max_results]
+            fetched = []
+            workers = max(1, min(4, len(targets)))
+            with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+                future_by_url = {pool.submit(fetch_single_url, s["url"], args.timeout): s["url"] for s in targets}
+                for future in concurrent.futures.as_completed(future_by_url):
+                    try:
+                        detailed = future.result()
+                    except Exception:
+                        continue
+                    if detailed.get("status_code") == 200 and detailed.get("content"):
+                        fetched.append(detailed)
+            if fetched:
+                order = {s["url"]: i for i, s in enumerate(targets)}
+                fetched.sort(key=lambda s: order.get(s.get("url"), len(order)))
+                sources = fetched[:args.max_results]
+            else:
+                sources = []
 
     output = {
         "schema_version": "1.0",
