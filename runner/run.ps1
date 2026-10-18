@@ -118,7 +118,8 @@ try{
                 $domainsJson='[]';if($script:Admission.plan.research.domains){$domainsJson=@($script:Admission.plan.research.domains)|ConvertTo-Json -Compress}
                 $researchArgs+=@('-DomainsJson',$domainsJson)
             }else{throw 'RESEARCH_MODE_INVALID'}
-            $web=Invoke-RunnerManaged 'web-research' 'powershell.exe' $researchArgs 35
+            $researchTimeout=35;if($script:Admission.plan.research.query){$researchTimeout=150}
+            $web=Invoke-RunnerManaged 'web-research' 'powershell.exe' $researchArgs $researchTimeout
             if($web.exit_code -ne 0){throw 'REQUIRED_WEB_FETCH_FAILED'}
             Runner-Event 'WEB_FETCHED' @{source='official_web_wrapper';mode=$(if($script:Admission.plan.research.url){'url'}else{'query'})}
         }

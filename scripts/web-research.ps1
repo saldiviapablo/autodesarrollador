@@ -21,6 +21,9 @@ param(
     [int]$TimeoutSeconds = 25,
 
     [Parameter(Mandatory = $false)]
+    [int]$ProcessTimeoutSeconds = 0,
+
+    [Parameter(Mandatory = $false)]
     [switch]$FetchTop,
 
     [Parameter(Mandatory = $false)]
@@ -72,6 +75,14 @@ if ($FetchTop) {
     $pyArgs.Add("--fetch-top")
 }
 
+$effectiveTimeout = $TimeoutSeconds + 5
+if ($ProcessTimeoutSeconds -gt 0) {
+    if ($ProcessTimeoutSeconds -gt 180 -or $ProcessTimeoutSeconds -lt $TimeoutSeconds) {
+        throw "INVALID_RESEARCH_PROCESS_TIMEOUT"
+    }
+    $effectiveTimeout = $ProcessTimeoutSeconds
+}
+
 # Ejecutar proceso Python con captura
 $pInfo = New-Object System.Diagnostics.ProcessStartInfo
 $pInfo.FileName = $pythonExe
@@ -89,7 +100,7 @@ $proc = [System.Diagnostics.Process]::Start($pInfo)
 $stdoutTask = $proc.StandardOutput.ReadToEndAsync()
 $stderrTask = $proc.StandardError.ReadToEndAsync()
 
-$procExited = $proc.WaitForExit($TimeoutSeconds * 1000 + 5000)
+$procExited = $proc.WaitForExit($effectiveTimeout * 1000)
 if (-not $procExited) {
     try { $proc.Kill() } catch {}
     throw "Timeout en web-research.py tras ${TimeoutSeconds}s"

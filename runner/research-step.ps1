@@ -20,6 +20,8 @@ if(-not [string]::IsNullOrWhiteSpace($Url)){
 }else{
     $params.Query=$Query
     $params.FetchTop=$true
+    $params.TimeoutSeconds=20
+    $params.ProcessTimeoutSeconds=140
     $domains=@()
     try{$domains=@($DomainsJson|ConvertFrom-Json)}catch{throw 'RESEARCH_DOMAINS_JSON_INVALID'}
     if($domains.Count -gt 0){$params.Domains=@($domains)}
